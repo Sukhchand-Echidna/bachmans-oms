@@ -206,32 +206,30 @@ function HomeController($sce, $rootScope, $state, $compile, HomeService, Undersc
 	OrderCloud.Shipments.List(null, null, null, null, null, null, {"xp.Status":"OnHold"}).then(function(res){
 		angular.forEach(res.Items, function(res, key){
 			angular.forEach(res.Items, function(res1, key1){
-				onholdorders.push(OrderCloud.Orders.Get(res1.OrderID));
+				OrderCloud.Orders.Get(res1.OrderID).then(function(res2){
+					console.log(res2);
+					OrderCloud.LineItems.Get(res1.OrderID,res1.LineItemID).then(function(res3){
+						console.log(res3);
+						onholdorders.push({"ID":res.ID,"DateCreated":res2.DateCreated,"FromUserFirstName":res2.FromUserFirstName,"Occassions":res3.xp.addressType,"WireStatusCode":res3.xp.WireService,"CSRID":res2.xp.CSRID});
+					})
+				})
+				//onholdorders.push(OrderCloud.Orders.Get(res1.OrderID));
 			},true);
 		},true);
-		$q.all(onholdorders).then(function(data){
-			onholdorders=[];
-			angular.forEach(data, function(data, key1){
-				if(!data.xp)
-					data.xp={};
-				if(!data.xp.CSRDID)
-					data.xp.CSRID =	null;
-				onholdorders.push({"ID":data.ID,"DateCreated":data.DateCreated,"FromUserFirstName":data.FromUserFirstName,"Occassions":"","WireStatusCode":"Wire Status Code","CSRID":data.xp.CSRID});
-			},true);
-			vm.onHold = onholdorders;
-		});
+		vm.onHold = onholdorders;
 	});
+	console.log(vm.onHold);
 	$scope.gridOptions = {
 	  data: 'home.onHold',
 	  enableSorting: true,
 	  columnDefs: [
 	   { name: 'ID', displayName:'Shipment'},
-	   { name: 'DateCreated', displayName:'Order Placed On', cellTemplate: '<div class="data_cell">{{row.entity.DateCreated | date:grid.appScope.dateFormat}}</div>'},
-	   { name: 'FromUserFirstName', displayName:'Sender Name'},
-	   { name: 'BillingAddress', displayName:'Occassions'},
-	   { name: 'Totl', displayName:'Wire Status Code'},
-	   { name: 'xp.CSRID', displayName:'CSR ID'},
-	   { name: 'ShippingCost', displayName:'', cellTemplate: '<div class="data_cell" ui-sref="hold({orderID:row.entity.ID})"><a> <i class="fa fa-upload"></i> Open Order</a></div>', width:"15%"}
+	   { name: 'DateCreated', displayName:'Order Placed On', cellTemplate: '<div class="data_cell">{{row.entity.DateCreated | date:grid.appScope.dateFormat}}</div>', width:"14.2%"},
+	   { name: 'FromUserFirstName', displayName:'Sender Name',width:"14.2%"},
+	   { name: 'BillingAddress', displayName:'Occassions',width:"14.2%"},
+	   { name: 'Totl', displayName:'Wire Status Code',width:"14.2%"},
+	   { name: 'xp.CSRID', displayName:'CSR ID',width:"14.2%"},
+	   { name: 'ShippingCost', displayName:'', cellTemplate: '<div class="data_cell" ui-sref="hold({orderID:row.entity.ID})"><a> <i class="fa fa-upload"></i> Open Order</a></div>', width:"14.2%"}
 	  ]
 	 };
 	vm.saved = OrderList.saved;
