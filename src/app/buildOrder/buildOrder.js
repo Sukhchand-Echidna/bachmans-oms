@@ -2861,11 +2861,19 @@ function BuildOrderService( $q, $window, $stateParams, ocscope, buyerid, OrderCl
 			if($stateParams.SearchType == 'Products' || $stateParams.SearchType == 'BuildOrder'){
 				OrderCloud.Orders.Patch(ID, {"xp": {"Status": "","CSRID":$cookieStore.get('OMS.CSRID')}}).then(function(res){
 					d.resolve(res);
+				}).catch(function(){
+					OrderCloud.Orders.Get(ID).then(function(res){
+						d.resolve(res);
+					});
 				});
 			}
 			else{
 				OrderCloud.As().Orders.Patch(ID, {"xp": {"Status": "","CSRID":$cookieStore.get('OMS.CSRID')}}).then(function(res){
 					d.resolve(res);
+				}).catch(function(){
+					OrderCloud.Orders.Get(ID).then(function(res){
+						d.resolve(res);
+					});
 				});
 			}
 		}else{
@@ -2883,11 +2891,19 @@ function BuildOrderService( $q, $window, $stateParams, ocscope, buyerid, OrderCl
 		if($stateParams.SearchType == 'Products' || $stateParams.SearchType == 'BuildOrder'){
 			OrderCloud.Orders.Patch(orderID, {ShippingCost: delChrgs}).then(function(res){
 				d.resolve(res);
+			}).catch(function(){
+				OrderCloud.Orders.Get(orderID).then(function(res){
+					d.resolve(res);
+				});
 			});
 		}
 		else{
 			OrderCloud.As().Orders.Patch(orderID, {ShippingCost: delChrgs}).then(function(res){
 				d.resolve(res);
+			}).catch(function(){
+				OrderCloud.Orders.Get(orderID).then(function(res){
+					d.resolve(res);
+				});
 			});
 		}
 		return d.promise;

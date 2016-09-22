@@ -365,7 +365,11 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems,Pr
 		vm.orderDtls.SpendingAccounts = {};
 		OrderCloud.As().Orders.Patch(vm.order.ID, {"ID": vm.order.ID, "ShippingCost": orderDtls.deliveryCharges}).then(function(res){
             vm.order = res;
-        });
+        }).catch(function(){
+			OrderCloud.Orders.Get(vm.order.ID).then(function(res){
+				vm.order = res;
+			});
+		});
 		for(var n in groups){
 			_.each(groups[n], function(val){
 				if(val.xp.deliveryFeesDtls){
@@ -475,6 +479,12 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems,Pr
 							if((lineitems.length)-1 > index){
 								vm.lineDtlsSubmit(lineitems, index+1);
 							}
+						}).catch(function(){
+							OrderCloud.Orders.Get(vm.order.ID).then(function(res){
+								if((lineitems.length)-1 > index){
+									vm.lineDtlsSubmit(lineitems, index+1);
+								}
+							});
 						});
 					}else{
 						if((lineitems.length)-1 > index){
