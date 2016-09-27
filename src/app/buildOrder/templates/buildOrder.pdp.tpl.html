@@ -1,7 +1,6 @@
 <ui-view>
-
 	<div class="oms_main_container buildOrder-pdp-container" id="buildOrder-pdp-container">
-		<div class="upselloverlay" ng-show="!buildOrder.upsell || !buildOrder.similar"></div>
+		<div class="upselloverlay" ng-show="!buildOrder.upsell || !buildOrder.similar" ng-click="buildOrder.HideUpsellNCross()"></div>
 		<div class="buildOrder-pdp" ng-if="buildOrder.UpsellSimilar!=true">
 			<h1>
 				<a ng-click="gotoplp()" ng-if="buildOrder.searchType!='Products'">
@@ -190,9 +189,9 @@
 						<span ng-repeat="eventPrice in buildOrder.selectedPrice">
 							<span class="prod-price">{{eventPrice.Price | currency}}</span>
 						</span>
-						<p class="register">Choose a date to register for:</p>{{buildOrder.limit}}
-						<uib-accordion ng-init="buildOrder.eventsLimit.length < 2 ? buildOrder.limit=buildOrder.eventsLimit.length : buildOrder.limit=1">
-							<uib-accordion-group ng-repeat="(key, value) in buildOrder.fullEventsData track by $index | limitTo : buildOrder.limit">
+						<p class="register">Choose a date to register for:</p>
+						<uib-accordion ng-init="buildOrder.limit=2">
+							<uib-accordion-group ng-repeat="(key, value) in buildOrder.fullEventsData track by $index" ng-if="($index < buildOrder.limit)">
 								<uib-accordion-heading>
 									<p><span class="events-img">
 									<svg class="plus" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 24 24" style="enable-background:new 0 0 24 24;" xml:space="preserve">
@@ -205,20 +204,19 @@
 										 viewBox="0 0 24 24" style="enable-background:new 0 0 24 24;" xml:space="preserve">
 										<rect y="10" width="24" height="4"/>
 									</svg>
-									
 									</span> {{key | date:'fullDate'}}
 									<span>Select this Date to Choose Time </span>
 									</p>
 								</uib-accordion-heading>
 								<div class="event-drpDown">
-								  <ul>
-									<li ng-repeat="eventslots in value track by $index" >
-									<div>
-            							<input type="checkbox" id="event{{$index}}" ng-click="buildOrder.DisplayEvent(eventslots)" class="checkbox-custom" >
-            							<label for="event{{$index}}" class="checkbox-custom-label">{{eventslots.xp.slot }}</label>
-        						     </div>
-								   </li>
-								</ul>	
+									<ul>
+										<li ng-repeat="eventslots in value track by $index" >
+										<div>
+											<input type="checkbox" id="{{key}}{{$index}}" ng-click="buildOrder.DisplayEvent(eventslots)" class="checkbox-custom" >
+											<label for="{{key}}{{$index}}" class="checkbox-custom-label">{{eventslots.xp.Slot}}</label>
+										 </div>
+									   </li>
+									</ul>	
 								</div>
 								<!-- <ul>
 									<li ng-repeat="eventslots in value track by $index" >
@@ -228,7 +226,7 @@
 									</li>
 								</ul> -->
 							</uib-accordion-group>
-							<a ng-click="buildOrder.showAll()" class="see-more">(See More Dates)</a>
+							<a ng-click="buildOrder.limit=buildOrder.eventsLimit.length" class="see-more" ng-if="buildOrder.limit!=buildOrder.eventsLimit.length">(See More Dates)</a>
 						</uib-accordion>
 					</div>
 					<!-- started -->
@@ -244,11 +242,8 @@
 							</ul>
 						</div>
 					</div>
-					<div class="delivery-methods" ng-if="!buildOrder.hidePdpblock">
-						<p ng-if="buildOrder.Courier || buildOrder.Faster">
-							<b>Delivery Methods Available:</b>
-						</p>
-						<p> 
+					<div class="delivery-methods" ng-if="!buildOrder.hidePdpblock && (buildOrder.Courier || buildOrder.Faster)">
+							<h5 ng-if="buildOrder.Courier || buildOrder.Faster">Delivery Methods Available:</h5>
 							<!-- <label class="radio-common radio-inline" ng-if="buildOrder.Courier">
 								<input type="radio" id="courier" name="optradio1" ng-model="buildOrder.DeliveryType" value="Courier">
 								<label for="courier">Courier</label>
@@ -282,7 +277,6 @@
 								</label>
 								</div>
 							</div>
-						</p>
 					</div>
 					<div class="row price-block" ng-if="buildOrder.productDetails[0].length == 1 &&  buildOrder.productDetails.length == 1">
 						<ul ng-repeat="priceItem in buildOrder.productDetails[0][0].StandardPriceSchedule.PriceBreaks">
@@ -327,43 +321,90 @@
 					</div>
 				</div>
 				<!--  -->
-				<div class="row faster-delivery-content">
-                                    <div class="assembly">
+				<div class="row faster-delivery-content" ng-if="buildOrder.hidePdpblock==false">
+                                    <div class="assembly" ng-if="buildOrder.Assembly" ng-init="buildOrder.IsAssembly='Not Assembled'">
                                         <h5>Assembly:</h5>
-                                        <div class="radio-inline">
-                                           <input type="radio" id="assembled" name="assembly" value="Assembled">
+ <!--                                        <div class="radio-inline" ng-click="buildOrder.AssemblyItems()">
+                                           <input type="radio" id="assembled" name="assembly" value="Assembled" ng-model="buildOrder.IsAssembly" />
                                            <label for="assembled" class="m0">
                                            <span class="radioOutline"><span class="radioInside"></span></span>
                                            <span class="label-name">Assembled</span>
                                            </label>
                                         </div>
                                         <div class="radio-inline">
-                                           <input type="radio" id="notAssembled" name="assembly" value="Not Assembled">
+                                           <input type="radio" id="notAssembled" name="assembly" value="Not Assembled" ng-model="buildOrder.IsAssembly" />
                                            <label for="notAssembled">
                                            <span class="radioOutline"><span class="radioInside"></span></span>
                                            <span class="label-name">Not Assembled</span>
                                            </label>
-                                        </div>
+                                        </div> -->
+										<div class="radio-btn-container">
+											<div class="size-box" ng-click="buildOrder.AssemblyItems()">
+												<input type="radio" id="assembled" name="assembly" 
+												 ng-model="buildOrder.IsAssembly" value="Assembled">
+												<label for="assembled">
+													<span class="radioOutline">
+													<span class="radioInside"></span>
+													</span>
+													<span class="courier">Assembled</span>
+												</label>
+											</div>
+										</div>
+										<div class="radio-btn-container">
+											<div class="size-box">
+												<input type="radio" id="notAssembled" name="assembly" 
+												 ng-model="buildOrder.IsAssembly" value="Not Assembled">
+												<label for="notAssembled">
+													<span class="radioOutline">
+													<span class="radioInside"></span>
+													</span>
+													<span class="courier">Not Assembled</span>
+												</label>
+											</div>
+										</div>
                                         <p class="note"><span>Note:&nbsp;</span>Assembly charges may be applicable</p>
                                     </div>
-                                    <div class="placement">
+                                    <div class="placement" ng-if="buildOrder.Placement" ng-init="buildOrder.IsPlacement='Not Placed'">
                                         <h5>Placement:</h5>
-                                        <div class="radio-inline">
-                                           <input type="radio" id="placed" name="placement" value="Placed">
+										<div class="radio-btn-container">
+											<div class="size-box">
+												<input type="radio" id="placed" name="placement" 
+												 ng-model="buildOrder.IsPlacement" value="Placed">
+												<label for="placed">
+													<span class="radioOutline">
+													<span class="radioInside"></span>
+													</span>
+													<span class="courier">Placed</span>
+												</label>
+											</div>
+										</div>
+										<div class="radio-btn-container">
+											<div class="size-box">
+												<input type="radio" id="notPlaced" name="placement" 
+												 ng-model="buildOrder.IsPlacement" value="Not Placed">
+												<label for="notPlaced">
+													<span class="radioOutline">
+													<span class="radioInside"></span>
+													</span>
+													<span class="courier">Not Placed</span>
+												</label>
+											</div>
+										</div>
+<!--                                         <div class="radio-inline">
+                                           <input type="radio" id="placed" name="placement" value="Placed" ng-model="buildOrder.IsPlacement" />
                                            <label for="placed"  class="m0">
                                            <span class="radioOutline"><span class="radioInside"></span></span>
                                            <span class="label-name">Placed</span>
                                            </label>
                                         </div>
                                         <div class="radio-inline">
-                                           <input type="radio" id="notPlaced" name="placement"value="Not Placed">
+                                           <input type="radio" id="notPlaced" name="placement" value="Not Placed" ng-model="buildOrder.IsPlacement" />
                                            <label for="notPlaced">
                                            <span class="radioOutline"><span class="radioInside"></span></span>
                                            <span class="label-name">Not Placed</span>
                                            </label>
-                                        </div>
-                                        <br>
-                                        <textarea placeholder="Placement Instruction" rows="4" cols="10"></textarea>
+                                        </div> -->
+                                        <textarea placeholder="Placement Instruction" rows="4" cols="10" ng-model="buildOrder.PlacementInstruction"></textarea>
                                         <p class="note"><span>Note:&nbsp;</span>Placement Charges Will be applicable</p>
                                     </div>
                                     <!-- <div class="fastDelivery" ng-show="pdp.Faster"> -->
@@ -378,10 +419,63 @@
                                          <p class="note"><span>Note:&nbsp;</span>Faster Delivery Charges Will be applicable</p>
                                     </div>
                                 </div>
+								
+						<div class="faster-location">
+							<h5>Delivery Information</h5>
+							<div class="side-block">
+								<p>Zip Code <span class="star">*</span></p>
+								<input type="number" ng-model="buildOrder.ZipCodeCheck" ng-blur="buildOrder.GetMinDays(buildOrder.ZipCodeCheck, prods.data.ID)" placeholder="Zip Code" />
+							</div>
+							<div class="side-block" ng-if="buildOrder.MultipleCities.length <= 1 || !buildOrder.MultipleCities">
+								<p>City <span class="star">*</span></p>
+								<input type="text" name="city" placeholder="City" ng-model="buildOrder.city" />
+							</div>
+							<div class="side-block" ng-if="buildOrder.MultipleCities.length > 1">
+								<p>Select City <span class="star">*</span>
+								</p>
+								<div class="multiple-cities">
+									<div uib-dropdown class="form-control" id="MultipleCities">
+										<div id="sort-dropdown" uib-dropdown-toggle>
+											<p class="sort-active-show" ng-init="buildOrder.Mcity = 'Select City'">{{buildOrder.Mcity}} <i class="fa fa-chevron-down"></i></p>
+										</div>
+										<ul class="dropdown-menu" uib-dropdown-menu aria-labelledby="sort-dropdown">
+											<li ng-repeat="city in buildOrder.MultipleCities" ng-click="buildOrder.CheckDeliveryAvailable(city, buildOrder.selectedProductId)"><a href="">{{city}}</a></li>
+										</ul>
+									</div>
+								</div>
+							</div>
+							<div class="side-block">
+								<p>Delivery Date <span class="star">*</span></p>
+								<div class="input-group">
+									<input type="text" name="checkDate" readonly class="form-control" placeholder="MM/DD/YYYY" uib-datepicker-popup="MM/dd/yyyy" ng-model="buildOrder.checkDate" is-open="buildOrder.checkDateCalenderPopUp" datepicker-options="{formatYear: 'yy', minDate: buildOrder.MinDate, startingDay: 1}" ng-change="buildOrder.CalendarSelect(buildOrder.checkDate, buildOrder.selectedProductId)" />
+									<span class="input-group-btn">
+										  <button type="button" class="btn btn-default" ng-click="buildOrder.checkDateCalenderPopUp=!buildOrder.checkDateCalenderPopUp">
+											<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+											 viewBox="0 0 33 36" style="enable-background:new 0 0 33 36;" xml:space="preserve">
+										
+											<g>
+											<path  d="M0,10.2v20c0,2.7,2.2,4.9,4.9,4.9H28c2.7,0,4.9-2.2,4.9-4.9v-20c0-2.7-2.2-4.9-4.9-4.9h-1v-3
+												c0-0.8-0.7-1.5-1.5-1.5c-0.8,0-1.5,0.7-1.5,1.5v6c0,0.7-0.6,1.3-1.3,1.3c-0.7,0-1.3-0.6-1.3-1.3V5.3h-2.6v-3c0-0.8-0.7-1.5-1.5-1.5
+												c-0.8,0-1.5,0.7-1.5,1.5v6c0,0.7-0.6,1.3-1.3,1.3c-0.7,0-1.3-0.6-1.3-1.3V5.3h-2.6v-3c0-0.8-0.7-1.5-1.5-1.5
+												c-0.8,0-1.5,0.7-1.5,1.5v6c0,0.7-0.6,1.3-1.3,1.3c-0.7,0-1.3-0.6-1.3-1.3V5.3C2.2,5.3,0,7.5,0,10.2z M29.4,29.6
+												c0,0.9-0.7,1.6-1.6,1.6H5.4c-0.9,0-1.6-0.7-1.6-1.6V16.7h25.6L29.4,29.6z"/>
+											<path  d="M19.2,29h-7l2.8-3.7c0.3-0.4,0.6-0.8,0.8-1.1c0.2-0.3,0.4-0.6,0.5-0.9c0.2-0.5,0.4-1,0.4-1.5
+												c0-0.3-0.1-0.5-0.2-0.7c-0.1-0.2-0.3-0.2-0.5-0.2c-0.4,0-0.7,0.4-0.7,1.2c0,0,0,0.1,0,0.2c0,0.1,0,0.1,0,0.2h-2.7l0-0.4
+												c0-1,0.3-1.8,0.9-2.5c0.6-0.6,1.5-0.9,2.4-0.9c1,0,1.7,0.3,2.3,0.9c0.6,0.6,0.9,1.4,0.9,2.4c0,0.8-0.2,1.6-0.6,2.3
+												c-0.2,0.4-0.5,0.8-0.8,1.2c-0.3,0.4-0.7,0.8-1.2,1.3c0.4-0.1,0.8-0.2,1.2-0.2c0.4,0,0.8-0.1,1.3-0.1L19.2,29L19.2,29z"/>
+											</g>
+											</svg>
+										   </button>
+									</span>
+								</div>
+							</div>
+							<p style="color:red;" ng-if="buildOrder.DeliveryNotAvailable">Delivery Not Available To The Specified Zip...</p>
+							<p style="color:green;" ng-if="buildOrder.DeliveryNotAvailable==false">Delivery Available...!</p>
+						</div>
 				<button class="addCart" ng-if="buildOrder.hidePdpblock">REGISTER</button>
 				<button class="addCart" ng-click="AddtoCart(buildOrder.selectedProductId, buildOrder.selectedProductImg)" ng-if="!buildOrder.hidePdpblock">ADD TO CART</button>
 				</div>
-				<div class="key-product col-xs-12 p0">
+				<div class="key-product col-xs-12 p0" ng-if="buildOrder.hidePdpblock==false">
 					<h3>Key Product Info:</h3>
 					<p class="row">
 						<div class="key-prod-info" ng-repeat="attribute in buildOrder.selectedKey">
@@ -416,7 +510,7 @@
 
 							</ul>
 						</uib-accordion-group>
-						<uib-accordion-group is-open="status.open2" class="specification">
+						<uib-accordion-group is-open="status.open2" class="specification" ng-if="buildOrder.hidePdpblock==false">
 							<uib-accordion-heading>
 								<p ng-class="{'footer-minus': status.open2, 'footer-plus': !status.open2}">Specifications:
 									<svg class="plus" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 24 24" style="enable-background:new 0 0 24 24;" xml:space="preserve">
@@ -442,7 +536,7 @@
 							</table>
 						</uib-accordion-group>
 
-						<uib-accordion-group is-open="status.open3">
+						<uib-accordion-group is-open="status.open3" ng-if="buildOrder.hidePdpblock==false">
 							<uib-accordion-heading>
 								<p ng-class="{'footer-minus': status.open3, 'footer-plus': !status.open3}">Return/Warranty/Exchange:
 									<svg class="plus" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 24 24" style="enable-background:new 0 0 24 24;" xml:space="preserve">
@@ -460,6 +554,50 @@
 							<div class="footer_cat col-xs-12 col-sm-12 col-md-12 col-lg-12" ng-bind-html="buildOrder.selectedWarranty">
 								
 							</div>
+						</uib-accordion-group>
+						<uib-accordion-group is-open="status.open4" ng-if="buildOrder.hidePdpblock">
+							<uib-accordion-heading>
+								<p ng-class="{'footer-minus': status.open4, 'footer-plus': !status.open4}">Ticket Information:
+									<svg class="plus" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 24 24" style="enable-background:new 0 0 24 24;" xml:space="preserve">
+										<g>
+											<rect x="10" width="4" height="24" />
+											<rect y="10" width="24" height="4" />
+										</g>
+									</svg>
+									<svg class="minus" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+										 viewBox="0 0 24 24" style="enable-background:new 0 0 24 24;" xml:space="preserve">
+										<rect y="10" width="24" height="4"/>
+									</svg>
+								</p>
+							</uib-accordion-heading>
+							<ul class="footer_cat col-xs-12 col-sm-12 col-md-12 col-lg-12">
+								<li>
+									<p>{{buildOrder.ticketInformation}}</p>
+								</li>
+
+							</ul>
+						</uib-accordion-group>
+						<uib-accordion-group is-open="status.open5" ng-if="buildOrder.hidePdpblock">
+							<uib-accordion-heading>
+								<p ng-class="{'footer-minus': status.open5, 'footer-plus': !status.open5}">Cancellation/Policies:
+									<svg class="plus" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 24 24" style="enable-background:new 0 0 24 24;" xml:space="preserve">
+										<g>
+											<rect x="10" width="4" height="24" />
+											<rect y="10" width="24" height="4" />
+										</g>
+									</svg>
+									<svg class="minus" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+										 viewBox="0 0 24 24" style="enable-background:new 0 0 24 24;" xml:space="preserve">
+										<rect y="10" width="24" height="4"/>
+									</svg>
+								</p>
+							</uib-accordion-heading>
+							<ul class="footer_cat col-xs-12 col-sm-12 col-md-12 col-lg-12">
+								<li>
+									<p>{{buildOrder.cancellationOrPolicies}}</p>
+								</li>
+
+							</ul>
 						</uib-accordion-group>
 					</uib-accordion>
 					<!-- <p ng-click="accordion=1">Bachman’s Products</p>
@@ -513,7 +651,7 @@
 							<div>
 								<h3>{{opt.Type}}:</h3>
 								<span ng-repeat="coloropt in opt.Option">
-									<input type="radio" id="color1" name="coloropt" ng-model="prods.data.colorval" value="{{coloropt}}" ng-init="$index==0?(prods.data.colorval=coloropt):''" ng-change="selectVarients('upsell',$parent.$parent.$index)">
+									<input type="radio" id="color1" name="coloropt" ng-model="prods.data.colorval" value="{{coloropt}}" ng-init="$index==0?(prods.data.colorval=coloropt):''" ng-change="selectVarients('upsell',$parent.$parent.$index)" />
 									<label for="color1"><span ng-style="{'background-color': coloropt}"></span></label>
 								</span>
 							</div>
@@ -555,16 +693,16 @@
 					<div class="items-list">
 						<span>Upsell Items</span>
 						<ul>
-							<li ng-repeat="cat in buildOrder.Categories"><a href="javascript:void(0)" ng-click="buildOrder.getCategoriesItems(cat.ID)">{{cat.Name}}</a></li>
+							<li ng-repeat="cat in buildOrder.Categories"><a href="javascript:void(0)" ng-click="buildOrder.UpsellShow($index)">{{cat.Name}}</a></li>
 						</ul>
 					</div>
-					<ul class="pdp-upsell-container" id="owl-carousel-upsell">
-						<li class="item" ng-repeat="upsell in buildOrder.CategoryItemsUpsell">
+					<ul class="pdp-upsell-container" ng-repeat="cat in buildOrder.Categories" ng-if="$index==buildOrder.UpsellIndex" id="owl-carousel-upsell{{$index}}">
+						<li class="item" ng-repeat="upsell in buildOrder.CategoryItemsUpsell[$index]">
 							<div class="pdp-upsell-block" ng-click="buildOrder.UpsellProductItem(upsell.ID, buildOrder.CategoryItemsUpsell)">
-								<div class="product_img"><img src="assets/images/flowers.jpg" class="owl-lazy"></div>
+								<div class="product_img"><img ng-src="{{buildOrderPDP.alfrescoAccessURL}}/imagefinder/{{upsell.ID}}?alf_ticket={{buildOrderPDP.alfrecoTct}}" class="owl-lazy"></div>
 								<h2>{{upsell.Name}}</h2>
-								<h3>Option Deluxe</h3>
-								<h4>Color Red</h4>
+								<h3>{{upsell.Size}}</h3>
+								<h4>{{upsell.Color}}</h4>
 								<div class="price_lst">
 									<h5>{{upsell.Price | currency}}</h5>
 								</div>
@@ -577,10 +715,10 @@
 					<ul class="pdp-upsell-container" id="owl-carousel-similar">
 						<li class="item" ng-repeat="cross in buildOrder.CategoryItemsSimilar">
 							<div class="pdp-upsell-block" ng-click="buildOrder.UpsellProductItem(cross.ID, CategoryItemsSimilar)">
-								<div class="product_img"><img src="assets/images/flowers.jpg" class="owl-lazy"></div>
+								<div class="product_img"><img ng-src="{{buildOrderPDP.alfrescoAccessURL}}/imagefinder/{{upsell.ID}}?alf_ticket={{buildOrderPDP.alfrecoTct}}" class="owl-lazy"></div>
 								<h2>{{cross.Name}}</h2>
-								<h3>Option Deluxe</h3>
-								<h4>Color Red</h4>
+								<h3>{{cross.xp.SpecsOptions.Size}}</h3>
+								<h4>{{cross.xp.SpecsOptions.Color}}</h4>
 								<div class="price_lst">
 									<h5>{{pricelist.Price | currency}}</h5>
 								</div>
@@ -622,5 +760,27 @@
 			<img src="{{buildOrderPDP.articleImgURL}}"/>
 		</div>
 		<div ng-include="buildOrderPDP.articleURL"></div>
+	</div>
+</modal>
+<modal title="Assembled Items" visible="buildOrder.AssemblyModal" class="modal-pop-up assembled-popup">
+	<div>
+		<ul>
+			<li ng-repeat="items in buildOrder.AssemblyProducts" ng-click="">
+				<div class="check">
+					<input type="checkbox" id="saved" class="checkbox-custom" ng-model="buildOrder.ItemSelected[items.ID]">
+					<label  for="saved" class="checkbox-custom-label"></label>
+				</div>
+				<div class="prod_img">
+					<img src="assets/images/flowers.jpg" />
+				</div>
+				<div class="prod-info">
+					<h2>{{items.Name}}</h2>
+					<h3>Size:<span>{{items.Size}}</span></h3>
+					<h4>Color:<span>{{items.Color}}</span></h4>
+					<h5>Price:<span>{{items.Price | currency}}</span></h5>
+				</div>
+			</li> 
+		</ul>
+		<button ng-click="buildOrder.SelectedProducts()" class="done">Done</button>
 	</div>
 </modal>

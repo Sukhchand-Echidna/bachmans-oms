@@ -44,7 +44,7 @@ button {
 		z-index:9;
 	}
 }
-input.error {
+input.error, .errorCity {
     border: 1px solid red !important;
 }
 .buildOrderSummary-main{
@@ -327,12 +327,16 @@ input.error {
 						overflow: hidden;
 					}
 					h3,
-					h4 {
+					h4 , h3 span, h4 span{
 						.helvetica-regular;
 						font-size: 10px;
 						color: #54565d;
 						margin: 3px 0;
-					}
+						text-transform:lowercase;
+						&:first-letter{
+							text-transform:uppercase;
+						}
+					}					
 					h5 {
 						.helvetica-bold;
 						font-size: 12px;
@@ -417,7 +421,7 @@ input.error {
 			}
 			.buildOrder-pdp-content {
 				background-color: @color0;
-				padding: 35px;
+				padding: 35px 15px 35px 35px;
 				.pdp-left{
 					img{
 						max-width:100%;
@@ -465,7 +469,7 @@ input.error {
 						color: #54565d;
 						margin:0px;
 					}
-					button {
+					button.addCart {
 						padding: 10px 45px 6px 45px;
 						background-color: @color15;
 						.helvetica-bold;
@@ -481,6 +485,7 @@ input.error {
 						}
 					}
 					.dropdown-box{
+						margin-bottom:20px;
 						h5{
 							margin-bottom: 15px;
 						}
@@ -580,7 +585,6 @@ input.error {
 					 .color-selection,.dropdown-box{
 					 	width:100%;
 					 	float:left;
-					 	margin-bottom:10px;
 					 	h5{
 					 		font-size:13px;
 					 		color:#54565d;
@@ -589,18 +593,20 @@ input.error {
 					 	}
 					 }
 					 .color-selection{
+						margin-bottom:10px;
 					 	.color-circle{
 					 		margin: 12px 0 0 6px;
 					 	}
 					 }
 					 .delivery-methods{
-					 	.helvetica-bold;
-					 	float:left;
-					 	p{
-					 			margin:0;
-					 	}
+					 	h5{
+							color:@color1;
+							font-size:13px;
+							.helvetica-bold;
+							margin-bottom:0;
+						}
 					 	.radio-btn-container{
-					 	margin:5px 0 20px 0;
+							margin:5px 0 20px 0;
 					 		size-box{
 					 			padding:0;	
 					 		}
@@ -1459,6 +1465,49 @@ input.error {
 				}
 			}
 		}
+		.city-list{
+			width:13.1%;
+			.in-block;
+			.dropdown{
+				border-top: none;
+				border-left: none;
+				border-right: none;
+				border-bottom: 1px solid #8c58b5;
+				padding: 3px 0px 3px 3px;
+				box-shadow:none;
+				border-radius:0;
+				cursor:pointer;
+				p{
+				    .helvetica-regular;
+					font-size: 13px;
+					line-height: 24px;
+				}
+			}
+			.dropdown-menu{
+			width: 86.5%;
+			padding:0;
+			border:1px solid @base-bg-purple-light;
+			border-radius:0;
+			li{
+				border-bottom:1px solid @color21;
+				border-radius:0;
+				a{
+					font-size:13px;
+					padding: 5px 10px;
+					.helvetica-regular;
+					color:@color1;
+					text-decoration:none;
+					overflow: hidden;
+					white-space: nowrap;
+					text-overflow: ellipsis;
+					&:hover{
+						background-color:@base-bg-purple-light;
+						color:@color0 !important;
+					}
+				}
+			}
+		}
+		}
 	}
 	.oms-plp-right {
 		width: 20%;
@@ -1832,9 +1881,14 @@ input.error {
 						height: 25px;
 					}
 					.location-Code {
-						.address-cart a{
+						.address-cart{
+							a{
 							font-size:12px;
 							.helvetica-bold;
+							&:last-child{
+								float:right;
+							}
+							}
 						}
 						.zipcont{
 							padding:0px;
@@ -1906,6 +1960,53 @@ input.error {
 								width: 59%;
 							    margin-right: 3%;
 							    padding: 0px;
+								.form-control{
+										padding:0px 5px;
+										height:29px;
+										border:1px solid #eaeaea;
+										line-height:29px;
+										cursor:pointer;
+										i {
+											color:@primary-dark-color;
+											float:right;
+											font-size:12px;
+											padding: 9px 0;
+											.transition-common(all 0.5s ease);
+											.rotate(0deg);
+										}
+									.dropdown-menu{
+										width: 86.5%;
+										padding:0;
+										border:1px solid @base-bg-purple-light;
+										border-radius:0;
+										li{
+											border-bottom:1px solid @color21;
+											border-radius:0;
+											a{
+												font-size:13px;
+												padding: 5px 10px;
+												.helvetica-regular;
+												color:@color1;
+												text-decoration:none;
+												overflow: hidden;
+												white-space: nowrap;
+												text-overflow: ellipsis;
+												&:hover{
+													background-color:@base-bg-purple-light;
+													color:@color0 !important;
+												}
+											}
+										}
+										&:last-child{
+											border-bottom:none;
+										}
+									}
+									&.open{
+										.fa-chevron-down{
+											.rotate(180deg);
+										}
+									}
+								}
 							}
 							.location-state {
 								width: 35%;
@@ -2096,6 +2197,9 @@ input.error {
 										overflow: hidden;
 										white-space: nowrap;
 										text-overflow: ellipsis;
+									}
+									&:last-child{
+										border-bottom:none;
 									}
 								}
 							}
@@ -2397,6 +2501,7 @@ input.error {
 		}
 		.modal-body{
 			padding:10px 25px;
+			max-height:400px;
 			span{
 				.helvetica-bold;
 				font-size:15px;
@@ -2806,7 +2911,7 @@ input.error {
 		    					text-decoration: none;
 		    					background-color: #969696;
 		   						color: #fff;
-		    					padding:10px 0 5px 0;
+		    					padding:7px 0 7px 0;
 		    					width: 26%;
 		    					margin-left: 2%;
 								&:hover{
@@ -3157,6 +3262,12 @@ input.error {
 	.articlePDP{
 		height:300px;
 		overflow-y: auto;
+		.article-img{
+			margin-bottom:10px;
+			img{
+				max-width:100%;
+			}
+		}
 	}
 }
 /*Sukhchand*/
@@ -3175,25 +3286,19 @@ input.error {
                             margin: 12px 0px;
                             cursor: default;
                             h5{
-                                //font: 1.188em @proxima-regular;
-                                color: #000000;
-                                margin-bottom: 10px;
+								.helvetica-bold;
+                                color: @color1;
+                                margin-bottom: 0px;
+								font-size:13px;
                             }
-                            .radio-inline{
-                                padding-left: 0px;
-                                width: 45%;
-                                margin: 0px;
-                                &:first-child{
-                                	label{
-                                		margin-left:0;
-                                	}
-                                }
-                            }
+							.radio-btn-container{
+								width:50%;
+							}
                             .placement{
                                 margin: 20px 0px;
                             }
                             .note{
-                            font-size:0.85em;
+                            font-size:11px;
                                 //font: 0.85em @proxima-regular;
                                 color: #666666;
                                 margin-top: 7px;
@@ -3201,134 +3306,65 @@ input.error {
                                         color: #000000;
                                     }
                             }
-                            input[type=radio], input[type=checkbox] {
+                            input[type=checkbox] {
                                     display: none;
                                 }
                             label{
-			display: inline-block;
-			cursor: pointer;
-			position: relative;
-			padding-left: 0;
-			width: 100%;
-			margin: 0;
-			font-weight: 400;
-			text-transform: capitalize;
-			text-align:left;
-		}
-		 .radioOutline{
-		    position: relative;
-		}
-		input[type=radio]:not(old)+label .radioOutline .radioInside{
-		    border: 1px solid #8c58b5;
-			border-radius: 50%;
-			background: 0 0;
-			display: inline-block;
-			width: 18px;
-			height: 18px;
-			text-align: center;
-		 }
-	   input[type=radio]:not(old):checked+label .radioOutline{
-	 		    border: 1px solid #8c58b5;
-			border-radius: 50%;
-			background: 0 0;
-			display: inline-block;
-			width: 18px;
-			height: 18px;
-			text-align: center;
-			top:4px;
-		}
-		input[type=radio]:not(old):checked+label .radioOutline .radioInside{
-		    width: 10px;
-			height: 10px;
-			border-radius: 50%;
-			display: inline-block;
-			background-color: #8c58b5;
-			position: absolute;
-			top: 0;
-			left: 0;
-			right: 0;
-			bottom: 0;
-			margin: auto;
-		   }
-			input[type=radio]:not(old)+label .radioOutline .radioInside{
-		    width: 16px;
-			height: 16px;
-			border-radius: 50%;
-			display: inline-block;
-			background-color: transparent;
-			position: absolute;
-			top: 0;
-			left: 0;
-			right: 0;
-			bottom: 0;
-			margin: auto;
-		  }
-		  input[type=radio]:not(old)+label{
-		  	 h5,.courier,.faster-del{
-		  	 		padding-left: 30px;
-		  			
-		  	 }
-		   }
-                            /*input[type=radio] {
-                                    display: none;
-                                }
-                                input[type=radio]{
-                                    opacity: 0;
-                                    &:not(old){
-                                        &+ label .radioOutline, &:checked + label .radioOutline{
-                                            //border: 1px solid @base-bg-purple-dark;
-                                            border-radius: 50%;
-                                            background: transparent;
-                                            display: inline-block;
-                                            width: 18px;
-                                            height: 18px;
-                                            text-align: center;
-                                            cursor: pointer;
-                                            vertical-align: middle;
-                                        }
-                                        &:checked + label .radioOutline .radioInside{
-                                            display: block;
-                                            width: 10px;
-                                            height: 10px;
-                                            border-radius: 50%;
-                                            display: inline-block;
-                                            //background-color: @base-bg-purple-dark;
-                                            position: absolute;
-                                            top: 0;
-                                            left: 0;
-                                            right: 0;
-                                            bottom: 0;
-                                            margin: auto;
-                                        }
-                                        &+ label .radioOutline .radioInside{
-                                            display: block;
-                                            width: 10px;
-                                            height: 10px;
-                                            border-radius: 50%;
-                                            display: inline-block;
-                                            background-color: transparent;
-                                            position: absolute;
-                                            top: 0;
-                                            left: 0;
-                                            right: 0;
-                                            bottom: 0;
-                                            margin: auto;
-                                        }
-                                    }   
-                                }*/
-                                .label-name ,label{
-                                    //font: 1em @proxima-regular;
-                                    font-size: 1em;
-                                    margin-left:20px;
-                                    color: #666666;
-                                    vertical-align: middle;
-                                    cursor: pointer;
-                                    text-transform: capitalize;
-                                    &.fastDelivery{
-                                        margin: 0px 0px 0px 5px;
-
-                                    }
-                                }
+								display: inline-block;
+								cursor: pointer;
+								position: relative;
+								padding-left: 0;
+								width: 100%;
+								margin: 0;
+								font-weight: 400;
+								text-transform: capitalize;
+								text-align:left;
+							}
+							.radioOutline{
+								position: relative;
+							}
+							input[type=radio]:not(old):checked+label .radioOutline{
+									border: 1px solid #8c58b5;
+								border-radius: 50%;
+								background: 0 0;
+								display: inline-block;
+								width: 18px;
+								height: 18px;
+								text-align: center;
+								top:4px;
+							}
+							input[type=radio]:not(old):checked+label .radioOutline .radioInside{
+								width: 10px;
+								height: 10px;
+								border-radius: 50%;
+								display: inline-block;
+								background-color: #8c58b5;
+								position: absolute;
+								top: 0;
+								left: 0;
+								right: 0;
+								bottom: 0;
+								margin: auto;
+							   }
+								input[type=radio]:not(old)+label .radioOutline .radioInside{
+								width: 16px;
+								height: 16px;
+								border-radius: 50%;
+								display: inline-block;
+								background-color: transparent;
+								position: absolute;
+								top: 0;
+								left: 0;
+								right: 0;
+								bottom: 0;
+								margin: auto;
+							  }
+							  input[type=radio]:not(old)+label{
+								 h5,.courier,.faster-del{
+										padding-left: 30px;
+										
+								 }
+							   }
                                 label.m0{
                                 	margin-left:0;
                                 }
@@ -3346,7 +3382,8 @@ input.error {
                                             background-position: center;
                                         }
                                         &+label{
-                                        	font-size: 1em;
+                                        	font-size: 13px;
+											.helvetica-regular;
 										    display: inline-block;
 										    width: initial;
 										    vertical-align: middle;
@@ -3356,11 +3393,188 @@ input.error {
                                         width: 100%;
                                         resize: none;
                                         padding: 5px 10px;
-                                        //font: 0.9em @proxima-regular;
+                                        font-size:12px;
+										.helvetica-regular;
                                         line-height: initial;
                                         outline: 0;
+										color:@color1;
                                         border: 1px solid #ccc;
                                         margin-top: 7px;
                                     }
-                                   
                         }
+		.faster-location{
+			h5{
+				.helvetica-bold;
+				color: @color1;
+				margin-bottom: 10px;
+				font-size:13px;
+			}
+			input{
+				border: 1px solid #EAEAEA;
+				font-size: 11px;
+				line-height: 23px;
+				.helvetica-regular;
+				height:29px;
+				text-indent: 5px;
+			}
+			.multiple-cities{
+				vertical-align:top;
+				.form-control{
+					border:1px solid #eaeaea;
+					border-radius:0;
+					padding:0 5px;
+					height:29px;
+					box-shadow:none;
+					p{
+						line-height:29px;
+						font-size:11px;
+						color:@color1;
+						cursor:pointer;
+						margin-bottom:0;
+						i {
+							color:@primary-dark-color;
+							float:right;
+							font-size:12px;
+							padding: 9px 0;
+							.transition-common(all 0.5s ease);
+							.rotate(0deg);
+						}
+					}
+					.dropdown-menu{
+						width: 100%;
+						border:1px solid @base-bg-purple-light;
+						padding:0px;
+						border-radius:0;
+						min-width:initial;
+						li{
+							border-bottom:1px solid @color21;
+							border-radius:0;
+							a{
+								font-size:13px;
+								padding: 5px 10px;
+								.helvetica-regular;
+								color:@color1;
+								text-decoration:none;
+								overflow: hidden;
+								white-space: nowrap;
+								text-overflow: ellipsis;
+								&:hover{
+									background-color:@base-bg-purple-light;
+									color:@color0 !important;
+								}
+							}
+							&:last-child{
+								border-bottom:none;
+							}
+						}
+					}
+					&.open{
+						.fa-chevron-down{
+							.rotate(180deg);
+						}
+					}
+				}
+			}
+			.side-block{
+				margin-top:8px;
+				width:49.3%;
+				.in-block;
+				p{
+					font-size: 12px;
+					.helvetica-medium;
+					margin-bottom: 5px;
+					color: #8b8e96;
+				}
+				.input-group{
+					width:100%;
+					border-radius:0;
+					input{
+						width: 100%;
+						border: 1px solid #EAEAEA;
+						font-family: "Helvetica-regular";
+						font-size: 11px;
+						height: 29px;
+						background: #fff;
+						box-shadow:none;
+					}
+				}
+			}
+			.uib-datepicker-popup-wrap ul{
+				top:29px;
+			}
+			.input-group-btn{
+			    position: relative;
+				white-space: nowrap;
+				.btn{
+					padding: 4px 12px;
+					line-height: 9px;
+					border-radius:0;
+					svg{
+					    width: 20px;
+						height: 19px;
+						fill: #8c58b5;
+					}
+				}
+			}
+		}
+.modal-pop-up.assembled-popup{
+	modal-body{
+		max-height:400px;
+	}
+	ul{
+		border-top:1px solid #EAEAEA;
+		li{
+			padding:8px 0;
+			border-left:1px solid #EAEAEA;
+			border-right:1px solid #EAEAEA;
+			border-bottom:1px solid #EAEAEA;
+			&:nth-child(odd){
+				background-color: #f7f8fa;
+			}
+			&:hover{
+				background-color:#f0f0f1;
+			}
+			.check{
+				width:20%;
+				.in-block;
+				vertical-align:top;
+			}
+			.prod_img{
+				width:35%;
+				.in-block;
+				vertical-align:top;
+				img{
+					max-width:100%;
+				}
+			}
+			.prod-info{
+				width:43.7%;
+				.in-block;
+				h2{
+					font-size:14px;
+					.helvetica-bold;
+					margin:3px 0;
+					color:@color1;
+				}
+				h3, h5, h4{
+					font-size:14px;
+					.helvetica-regular;
+					color:@color1;
+					margin:3px 0;
+					span{
+						.helvetica-medium;
+					}
+				}
+			}
+		}
+	}
+	button.done{
+		font-size:12px;
+		background-color:@primary-color;
+		padding:5px 10px;
+		color:@color0;
+		&:hover{
+			background-color:@primary-dark-color;
+		}
+	}
+}

@@ -84,12 +84,19 @@ input.error, .errorMMyy {
 	    -moz-transition: background-color 0.5s ease-out;
 	    -o-transition: background-color 0.5s ease-out;
 	    transition: background-color 0.5s ease-out;
+		.background-fade;
 	    h5{
 	    	color: #f32929;
 			.helvetica-bold;
     		font-size: 12.5px;
 			line-height:50px;
 	    }
+		&:hover{
+			background-color:@primary-dark-color;
+			h5{
+				color:@color0;
+			}
+		}
     }
     .save-later{
     	border-left: 1px solid #f2f5f7;
@@ -100,11 +107,18 @@ input.error, .errorMMyy {
 	    -moz-transition: background-color 0.5s ease-out;
 	    -o-transition: background-color 0.5s ease-out;
 	    transition: background-color 0.5s ease-out;
+		.background-fade;
 	    h5{
 			.helvetica-bold;
 	    	font-size: 12.5px;
 			line-height:50px;
 	    }
+		&:hover{
+			background-color:@primary-dark-color;
+			h5{
+				color:@color0;
+			}
+		}
     }
 	.modal{
 		top: 75px;
@@ -417,6 +431,65 @@ input.error, .errorMMyy {
 						.in-block;
 						width:65%;
 						margin-right:3.9%;
+						.multiple-cities{
+							.form-control{
+								&.open{
+									.fa-chevron-down{
+										.rotate(180deg);
+									}
+								}
+							}
+							.dropdown{
+								border: 1px solid #eaeaea;
+								box-shadow:none;
+								border-radius:0;
+								cursor:pointer;
+								height:35px;
+								background: #F4F4F4;
+								border-radius: 2px;
+								margin-bottom: 25px;
+								p{
+									.helvetica-regular;
+									font-size: 16px;
+									line-height:25px;
+									i {
+										color:@primary-dark-color;
+										float:right;
+										font-size:12px;
+										padding: 7px 0;
+										.transition-common(all 0.5s ease);
+										.rotate(0deg);
+									}
+								}
+							}
+							.dropdown-menu{
+							width: 100%;
+							padding:0;
+							border:1px solid @base-bg-purple-light;
+							border-radius:0;
+							li{
+								border-bottom:1px solid @color21;
+								border-radius:0;
+								a{
+									font-size:13px;
+									padding: 5px 10px;
+									.helvetica-regular;
+									color:@color1;
+									text-decoration:none;
+									overflow: hidden;
+									white-space: nowrap;
+									text-overflow: ellipsis;
+									&:hover{
+										background-color:@base-bg-purple-light;
+										color:@color0 !important;
+									}
+								}
+								&:last-child{
+									border-bottom:none;
+								}
+							}
+						}
+						}
 					}
 					.state-block{
 						.in-block;

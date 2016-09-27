@@ -57,17 +57,18 @@ function HoldConfig( $stateProvider ) {
 
 function HoldController($scope, $state, $stateParams, Order, WiredProduct, OrderCloud, LineItemHelpers, Underscore) {
 	var vm = this;
-	vm.onholdlineitems=Order;
+	vm.onholdlineitems=[];
+	vm.onholdlineitems.push(Order);
 	vm.onholdlineitems1=vm.onholdlineitems;
 	vm.wiredproducts=WiredProduct;
 	vm.wireserviceopt=null;
-	console.log(vm.onholdlineitems);
-	console.log(vm.wiredproducts);
 	vm.deliveryinfo=vm.onholdlineitems1;
+	console.log("test",$scope.gridOptions);
 	vm.addItem=function(){
 		vm.selectSKU =! vm.selectSKU;
 		$scope.gridOptions.columnDefs[0].visible=true;
 		$scope.gridApi.core.refresh();
+		console.log("test",$scope.gridOptions);
 		//$scope.gridOptions.gridApi.core.refresh();
 	}
 	vm.removeItem=function(){

@@ -32,6 +32,12 @@
 	}
 	.hold-btm{
 		margin-bottom:10px;
+		a{
+			color:@color1;
+			&:hover{
+				color:@primary-dark-color;
+			}
+		}
 		p{
 			.helvetica-bold;
 			font-size: 14px;
@@ -54,9 +60,11 @@
 		}
 	}
 	button{
-		padding:5px 10px;
+		padding:0 10px;
 		.in-block;
 		margin-right:10px;
+		height:30px;
+		line-height:30px;
 		.helvetica-bold;
 		font-size:12px;
 		border:1px solid @base-bg-purple-light;

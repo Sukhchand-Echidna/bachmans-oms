@@ -66,10 +66,10 @@ function checkoutConfig( $stateProvider ) {
 	$stateProvider
 	.state( 'checkout', {
 		parent: 'base',
-		url: '/checkout/:ID',
+		url: '/checkout/:ID/:FromUserID',
 		templateUrl:'checkout/templates/checkout.tpl.html',
         data: {
-            loadingMessage: 'LOADING'
+            loadingMessage: 'Loading...'
         },
 		views: {
 			'': {
@@ -77,28 +77,28 @@ function checkoutConfig( $stateProvider ) {
 				controller: 'checkoutCtrl',
 				controllerAs: 'checkout',
                 resolve: {
-                    SavedCreditCards: function(OrderCloud) {
+                    /*SavedCreditCards: function(OrderCloud) {
                         return OrderCloud.As().Me.ListCreditCards(null, 1, 100);
-                    },
+                    },*/
                     Order: function(CurrentOrder) {
                         return CurrentOrder.Get();
                     },
                     OrderLineItems: function(OrderCloud, Order) {
-                        return OrderCloud.As().LineItems.List(Order.ID)
+                        return OrderCloud.LineItems.List(Order.ID);
                     },
                     ProductInfo: function(OrderCloud, LineItemHelpers, OrderLineItems) {
-                        return LineItemHelpers.GetProductInfo(OrderLineItems.Items)
+                        return LineItemHelpers.GetProductInfo(OrderLineItems.Items);
                     },
-                    TakeOrderOffHold: function(BuildOrderService, Order, OrderLineItems) {
-                        return BuildOrderService.OrderOnHoldRemove(OrderLineItems.Items, Order.ID)
+                    /*TakeOrderOffHold: function(BuildOrderService, Order, OrderLineItems) {
+                        return BuildOrderService.OrderOnHoldRemove(OrderLineItems.Items, Order.ID);
                     },
                     GetBuyerDetails: function(BuildOrderService) {
-                        return BuildOrderService.GetBuyerDtls()
+                        return BuildOrderService.GetBuyerDtls();
                     },
                     GetTax: function(TaxService, Order) {
                         return TaxService.GetTax(Order.ID);
-                    },
-					GetCstDateTime: function(BuildOrderService){
+                    },*/
+					GetCstDateTime: function(BuildOrderService, $q){
 						return BuildOrderService.CompareDate();
 					}
                 }
@@ -113,20 +113,18 @@ function checkoutConfig( $stateProvider ) {
 	});
 }
 
-function checkoutController($scope, $state, Underscore, Order, OrderLineItems,ProductInfo, GetBuyerDetails, GetTax, CreditCardService, TaxService, AddressValidationService, SavedCreditCards, OrderCloud, $stateParams, BuildOrderService, $q, AlfrescoFact, $http, checkoutService, LineItemHelpers, PurplePerkEagle, GiftCardEagle, GetCstDateTime) {
+function checkoutController($scope, $state, Underscore, Order, OrderLineItems, ProductInfo, CreditCardService, TaxService, AddressValidationService, OrderCloud, $stateParams, BuildOrderService, $q, AlfrescoFact, $http, checkoutService, LineItemHelpers, GetCstDateTime, GC_PP_Redemption, PPBalance, GCBalance) {
 	var vm = this;
 	vm.logo=AlfrescoFact.logo;
     vm.order = Order;
     vm.orderID = Order.ID;
-    vm.order.TaxInfo = GetTax;
+    //vm.order.TaxInfo = GetTax;
     vm.lineItems = OrderLineItems.Items;
-    vm.buyerDtls = GetBuyerDetails;
-    vm.buyerDtls.xp.deliveryChargeAdjReasons.unshift("---select---");
     vm.paymentOption = 'CreditCard';
     vm.lineTotalQty = Underscore.reduce(Underscore.pluck(vm.lineItems, 'Quantity'), function(memo, num){ return memo + num; }, 0);
     vm.lineTotalSubTotal = Underscore.reduce(Underscore.pluck(vm.lineItems, 'LineTotal'), function(memo, num){ return memo + num; }, 0);
-    vm.creditCardsList = SavedCreditCards.Items;
-    vm.seluser = $stateParams.ID;
+    //vm.seluser = $stateParams.ID;
+    vm.seluser = $stateParams.FromUserID;
     vm.AvoidMultipleDelryChrgs = [];
 	vm.oneAtATime = true;
 	vm.opened = false;
@@ -138,10 +136,20 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems,Pr
 	}
 	var today = dt.getMonth()+1+"/"+dt.getDate()+"/"+dt.getFullYear();
 	dt = new Date(angular.copy(GetCstDateTime.datetime));
+	vm.TodayDate = dt;
 	$scope.tom = new Date(dt.setDate(dt.getDate() + 1));//tomorrow
 	vm.initDate = new Date(angular.copy(GetCstDateTime.datetime));//day after tomorrow
 	var tomorrow = $scope.tom;
 	tomorrow = tomorrow.getMonth()+1+"/"+tomorrow.getDate()+"/"+tomorrow.getFullYear();
+	BuildOrderService.GetBuyerDtls().then(function(res){
+		vm.buyerDtls = res;
+		vm.buyerXp = res.xp;
+		vm.buyerDtls.xp.deliveryChargeAdjReasons.unshift("---select---");
+	});
+	OrderCloud.As().Me.ListCreditCards(null, 1, 100).then(function(cards){
+		vm.creditCardsList = cards.Items;
+	});
+	BuildOrderService.OrderOnHoldRemove(OrderLineItems.Items, Order.ID);
 	vm.status = {
 		delInfoOpen : true,
 		paymentOpen : false,
@@ -156,7 +164,7 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems,Pr
 		}, 0);
     };
 
-    vm.getRecipientTax = function(lineitems) {
+    /*vm.getRecipientTax = function(lineitems) {
         angular.forEach(lineitems, function(item){
             var line = Underscore.findWhere(GetTax.ResponseBody.TaxLines, {LineNo: item.ID});
             item.TaxCost = line.Tax;
@@ -164,13 +172,13 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems,Pr
         return Underscore.pluck(lineitems, 'TaxCost').reduce(function(prev, current) {
             return prev + current;
         }, 0);
-    };
+    };*/
 
-    vm.submitOrder = function(card, billingAddress) {
-		if(vm.addCard){
+    vm.submitOrder = function(card, billingAddress){
+		/*if(vm.addCard && vm.paymentOption != 'PO'){
 			checkoutService.AddCreditCard(card, billingAddress, vm).then(function(res1){
 				if(res1=="1"){
-					checkoutService.SpendingAccountsRedeemtion(vm.orderDtls.SpendingAccounts, angular.copy(GetCstDateTime.datetime)).then(function(res2){
+					checkoutService.SpendingAccountsRedeemtion(vm.orderDtls.SpendingAccounts, angular.copy(GetCstDateTime.datetime), vm).then(function(res2){
 						if(res2=="1"){
 							checkoutService.CreditCardPayment(vm).then(function(res3){
 								if(res3=="1"){
@@ -182,16 +190,37 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems,Pr
 				}
 			});
 		}else{
-			checkoutService.SpendingAccountsRedeemtion(vm.orderDtls.SpendingAccounts, angular.copy(GetCstDateTime.datetime)).then(function(res1){
-				if(res1=="1"){
-					checkoutService.CreditCardPayment(vm).then(function(res2){
-						if(res2=="1"){
-							console.log("-========>");
-						}
+			if(vm.paymentOption != 'PO'){
+				checkoutService.SpendingAccountsRedeemtion(vm.orderDtls.SpendingAccounts, angular.copy(GetCstDateTime.datetime), vm).then(function(res1){
+					if(res1=="1"){
+						checkoutService.CreditCardPayment(vm).then(function(res2){
+							if(res2=="1"){
+								console.log("-========>");
+							}
+						});
+					}
+				});
+			}else{
+				OrderCloud.Orders.Submit(vm.order.ID).then(function(){
+					vm.order.xp.PONumber = vm.CurrentUser.xp.PO.PONumber;
+					OrderCloud.Orders.Update(vm.order.ID, vm.order);
+					TaxService.CollectTax(vm.order.ID).then(function(){
+						$q.all(vm.ShipmentsPromise).then(function(results){
+							$state.go('orderConfirmation' , {userID: vm.order.FromUserID ,ID: vm.orderID});
+						});
 					});
-				}
+				});
+			}	
+		}*/
+		OrderCloud.Orders.Submit(vm.order.ID).then(function(){
+			//vm.order.xp.PONumber = vm.CurrentUser.xp.PO.PONumber;
+			//OrderCloud.Orders.Update(vm.order.ID, vm.order);
+			TaxService.CollectTax(vm.order.ID).then(function(){
+				$q.all(vm.ShipmentsPromise).then(function(results){
+					$state.go('orderConfirmation' , {userID: vm.order.FromUserID ,ID: vm.orderID});
+				});
 			});
-		}
+		});
 		/*var PaymentType, TempStoredArray = [], dat = new Date();
 		angular.forEach(vm.orderDtls.SpendingAccounts, function(val, key){
 			PaymentType = {"Type":"SpendingAccount", "SpendingAccountID":val.ID, "Description": key, "Amount": val.Amount, "xp":null};
@@ -352,11 +381,36 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems,Pr
 			angular.forEach(obj.xp.deliveryFeesDtls, function(val, key){
 				deliverySum += parseFloat(val);
 			},true);
-			if(deliverySum > 250){
-				line.xp.Discount = deliverySum - 250;
-				deliverySum = 250;
-			}
+			// if(deliverySum > 250){
+				// line.xp.Discount = deliverySum - 250;
+				// deliverySum = 250;
+			// }
 			orderDtls.deliveryCharges += deliverySum;
+			obj.xp.MinDays = {};
+			if(obj.xp.MinDate){
+				angular.forEach(obj.xp.MinDate, function(val1, key1){
+					dt = new Date(angular.copy(GetCstDateTime.datetime));
+					dt = dt.setDate(dt.getDate() + val1);
+					obj.xp.MinDays[key1] = new Date(dt);
+				}, true);
+				obj.xp.MinDays['MinToday'] = new Date(angular.copy(GetCstDateTime.datetime));
+				if(obj.xp.MinDate.LocalDelivery){
+					dt = new Date(angular.copy(GetCstDateTime.datetime));
+					//dt.setHours(0, 0, 0, 0);
+					if(dt.getHours() >= 12)
+						dt = dt.setDate(dt.getDate() + obj.xp.MinDate.LocalDelivery + 1);
+					else
+						dt = dt.setDate(dt.getDate() + obj.xp.MinDate.LocalDelivery);
+					obj.xp.MinDays['MinToday'] = new Date(dt);
+				}	
+			}else{
+				dt = new Date(angular.copy(GetCstDateTime.datetime));
+				obj.xp.MinDate = {};
+				if(dt.getHours() >= 12)
+					obj.xp.MinDays['MinToday'] = dt.setDate(dt.getDate() + 1);
+				else
+					obj.xp.MinDays['MinToday'] = dt;
+			}
 			return obj.ShippingAddress.FirstName + ' ' + obj.ShippingAddress.LastName + ' ' + obj.ShippingAddress.Zip + ' ' + (obj.ShippingAddress.Street1).split(/(\d+)/g)[1] + ' ' + obj.xp.DeliveryMethod + ' ' + obj.xp.deliveryDate;
 		});
 		vm.AvoidMultipleDelryChrgs = _.uniq(vm.AvoidMultipleDelryChrgs, 'lineID');
@@ -378,7 +432,7 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems,Pr
 				}
 			});
 		}
-		vm.recipientsGroup = groups;
+		vm.activeOrders = groups;
 		vm.recipients = [];
 		vm.ShipmentsPromise = [];
 		for(var n in groups){
@@ -411,7 +465,7 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems,Pr
 		}
 	};
 	vm.ProceedToReview = function(billingform, creditcardform){
-		if(creditcardform){
+		if(creditcardform && vm.paymentOption != 'PO'){
 			billingform.$submitted = true;
 			creditcardform.$submitted = true;
 			if(billingform.$valid && creditcardform.$valid && vm.card.ExpMonth!="MM" && vm.card.ExpYear!="YYYY"){
@@ -423,7 +477,7 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems,Pr
 				vm.status.isThirdDisabled = false;
 			}
 		}
-		if(vm.selectedCard.cvvform){
+		if(vm.selectedCard.cvvform && vm.paymentOption != 'PO'){
 			if(vm.selectedCard.cvvform.$invalid){
 				vm.selectedCard.cvvform.$submitted = true;
 			}else{
@@ -435,6 +489,14 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems,Pr
 				vm.status.isThirdDisabled = false;
 			}
 		}
+		if(vm.paymentOption == 'PO'){
+			vm.paymentDone = true;
+			vm.status.delInfoOpen = false;
+			vm.status.paymentOpen = false;
+			vm.status.reviewOpen = true;
+			vm.status.isSecondDisabled = true;
+			vm.status.isThirdDisabled = false;
+		}
 	};
 	vm.lineDtlsSubmit = function(lineitems, index){
 		var line = lineitems[index];
@@ -443,11 +505,9 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems,Pr
 		if(line.cardMsg != true){
 			delete line.xp.CardMessage;
 		}
-		if(line.xp.deliveryRun=='Run4'){
-			if(!line.xp.deliveryFeesDtls)
-				line.xp.deliveryFeesDtls = {};
-			line.xp.deliveryFeesDtls.PriorityDelivery = vm.buyerDtls.xp.DeliveryRuns[0].Run4.charge;
-		}
+		/*if(line.xp.deliveryRun=='Run4' && vm.TodayDate.getHours() >= 12){
+			line.xp.deliveryFeesDtls['Priority Delivery'] = vm.buyerDtls.xp.DeliveryRuns[0].Run4.charge;
+		}*/
 		angular.forEach(line.xp.deliveryFeesDtls, function(val, key){
 			deliverySum += parseFloat(val);
 		});
@@ -455,10 +515,10 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems,Pr
 			line.xp.Discount = deliverySum - 250;
 			deliverySum = 250;
 		}
-		line.xp.TotalCost = deliverySum+(parseFloat(line.Quantity)*parseFloat(line.UnitPrice))+line.TaxCost;
+		line.xp.TotalCost = deliverySum + line.LineTotal + line.TaxCost;
+		if(line.xp.deliveryChargeAdjReason == "---select---")
+			delete line.xp.deliveryChargeAdjReason;
 		if(line.selectedAddrID){
-			if(line.xp.deliveryChargeAdjReason == "---select---")
-				delete line.xp.deliveryChargeAdjReason;
 			OrderCloud.As().LineItems.Patch(vm.order.ID, line.ID, {"ShippingAddressID":line.selectedAddrID,"xp":line.xp}).then(function(res){
 				if((lineitems.length)-1 > index){
 					vm.lineDtlsSubmit(lineitems, index+1);
@@ -628,7 +688,7 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems,Pr
 		}
 		if(line){
 			if(line.xp.addressType == "InStorePickUp"){
-				vm.getDeliveryCharges(line);
+				vm.GetDeliveryFees(line);
 			}
 		}
 	};
@@ -648,12 +708,14 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems,Pr
 			line.ShippingAddress.Phone2 = res[1];
 			line.ShippingAddress.Phone3 = res[2];
 		});
-		vm.getDeliveryCharges(line);
+		vm.GetDeliveryFees(line);
 	};
 	vm.changeAddrType = function(line){
-		vm.getDeliveryCharges(line);
+		if(line.xp.addressType!="Church" && line.xp.addressType!="Funeral")
+			delete line.xp.deliveryRun;
+		vm.GetDeliveryFees(line);
 	}
-	vm.getDeliveryCharges = function(line, form){
+	/*vm.GetDeliveryFees = function(line, form){
 		vm.NoDeliveryFees = false;
 		angular.forEach(vm.AvoidMultipleDelryChrgs, function(val, key){
 			val.deliveryDate = new Date(val.deliveryDate);
@@ -792,7 +854,7 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems,Pr
 			line.xp.TotalCost = line.xp.TotalCost + (line.Quantity * line.UnitPrice);
 			d.resolve("1");
 		});
-	}
+	}*/
 	vm.selectedAddr = function(line,addr){
 		if(addr.isAddrOpen){
 			line.selectedAddrID = addr.ID;
@@ -810,7 +872,7 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems,Pr
 			line.xp.deliveryDate = $scope.dt;
 		else if(text.indexOf("tom") > -1)
 			line.xp.deliveryDate = new Date($scope.tom);
-		vm.getDeliveryCharges(line, vm.lineItemForm[line.ID]);
+		vm.GetDeliveryFees(line, vm.lineItemForm[line.ID]);
 	};
 	vm.toggle = function(line,index){
 		vm.opened = true;
@@ -839,7 +901,7 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems,Pr
 			}				
 		}
 		if($scope.datePickerLine)
-			vm.getDeliveryCharges($scope.datePickerLine, vm.lineItemForm[$scope.datePickerLine.ID]);
+			vm.GetDeliveryFees($scope.datePickerLine, vm.lineItemForm[$scope.datePickerLine.ID]);
 	}, true);
 	//----------Date picker ends------------------
 	$scope.cancelOrder = function(){
@@ -848,15 +910,19 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems,Pr
 		});
 	};
 	$scope.saveForLater = function(note){
-		OrderCloud.As().Orders.ListOutgoing(null, null, $stateParams.ID, null, null, "FromUserID").then(function(res){
+		OrderCloud.As().Orders.ListOutgoing(null, null, $stateParams.FromUserID, null, null, "FromUserID").then(function(res){
 			angular.forEach(res.Items,function(val, key){
 				if(val.FromUserID == vm.order.FromUserID && val.ID == vm.order.ID){
 					OrderCloud.As().Orders.Patch(vm.order.ID,{"xp":{"SavedOrder":{"Name":note,"Flag":true}}}).then(function(res1){
 						console.log("saved order successfully/removed");
+					}).catch(function(){
+						
 					});
 				}else if(val.FromUserID == vm.order.FromUserID && val.ID != vm.order.ID && val.xp.SavedOrder){
 					OrderCloud.As().Orders.Patch(val.ID,{"xp":{"SavedOrder":{"Flag":false}}}).then(function(res2){
 						console.log("saved order successfully/removed");
+					}).catch(function(){
+						
 					});
 				}
 			});
@@ -1014,65 +1080,66 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems,Pr
 		}
 		vm.SumSpendingAccChrgs(orderDtls);		
 	};
-	vm.RedeemGiftCard = function(CardNo, orderDtls){
-		var params = {
+	vm.GCApply = function(CardNo, orderDtls){
+		//var dt = new Date(angular.copy(GetCstDateTime.datetime));
+		/*var params = {
 			"transactionDate":"",
 			"customerNumber":$stateParams.ID,
 			"cardNumber":"2147443647",
 			"transactionAmountFromF51":"",
-			"four51TimeStamp":""
-		};
+			"four51TimeStamp":"",
+			
+			"date": (dt.getMonth()+1)+"-"+dt.getDate()+"-"+dt.getFullYear(),
+			"customerId": $stateParams.ID,
+			"cardNumber": "7777001112223333",
+			"cardAmount": "14.50",
+			"orderId": vm.order.ID,
+			"numberOfGiftCardsRedemeed": "1",
+			"redemption": "G"
+		};*/
 		OrderCloud.SpendingAccounts.Get(CardNo).then(function(data){
-			vm.InvalidGiftCard = false;
-			if(data.xp.RedeemDate)
-				data.xp.RedeemDate = new Date(data.xp.RedeemDate);
-			else
-				data.xp.RedeemDate = new Date(angular.copy(GetCstDateTime.datetime));
-			params.four51TimeStamp = data.xp.RedeemDate.getFullYear()+"-"+(data.xp.RedeemDate.getMonth()+1)+"-"+data.xp.RedeemDate.getDate()+" "+data.xp.RedeemDate.getHours()+":"+data.xp.RedeemDate.getMinutes()+":"+data.xp.RedeemDate.getSeconds();
-			params.transactionAmountFromF51 = data.Balance;
-			$http.post(GiftCardEagle, params).success(function(res2){
-				if(res2.LatestValue != data.Balance)
-					data.Balance = res2.LatestValue;
-				vm.UserSpendingAcc[data.Name] = data;
-				vm.orderDtls.SpendingAccounts.GiftCard = {"ID":data.ID, "Amount":data.Balance};
-				vm.SumSpendingAccChrgs(orderDtls);
-			});
+			if(new Date(data.StartDate) <= new Date(GetCstDateTime.datetime) && new Date(data.EndDate) >= new Date(GetCstDateTime.datetime)){
+				vm.InvalidGiftCard = false;
+				$http.post(GCBalance, {"card_number": CardNo}).success(function(res2){
+					if(res2.card_value != data.Balance && res2.card_value!="cardNumber not available")
+						data.Balance = res2.card_value;
+					vm.UserSpendingAcc[data.Name] = data;
+					vm.orderDtls.SpendingAccounts.GiftCard = {"ID":data.ID, "Amount":data.Balance};
+					vm.SumSpendingAccChrgs(orderDtls);
+				});
+			}else{
+				vm.InvalidGiftCard = true;
+			}	
 		}).catch(function(err){
 			vm.InvalidGiftCard = true;
 		});
 	};
 	vm.UserSpendingAccounts = function(){
-		OrderCloud.SpendingAccounts.ListAssignments(null, $stateParams.ID).then(function(res){
+		OrderCloud.SpendingAccounts.ListAssignments(null, $stateParams.FromUserID).then(function(res){
 			vm.UserSpendingAcc = {};
-			var params = {
-				"transactionDate":"",
-				"customerNumber":$stateParams.ID,
-				"cardNumber":"2147443647",
-				"transactionAmountFromF51":"",
-				"four51TimeStamp":""
-			}, TempStoredArray = [];
+			var TempStoredArray = [];
 			angular.forEach(res.Items, function(val, key){
 				TempStoredArray.push(OrderCloud.SpendingAccounts.Get(val.SpendingAccountID));
 			}, true);
 			$q.all(TempStoredArray).then(function(result1){
 				TempStoredArray = [];
 				angular.forEach(result1, function(val, key){
-					if(val.xp.RedeemDate)
+					/*if(val.xp.RedeemDate)
 						val.xp.RedeemDate = new Date(val.xp.RedeemDate);
 					else
-						val.xp.RedeemDate = new Date(angular.copy(GetCstDateTime.datetime));
-					params.four51TimeStamp = val.xp.RedeemDate.getFullYear()+"-"+(val.xp.RedeemDate.getMonth()+1)+"-"+val.xp.RedeemDate.getDate()+" "+val.xp.RedeemDate.getHours()+":"+val.xp.RedeemDate.getMinutes()+":"+val.xp.RedeemDate.getSeconds();
-					params.transactionAmountFromF51 = val.Balance;
+						val.xp.RedeemDate = new Date(angular.copy(GetCstDateTime.datetime));*/
+					//params.four51TimeStamp = val.xp.RedeemDate.getFullYear()+"-"+(val.xp.RedeemDate.getMonth()+1)+"-"+val.xp.RedeemDate.getDate()+" "+val.xp.RedeemDate.getHours()+":"+val.xp.RedeemDate.getMinutes()+":"+val.xp.RedeemDate.getSeconds();
+					//params.transactionAmountFromF51 = val.Balance;
 					if(val.Name == "Purple Perks")
-						TempStoredArray.push($http.post(PurplePerkEagle, params));
+						TempStoredArray.push($http.post(PPBalance, {"card_number": val.RedemptionCode}));
 					if(val.Name == "Bachman Charges")
 						vm.UserSpendingAcc[val.Name] = val;
 				}, true);
 				$q.all(TempStoredArray).then(function(result2){
 					angular.forEach(result2, function(val, key){
-						var row = _.findWhere(result1, {ID: val.config.data.cardNumber});
-						if(val.data.LatestValue != row.Balance)
-							row.Balance = val.data.LatestValue;
+						var row = _.findWhere(result1, {RedemptionCode: val.config.data.card_number});
+						if(val.data.card_value != row.Balance && val.data.card_value!="cardNumber not available")
+							row.Balance = val.data.card_value;
 						vm.UserSpendingAcc[row.Name] = row;
 					}, true);
 				});
@@ -1080,9 +1147,35 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems,Pr
 		});
 	};
 	vm.UserSpendingAccounts();
+	vm.GetDeliveryFees = function(line, form){
+		if(line.ShippingAddress.City != "Select City"){
+			vm.CheckOutLoader = BuildOrderService.DeliveryFeesService(line, form, vm, GetCstDateTime.datetime).then(function(res){
+				console.log(res);
+			});
+		}	
+	};
+	OrderCloud.Users.Get($stateParams.ID).then(function(res){
+		vm.CurrentUser = res;
+	});
+	vm.ClearOtherPayments = function(){
+		vm.paymentOption = 'PO';
+		vm.orderDtls.SpendingAccounts = {};
+		if(vm.selectedCard)
+			vm.selectedCard.CVV = null;
+		if(vm.selectedCard)
+			vm.card.CVV = null;
+		vm.SumSpendingAccChrgs(vm.orderDtls);
+	};
+	vm.disabledDates = function (data) {
+		return (data.mode === 'day' && (data.date.getDay() === 0));
+	};
+	vm.SelectedCity = function(city, line, form){
+		line.ShippingAddress.City = city;
+		vm.GetDeliveryFees(line, form);
+	};
 }
 
-function checkoutService(CreditCardService, $q, OrderCloud, $state, TaxService){
+function checkoutService(CreditCardService, $q, OrderCloud, $state, TaxService, $http, GC_PP_Redemption){
 	var service = {
 		GetCardType: _getCardType,
 		AddCreditCard : _addCreditCard,
@@ -1138,8 +1231,8 @@ function checkoutService(CreditCardService, $q, OrderCloud, $state, TaxService){
 		});
 		return d.promise;
 	}
-	function _spendingAccountsRedeemtion(SpendingAccounts, cstdatetime){
-		var PaymentType, TempStoredArray = [], dat = new Date(cstdatetime), d = $q.defer();
+	function _spendingAccountsRedeemtion(SpendingAccounts, cstdatetime, vm){
+		var PaymentType, TempStoredArray = [], dat = new Date(cstdatetime), d = $q.defer(), params;
 		angular.forEach(SpendingAccounts, function(val, key){
 			PaymentType = {"Type":"SpendingAccount", "SpendingAccountID":val.ID, "Description": key, "Amount": val.Amount, "xp":null};
 			if(key == "Cheque" || key == "PaidCash"){
@@ -1154,11 +1247,38 @@ function checkoutService(CreditCardService, $q, OrderCloud, $state, TaxService){
 			$q.all(TempStoredArray).then(function(result){
 				TempStoredArray = [];
 				angular.forEach(result, function(val, key){
-					TempStoredArray.push(OrderCloud.Payments.CreateTransaction(vm.order.ID, val.ID, {"Type": val.Type, "DateExecuted": (dat.getMonth()+1)+"/"+dat.getDate()+"/"+dat.getFullYear(), "Amount":val.Amount, "xp": null}));
+					TempStoredArray.push(OrderCloud.Payments.CreateTransaction(vm.order.ID, val.ID, {"Type": val.Type, "DateExecuted": (dat.getMonth()+1)+"/"+dat.getDate()+"/"+dat.getFullYear(), "Amount": val.Amount, "xp": null, "ResultMessage": val.Description}));
 				}, true);
 				$q.all(TempStoredArray).then(function(result2){
-					console.log("===========>>>"+result2);
-					d.resolve("1");
+					//console.log("===========>>>"+result2);
+					//d.resolve("1");
+					TempStoredArray = [];
+					params = {
+						"date": (dat.getMonth()+1)+"-"+dat.getDate()+"-"+dat.getFullYear(),
+						"customerId": vm.order.FromUserID,
+						"cardNumber": "",
+						"cardAmount": "",
+						"orderId": vm.order.ID,
+						"numberOfGiftCardsRedemeed": "1",
+						"redemption": ""
+					};
+					angular.forEach(result2, function(val, key){
+						if(val.Description=="PurplePerks"){
+							params.redemption = "P";
+							params.cardNumber = "";// Add to card number dynamic
+							params.cardAmount = parseFloat(vm.UserSpendingAcc['Purple Perks'].Balance) - parseFloat(val.Amount);// Remaining amount in card
+							TempStoredArray.push($http.post(GC_PP_Redemption, params));
+						}
+						if(val.Description=="GiftCard"){
+							params.redemption = "G";
+							params.cardNumber = "";// Add to card number dynamic
+							params.cardAmount =  parseFloat(vm.UserSpendingAcc['Gift Card'].Balance) - parseFloat(val.Amount);// Remaining amount in card
+							TempStoredArray.push($http.post(GC_PP_Redemption, params));
+						}
+					}, true);
+					$q.all(TempStoredArray).then(function(result){
+						console.log("========>>>>>>"+result);
+					});
 				});
 			});
 		}else{
@@ -1167,8 +1287,8 @@ function checkoutService(CreditCardService, $q, OrderCloud, $state, TaxService){
 		return d.promise;
 	}
 	function _creditCardPayment(vm){
-		var d = $q.defer();//for demo uncomment later
-		/*if(vm.selectedCard!="createcreditcard" && vm.order.Total > 0) {
+		var d = $q.defer();
+		if(vm.selectedCard!="createcreditcard" && vm.order.Total > 0) {
             CreditCardService.ExistingCardAuthCapture(vm.selectedCard, vm.order)
                 .then(function(res){
 					if(res.ResponseBody.messages.resultCode != "Error"){
@@ -1210,7 +1330,7 @@ function checkoutService(CreditCardService, $q, OrderCloud, $state, TaxService){
 						d.resolve("0");
 					}
 				});	
-        } else{*/
+        } else{
 			OrderCloud.Orders.Submit(vm.orderID)
 				.then(function(){
 					TaxService.CollectTax(vm.orderID)
@@ -1219,7 +1339,7 @@ function checkoutService(CreditCardService, $q, OrderCloud, $state, TaxService){
 							$state.go('orderConfirmation' , {userID: vm.order.FromUserID ,ID: vm.orderID});
 						})
 				});
-        //}
+        }
 		return d.promise;
 	}
 	return service;

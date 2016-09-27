@@ -8,13 +8,16 @@ function CustInfoConfig( $stateProvider ) {
 	$stateProvider
 		.state( 'custInfo', {
 			parent: 'base',
-			url: '/custInfo',
+			url: '/custInfo/:ID',
 			templateUrl: 'custInfo/templates/custInfo.tpl.html',
 			controller: 'CustInfoCtrl',
 			controllerAs: 'custInfo',
             params: {
                 ID:null                
             },
+			data: {
+				loadingMessage: 'Loading...'
+			},
 			resolve: {
                 UserList: function( OrderCloud, $state, $q) {
                     var arr={};
@@ -39,6 +42,9 @@ function CustInfoConfig( $stateProvider ) {
 								console.log("addresses", arr);
 							 
 						 }); */
+						OrderCloud.As().Me.ListUserGroups(null, 1, 100).then(function(usergrp){
+							arr["userGroup"]=usergrp.Items;
+						})
 						OrderCloud.As().Me.ListAddresses(null, 1, 100).then(function(addrList){
 							arr["addresses"]=addrList.Items;
 								arr["defaultAddr"]=_.filter(addrList.Items, function(obj) {
@@ -77,7 +83,7 @@ function CustInfoConfig( $stateProvider ) {
 					  return dfd.promise;
 				},
 				creditCard:function($q, $state, $stateParams, OrderCloud){
-					var dfd=$q.defer();
+					var dfd=$q.defer(), TempArr = [];
 					/*OrderCloud.CreditCards.ListAssignments(null, $stateParams.ID).then(function(assign){
 						console.log("datadatadatadata", assign);
 						angular.forEach(assign.Items, function(value, key) {
@@ -91,7 +97,15 @@ function CustInfoConfig( $stateProvider ) {
 						}
 					}); */
 					OrderCloud.As().Me.ListCreditCards(null, 1, 100).then(function (response) {
-						dfd.resolve(response);
+						angular.forEach(response.Items, function(value, key) {
+							TempArr.push(OrderCloud.As().Me.GetAddress(value.xp.BillingAddressID));
+						}, true);
+						$q.all(TempArr).then(function(result){
+							angular.forEach(response.Items, function(value, key) {
+								value.billing=result[key];
+							}, true);
+							dfd.resolve(response);
+						});
 					});
 					return dfd.promise;
 				},
@@ -126,18 +140,12 @@ function CustInfoConfig( $stateProvider ) {
 }
 
 
-function CustInfoController($scope, $exceptionHandler, $stateParams, $state, UserList, spendingAccounts, creditCard, OrderCloud, userSubscription, Underscore, ConstantContact, BuildOrderService, AddressValidationService) {
+function CustInfoController($scope, $exceptionHandler, $stateParams, $state, UserList, spendingAccounts, creditCard, OrderCloud, userSubscription, Underscore, ConstantContact, BuildOrderService, AddressValidationService, $http, GoogleAPI) {
 	var vm = this;
 	vm.list = UserList;
 	vm.subscribedList=userSubscription;
-	console.log("vm.subscribedLis", vm.subscribedList);
 	vm.spendingAcc=spendingAccounts;
 	vm.creditCard=creditCard.Items;
-	console.log("creditCard",vm.creditCard);
-	console.log("spendingAccounts", spendingAccounts);
-	console.log("vm.purple", vm.purple);
-	console.log("vm.charges", vm.charges);
-	console.log("vm.Account", vm.creditCard);
 	  var userid = vm.list.user.ID;
 	  $scope.showModal = false;
 	 console.log(userid);
@@ -176,10 +184,7 @@ function CustInfoController($scope, $exceptionHandler, $stateParams, $state, Use
 		});
 	}
 	vm.getLocation=function(){
-		AddressValidationService.Validate(vm.list.defaultAddr[0]).then(function(res){
-			vm.list.defaultAddr[0].City = res.Address.City;
-			vm.list.defaultAddr[0].State = res.Address.Region;
-		});
+		vm.GetMultipleCities(vm.list.defaultAddr[0]);
 	}
 	$scope.ok=function(){
 		OrderCloud.Users.Update(userid, vm.list.user).then(function(){
@@ -204,5 +209,55 @@ function CustInfoController($scope, $exceptionHandler, $stateParams, $state, Use
 		ConstantContact.UpdateContact(params).then(function(res){
 			console.log("subscribedListparams", res);
 		});
-	}
+	};
+	vm.showPOModal = false;
+	vm.UpdatePONumber = function(){
+		if(vm.PoNo == UserList.user.xp.PO.PONumber){
+			vm.ValidPO = true;
+			if(vm.NPoNo==vm.CPoNo){
+				vm.PoNotMatches = true;
+				UserList.user.xp.PO.PONumber = vm.NPoNo;
+				OrderCloud.Users.Update(UserList.user.ID, UserList.user).then(function(res){
+					vm.showPOModal = !vm.showPOModal;
+					vm.PoNo = null;
+					vm.NPoNo = null;
+					vm.CPoNo = null;
+				});
+			}else{
+				vm.PoNotMatches = false;
+			}
+		} else{
+			vm.ValidPO = false;
+		}
+	};
+	vm.GetMultipleCities = function(line){
+		if((line.Zip.toString()).length == 5){
+			$http.get(GoogleAPI+line.Zip).then(function(res){
+				if(res.data.results[0].postcode_localities){
+					if(res.data.results[0].postcode_localities.length > 1){
+						line.MultipleCities = res.data.results[0].postcode_localities;
+						if(line.Zip == 55038)
+							line.MultipleCities.push("Columbus");
+						if(line.Zip == 55082){
+							line.MultipleCities.push("Grant");
+							line.MultipleCities.push("West Lakeland");
+						}
+					}	
+				}else{
+					delete line.MultipleCities;
+					angular.forEach(res.data.results[0].address_components, function(component,index){
+						var types = component.types;
+						angular.forEach(types, function(type,index){
+							if(type == 'locality') {
+								line.City = component.long_name;
+							}
+							if(type == 'administrative_area_level_1') {
+								line.State = component.short_name;
+							}
+						});
+					}); 
+				}
+			});
+		}
+	};
 }

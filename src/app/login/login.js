@@ -13,17 +13,19 @@ function LoginConfig( $stateProvider, $locationProvider ) {
             templateUrl:'login/templates/login.tpl.html',
             controller:'LoginCtrl',
             controllerAs: 'login',
+			data: {
+				loadingMessage: 'Loading...'
+			},
 			resolve: {
-				AlfrescoCommon: function ($sce, $q, AlfrescoFact, alfrescoURL) {
+				AlfrescoCommon: function ($sce, $q, AlfrescoFact, alfrescoAccessURL) {
 					var df = $q.defer();
 					AlfrescoFact.Get().then(function (data) {
                         console.log(data);
                         var ticket = data.data.ticket;
-                        localStorage.setItem("alf_ticket", ticket);
-                        console.log("alf_ticketalf_ticket", ticket);
+                        localStorage.setItem("alfrescoTicket", ticket);
 						var homePath="OMS/Home?alf_ticket=";
 						AlfrescoFact.GetHome(homePath).then(function (data) {
-							AlfrescoFact.logo=$sce.trustAsResourceUrl(alfrescoURL+data.items[0].contentUrl+"?alf_ticket="+ ticket);
+							AlfrescoFact.logo=$sce.trustAsResourceUrl(alfrescoAccessURL+"/"+data.items[0].contentUrl+"?alf_ticket="+ ticket);
 							df.resolve(AlfrescoFact.logo);
 						 console.log("logoooooooooooooo", AlfrescoFact.logo);
 						 });
@@ -125,15 +127,15 @@ function LoginController( $state, $stateParams, $exceptionHandler, OrderCloud, L
     };
     vm.rememberStatus = false;
     vm.submit = function() {
-        OrderCloud.Auth.GetToken(vm.credentials)
+        vm.LoginSubmit = OrderCloud.Auth.GetToken(vm.credentials)
             .then(function(data) {
                 vm.rememberStatus ? TokenRefresh.SetToken(data['refresh_token']) : 'angular-noop';
-                OrderCloud.BuyerID.Set(buyerid);
-                OrderCloud.Auth.SetToken(data['access_token']);
+                vm.LoginSubmit = OrderCloud.BuyerID.Set(buyerid);
+                vm.LoginSubmit = OrderCloud.Auth.SetToken(data['access_token']);
                 console.log($cookieStore);
                 $cookieStore.put('OMS.Admintoken',data['access_token']);
                 $state.go('home');
-				OrderCloud.AdminUsers.List(null, 1, 100, null, null, {"Username":vm.credentials.Username, "Password":vm.credentials.Password}).then(function(res){
+				vm.LoginSubmit = OrderCloud.AdminUsers.List(null, 1, 100, null, null, {"Username":vm.credentials.Username, "Password":vm.credentials.Password}).then(function(res){
 					$cookieStore.put('OMS.CSRID', res.Items[0].ID);
 				});
             })

@@ -86,7 +86,7 @@ function AppCtrl($q, $rootScope, $state, $http, appname, LoginService, toastr, $
         cleanLoadingIndicators();
         var defer = $q.defer();
         defer.wrapperClass = 'indicator-container';
-        (toState.data && toState.data.loadingMessage) ? defer.message = toState.data.loadingMessage : defer.message = null;
+        (toState.data && toState.data.loadingMessage) ? defer.message = toState.data.loadingMessage : defer.message = 'Loading...';
         defer.templateUrl = 'common/loading-indicators/templates/view.loading.tpl.html';
         vm.contentLoading = defer;
     });
@@ -101,12 +101,24 @@ function AppCtrl($q, $rootScope, $state, $http, appname, LoginService, toastr, $
 
         if(toState.name == 'buildOrder'){
             vm.headerstat = true;
-        }
-        else if(toState.name == 'checkout'){
+            vm.footerstat = true;
+            vm.orderclaimfooterstat = true;            
+        } else if(toState.name == 'checkout'){
             vm.headerstat = true;
-        }
-        else{
+            vm.footerstat = true;
+            vm.orderclaimfooterstat = true;
+        } else if(toState.name == 'orderClaim'){
             vm.headerstat = false;
+            vm.footerstat = true;
+            vm.orderclaimfooterstat = false;
+        } else if(toState.name == 'orderConfirmation'){
+            vm.headerstat = true;
+            vm.footerstat = true;
+            vm.orderclaimfooterstat = true;
+        } else{
+            vm.headerstat = false;
+			vm.footerstat = false;
+            vm.orderclaimfooterstat = true;
         }
     });
 
