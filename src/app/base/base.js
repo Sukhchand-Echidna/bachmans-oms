@@ -85,7 +85,7 @@ function BaseConfig( $stateProvider ) {
                     return OrderCloud.Users.List();
                 },
                 ProductList: function (OrderCloud) {
-                    return OrderCloud.Products.List();
+                    return OrderCloud.Me.ListProducts()();
                 },
                 Alfrescoticket: function (AlfrescoFact) {
                     return AlfrescoFact.Get().then(function (data) {
@@ -155,7 +155,7 @@ function BaseService($q, $localForage, Underscore, OrderCloud) {
     }
     
     function _getProductList() {
-        return OrderCloud.Products.List();
+        return OrderCloud.Me.ListProducts();
     }
     return service;
 }
