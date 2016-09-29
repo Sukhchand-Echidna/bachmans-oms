@@ -212,11 +212,14 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 				});
 			}	
 		}*/
-		OrderCloud.Orders.Submit(vm.order.ID).then(function(){
+		OrderCloud.Orders.Submit(vm.order.ID).then(function(res){
+			console.log(res);
 			//vm.order.xp.PONumber = vm.CurrentUser.xp.PO.PONumber;
 			//OrderCloud.Orders.Update(vm.order.ID, vm.order);
-			TaxService.CollectTax(vm.order.ID).then(function(){
+			TaxService.CollectTax(vm.order.ID).then(function(res1){
+				console.log(res1);
 				$q.all(vm.ShipmentsPromise).then(function(results){
+					console.log(results);
 					$state.go('orderConfirmation' , {userID: vm.order.FromUserID ,ID: vm.orderID});
 				});
 			});
