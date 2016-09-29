@@ -7,6 +7,9 @@ function OrderConfirmationConfig( $stateProvider ) {
 			parent: 'base',
 			url: '/orderConfirmation/:userID/:ID',
 			templateUrl: 'orderConfirmation/templates/orderConfirmation.tpl.html',
+			data: {
+	            loadingMessage: 'Loading...'
+	        },
 			controller: 'OrderConfirmationCtrl',
 			controllerAs: 'orderConfirmation',
 			views: {

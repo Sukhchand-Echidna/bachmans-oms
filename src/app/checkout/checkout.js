@@ -218,10 +218,11 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 			//OrderCloud.Orders.Update(vm.order.ID, vm.order);
 			TaxService.CollectTax(vm.order.ID).then(function(res1){
 				console.log(res1);
-				$q.all(vm.ShipmentsPromise).then(function(results){
+				$state.go('orderConfirmation' , {userID: vm.order.FromUserID ,ID: vm.orderID});
+				/*$q.all(vm.ShipmentsPromise).then(function(results){
 					console.log(results);
 					$state.go('orderConfirmation' , {userID: vm.order.FromUserID ,ID: vm.orderID});
-				});
+				});*/
 			});
 		});
 		/*var PaymentType, TempStoredArray = [], dat = new Date();
