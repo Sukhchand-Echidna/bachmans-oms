@@ -122,16 +122,16 @@ function HoldController($scope, $state, $stateParams, Order, WiredProduct, Order
 		enableFiltering: true,
 		enableCellEditOnFocus: true,
 		columnDefs: [
-			{ name: 'selectradio ', displayName:' ',visible: false, cellTemplate: '<div class="data_cell"><input type="radio" name="holdlineitem" ng-click="grid.appScope.showlineitem(row.entity)" /></div>'},
-			{ name: 'ID', displayName:'Inventory Status',enableFiltering: true},
-			{ name: 'ProductID', displayName:'SKU Code', enableCellEdit:true},
-			{ name: 'Product.Name', displayName:'Product Name'},
-			{ name: 'BillingAddress', displayName:'SKU Option'},
-			{ name: 'Price', displayName:'List Price',cellTemplate: '<div class="data_cell">{{row.entity.UnitPrice|currency}}</div>'},
-			{ name: 'Quantity', displayName:'Qty.'},
-			{ name: 'xp.TotalCost', displayName:'Invoice Price'},
-			{ name: 'ShippingCost', displayName:'Item Discount'},
-			{ name: 'ShippingCost', displayName:'Additional Item Information'}
+			{ name: 'selectradio ', displayName:' ',visible: false, cellTemplate: '<div class="data_cell"><input type="radio" name="holdlineitem" ng-click="grid.appScope.showlineitem(row.entity)" /></div>',width:"12.5%"},
+			{ name: 'ID', displayName:'Inventory Status',enableFiltering: true,width:"12.5%"},
+			{ name: 'ProductID', displayName:'SKU Code', enableCellEdit:true,width:"12.5%"},
+			{ name: 'Product.Name', displayName:'Product Name',width:"12.5%"},
+			{ name: 'BillingAddress', displayName:'SKU Option',width:"12.5%"},
+			{ name: 'Price', displayName:'List Price',cellTemplate: '<div class="data_cell">{{row.entity.UnitPrice|currency}}</div>',width:"12.5%"},
+			{ name: 'Quantity', displayName:'Qty.',width:"12.5%"},
+			{ name: 'xp.TotalCost', displayName:'Invoice Price',width:"12.5%"},
+			{ name: 'ShippingCost', displayName:'Item Discount',width:"12.5%"},
+			{ name: 'ShippingCost', displayName:'Additional Item Information',width:"12.5%"}
 		]
 	};
 	 $scope.gridOptions.onRegisterApi = function(gridApi){

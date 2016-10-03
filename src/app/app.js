@@ -69,7 +69,7 @@ function ErrorHandling( $provide ) {
     }
 }
 
-function AppCtrl($q, $rootScope, $state, $http, appname, LoginService, toastr, $ocMedia, localdeliverytimeurl ) {
+function AppCtrl($q, $rootScope, $state, $http, appname, LoginService, toastr, $ocMedia ) {
     var vm = this;
     vm.name = appname;
     vm.title = appname;
@@ -155,7 +155,7 @@ function AppCtrl($q, $rootScope, $state, $http, appname, LoginService, toastr, $
     $rootScope.$on('OC:AccessForbidden', function(){
         //toastr.warning("I'm sorry, it doesn't look like you have permission to access this page.", 'Warning:');
     })
-	$.ajax({
+	/*$.ajax({
 	    method:"GET",
 		dataType:"json",
 		contentType: "application/json",
@@ -165,7 +165,7 @@ function AppCtrl($q, $rootScope, $state, $http, appname, LoginService, toastr, $
 			vm.cstTime = new Date(data.datetime);
 		}).error(function(data){
 			console.log(data);
-		})
+		})*/
 }
 
 function Interceptor( $httpProvider ) {

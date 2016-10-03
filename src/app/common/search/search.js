@@ -233,12 +233,13 @@ function ordercloudSearchCtrl($state, $timeout, $scope, TrackSearch, OrderCloud,
 			'query' : '',
 			'hits' : []
 		};
-		if($scope.servicename=='products' && $scope.attribute=='buildorder-search'){
-			var ticket = localStorage.getItem("alf_ticket");
-			BuildOrderService.GetProductImages(ticket).then(function(imagesList){
-				vm.imagesList=imagesList.items;
-			})
-		}
+		// if($scope.servicename=='products' && $scope.attribute=='buildorder-search'){
+			// var ticket = localStorage.getItem("alfrescoTicket");
+			// console.log("searchController", ticket);
+			// BuildOrderService.GetProductImages(ticket).then(function(imagesList){
+				// vm.imagesList=imagesList.items;
+			// })
+		// }
 		// $scope.$watch('searchTerm', function(n,o) {
 			// if (n == o) {
 				// if (searching) $timeout.cancel(searching);
@@ -293,10 +294,10 @@ function ordercloudSearchCtrl($state, $timeout, $scope, TrackSearch, OrderCloud,
 					// $scope.controlleras.list = content.hits;
 				// }
 				if($scope.servicename=='products' && $scope.attribute=='buildorder-search'){
-					var ticket = localStorage.getItem("alf_ticket");
-						BuildOrderService.GetProductList(content.hits, vm.imagesList).then(function(prodList){
-							$scope.controlleras.buildorderSearch=prodList;
-					})
+					//var ticket = localStorage.getItem("alfrescoTicket");
+						//BuildOrderService.GetProductList(content.hits, vm.imagesList).then(function(prodList){
+							$scope.controlleras.buildorderSearch=content.hits;
+					//})
 				}
 				else if($scope.servicename=='products'){
 					// var ticket = localStorage.getItem("alf_ticket");

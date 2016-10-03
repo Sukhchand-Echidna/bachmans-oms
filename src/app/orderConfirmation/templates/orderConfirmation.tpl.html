@@ -13,12 +13,11 @@
 		<div class="orderConfirm-Btn print-order" ng-if="!orderConfirmation.ShowStorePrinters" ng-click="orderConfirmation.ShowStorePrinters= !orderConfirmation.ShowStorePrinters">
 			<a>Print Order</a>
 		</div>
-		<div ng-if="orderConfirmation.ShowStorePrinters">
-
+		<div ng-show="orderConfirmation.ShowStorePrinters">
 		<div class="print-order-header">Print Order</div>
 		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 		<div class="select-store-container">
-			<p  class="col-xs-3 col-sm-3 col-md-3 col-lg-3 select-title">Select a Store</p>
+			<p class="col-xs-3 col-sm-3 col-md-3 col-lg-3 select-title">Select a Store</p>
 			<div ng-init="orderConfirmation.Store='thisStore'" class="col-xs-7 col-sm-7	 col-md-7 col-lg-7">
 				<!-- <input type="radio" id="Store" name="Store" ng-model="orderConfirmation.Store" value="thisStore" ng-click="orderConfirmation.GetCSRStore()"/><label>This Store</label><br/>
 				<input type="radio" id="Store" name="Store" ng-model="orderConfirmation.Store" value="otherStore" ng-click="orderConfirmation.GetPMCStores()"/><label>Other Store</label> -->
@@ -40,7 +39,6 @@
 			</div>
 			<div ng-if="orderConfirmation.Store!='thisStore'" class="order-confirmation">
 				<label class="col-xs-4 col-sm-4 col-md-4 col-lg-4">Select from other Stores</label>
-
 				<div uib-dropdown class="form-control col-xs-6 col-sm-6 col-md-6 col-lg-6" id="selectStore">
 					<div id="sort-dropdown" uib-dropdown-toggle>
 					<p class="sort-active-show" ng-init="orderConfirmation.SelectStore = 'Select Store'">{{orderConfirmation.SelectStore}}</p></div>

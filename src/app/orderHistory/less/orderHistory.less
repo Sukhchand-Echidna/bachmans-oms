@@ -1,11 +1,26 @@
 .order-history-main{
     position: absolute;
     top: 0px;
-    bottom: 30px;
-    padding: 0 15px;
+    bottom: 0px;
+    padding: 5px 15px 5px;
     box-sizing: border-box;
     width: 100%;
 	overflow:auto;
+	.back-common{
+		margin-top:5px;
+		a{
+			color:@color0;
+			text-decoration:none;
+			&:hover{
+				color:@color0;
+			}
+			&:before{
+				border-left:16px solid #e4e6ea;
+				border-top:16px solid #e4e6ea;
+				border-bottom:16px solid #e4e6ea;
+			}
+		}
+	}
 	.order-history {
 		h5 {
 			overflow: hidden;
@@ -41,6 +56,7 @@
 				height:initial !important;
 				.ui-grid-canvas .ui-grid-row .ui-grid-cell:last-child{
 					background-color:@color20;
+					border-right:1px solid #ccc;
 					.background-fade;
 					&:hover{
 						background-color:@primary-dark-color;
@@ -65,6 +81,10 @@
 					    border-left: 1px solid #ccc;
     					border-right: none;
 						height:40px;
+						min-width:20%;
+				}
+				.ui-grid-header-canvas .ui-grid-header-cell-wrapper .ui-grid-header-cell{
+					min-width:20%;
 				}
 				.ui-grid-canvas .ui-grid-row{
 					background-color:@color20;
@@ -76,5 +96,11 @@
 		font-size:16px;
 		font-family: "Helvetica Medium";
 		margin-top:15px;
+	}
+}
+.ui-grid-header-canvas{
+	width: 100% !important;
+	.ui-grid-header-cell-wrapper{
+		width: 100% !important;
 	}
 }

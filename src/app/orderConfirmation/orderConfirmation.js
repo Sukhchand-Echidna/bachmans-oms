@@ -10,11 +10,11 @@ function OrderConfirmationConfig( $stateProvider ) {
 			data: {
 	            loadingMessage: 'Loading...'
 	        },
-			controller: 'OrderConfirmationCtrl',
-			controllerAs: 'orderConfirmation',
 			views: {
 				'': {
-					templateUrl: 'orderConfirmation/templates/orderConfirmation.tpl.html'
+					templateUrl: 'orderConfirmation/templates/orderConfirmation.tpl.html',
+					controller: 'OrderConfirmationCtrl',
+					controllerAs: 'orderConfirmation'
 				},
 				'orderConfirmationtop@orderConfirmation': {
 					templateUrl: 'orderConfirmation/templates/orderConfirmation.top.tpl.html'
@@ -22,6 +22,9 @@ function OrderConfirmationConfig( $stateProvider ) {
 			}
 		})
 }
+
+
+
 function OrderConfirmationController($stateParams, OrderCloud, $http, PMCStoresURL, OrderPrintURL) {
 	var vm = this;
 	vm.order = {};

@@ -45,13 +45,12 @@
 		</div>
 		<div class="hold-btm col-md-12 col-lg-12">
 			<p class="col-md-2 col-lg-2">Wired Service</p>
-			<input type="text" class="col-md-2 col-lg-2"/>
 			<select ng-model="hold.wireserviceopt">
 				<option value="FTD">FTD</option>
 				<option value="Teleflora">Teleflora</option>
 			</select>
 		</div>
-		<button ng-click="hold.florist(hold.wireserviceopt)">Select florist</button>
+		<button ng-click="hold.florist(hold.wireserviceopt)" class="select-florist">Select florist</button>
 
 	</div>
 	<div class="hold-screen row">
@@ -97,7 +96,7 @@
 		</div>
 		<div class="hold-btm col-md-12 col-lg-12">
 			<p class="col-md-2 col-lg-2">Delivery Date</p>
-			<div class="col-md-6 col-lg-6">
+			<div class="col-md-2 col-lg-2 delivery-input">
 				<input type="text" class="message" ng-model="hold.onholdlineitems.xp.CardMessage.line1"/>
 				<input type="text" class="message" ng-model="hold.onholdlineitems.xp.CardMessage.line2"/>
 				<input type="text" class="message" ng-model="hold.onholdlineitems.xp.CardMessage.line3"/> 
@@ -113,7 +112,7 @@
 <modal title="Select a SKU" visible="hold.selectSKU" id="selectSKU" class="create-user-pop-up modal-pop-up">
 	<div>
 		<h1>Select a SKU</h1>
-		<span>X</span>	
+		
 	</div>
 	<div>
 		<div class="searchfield">
@@ -122,14 +121,14 @@
 	<div ui-grid="gridskuopt" ui-grid-selection class="order-grid"></div>
 
 	<div>
-		<button ng-click="hold.selectSKU =! hold.selectSKU">CANCEL</button>
+		<button ng-click="hold.selectSKU =! hold.selectSKU" class="cancel">CANCEL</button>
 		<button ng-click="hold.adddummy()">OKAY</button>
 	</div>
 </modal>
 <modal title="Select a SKU" visible="hold.selectFloristshow" id="selectFlorist" class="create-user-pop-up modal-pop-up">
 	<div>
 		<h1>Select a Florist</h1>
-		<span>X</span>	
+		
 	</div>
 	<div>
 		<div class="searchfield">
@@ -138,7 +137,7 @@
 	<div ui-grid="gridfloristopt" ui-grid-selection class="order-grid"></div>
 
 	<div>
-		<button ng-click="hold.selectFloristshow =! hold.selectFloristshow">CANCEL</button>
+		<button ng-click="hold.selectFloristshow =! hold.selectFloristshow" class="cancel">CANCEL</button>
 		<button ng-click="hold.selectFloristshow =! hold.selectFloristshow">OKAY</button>
 	</div>
 </modal>

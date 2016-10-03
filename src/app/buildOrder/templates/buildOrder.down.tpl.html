@@ -1,15 +1,15 @@
 <div class="build-order-footer" ng-show="application.headerstat" id="build-order-footer">
 	<!-- <div class="order-checkout" id="order-checkout" ng-click="gotoCheckout();OrderSummary();"> -->
 	<div class="order-checkout" id="order-checkout">
-		<button ng-if="!showOrdersummary" ng-click="buildOrderDown.SaveAllLineItems()">SAVE &amp; PROCEED</button>
-		<button ng-if="showOrdersummary" ng-click="gotoCheckout();OrderSummary();">PROCEED TO CHECKOUT</button>
+		<button ng-if="!showOrdersummary && !buildOrderDown.orderdetails" ng-disabled="buildOrderDown.buildorderfooter" ng-click="buildOrderDown.SaveAllLineItems()" ng-class="{savedisabled: buildOrderDown.buildorderfooter}">SAVE &amp; PROCEED</button>
+		<button ng-if="showOrdersummary || buildOrderDown.orderdetails && buildOrderDown.orderhistorydetails" ng-click="gotoCheckout();OrderSummary();">PROCEED TO CHECKOUT</button>
 		<div class="order-total">
 			<p>Order Total</p>
 			<span ng-if="orderTotal">{{orderTotal | currency}}</span>
 			<span ng-if="!orderTotal">$0.00</span>
 		</div>
 	</div>
-	<div class="cancel-order" ng-if="buildOrderDown.SearchType == 'Products'  || buildOrderDown.SearchType == 'BuildOrder' || buildOrderDown.SearchType == 'PDP' || buildOrderDown.SearchType == 'plp'" ng-click="buildOrderDown.CancelToolTip()" popover-trigger="none" popover-is-open="buildOrderDown.ShowCancelOrderToolTip" uib-popover-template="buildOrderDown.ToolTip.templateUrl">
+	<div class="cancel-order" ng-disabled="buildOrderDown.buildorderfooter" ng-click="buildOrderDown.CancelToolTip()" popover-trigger="none" popover-is-open="buildOrderDown.ShowCancelOrderToolTip && !buildOrderDown.buildorderfooter" uib-popover-template="buildOrderDown.ToolTip.templateUrl" ng-class="{savedisabled: buildOrderDown.buildorderfooter}"  ng-if="!buildOrderDown.orderdetails && !buildOrderDown.buildorderfooter">
 		<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 			viewBox="0 0 34 34" style="enable-background:new 0 0 34 34;" xml:space="preserve" class="footer-svg">
 			<g transform="translate(0,-952.36218)">
@@ -25,12 +25,12 @@
 		<script type="text/ng-template" id="CancelOrderToolTip.html">
 			<div click-outside="buildOrderDown.closePopover()">
 				<h2>Are you sure to want cancel?</h2>
-				<button type="button" ng-click="buildOrderDown.cancelOrder()">OK</button>
-				<button type="button" ng-click="buildOrderDown.closePopover()">Cancel</button>
+				<button type="button" ng-click="buildOrderDown.cancelOrder()">Yes</button>
+				<button type="button" ng-click="buildOrderDown.closePopover()">No</button>
 			</div>
 		</script>
 	</div>
-	<div class="save-later" ng-click="saveLaterPopup()">
+	<div class="save-later" ng-disabled="buildOrderDown.buildorderfooter" ng-click="buildOrderDown.buildorderfooter || saveLaterPopup()" ng-class="{savedisabled: buildOrderDown.buildorderfooter}" ng-if="!buildOrderDown.orderdetails && !buildOrderDown.buildorderfooter">
 		<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 			 viewBox="-630.3 455.4 25.2 24" style="enable-background:new -630.3 455.4 25.2 24;" xml:space="preserve" class="footer-svg">
 		<polygon points="-617.7,456.4 -614.9,464.8 -606.1,464.8 -613.2,470 -610.5,478.5 -617.7,473.3 -624.8,478.5 
@@ -38,9 +38,17 @@
 		</svg>
 		<h5>Save For Later</h5>
 	</div>
+	<div class="save-later re-order" ng-if="buildOrderDown.orderdetails" ng-click="buildOrderDown.ReOrder()">
+		<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+			 viewBox="-630.3 455.4 25.2 24" style="enable-background:new -630.3 455.4 25.2 24;" xml:space="preserve" class="footer-svg">
+		<polygon points="-617.7,456.4 -614.9,464.8 -606.1,464.8 -613.2,470 -610.5,478.5 -617.7,473.3 -624.8,478.5 
+			-622.1,470 -629.2,464.8 -620.4,464.8 "/>
+		</svg>
+		<h5>ReOrder</h5>
+	</div>
 </div>
 <modal title="Save Order For Later" visible="showModal" id="mymodal" class="modal-pop-up">
-	Save Order as:<br/>
+	Save Order As <span class="star">*</span>:<br/>
 	<input type="text" ng-model="saveOrderTxt" /><br/>
-	<input type="button" ng-click="saveForLater(saveOrderTxt)" value="SAVE" />
+	<input type="button" ng-click="saveForLater(saveOrderTxt)" ng-disabled="!saveOrderTxt" value="SAVE" />
 </modal>

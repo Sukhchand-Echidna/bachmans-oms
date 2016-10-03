@@ -8,15 +8,29 @@ input[type="number"],input[type="text"],input[type="email"],textarea,input[type=
 				}
 				
 }
-
+input.error, .errorCity {
+    border: 1px solid #f32929 !important;
+}
 .customer-info{
 	position: absolute;
     top:0px;
-    bottom: 30px;
+    bottom: 0px;
     overflow: auto;
 	padding:0 30px;
 	background-color:@color0;
 	.cust-info-container{
+		.back-common{
+			a{
+				color:@color0;
+				text-decoration:none;
+				&:hover{
+				color:@color0;
+				}
+			}
+		}
+		.employe{
+			padding-left:15px;
+		}
 		padding: 15px 0px 35px 15px;
 		h1{
 			.helvetica-bold;
@@ -34,13 +48,31 @@ input[type="number"],input[type="text"],input[type="email"],textarea,input[type=
 			}
 			}
 		}
-		.cust-form{
-			margin-top:30px;
-		}
 		.credit-card-details{
+			position:absolute;
+			width:100%;
+			overflow-y:auto;
+			top:0px;
+			bottom:0px;
 			h4{
 				font-size:15px;
 				.helvetica-bold;
+				.in-block;
+				width:49%;
+				text-align:right;
+				margin-top:0;
+			}
+			.billing-addr{
+				border:1px solid @color25;
+				background-color:rgba(244, 244, 244, 0.17);
+				width:100%;
+				margin-bottom:20px;
+				div{
+					vertical-align:top;
+					width:32.5%;
+					.in-block;
+					padding:5px;
+				}
 			}
 		}
 		p{
@@ -88,6 +120,7 @@ input[type="number"],input[type="text"],input[type="email"],textarea,input[type=
 			color:@color0;
 			background-color:@primary-color;
 			margin-top:8px;
+			margin-left: 10px;
 			&:hover{
 				background-color:@primary-dark-color;
 			}
@@ -191,7 +224,52 @@ input[type="number"],input[type="text"],input[type="email"],textarea,input[type=
 			padding:0;
 			position: relative;
 			height: 250px;
-			.cust-addr-list{
+			.address-book{
+				width:100%;
+				th{
+					font-size:14px;
+					.helvetica-bold;
+					color:@color1;
+					padding:0 5px 5px;
+				}
+				th,td{
+						
+						&:first-child{
+							width:30%;
+						}
+						&:nth-child(2){
+							width:50%;
+						}
+						&:last-child{
+							width:20%;
+						}
+				}
+				td{
+					padding:5px;
+					font-size:14px;
+					.helvetica-regular;
+					p{
+					font-size:14px;
+					.helvetica-regular;
+					}
+				}
+				tbody{
+					position: absolute;
+					top: 90px;
+					overflow-y: auto;
+					bottom:-15px;
+					width:@width0;
+					tr{
+						border:1px solid @color25;
+						background-color:rgba(244, 244, 244, 0.17);
+						margin-bottom:5px;
+						p{
+							margin-bottom:5px;
+						}
+					}
+				}
+			}
+			/* .cust-addr-list{
 				    position: absolute;
 					top: 53px;
 					overflow-y: auto;
@@ -223,12 +301,12 @@ input[type="number"],input[type="text"],input[type="email"],textarea,input[type=
 						margin-bottom:15px;
 					}
 
-			}
+			}*/
 		}
 		.subscription{
 		    position: relative;
     		margin-top: 25px;
-    		    height:300px;
+    		    height:200px;
 			.sub-header{
 				background-color: #e4e6ea;
 			    float: left;
@@ -257,11 +335,11 @@ input[type="number"],input[type="text"],input[type="email"],textarea,input[type=
 
 			}
 			.sud-del{
-			      overflow-y: auto;
+			    overflow-y: auto;
 			    width: 100%;
 			    position: absolute;
 			   	top:55px;
-			   	bottom:-15px;
+			   	bottom:0;
 				table{
 					th, td{
 						width:20%;
@@ -287,17 +365,19 @@ input[type="number"],input[type="text"],input[type="email"],textarea,input[type=
 			font-size: 14px;
 			margin-bottom:4px;
 		}
-		.credit-card-details{
-			.card-left{
-				width:30%;
-				vertical-align: top;
-			}
-			div{
-				width:69%;
-				.in-block;
-			}
-			p{
-				margin-bottom:3px;
+		.payment{
+			min-height:150px;
+			max-height:250px;
+			position:relative;
+			.credit-card-details{
+				.card-left{
+					width:49%;
+					vertical-align: top;
+					.in-block;
+				}
+				p{
+					margin-bottom:3px;
+				}
 			}
 		}
 		.card{
@@ -366,6 +446,97 @@ input[type="number"],input[type="text"],input[type="email"],textarea,input[type=
 				}
 			}
 		}
+		.edit-block{
+			width:70%;
+			.group-blk{
+				.blk{
+					.in-block;
+					width:47.5%;
+					margin:0 0 10px 2%;
+					vertical-align:top;
+					&.phone-blk input{
+						width:32.5%;
+						.in-block;
+						margin-right:1%;
+						&:last-child{
+							margin-right:0px;
+						}
+					}
+				}
+			}
+			.full-blk, .group-blk{
+				p{
+					margin-bottom:5px;
+					color:#464646;
+				}
+				input{
+						width:100%;
+						margin:0;
+						box-shadow:none;
+						background-color: #f4f4f4;
+						font-family: "Helvetica-regular";
+						font-size: 16px;
+						line-height: 35px;
+						color: #464646;
+						border: 1px solid #EAEAEA;
+						text-indent: 8px;
+				}
+			}
+			.full-blk{
+				margin:0 0 10px 2%;
+				width:100%;
+				input{
+					width:97%;
+				}
+			}
+			.form-control{
+				padding:0px 5px;
+				height:29px;
+				border:1px solid #eaeaea;
+				line-height:29px;
+				cursor:pointer;
+				i {
+					color:@primary-dark-color;
+					float:right;
+					font-size:12px;
+					padding: 9px 0;
+					.transition-common(all 0.5s ease);
+					.rotate(0deg);
+				}
+				.dropdown-menu{
+					width:100%;
+					padding:0;
+					border:1px solid @base-bg-purple-light;
+					border-radius:0;
+					li{
+						border-bottom:1px solid @color21;
+						border-radius:0;
+						a{
+							font-size:13px;
+							padding: 5px 10px;
+							.helvetica-regular;
+							color:@color1;
+							text-decoration:none;
+							overflow: hidden;
+							white-space: nowrap;
+							text-overflow: ellipsis;
+							&:hover{
+								background-color:@base-bg-purple-light;
+								color:@color0 !important;
+							}
+						}
+					}
+					&:last-child{
+						border-bottom:none;
+					}
+				}
+				&.open{
+					.fa-chevron-down{
+						.rotate(180deg);
+					}
+				}
+		}
+	}
 	}
 	.corporate-info{
 		p{

@@ -45,7 +45,7 @@ button {
 	}
 }
 input.error, .errorCity {
-    border: 1px solid red !important;
+    border: 1px solid #f32929 !important;
 }
 .buildOrderSummary-main{
 	width:82%;
@@ -92,6 +92,10 @@ input.error, .errorCity {
 		background-color: @color0;
 		width: 18%;
 		left: 0;
+		.plp-left-container.disabled {
+			cursor: not-allowed;
+			opacity: 0.6;
+		}
 		.position-common;
 		.order-for {
 			padding: 20px 0 0 0px;
@@ -134,15 +138,15 @@ input.error, .errorCity {
 			}
 			h2 {
 				.helvetica-regular;
-				font-size: 12px ;
+				font-size: 14px ;
 			}
 			p {
-				font-size: 12px;
+				font-size: 14px;
 				.helvetica-medium;
 				text-align: right;
 			}
 			h3 {
-				font-size: 10px ;
+				font-size: 12px ;
 				.helvetica-medium;
 				margin: 0;
 				opacity:0.7;
@@ -234,6 +238,13 @@ input.error, .errorCity {
 				&:hover {
 					background-color: @base-bg-purple-light;
 					color: @color0;
+				}
+				&:disabled {
+					background-color: @color0;
+					&:hover {
+						background-color: @color0;
+						color: @primary-dark-color;
+					}
 				}
 			}
 		}
@@ -336,7 +347,12 @@ input.error, .errorCity {
 						&:first-letter{
 							text-transform:uppercase;
 						}
-					}					
+					}	
+					.variant{
+						min-width:25px;
+						.in-block;
+						margin:0;
+					}
 					h5 {
 						.helvetica-bold;
 						font-size: 12px;
@@ -449,7 +465,6 @@ input.error, .errorCity {
 									text-align:center;
 									border:1px solid @color23;
 									width:80px;
-									height:80px;
 								}
 							}
 						}
@@ -461,9 +476,9 @@ input.error, .errorCity {
 						font-size: 20px;
 						color: @primary-dark-color;
 						text-transform: capitalize;
-						margin:0px;
+						margin:0 0 20px;
 					}
-					>h5{
+					h5{
 						.helvetica-bold;
 						font-size: 13px;
 						color: #54565d;
@@ -485,7 +500,7 @@ input.error, .errorCity {
 						}
 					}
 					.dropdown-box{
-						margin-bottom:20px;
+						margin-bottom:7px;
 						h5{
 							margin-bottom: 15px;
 						}
@@ -595,7 +610,7 @@ input.error, .errorCity {
 					 .color-selection{
 						margin-bottom:10px;
 					 	.color-circle{
-					 		margin: 12px 0 0 6px;
+					 		margin: 7px 0 0 6px;
 					 	}
 					 }
 					 .delivery-methods{
@@ -892,7 +907,7 @@ input.error, .errorCity {
 					height: 22px;
 					position: absolute;
 					top: 46%;
-					left: 5px;
+					left: 0;
 					.transform-common(translateY(-50%));
 					
 				}
@@ -992,6 +1007,9 @@ input.error, .errorCity {
 						font-size: 13px;
 						.helvetica-medium;
 						.in-block;
+						font-size: 17px;
+						color:#8c58b5;
+						.helvetica-bold;
 					}
 					ul {
 						.in-block;
@@ -1003,6 +1021,9 @@ input.error, .errorCity {
 								.helvetica-regular;
 								font-size: 13px ;
 								color: @color1;
+								&.active{
+								 color:#a576ca;
+								}
 							}
 							&:last-child {
 								border-right: none;
@@ -1039,7 +1060,6 @@ input.error, .errorCity {
 					.product_img {
 						img {
 							max-width: 100%;
-							height:170px;
 						}
 					}
 				}
@@ -1052,9 +1072,9 @@ input.error, .errorCity {
 						background-color:@color18;
 						top:0;
 						span{
-							.background-img(15px,center,center);
-							width: 15px;
-							height: 16px;
+							.background-img(20px,center,center);
+							width: 20px;
+							height: 20px;
 						}
 						}
 					.owl-next{
@@ -1088,7 +1108,7 @@ input.error, .errorCity {
 		.order-info {
 			h1 {
 				.helvetica-bold;
-				font-size: 21px ;
+				font-size: 22px ;
 				color: @primary-dark-color;
 				margin-top:10px;
 				text-transform: capitalize;
@@ -1112,14 +1132,18 @@ input.error, .errorCity {
 					p {
 						display: inline-block;
 						margin-bottom: 0;
+						font-size: 14px;
+						.helvetica-regular;
 					}
 					&.name {
 						border-right: 1px solid #f1f1f1;
 						width: 126px;
-						.helvetica-bold;
-						font-size: 14px;
-						line-height:28px;
-						color: @primary-dark-color;
+						p{
+							.helvetica-bold;
+							font-size: 14px;
+							line-height:28px;
+							color: @primary-dark-color;
+						}
 						input{
 							.helvetica-bold;
 							font-size: 14px;
@@ -1130,11 +1154,12 @@ input.error, .errorCity {
 					&.address {
 						padding: 5px 0 0 15px;
 						.helvetica-regular;
-						font-size: 13px;
+						font-size: 14px;
 						line-height:20px;
+						width:69%;
 						input{
 							.helvetica-regular;
-							font-size: 13px;
+							font-size: 14px;
 							line-height:22px;
 							width: 13.1%;
 						}
@@ -1150,7 +1175,7 @@ input.error, .errorCity {
 						text-align: right;
 						button {
 							.helvetica-bold;
-							font-size: 9px;
+							font-size: 10px;
 							line-height: 24px;
 						    border-radius: 4px;
 						    color: #fff;
@@ -1172,6 +1197,15 @@ input.error, .errorCity {
 							}
 						}
 					}
+					&.delivery-date{
+						padding:5px 0 0 0;
+						float:right;
+						text-align:right;
+						span{
+							.helvetica-regular;
+							font-size: 12px;
+						}
+					}
 				}
 			}
 			table {
@@ -1190,7 +1224,7 @@ input.error, .errorCity {
 					th {
 						padding: 0 0 0 15px;
 						.helvetica-bold;
-						font-size: 14px;
+						font-size: 15px;
 						line-height:48px;
 					}
 				}
@@ -1207,7 +1241,7 @@ input.error, .errorCity {
 									border: 1px solid @color21;
 									display: block;
 									text-align: center;
-									font-size: 12.5px;
+									font-size: 13px;
 									.helvetica-medium;
 									background: #fff;
 								}
@@ -1239,13 +1273,13 @@ input.error, .errorCity {
 											li {
 												h5 {
 													margin: 0;
-													font-size: 13px;
+													font-size: 14px;
 													line-height:16px;
 													.helvetica-bold;
 												}
 												span {
 													display: block;
-													font-size: 12px;
+													font-size: 13px;
 													line-height:16px;
 													.helvetica-regular;
 												}
@@ -1254,7 +1288,7 @@ input.error, .errorCity {
 													button {
 														padding: 2px 6px;
 														border-radius: 3px;
-														font-size: 10px;
+														font-size: 11px;
 														.helvetica-medium;
 														color: #fff;
 														background: #b0b3bd;
@@ -1303,18 +1337,18 @@ input.error, .errorCity {
 											div {
 												h5 {
 													.helvetica-bold;
-													font-size: 13px;
+													font-size: 14px;
 													line-height:13px;
 													margin: 0;
 												}
 												span {
 													.helvetica-regular;
-													font-size: 12px;
+													font-size: 13px;
 													line-height:22px;
 												}
 												input{
 													.helvetica-regular;
-													font-size: 12px;
+													font-size: 13px;
 													line-height:22px;
 												}
 												&:first-child {
@@ -1352,6 +1386,7 @@ input.error, .errorCity {
 								width: 12%;
 								ul li .row div:first-child {
 									text-align: right;
+									width:100%;
 								}
 							}
 						}
@@ -1377,12 +1412,12 @@ input.error, .errorCity {
 							h5 {
 								margin: 0;
 								.helvetica-regular;
-								font-size: 13px;
+								font-size: 14px;
 								line-height:35px;
 							}
 							span {
 								.helvetica-bold;
-								font-size: 15px;
+								font-size: 16px;
 								line-height:21px;
 								color: @primary-dark-color;
 							}
@@ -1398,7 +1433,7 @@ input.error, .errorCity {
 						text-align: right;
 						button {
 							.helvetica-bold;
-							font-size: 9px;
+							font-size: 10px;
 							line-height: 24px;
 						    border-radius: 4px;
 						    color: #fff;
@@ -1434,11 +1469,11 @@ input.error, .errorCity {
 								    padding-right: 0px;
 								    margin-right: 27px;
 								    .helvetica-regular;
-								    font-size: 13px;
+								    font-size: 14px;
 								    color:@color1;
     					    	}
     					    	span{
-    					            font-size: 15px;
+    					            font-size: 16px;
 								    color: #8c58b5;
 								    float: right;
 								    width: 30%;
@@ -1477,10 +1512,25 @@ input.error, .errorCity {
 				box-shadow:none;
 				border-radius:0;
 				cursor:pointer;
+				height:25px;
+				vertical-align:top;
 				p{
 				    .helvetica-regular;
-					font-size: 13px;
+					font-size: 14px;
 					line-height: 24px;
+					i {
+						color:@primary-dark-color;
+						float:right;
+						font-size:12px;
+						padding: 6px 0;
+						.transition-common(all 0.5s ease);
+						.rotate(0deg);
+					}
+				}
+				&.open{
+					.fa-chevron-down{
+						.rotate(180deg);
+					}
 				}
 			}
 			.dropdown-menu{
@@ -1492,7 +1542,7 @@ input.error, .errorCity {
 				border-bottom:1px solid @color21;
 				border-radius:0;
 				a{
-					font-size:13px;
+					font-size:14px;
 					padding: 5px 10px;
 					.helvetica-regular;
 					color:@color1;
@@ -1508,6 +1558,11 @@ input.error, .errorCity {
 			}
 		}
 		}
+		&.buildOrder-order-historyDetails{
+			.order-info table tbody tr td:nth-of-type(5) ul li .row div h5{
+				margin-right:10px;
+			}
+		}
 	}
 	.oms-plp-right {
 		width: 20%;
@@ -1517,6 +1572,9 @@ input.error, .errorCity {
 		background-color: @color0;
 		.prod-variants span{
 			text-transform:lowercase;
+		}
+		.btn-default[disabled].active{
+			background: #9f64cc;
 		}
 		.no-items{
 			position: absolute;
@@ -1582,7 +1640,7 @@ input.error, .errorCity {
 				height:30px;
 				button{
 					background:none;
-					width:23%;
+					width:50%;
 					.in-block;
 				    vertical-align: middle;
 					text-align: left;
@@ -1590,6 +1648,13 @@ input.error, .errorCity {
 						width: 25px;
 						height: 25px;
 						fill:@base-bg-purple-light;
+						&.save-icon{
+							width: 18px;
+							height: 18px;
+						}
+					}
+					&.edit-icon{
+						width:23%;
 					}
 				}
 				.notes{
@@ -1769,6 +1834,14 @@ input.error, .errorCity {
 					padding-top:4px;
 					
 				}
+				.receipient-name{
+					div{
+						p{
+							margin:0 0 5px 0 !important;
+							line-height:15px !important;
+						}
+					}
+				}
 				.receipient-name,
 				.location-recipientName {
 					margin: 0 0 15px;
@@ -1882,6 +1955,8 @@ input.error, .errorCity {
 					}
 					.location-Code {
 						.address-cart{
+							display: block;
+							height:20px;
 							a{
 							font-size:12px;
 							.helvetica-bold;
@@ -2022,6 +2097,42 @@ input.error, .errorCity {
 							}
 						}
 					}
+					.church-del{
+						margin: 15px 0 15px;
+					  h3{
+					  	.helvetica-bold;
+						font-size: 15px;
+						color: @primary-dark-color;
+						white-space: nowrap;
+						overflow: hidden;
+						text-overflow: ellipsis;
+						margin:10px 0;	
+					  }
+					.firstNm {
+						margin-right: 3%;
+					}
+					div {
+						width: 47%;
+						display: inline-block;
+						p {
+							margin: 0px 0 5px 0;
+						}
+						p,
+						input {
+							font-size: 11px;
+							line-height:15px;
+							.helvetica-regular;
+							color: @color3;
+							width: 100%;
+						}
+						input {
+							color: @color1;
+							border-radius: 5px;
+							border: 1px solid @color21;
+							height:29px;
+						}
+					}
+					}
 					.location-contact {
 						input {
 							.in-block;
@@ -2033,12 +2144,14 @@ input.error, .errorCity {
 					}
 					.location-note {
 						&.add-card{
-							h1{
+							h3{
 								.helvetica-bold;
-								font-size:15px;
-								margin-top:15px;
+								font-size: 15px;
 								color: @primary-dark-color;
-								padding-left:0;
+								white-space: nowrap;
+								overflow: hidden;
+								text-overflow: ellipsis;
+								margin:10px 0;
 							}
 						}
 						.panel{
@@ -2099,6 +2212,7 @@ input.error, .errorCity {
 						}
 					}
 					.no-message {
+						margin-top:20px;
 						span {
 							font-size: 12px;
 							.helvetica-medium;
@@ -2106,13 +2220,16 @@ input.error, .errorCity {
 							.in-block;
 							margin-left:6px;
 						}
+						label{
+							margin-left:0;
+						}
 						.checkbox-custom-label{
 							.helvetica-regular;
 						}
 					}
 					.message-lines {
 						display:none;
-						margin: 10px 0;
+						margin:0;
 						color: @color2;
 						p {
 							font-size: 12px;
@@ -2279,7 +2396,7 @@ input.error, .errorCity {
 .build-order-footer {
 	height: 50px;
 	text-align: right;
-	z-index: 9999;
+	z-index: 9998;
 	position: fixed;
 	bottom: 0;
 	width: 100%;
@@ -2387,7 +2504,20 @@ input.error, .errorCity {
 				color: @color0;
 			}
 		}
-
+		&.re-order{
+			float:left;
+			background-color:#a576ca;
+			.background-fade;
+			svg{
+				fill:@color0;
+			}
+			h5{
+				color:@color0;
+			}
+			&:hover{
+				background-color:#7a43a3;
+			}
+		}
 	}
 	.order-checkout {
 		width: 20%;
@@ -2405,7 +2535,12 @@ input.error, .errorCity {
 				color: @color0;
 				background-color: @green-hover;
 			}
+			&.savedisabled{
+				&:hover{
+				  background-color: @color15;	
+			}
 		}
+	}
 		.order-total {
 			.in-block;
 			width: 33%;
@@ -2430,7 +2565,18 @@ input.error, .errorCity {
 			}
 		}
 	}
-
+	.savedisabled{
+		background-color: #ccc;
+    	cursor: no-drop;
+    	color: #000 !important;
+    	h5{
+    		color: #000 !important;
+    	}
+    	&:hover{
+    		color: #000 !important;
+    		background-color: #ccc;
+    	}
+	}
 }
 .buildordertop {
 	.search_box {
@@ -2460,7 +2606,7 @@ input.error, .errorCity {
 	.buildordersummaryheader{
 			display: inline-block;
 			margin: 24px 0 0 25px;
-			p{
+			a{
 				display: inline-block;
 				color: #fff;
 				.helvetica-regular;
@@ -2472,6 +2618,9 @@ input.error, .errorCity {
 					width:20px;
 					fill:@color0;
 				}
+			   }
+			   &:hover{
+					text-decoration:none;
 			   }
 			}
 	}
@@ -2538,27 +2687,32 @@ input.error, .errorCity {
 				
 				.user-top{
 					padding-top:5px;
-					 	p{
-						    color: #464646;
-						    font-family: "Helvetica-regular";
-						    font-size: 16px;
-						    margin-bottom: 10px;
-						}
+				 	p{
+					    color: #464646;
+					    font-family: "Helvetica-regular";
+					    font-size: 16px;
+					    margin-bottom: 10px;
 					}
-					.addr-dropdown{
-						margin-bottom:10px;
-						span{
-							margin-right:6px;
-						}
-						div{
-							display:inline-block;
-						}
+					button {
+						letter-spacing: normal;
+						font-size: 14px;
 					}
-					.user-addr {
-						input{
-							width:97%;
-						}
+				}
+				.addr-dropdown{
+					margin-bottom:10px;
+					span{
+						margin-right:6px;
 					}
+					div{
+						display:inline-block;
+					}
+				}
+				.user-addr {
+					input{
+						//width:97%;
+						width: 62%;
+					}
+				}
 				h1{
 					font-size: 16px;
 					.helvetica-bold;
@@ -2665,24 +2819,23 @@ input.error, .errorCity {
 						width:100%;
 					}
 					button{
-							.helvetica-bold;
-							font-size:16px;
-							line-height:40px;
-							.in-block;
-							width:19.3%;
-							color:@color0;
-							background-color:@gray-button;
-							.background-fade;
-							&.save{
-								margin-right:1%;
-								background-color:@primary-color;
-								&:hover{
-									background-color:@primary-dark-color;
-								}
-							}
+						.helvetica-bold;
+						font-size:16px;
+						.in-block;
+						width:19.3%;
+						color:@color0;
+						background-color:@gray-button;
+						.background-fade;
+						&.save{
+							margin-right:1%;
+							background-color:@primary-color;
 							&:hover{
-								background-color:@color1;
+								background-color:@primary-dark-color;
 							}
+						}
+						&:hover{
+							background-color:@color1;
+						}
 					}
 				}
 			}
@@ -2722,7 +2875,6 @@ input.error, .errorCity {
 						    font-size: 14px;
 						    line-height: 48px;
 						    background:#fff;
-
 							}
 							td{
 								padding: 15px 10px 15px 10px;
@@ -3081,6 +3233,9 @@ input.error, .errorCity {
 		  	 		padding-left: 30px;
 		  			
 		  	 }
+		  	  .default-pay{
+		  	 	padding-left:4px;
+		  	 }
 		   }
 		  input[type=radio]:not(old):checked+label{
 			   h5,.courier,.faster-del{
@@ -3091,6 +3246,10 @@ input.error, .errorCity {
 			   }
 			   .faster-del,.courier{
 			   		top:5px;
+			   }
+			   .default-pay{
+			   		padding-left:5px;
+			   		top:3px;
 			   }
 			}
 		.hidden-sm{
@@ -3283,8 +3442,18 @@ input.error, .errorCity {
     opacity: 0.2;
 }
 .oms_main_container .faster-delivery-content{
-                            margin: 12px 0px;
+                            margin: 0px 0px;
                             cursor: default;
+                            float: left;
+   							 width: 100%;
+   							 .fastDelivery{
+   							 	float: left;
+    							width: 100%;
+    							margin:10px 0 20px 0;
+    							 .radio-btn-container{
+    							 	width:100%;
+    							 }
+   							 }
                             h5{
 								.helvetica-bold;
                                 color: @color1;
@@ -3293,15 +3462,26 @@ input.error, .errorCity {
                             }
 							.radio-btn-container{
 								width:50%;
+								margin:0px 0 4px 0;
 							}
                             .placement{
                                 margin: 20px 0px;
+                                float:left;
+                                width:100%;
+                            }
+                            .assembly{
+								float:left;
+                                width:100%;	
+								margin-top:20px;
                             }
                             .note{
                             font-size:11px;
                                 //font: 0.85em @proxima-regular;
                                 color: #666666;
                                 margin-top: 7px;
+                                float:left;
+                                width:100%;
+                                    margin-bottom: 0px;
                                     span{
                                         color: #000000;
                                     }
@@ -3540,7 +3720,7 @@ input.error, .errorCity {
 				vertical-align:top;
 			}
 			.prod_img{
-				width:35%;
+				width:20%;
 				.in-block;
 				vertical-align:top;
 				img{
@@ -3548,8 +3728,9 @@ input.error, .errorCity {
 				}
 			}
 			.prod-info{
-				width:43.7%;
+				width:58.7%;
 				.in-block;
+				padding:5px 10px;
 				h2{
 					font-size:14px;
 					.helvetica-bold;
@@ -3560,7 +3741,7 @@ input.error, .errorCity {
 					font-size:14px;
 					.helvetica-regular;
 					color:@color1;
-					margin:3px 0;
+					margin:5px 0;
 					span{
 						.helvetica-medium;
 					}
@@ -3575,6 +3756,76 @@ input.error, .errorCity {
 		color:@color0;
 		&:hover{
 			background-color:@primary-dark-color;
+		}
+	}
+}
+.modal-pop-up.payment-method{
+	.modal-dialog{
+			width:70% !important;
+	}
+	input[type=radio]:not(old)+label .radioOutline{
+		margin-right:20px;
+	}
+	input[type=radio]:not(old):checked+label .radioOutline{
+		margin-right:0px;
+	}
+	.modal-body{
+		position:static !important;
+		height:450px;
+		max-height:450px;
+		h3{
+			font-size:15px;
+			.helvetica-bold;
+			color:@primary-dark-color;
+			margin:0 0 5px 0;
+		}
+		table{
+			width:100%;
+			tr{
+				border-top:1px solid @color21;
+				border-left:1px solid @color21;
+				border-right:1px solid @color21;
+				margin-bottom: 15px;
+				td, th{
+					width:23.3%;
+					&:nth-child(2), &:nth-child(5){
+						width:15%;
+					}
+				}
+				th{
+					padding: 0 0 0 15px;
+					.helvetica-bold;
+					font-size: 14px;		
+					line-height: 48px;
+					}
+				td{
+					padding: 15px 10px 15px 10px;
+					vertical-align: top;
+					font-size: 14px;
+					.helvetica-regular;
+					img{
+						max-width:100%;
+						width:50px;
+					}
+				}
+				&:last-child{
+					border-bottom:1px solid @color21;
+				}
+				&:nth-child(odd) {
+					background: #f7f8fa;
+				}
+				&:hover{
+					background-color:@color14;
+				}
+			}
+		}
+		.payment-container{
+			position:absolute;
+			top:110px;
+			width:98%;
+			bottom:30px;
+			overflow-y:auto;
+			padding-right:1%;
 		}
 	}
 }

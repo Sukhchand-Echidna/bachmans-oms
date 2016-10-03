@@ -1,106 +1,20 @@
 		<div class="oms-plp-right" id="oms-plp-right" ng-show="hideActiveSummary" cg-busy="{promise:buildOrderRight.ActiveOrderCartLoader,templateUrl:'common/loading-indicators/templates/view.loading.tpl.html'}">
             <h1>ACTIVE ORDER</h1>
-			<div ng-if="buildOrderRight.lineItemProducts.length == 0" class="no-items">
+			<div ng-if="buildOrderRight.lineItemProducts.length == 0 || buildOrderRight.lineItemProducts.length == null " class="no-items">
 				<p>There are currently no items in your order.</p>
 		   </div>
 			<div ng-repeat="line in buildOrderRight.lineItemProducts track by line">
 				<div class="pdt_name">
 					<h2>{{buildOrderRight.activeOrders[line][0].Product.Name}}</h2>
-					<!--<button class="edit" ng-click="editProduct(buildOrderRight.activeOrders[line])">
-						<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-							 viewBox="0 0 140.5 140" style="enable-background:new 0 0 140.5 140;" xml:space="preserve" fill="#fff">
-						<g>
-							<path d="M118.2,243.9c-0.5,0-0.9-0.4-0.9-0.9V238H116v5.1c0,0.5-0.4,0.9-0.9,0.9s-0.9-0.4-0.9-0.9V238h-1.3v5.1
-								c0,0.5-0.4,0.9-0.9,0.9c-0.5,0-0.9-0.4-0.9-0.9v-5.9c0-0.5,0.4-0.9,0.9-0.9h6.2c0.2,0,0.5,0.1,0.6,0.3s0.3,0.4,0.3,0.6v5.9
-								C119.1,243.6,118.7,243.9,118.2,243.9z M121.2,240c-0.4,0-0.8-0.3-0.9-0.7l-0.7-4.5l0,0l0-0.2l0,0l0,0l0,0l0,0l0-0.1l0,0l0-0.1l0,0
-								l0,0l0-0.1l0,0l0-0.1l0,0l0,0l0-0.1l0-0.1l0,0l0,0l0,0l0,0h0l0.1-0.1l0,0l0.1,0l0.1,0l0.1,0l0.1,0l0.1,0l0.1,0l0.1,0l0.1,0l0.1,0
-								l0.1,0l0.1,0c0,0,0.1,0,0.1,0c0,0,0,0,0,0l0,0l0.1,0.1l0,0l0,0l0,0l0,0l0.1,0.1l3.1,3.1c0.3,0.3,0.3,0.9,0,1.3
-								c-0.2,0.2-0.4,0.3-0.6,0.3c-0.2,0-0.5-0.1-0.6-0.3l-1.1-1.1l0.3,1.8c0,0.2,0,0.5-0.2,0.7s-0.3,0.3-0.6,0.4
-								C121.3,240,121.3,240,121.2,240z M112.2,235.4c-0.5,0-0.9-0.4-0.9-0.9s0.4-0.9,0.9-0.9h5.9c0.5,0,0.9,0.4,0.9,0.9s-0.4,0.9-0.9,0.9
-								H112.2z M112,232.8c0,0-0.1,0-0.1,0c-0.1,0-0.1,0-0.1,0c-0.1,0-0.1,0-0.1,0c0,0-0.1,0-0.1,0c-0.1,0-0.1-0.1-0.1-0.1
-								c0,0-0.1-0.1-0.1-0.1c0-0.1-0.1-0.1-0.1-0.1c0,0,0-0.1-0.1-0.1l-4.9-10c-0.2-0.4,0-1,0.4-1.2c0.1-0.1,0.3-0.1,0.4-0.1
-								c0.3,0,0.6,0.2,0.8,0.5l4.6,9.5h1.7v-5c0-0.5,0.4-0.9,0.9-0.9s0.9,0.4,0.9,0.9v5h1.7l4.8-9.5c0.2-0.3,0.5-0.5,0.8-0.5
-								c0.1,0,0.3,0,0.4,0.1c0.2,0.1,0.4,0.3,0.4,0.5c0.1,0.2,0.1,0.5-0.1,0.7l-5.1,10l-0.1,0.1c0,0.1-0.1,0.1-0.1,0.1
-								c0,0-0.1,0.1-0.1,0.1l-0.1,0.1c-0.1,0-0.1,0-0.1,0.1c0,0-0.1,0-0.1,0c-0.1,0-0.1,0-0.1,0c-0.1,0-0.1,0-0.1,0H112z M117.4,224.7
-								c-0.8,0-1.6-0.3-2.3-0.7l0,0c-0.7,0.5-1.5,0.8-2.3,0.8c-0.8,0-1.6-0.3-2.3-0.7c-1.3-1-1.9-2.7-1.4-4.3l0,0
-								c-1.7-1.2-2.1-3.6-0.8-5.4c0.7-1,1.9-1.6,3.1-1.6l0,0c0.1-0.4,0.3-0.8,0.6-1.1c0.7-1,1.9-1.6,3.1-1.6c0.8,0,1.6,0.3,2.3,0.7
-								c0.7,0.5,1.2,1.2,1.4,1.9l0,0c0.8,0,1.6,0.3,2.3,0.7c1.7,1.2,2.1,3.6,0.8,5.4c-0.2,0.3-0.5,0.6-0.9,0.9c0.4,1.2,0.2,2.5-0.5,3.5
-								C119.8,224.1,118.6,224.7,117.4,224.7z M115.1,221.9c0.3,0,0.5,0.1,0.7,0.3c0.1,0.1,0.2,0.3,0.4,0.3c0.4,0.3,0.8,0.4,1.3,0.4
-								c0.7,0,1.3-0.3,1.7-0.9c0.5-0.7,0.5-1.6,0.1-2.4c-0.1-0.2-0.2-0.5-0.1-0.7c0.1-0.2,0.3-0.4,0.5-0.5c0.4-0.1,0.7-0.4,0.9-0.7
-								c0.7-1,0.5-2.3-0.5-3c-0.4-0.3-0.8-0.4-1.2-0.4c-0.2,0-0.3,0-0.5,0.1c-0.1,0-0.1,0-0.2,0c-0.2,0-0.4-0.1-0.5-0.2
-								c-0.2-0.1-0.3-0.4-0.3-0.6c0-0.6-0.4-1.2-0.9-1.6c-0.4-0.3-0.8-0.4-1.3-0.4c-0.7,0-1.3,0.3-1.7,0.9c-0.2,0.3-0.4,0.7-0.4,1.1
-								c0,0.2-0.1,0.5-0.3,0.6c-0.1,0.1-0.3,0.2-0.5,0.2c-0.1,0-0.1,0-0.2,0c-0.2,0-0.3-0.1-0.5-0.1c-0.7,0-1.3,0.3-1.7,0.9
-								c-0.3,0.5-0.5,1-0.4,1.6c0.1,0.6,0.4,1.1,0.9,1.4c0.1,0.1,0.3,0.2,0.4,0.3c0.2,0.1,0.4,0.3,0.5,0.5c0.1,0.2,0,0.5-0.1,0.7
-								c-0.6,0.9-0.3,2.2,0.6,2.8c0.4,0.3,0.8,0.4,1.2,0.4c0.6,0,1.2-0.3,1.6-0.8C114.6,222,114.9,221.9,115.1,221.9L115.1,221.9z
-								 M115.1,221.5c-0.8,0-1.6-0.3-2.2-0.7c-0.8-0.6-1.4-1.5-1.5-2.5c-0.2-1,0.1-2,0.7-2.8c0.7-1,1.9-1.6,3.1-1.6c0.8,0,1.6,0.3,2.2,0.7
-								c1.7,1.2,2.1,3.6,0.8,5.3C117.5,220.9,116.3,221.5,115.1,221.5z M115.1,215.6c-0.7,0-1.3,0.3-1.7,0.9c-0.3,0.5-0.5,1-0.4,1.6
-								c0.1,0.6,0.4,1,0.8,1.4c0.4,0.3,0.8,0.4,1.2,0.4c0.7,0,1.3-0.3,1.7-0.9c0.7-0.9,0.5-2.3-0.5-2.9C116,215.7,115.6,215.6,115.1,215.6
-								z M128.4,220.2c-0.8,0-1.6-0.3-2.3-0.7l0,0c-0.7,0.5-1.5,0.8-2.3,0.8c-0.6,0-1.2-0.2-1.8-0.5l-0.2-0.1l0.2-0.2
-								c0.1-0.1,0.2-0.3,0.3-0.4c0.1-0.2,0.3-0.4,0.4-0.6l0.1-0.2l0.2,0.1c0.3,0.1,0.6,0.2,0.9,0.2c0.6,0,1.2-0.3,1.6-0.8
-								c0.2-0.2,0.4-0.3,0.6-0.3c0.3,0,0.5,0.1,0.7,0.3c0.1,0.1,0.2,0.2,0.4,0.4c0.4,0.3,0.8,0.4,1.3,0.4c0.7,0,1.3-0.3,1.7-0.9
-								c0.5-0.7,0.5-1.6,0.1-2.4c-0.1-0.2-0.2-0.5-0.1-0.7c0.1-0.2,0.3-0.4,0.5-0.5c0.4-0.1,0.7-0.4,0.9-0.7c0.7-1,0.5-2.3-0.5-3
-								c-0.4-0.3-0.8-0.4-1.2-0.4c-0.2,0-0.3,0-0.5,0.1c-0.1,0-0.1,0-0.2,0c-0.2,0-0.4-0.1-0.5-0.2c-0.2-0.1-0.3-0.4-0.3-0.6
-								c0-0.6-0.4-1.2-0.9-1.6c-0.4-0.3-0.8-0.4-1.3-0.4c-0.7,0-1.3,0.3-1.7,0.9c-0.2,0.3-0.4,0.7-0.4,1.1c0,0.2-0.1,0.5-0.3,0.6
-								c-0.1,0.1-0.3,0.2-0.5,0.2c-0.1,0-0.1,0-0.2,0c-0.2,0-0.3-0.1-0.5-0.1c-0.7,0-1.3,0.3-1.7,0.9c-0.3,0.4-0.4,0.9-0.4,1.4l0,0.3
-								l-0.3-0.1c-0.3-0.1-0.5-0.1-0.8-0.2l-0.1,0l0-0.1c-0.1-0.2-0.2-0.5-0.4-0.7l0,0l0-0.1c0.1-0.6,0.3-1.1,0.7-1.5
-								c0.7-1,1.9-1.6,3.1-1.6l0,0c0.1-0.4,0.3-0.8,0.6-1.1c0.7-1,1.9-1.6,3.1-1.6c0.8,0,1.6,0.3,2.3,0.7c0.7,0.5,1.2,1.2,1.4,1.9l0,0
-								c0.8,0,1.6,0.3,2.2,0.7c1.7,1.2,2.1,3.6,0.9,5.4c-0.2,0.3-0.5,0.6-0.9,0.9c0.4,1.2,0.2,2.5-0.5,3.5
-								C130.8,219.6,129.6,220.2,128.4,220.2z M106.4,220.2c-0.8,0-1.6-0.3-2.3-0.7l0,0c-0.7,0.5-1.5,0.7-2.3,0.7c-0.8,0-1.6-0.3-2.3-0.7
-								c-1.3-1-1.9-2.7-1.4-4.3l0,0c-0.8-0.6-1.4-1.5-1.5-2.5c-0.2-1,0.1-2,0.7-2.9c0.7-1,1.9-1.6,3.1-1.6l0,0c0.1-0.4,0.3-0.8,0.6-1.1
-								c0.7-1,1.9-1.6,3.1-1.6c0.8,0,1.6,0.3,2.3,0.7c0.7,0.5,1.2,1.2,1.4,1.9l0,0c0.8,0,1.6,0.3,2.3,0.7c0.8,0.6,1.3,1.4,1.5,2.3l0,0
-								l0,0.1c-0.2,0.3-0.3,0.5-0.4,0.7l0,0.1l-0.1,0c-0.3,0-0.5,0.1-0.8,0.2l-0.3,0.1l0-0.3c0-0.7-0.3-1.4-0.9-1.8
-								c-0.4-0.3-0.8-0.4-1.2-0.4c-0.2,0-0.3,0-0.5,0.1c-0.1,0-0.1,0-0.2,0c-0.2,0-0.4-0.1-0.5-0.2c-0.2-0.1-0.3-0.4-0.3-0.6
-								c0-0.6-0.4-1.2-0.9-1.6c-0.4-0.3-0.8-0.4-1.3-0.4c-0.7,0-1.3,0.3-1.7,0.9c-0.2,0.3-0.4,0.7-0.4,1.1c0,0.2-0.1,0.5-0.3,0.6
-								c-0.1,0.1-0.3,0.2-0.5,0.2c-0.1,0-0.1,0-0.2,0c-0.2,0-0.3-0.1-0.5-0.1c-0.7,0-1.3,0.3-1.7,0.9c-0.3,0.5-0.5,1-0.4,1.6
-								c0.1,0.6,0.4,1.1,0.9,1.4c0.1,0.1,0.3,0.2,0.4,0.3c0.2,0.1,0.4,0.3,0.5,0.5c0.1,0.2,0,0.5-0.1,0.7c-0.6,0.9-0.3,2.2,0.6,2.8
-								c0.4,0.3,0.8,0.4,1.2,0.4c0.6,0,1.2-0.3,1.6-0.8c0.2-0.2,0.4-0.3,0.7-0.3c0.3,0,0.5,0.1,0.7,0.3c0.1,0.1,0.2,0.2,0.4,0.4
-								c0.4,0.3,0.8,0.4,1.3,0.4c0.3,0,0.6-0.1,0.9-0.2l0.2-0.1l0.1,0.2c0.2,0.4,0.4,0.7,0.7,1l0.2,0.2l-0.2,0.1
-								C107.7,220,107,220.2,106.4,220.2z M104.1,217c-0.8,0-1.6-0.3-2.2-0.7c-0.8-0.6-1.4-1.5-1.5-2.5c-0.2-1,0.1-2,0.7-2.8
-								c0.7-1,1.9-1.6,3.1-1.6c0.8,0,1.6,0.3,2.2,0.7c0.8,0.6,1.4,1.5,1.5,2.5c0.2,1-0.1,2-0.7,2.8C106.5,216.4,105.4,217,104.1,217z
-								 M104.1,211.1c-0.7,0-1.3,0.3-1.7,0.9c-0.3,0.5-0.5,1-0.4,1.6c0.1,0.6,0.4,1,0.8,1.4c0.4,0.3,0.8,0.4,1.2,0.4
-								c0.7,0,1.3-0.3,1.7-0.9c0.3-0.5,0.5-1,0.4-1.6c-0.1-0.6-0.4-1-0.8-1.4C105,211.2,104.6,211.1,104.1,211.1z M126.1,217
-								c-0.8,0-1.6-0.3-2.2-0.7c-0.8-0.6-1.4-1.5-1.5-2.5c-0.2-1,0.1-2,0.7-2.8c0.7-1,1.9-1.6,3.1-1.6c0.8,0,1.6,0.3,2.2,0.7
-								c0.8,0.6,1.4,1.5,1.5,2.5c0.2,1-0.1,2-0.7,2.8C128.5,216.4,127.3,217,126.1,217z M126.1,211.1c-0.7,0-1.3,0.3-1.7,0.9
-								c-0.3,0.5-0.5,1-0.4,1.6c0.1,0.6,0.4,1,0.8,1.4c0.4,0.3,0.8,0.4,1.2,0.4c0.7,0,1.3-0.3,1.7-0.9c0.3-0.5,0.5-1,0.4-1.6
-								c-0.1-0.6-0.4-1-0.8-1.4C127,211.2,126.6,211.1,126.1,211.1z M114.1,209.6c0-0.5,0-1,0.2-1.5c-1.7-1.3-2.1-3.7-0.9-5.4
-								c0.7-1,1.9-1.6,3.1-1.6l0,0c0.1-0.4,0.3-0.8,0.6-1.1c0.7-1,1.9-1.6,3.1-1.6c0.8,0,1.6,0.3,2.3,0.7c0.7,0.5,1.2,1.2,1.4,1.9l0,0
-								c0.8,0,1.6,0.3,2.3,0.7c1,0.7,1.6,1.9,1.6,3.1l0,0.3l-0.3-0.1c-0.4-0.1-0.8-0.2-1.3-0.2l-0.2,0l0-0.2c-0.1-0.6-0.4-1.1-0.9-1.5
-								c-0.4-0.3-0.8-0.4-1.2-0.4c-0.2,0-0.3,0-0.5,0.1c-0.1,0-0.1,0-0.2,0c-0.2,0-0.4-0.1-0.5-0.2c-0.2-0.1-0.3-0.4-0.3-0.6
-								c0-0.6-0.4-1.2-0.9-1.6c-0.4-0.3-0.8-0.4-1.3-0.4c-0.7,0-1.3,0.3-1.7,0.9c-0.2,0.3-0.4,0.7-0.4,1.1c0,0.2-0.1,0.5-0.3,0.6
-								c-0.1,0.1-0.3,0.2-0.5,0.2c-0.1,0-0.1,0-0.2,0c-0.2,0-0.3-0.1-0.5-0.1c-0.7,0-1.3,0.3-1.7,0.9c-0.7,1-0.5,2.3,0.5,3
-								c0.1,0.1,0.3,0.2,0.4,0.3c0.2,0.1,0.4,0.3,0.5,0.5c0.1,0.2,0,0.5-0.1,0.7c-0.2,0.4-0.3,0.8-0.3,1.3l0,0.2l-0.2,0
-								c-0.2,0-0.3,0-0.5,0c-0.3,0-0.5,0-0.8,0.1l-0.2,0L114.1,209.6z M118.6,209.7c-0.2-0.1-0.4-0.2-0.6-0.3c-0.8-0.6-1.4-1.5-1.5-2.5
-								c-0.2-1,0.1-2,0.7-2.8c0.7-1,1.9-1.6,3.1-1.6c0.8,0,1.6,0.3,2.2,0.7c0.8,0.5,1.3,1.4,1.5,2.3l0,0.1l-0.1,0.1
-								c-0.5,0.3-0.9,0.6-1.2,1.1l0,0.1l-0.3-0.1l0-0.1c0.1-0.8-0.2-1.6-0.8-2c-0.4-0.3-0.8-0.4-1.2-0.4c-0.7,0-1.3,0.3-1.7,0.9
-								c-0.3,0.5-0.5,1-0.4,1.6c0.1,0.6,0.4,1,0.8,1.4c0.2,0.1,0.4,0.3,0.7,0.3l0.4,0.1l-0.3,0.2c-0.3,0.2-0.6,0.5-0.8,0.8
-								c0,0-0.1,0.1-0.1,0.1l-0.1,0.1L118.6,209.7z M111.4,209.6c-0.2-0.4-0.6-0.7-0.9-1l-0.3-0.2l0.4-0.1c0.4-0.1,0.8-0.4,1.1-0.8
-								c0.2-0.3,0.4-0.7,0.4-1l0-0.1l0.4,0l0,0.1c0.2,0.5,0.5,1,0.8,1.5l0.1,0.1l-0.1,0.1c-0.1,0.1-0.2,0.3-0.2,0.4
-								c-0.4,0.5-0.8,0.9-1.4,1.2l-0.2,0.1L111.4,209.6z M107.5,206.6c-0.2-0.3-0.5-0.6-0.8-0.8c-0.1-0.1-0.2-0.2-0.3-0.2l-0.1-0.1l0-0.1
-								c0.1-0.5,0.3-1,0.6-1.4c0.7-1,1.9-1.6,3.1-1.6c0.8,0,1.6,0.3,2.2,0.7c0.1,0.1,0.2,0.1,0.2,0.2l0.1,0.1l0,0.1
-								c-0.2,0.5-0.3,1.1-0.3,1.7l0,0.1l-0.3,0.1l0-0.1c-0.2-0.3-0.4-0.6-0.7-0.8c-0.4-0.3-0.8-0.4-1.2-0.4c-0.7,0-1.3,0.3-1.7,0.9
-								c-0.3,0.4-0.4,0.9-0.4,1.5l0.1,0.7L107.5,206.6z M102.4,205.1c0-0.8,0.2-1.6,0.7-2.3c0.7-1,1.9-1.6,3.1-1.6l0,0
-								c0.1-0.4,0.3-0.8,0.6-1.1c0.7-1,1.9-1.6,3.1-1.6c0.8,0,1.6,0.3,2.3,0.7c0.7,0.5,1.2,1.3,1.4,2.1l0,0c0,0,0,0.1,0,0.1
-								c0,0.1,0,0.2,0,0.2l0,0l0,0.1l0,0l0,0c-0.2,0.2-0.4,0.4-0.6,0.6c-0.1,0.1-0.2,0.2-0.2,0.3l-0.1,0.2l-0.2-0.1c0,0-0.1,0-0.1-0.1
-								c-0.2-0.1-0.3-0.4-0.3-0.6c0-0.6-0.4-1.2-0.9-1.6c-0.4-0.3-0.8-0.4-1.3-0.4c-0.7,0-1.3,0.3-1.7,0.9c-0.2,0.3-0.4,0.7-0.4,1.1
-								c0,0.3-0.1,0.5-0.3,0.6c-0.1,0.1-0.3,0.2-0.5,0.2c-0.1,0-0.1,0-0.2,0c-0.2,0-0.3-0.1-0.5-0.1c-0.7,0-1.3,0.3-1.7,0.9
-								c-0.2,0.3-0.4,0.7-0.4,1l0,0.2l-0.2,0c-0.4,0-0.8,0.1-1.3,0.2l-0.3,0.1L102.4,205.1z"/>
-						</g>
-						<g>
-							<path d="M113.5,43c-4.7-4.7-12.4-12.4-12.4-12.4s-6-5.5-11.5,0c-5.5,5.5-43.1,43.1-43.1,43.1l23.1,23.6l43.9-43.9
-								C113.5,53.4,118.1,47.7,113.5,43z"/>
-							<polygon points="31.9,111.8 63,102.6 40.6,80.2 	"/>
-						</g>
-						</svg>
-					Edit</button>-->
 					<p class="prod-variants">Size: <span>{{buildOrderRight.activeOrders[line][0].Product.xp.SpecsOptions.Size}}</span></p>
 					<p class="prod-variants">Color: <span>{{buildOrderRight.activeOrders[line][0].Product.xp.SpecsOptions.Color}}</span></p>
 					<p>Quantity: <span>{{prodQty[line]}}</span></p>
 					<div class="note-edit">
-						<button class="notes" ng-hide="buildOrderRight.activeOrders[line][0].Product.xp.productNote" ng-click="buildOrderRight.showNoteField($index)">Notes</button>
+						<button class="notes" ng-hide="buildOrderRight.activeOrders[line][0].Product.xp.productNote || buildOrderRight.prodNoteShow{{$index}}" ng-click="buildOrderRight.showNoteField($index)">Order Product Note</button>
 						<form ng-submit="buildOrderRight.updateProdNote($index,prodNotes,buildOrderRight.activeOrders[line][0].ProductID,line,$parent.buildOrderRight)">
-							<input type="text" ng-model="prodNotes" ng-init="prodNotes=buildOrderRight.activeOrders[line][0].Product.xp.productNote" ng-show="buildOrderRight.activeOrders[line][0].Product.xp.productNote || buildOrderRight.prodNoteShow{{$index}}" placeholder="Product Note" ng-readonly="!buildOrderRight.readOnly{{$index}}" />
+							<input type="text" id="prodNotes{{$index}}" ng-model="prodNotes" ng-init="prodNotes=buildOrderRight.activeOrders[line][0].Product.xp.productNote" ng-show="buildOrderRight.activeOrders[line][0].Product.xp.productNote || buildOrderRight.prodNoteShow{{$index}}" placeholder="Product Note" ng-readonly="!buildOrderRight.readOnly{{$index}}" />
 						</form>
-						<button ng-show="buildOrderRight.activeOrders[line][0].Product.xp.productNote" ng-click="buildOrderRight.showNoteField($index, 'buildOrderRight.readOnly{{$index}}')">
+						<button ng-show="buildOrderRight.activeOrders[line][0].Product.xp.productNote && !buildOrderRight.prodNoteShow{{$index}}" ng-click="buildOrderRight.showNoteField($index)" class="edit-icon">
 							<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 								 viewBox="0 0 140.5 140" style="enable-background:new 0 0 140.5 140;" xml:space="preserve" fill="#fff">
 							<g>
@@ -185,15 +99,56 @@
 								<polygon points="31.9,111.8 63,102.6 40.6,80.2 	"/>
 							</g>
 							</svg>
+							</button>
+							<button ng-show="buildOrderRight.prodNoteShow{{$index}}" ng-click="buildOrderRight.updateProdNote($index,prodNotes,buildOrderRight.activeOrders[line][0].ProductID,line,$parent.buildOrderRight)" ng-disabled="!prodNotes" class="edit-icon">
+							<svg version="1.1" class="save-icon" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 49 49" style="enable-background:new 0 0 49 49;" xml:space="preserve">
+<g>
+	<path d="M39.914,0H37.5h-28h-9v49h7h33h8V8.586L39.914,0z M35.5,2v14h-24V2H35.5z M9.5,47V28h29v19H9.5z M46.5,47h-6V26h-33v21h-5
+		V2h7v16h28V2h1.586L46.5,9.414V47z"/>
+	<path d="M13.5,33h7c0.553,0,1-0.447,1-1s-0.447-1-1-1h-7c-0.553,0-1,0.447-1,1S12.947,33,13.5,33z"/>
+	<path d="M23.5,35h-10c-0.553,0-1,0.447-1,1s0.447,1,1,1h10c0.553,0,1-0.447,1-1S24.053,35,23.5,35z"/>
+	<path d="M25.79,35.29c-0.181,0.189-0.29,0.45-0.29,0.71s0.109,0.52,0.29,0.71C25.979,36.89,26.229,37,26.5,37
+		c0.26,0,0.52-0.11,0.71-0.29c0.18-0.19,0.29-0.45,0.29-0.71s-0.11-0.521-0.29-0.71C26.84,34.92,26.16,34.92,25.79,35.29z"/>
+	<path d="M33.5,4h-6v10h6V4z M31.5,12h-2V6h2V12z"/>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+<g>
+</g>
+</svg>
 						</button>
 					</div>
 					<button class="notes" ng-click="buildOrderRight.GetDeliveryMethods(buildOrderRight.activeOrders[line][0].Product.ID, $index, buildOrderRight.activeOrders[line][0].xp.ProductImageUrl)" popover-trigger="none" popover-placement="bottom-left" popover-is-open="buildOrderRight.showDeliveryToolTip{{$index}}" uib-popover-template="showDeliveryMethods.templateUrl">ADD Recipient</button>
 					<script type="text/ng-template" id="AddRecipientDelMethods.html">
 							<div click-outside="closePopover()">
 								<h4>Delivery Method</h4>
-						<!-- 		<label ng-if="buildOrderRight.Courier" class=""><input type="radio" name="optradio1" ng-model="buildOrderRight.DeliveryType" value="Courier">Courier</label>
-								<label ng-if="buildOrderRight.Faster" class=""><input type="radio" name="optradio1" ng-model="buildOrderRight.DeliveryType" value="Mixed" >Faster Delivery</label>
-								 -->
 								<label class="radio-inline radio-common" ng-if="buildOrderRight.Courier">
 									<input type="radio" id="courier" name="optradio1" ng-model="buildOrderRight.DeliveryType" value="Courier">
 									<label for="courier">Courier</label>
@@ -205,15 +160,14 @@
 									<div class="radio"></div>
 								</label>
 								<label class=""><input type="radio" name="optradio1" ng-model="buildOrderRight.DeliveryType" value="Default" ng-init="buildOrderRight.DeliveryType='Default'">Default Delivery</label>
-								<button type="button" ng-click="cancelPopUp(buildOrderRight.activeOrders[line][0].Product.ID, buildOrderRight.DeliveryType, $index, buildOrderRight.activeOrders[line][0].xp.ProductImageUrl)">OK</button>
-								<button type="button" ng-click="closePopover($index)">Cancel</button>
+								<button type="button" ng-click="cancelPopUp(buildOrderRight.activeOrders[line][0].Product.ID, buildOrderRight.DeliveryType, $index)">Yes</button>
+								<button type="button" ng-click="closePopover($index)">No</button>
 							</div>
 					</script>
 				</div>
 				<div class="receipient-details">
 					<uib-accordion close-others="oneAtATime">
 					<uib-accordion-group ng-repeat="lineitem in buildOrderRight.activeOrders[line] track by lineitem.ID" is-open="buildOrderRight.isOpen[lineitem.ID]">
-						<!-- <form role="form" class="lineItemForm" id="lineItemForm_{{lineitem.ID}}" name="buildOrderRight.lineItemForm[lineitem.ID]" ng-submit="buildOrderRight.lineDtlsSubmit(lineitem, $index)" disable-dynamic-validation> -->
 						<form role="form" class="lineItemForm" id="lineItemForm_{{lineitem.ID}}" name="buildOrderRight.lineItemForm[lineitem.ID]" disable-dynamic-validation>
 							<uib-accordion-heading>
 								<svg class="close" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
@@ -241,12 +195,12 @@
 									<script type="text/ng-template" id="DeleteToolTip.html">
 										<div click-outside="buildOrderRight.closeOusideClick()">
 											<h5>Are you sure you want to delete?</h5>
-											<button type="button" ng-click="buildOrderRight.deleteListItem($event,lineitem.ID)">OK</button>
-											<button type="button" ng-click="buildOrderRight.closeDeletePopover($event,lineitem.ID)">Cancel</button>
+											<button type="button" ng-click="buildOrderRight.deleteListItem($event,lineitem)">Yes</button>
+											<button type="button" ng-click="buildOrderRight.closeDeletePopover($event,lineitem.ID)">No</button>
 										</div>
 									</script>
 								</span>
-								<img src="../assets/images/error.png" ng-if="buildOrderRight.lineItemForm[lineitem.ID].formError" />
+								<!-- <img src="../assets/images/error.png" ng-if="buildOrderRight.lineItemForm[lineitem.ID].formError" /> -->
 							</uib-accordion-heading>
 							<div class="receipient-drpDown">
 								<div class="qty">
@@ -256,6 +210,7 @@
 									<p ng-if="buildOrderRight.lineItemForm[lineitem.ID].qty.$error.max" style="color:red;"><span>Maximum 999 Quantity</span></p>
 								</div>
 								<div class="receipient-name" ng-init="buildOrderRight.changeAddrType(lineitem.xp.addressType, lineitem, buildOrderRight.lineItemForm[lineitem.ID], 'onload')">
+									<!-- <h3>In Memory Of</h3> -->
 									<div class="firstNm">
 										<p>First Name <span class="star">*</span></p>
 										<input type="text" ng-blur="buildOrderRight.GetDeliveryFees(lineitem, buildOrderRight.lineItemForm[lineitem.ID])" ng-model="lineitem.ShippingAddress.FirstName" name="FirstName" ng-required="true" max-length="100" ng-class="{error: buildOrderRight.lineItemForm[lineitem.ID].$submitted && buildOrderRight.lineItemForm[lineitem.ID].FirstName.$invalid}" />
@@ -265,15 +220,6 @@
 										<input type="text" ng-blur="buildOrderRight.GetDeliveryFees(lineitem, buildOrderRight.lineItemForm[lineitem.ID])" ng-model="lineitem.ShippingAddress.LastName" name="LastName" ng-required="true" max-length="100" ng-class="{error: buildOrderRight.lineItemForm[lineitem.ID].$submitted && buildOrderRight.lineItemForm[lineitem.ID].LastName.$invalid}" />
 									</div>
 								</div>
-<!-- 								<div class="receipient-location" ng-init="addressType = lineitem.xp.addressType">
-									<label class="radio-inline"><input type="radio" name="optradio" ng-model="addressType" ng-click="buildOrderRight.changeAddrType(addressType, lineitem)" value="Residence" ng-disabled="{{lineitem.xp.NoDeliveryExInStore}}">Residence</label>
-									<label class="radio-inline"><input type="radio" name="optradio" ng-model="addressType" ng-click="buildOrderRight.changeAddrType(addressType, lineitem)" value="Hospital" ng-disabled="{{lineitem.xp.NoDeliveryExInStore}}">Hospital</label>
-									<label class="radio-inline"><input type="radio" name="optradio" ng-model="addressType" ng-click="buildOrderRight.changeAddrType(addressType, lineitem)" value="Funeral" ng-disabled="{{lineitem.xp.NoDeliveryExInStore}}">Funeral</label>
-									<label class="radio-inline"><input type="radio" name="optradio" ng-model="addressType" ng-click="buildOrderRight.changeAddrType(addressType, lineitem)" value="Church" ng-disabled="{{lineitem.xp.NoDeliveryExInStore}}">Church</label>
-									<label class="radio-inline"><input type="radio" name="optradio" ng-model="addressType" ng-click="buildOrderRight.changeAddrType(addressType, lineitem)" value="Shipping" ng-disabled="{{lineitem.xp.NoDeliveryExInStore}}">Standard Shipping</label>
-									<label class="radio-inline"><input type="radio" name="optradio" ng-model="addressType" ng-click="buildOrderRight.changeAddrType(addressType, lineitem)" value="School"  ng-disabled="{{lineitem.xp.NoDeliveryExInStore}}">School</label>
-									<label class="radio-inline"><input type="radio" name="optradio" ng-model="addressType" ng-click="buildOrderRight.changeAddrType(addressType, lineitem)" value="InStorePickUp" ng-disabled="{{lineitem.xp.NoInStorePickUp}}">In-Store Pick Up</label>
-								</div> -->
 								<div class="receipient-location" ng-init="lineitem.xp.addressType ? '' : lineitem.xp.addressType='Residence'">
 									<label class="radio-inline radio-common">
 										<input type="radio" id="residence{{lineitem.ID}}" name="optradio" ng-model="lineitem.xp.addressType" ng-click="buildOrderRight.changeAddrType(lineitem.xp.addressType, lineitem)" value="Residence">
@@ -318,44 +264,17 @@
 									<p ng-show="lineitem.DeliveryNotAvailable" ng-if="lineitem.DeliveryNotAvailable ? buildOrderRight.lineItemForm[lineitem.ID].DeliveryNotAvailable = true : buildOrderRight.lineItemForm[lineitem.ID].DeliveryNotAvailable = false" style="color:red;"><span>Delivery Not Available For This Address</span></p>
 								</div>
 								<div ng-if="lineitem.xp.addressType=='Hospital' || lineitem.xp.addressType=='Funeral' || lineitem.xp.addressType=='Church'" class="outgoing-wire" ng-init="buildOrderRight.TempAddrType = lineitem.xp.addressType">
-									<!-- <label><input type="checkbox" ng-checked="lineitem.xp.Status=='OnHold' ? true : false" ng-model="lineitem.OutgoingWire">Outgoing Wire</label> -->
-									<!-- <div class="check-common">
-										<input type="checkbox" ng-checked="lineitem.xp.Status=='OnHold' ? true : false" ng-model="lineitem.OutgoingWire" id="outgoingwire">
-										<label for="outgoingwire" class="check"></label>
-									</div>
-									<span>Outgoing Wire</span> -->
 									<div>
             							<input type="checkbox" ng-checked="lineitem.xp.Status=='OnHold' ? true : false" ng-model="lineitem.OutgoingWire" id="outgoingwire{{$index}}" class="checkbox-custom" >
             							<label for="outgoingwire{{$index}}" class="checkbox-custom-label">Outgoing Wire</label>
         						  </div>
 								</div>
 								<div class="location-selected">
-									<!-- <div class="residence-address" ng-init="buildOrderRight.GetSearchedVal(lineitem)"> -->
 									<div class="residence-address">
 										<div class="hospital-search" ng-if="lineitem.xp.addressType!='Residence' && lineitem.xp.addressType!='InStorePickUp'" >
 											<h1>Find {{lineitem.xp.addressType}} <span class="star">*</span></h1>
 											<input type="search" name="{{lineitem.xp.addressType}}" autocomplete="off" uib-typeahead="hosp for hosp in buildOrderRight[lineitem.xp.addressType+'Names'] | filter:$viewValue" typeahead-on-select="buildOrderRight.AllDtls($item, lineitem, buildOrderRight.lineItemForm[lineitem.ID])" ng-model="lineitem.ShippingAddress.CompanyName" ng-required="lineitem.xp.addressType!='Residence' && lineitem.xp.addressType!='InStorePickUp'" ng-class="{error: buildOrderRight.lineItemForm[lineitem.ID].$submitted && buildOrderRight.lineItemForm[lineitem.ID][lineitem.xp.addressType].$invalid}" />
 										</div>
-										<!-- <div class="hospital-search" ng-if="lineitem.xp.addressType=='Funeral'">
-											<h1>Find Funeral <span class="star">*</span></h1>
-											<input type="search" name="funeral" autocomplete="off" uib-typeahead="funeral for funeral in buildOrderRight.FuneralNames | filter:$viewValue" typeahead-on-select="buildOrderRight.AllDtls($item, lineitem)" ng-model="lineitem.funeralSearch" ng-required="lineitem.xp.addressType=='Funeral'" ng-class="{error: buildOrderRight.lineItemForm[lineitem.ID].$submitted && buildOrderRight.lineItemForm[lineitem.ID].funeral.$invalid}" />
-										</div>
-										<div class="hospital-search" ng-if="lineitem.xp.addressType=='Cemetery'">
-											<h1>Find Cemetery <span class="star">*</span></h1>
-											<input type="search" name="cemetery" autocomplete="off" uib-typeahead="Cemetery for Cemetery in buildOrderRight.CemeteryNames | filter:$viewValue" typeahead-on-select="buildOrderRight.AllDtls($item, lineitem)" ng-model="lineitem.cemeterySearch" ng-required="lineitem.xp.addressType=='Cemetery'" ng-class="{error: buildOrderRight.lineItemForm[lineitem.ID].$submitted && buildOrderRight.lineItemForm[lineitem.ID].cemetery.$invalid}" />
-										</div>
-										<div class="hospital-search" ng-if="lineitem.xp.addressType=='Church'">
-											<h1>Find Church <span class="star">*</span></h1>
-											<input type="search" name="church" autocomplete="off" uib-typeahead="Church for Church in buildOrderRight.ChurchNames | filter:$viewValue" typeahead-on-select="buildOrderRight.AllDtls($item, lineitem)" ng-model="lineitem.churchSearch" ng-required="lineitem.xp.addressType=='Church'" ng-class="{error: buildOrderRight.lineItemForm[lineitem.ID].$submitted && buildOrderRight.lineItemForm[lineitem.ID].church.$invalid}"/>
-										</div>
-										<div class="hospital-search" ng-if="lineitem.xp.addressType=='School'">
-											<h1>School Name<span class="star">*</span></h1>
-											<input type="text" name="school" ng-model="lineitem.schSearch" ng-required="lineitem.xp.addressType=='School'" ng-class="{error: buildOrderRight.lineItemForm[lineitem.ID].$submitted && buildOrderRight.lineItemForm[lineitem.ID].school.$invalid}" />
-										</div>
-										<div class="hospital-search" ng-if="lineitem.xp.addressType=='Business'">
-											<h1>Business Name<span class="star">*</span></h1>
-											<input type="text" name="business" ng-model="lineitem.businessSearch" ng-required="lineitem.xp.addressType=='Business'" ng-class="{error: buildOrderRight.lineItemForm[lineitem.ID].$submitted && buildOrderRight.lineItemForm[lineitem.ID].business.$invalid}" />
-										</div> -->
 										<div class="willCall-address" ng-show="lineitem.xp.addressType=='InStorePickUp'" ng-if="lineitem.xp.addressType=='InStorePickUp' ? DeliveryMethod = 'InStorePickUp' : DeliveryMethod = 'LocalDelivery'">
 											<div class="willCall-search">
 												<h1>Find store <span class="star">*</span></h1>
@@ -389,7 +308,7 @@
 										</div>
 										<div class="location-Code" ng-if="lineitem.xp.addressType!='InStorePickUp' ? DeliveryMethod = 'LocalDelivery' : DeliveryMethod = 'InStorePickUp'">
 											<div class="address-cart">
-												<a ng-click="buildOrderRight.viewAddrBook(lineitem)" ng-if="lineitem.xp.addressType=='Residence'">Address Book</a>
+												<a ng-click="buildOrderRight.viewAddrBook(lineitem)" ng-if="lineitem.xp.addressType=='Residence' && buildOrderRight.addressbook && buildOrderRight.addressesList.length > 0">Address Book</a>
 												<a ng-click="buildOrderRight.GetAboveAddresses(lineitem)" ng-if="lineitem.xp.addressType=='Residence'">Address From Cart</a>
 											</div>
 										<div class="col-md-6 zipcont">
@@ -430,15 +349,11 @@
 											<h6 style="color:red;" ng-if="buildOrderRight.lineItemForm[lineitem.ID].invalidAddress && lineitem.ShippingAddress.Street1 && lineitem.ShippingAddress.Zip">Invalid Address/Zip</h6>
 												<div class="location-state col-md-6">
 													<p>State <span class="star">*</span></p>
-													<!--<select ng-model="lineitem.ShippingAddress.State">
-														<option selected>K</option>
-														<option>RNR</option>
-													</select>-->
-													<input type="text" name="state" ng-model="lineitem.ShippingAddress.State" required ng-class="{error: buildOrderRight.lineItemForm[lineitem.ID].$submitted && buildOrderRight.lineItemForm[lineitem.ID].state.$invalid}" />
+													<input type="text" name="state" ng-model="lineitem.ShippingAddress.State" required ng-class="{error: buildOrderRight.lineItemForm[lineitem.ID].$submitted && buildOrderRight.lineItemForm[lineitem.ID].state.$invalid}" ng-blur="buildOrderRight.AssemblyDtlsAutoPopulate(lineitem)" />
 												</div>
 												<div class="location-city col-md-6" ng-if="lineitem.MultipleCities.length <= 1 || !lineitem.MultipleCities">
 													<p>City <span class="star">*</span></p>
-													<input type="text" name="city" ng-model="lineitem.ShippingAddress.City" ng-required="lineitem.MultipleCities.length <= 1" ng-class="{error: buildOrderRight.lineItemForm[lineitem.ID].$submitted && buildOrderRight.lineItemForm[lineitem.ID].city.$invalid}" />
+													<input type="text" name="city" ng-model="lineitem.ShippingAddress.City" ng-required="lineitem.MultipleCities.length <= 1 || !lineitem.MultipleCities" ng-class="{error: buildOrderRight.lineItemForm[lineitem.ID].$submitted && buildOrderRight.lineItemForm[lineitem.ID].city.$invalid}" ng-blur="buildOrderRight.AssemblyDtlsAutoPopulate(lineitem)" />
 												</div>
 												<div class="location-city col-md-6" ng-if="lineitem.MultipleCities.length > 1">
 													<p>Select City <span class="star">*</span></p>
@@ -454,22 +369,33 @@
 											</div>
 											<div class="location-contact">
 												<p>Recipients Phone Number</p>
-												<input type="number" ng-model="lineitem.ShippingAddress.Phone1" placeholder="Area Code" max-length="3" ng-paste="$event.preventDefault()"></input>
-												<input type="number" ng-model="lineitem.ShippingAddress.Phone2" placeholder="Prefix" max-length="3" ng-paste="$event.preventDefault()"></input>
-												<input type="number" ng-model="lineitem.ShippingAddress.Phone3" placeholder="Number" max-length="4" ng-paste="$event.preventDefault()"></input>
+												<input type="number" name="phone1" ng-model="lineitem.ShippingAddress.Phone1" placeholder="Area Code" max-length="3" ng-paste="$event.preventDefault()" ng-class="{error: buildOrderRight.lineItemForm[lineitem.ID].$submitted && buildOrderRight.lineItemForm[lineitem.ID].phone1.$invalid}" ng-minlength="3" required ng-blur="buildOrderRight.AssemblyDtlsAutoPopulate(lineitem)"></input>
+												<input type="number" name="phone2" ng-model="lineitem.ShippingAddress.Phone2" placeholder="Prefix" max-length="3" ng-paste="$event.preventDefault()" ng-class="{error: buildOrderRight.lineItemForm[lineitem.ID].$submitted && buildOrderRight.lineItemForm[lineitem.ID].phone2.$invalid}" ng-minlength="3" required ng-blur="buildOrderRight.AssemblyDtlsAutoPopulate(lineitem)"></input>
+												<input type="number" name="phone3" ng-model="lineitem.ShippingAddress.Phone3" placeholder="Number" max-length="4" ng-paste="$event.preventDefault()" ng-class="{error: buildOrderRight.lineItemForm[lineitem.ID].$submitted && buildOrderRight.lineItemForm[lineitem.ID].phone3.$invalid}" ng-minlength="4" required ng-blur="buildOrderRight.AssemblyDtlsAutoPopulate(lineitem)"></input>
 											</div>
 										</div>
-										
+										<!-- <div class="church-del">
+											<h3>To be used when not in relation to a funeral service</h3>
+											<div class="firstNm">
+											<p>First Name <span class="star">*</span></p>
+											<input type="text" ng-blur="buildOrderRight.GetDeliveryFees(lineitem, buildOrderRight.lineItemForm[lineitem.ID])" ng-model="lineitem.ShippingAddress.FirstName" name="FirstName" ng-required="true" max-length="100" ng-class="{error: buildOrderRight.lineItemForm[lineitem.ID].$submitted && buildOrderRight.lineItemForm[lineitem.ID].FirstName.$invalid}" />
+										</div>
+										<div>
+											<p>Last Name <span class="star">*</span></p>
+											<input type="text" ng-blur="buildOrderRight.GetDeliveryFees(lineitem, buildOrderRight.lineItemForm[lineitem.ID])" ng-model="lineitem.ShippingAddress.LastName" name="LastName" ng-required="true" max-length="100" ng-class="{error: buildOrderRight.lineItemForm[lineitem.ID].$submitted && buildOrderRight.lineItemForm[lineitem.ID].LastName.$invalid}" />
+										</div>	
+										</div> -->
 										<div class="location-recipientName" ng-if="lineitem.xp.addressType=='Hospital' || lineitem.xp.addressType=='Funeral' || lineitem.xp.addressType=='Cemetery'">
 											<h3 ng-if="lineitem.xp.addressType=='Hospital'">Patient Name</h3>
+											<!-- <h3 ng-if="lineitem.xp.addressType=='Funeral' || lineitem.xp.addressType=='Cemetery'">Grave Site of:</h3> -->
 											<h3 ng-if="lineitem.xp.addressType=='Funeral' || lineitem.xp.addressType=='Cemetery'">In Memory of:</h3>
 											<div class="firstNm">
 												<p>First Name</p>
-												<input type="text" ng-model="lineitem.xp.PatientFName"></input>
+												<input type="text" ng-model="lineitem.xp.PatientFName" ng-blur="buildOrderRight.AssemblyDtlsAutoPopulate(lineitem)"></input>
 											</div>
 											<div>
 												<p>Last Name</p>
-												<input type="text" ng-model="lineitem.xp.PatientLName"></input>
+												<input type="text" ng-model="lineitem.xp.PatientLName" ng-blur="buildOrderRight.AssemblyDtlsAutoPopulate(lineitem)"></input>
 											</div>
 										</div>
 									</div>
@@ -490,7 +416,7 @@
 														</svg>
 													</h1>
 												</uib-accordion-heading>
-												<textarea rows="5" ng-model="lineitem.xp.productNote"></textarea>
+												<textarea rows="5" ng-model="lineitem.xp.productNote" ng-blur="buildOrderRight.AssemblyDtlsAutoPopulate(lineitem)"></textarea>
 											</uib-accordion-group>
 										</div>
 										<div class="location-note" ng-if="lineitem.xp.addressType || !lineitem.xp.addressType">
@@ -509,47 +435,40 @@
 														</svg>													
 													</h1>
 												</uib-accordion-heading>
-												<textarea rows="5" ng-model="lineitem.xp.deliveryNote"></textarea>
+												<textarea rows="5" ng-model="lineitem.xp.deliveryNote" ng-blur="buildOrderRight.AssemblyDtlsAutoPopulate(lineitem)"></textarea>
 											</uib-accordion-group>
 										</div>
-										<div class="location-note add-card" ng-if="lineitem.xp.addressType">
-											<h1>Add Card Message</h1>
+										<div class="no-message" ng-show="lineitem.xp.addressType && lineitem.xp.addressType!='Shipping'">
+											<div>
+												<input type="checkbox" ng-model="lineitem.visible" id="noMessage{{lineitem.ID}}" class="checkbox-custom" />
+												<label for="noMessage{{lineitem.ID}}" class="checkbox-custom-label"> No Card Message</label>
+											</div>
 										</div>
 									</uib-accordion>
 									<div ng-init="lineitem.visible=false">
-										<div class="no-message" ng-show="lineitem.xp.addressType && lineitem.xp.addressType!='Shipping'">
-												<!-- <div class="check-common">
-													<input type="checkbox" ng-model="lineitem.visible" id="noMessage{{$index}}">
-													<label for="noMessage{{$index}}" class="check"></label>
-												</div>
-												<span>No Card Message</span> -->
-												<div>
- 												<input type="checkbox" ng-model="lineitem.visible" id="noMessage{{lineitem.ID}}" class="checkbox-custom" >
- 												<label for="noMessage{{lineitem.ID}}" class="checkbox-custom-label"> No Card Message</label>
-											 	</div>
-										</div>
-
 										<div class="message-lines" ng-class="{'hideItem': !lineitem.visible}" ng-show="lineitem.xp.addressType && lineitem.xp.addressType!='Shipping'">
+											<div class="location-note add-card" ng-if="lineitem.xp.addressType">
+												<h3>Add Card Message</h3>
+											</div>
 											<p>Line 1</p>
-											<input type="text" ng-model="lineitem.xp.CardMessage.line1" />
+											<input type="text" ng-model="lineitem.xp.CardMessage.line1" ng-blur="buildOrderRight.AssemblyDtlsAutoPopulate(lineitem)" />
 											<p>Line 2</p>
-											<input type="text" ng-model="lineitem.xp.CardMessage.line2" />
+											<input type="text" ng-model="lineitem.xp.CardMessage.line2" ng-blur="buildOrderRight.AssemblyDtlsAutoPopulate(lineitem)" />
 											<p>Line 3</p>
-											<input type="text" ng-model="lineitem.xp.CardMessage.line3" />
+											<input type="text" ng-model="lineitem.xp.CardMessage.line3" ng-blur="buildOrderRight.AssemblyDtlsAutoPopulate(lineitem)" />
 											<p>Line 4</p>
-											<input type="text" ng-model="lineitem.xp.CardMessage.line4" />
+											<input type="text" ng-model="lineitem.xp.CardMessage.line4" ng-blur="buildOrderRight.AssemblyDtlsAutoPopulate(lineitem)" />
 										</div>
 									</div>	
 								</div>
 								<div class="product-cost">
 									<h4>Item Price <span>{{lineitem.UnitPrice | currency}}</span></h4>
-									<h4 ng-if="!lineitem.xp.deliveryFeesDtls && lineitem.ShippingAddress.Zip && lineitem.ShippingAddress.Street1">Delivery Charges<span>$0.00</span></h4>
+									<h4 ng-if="!lineitem.xp.deliveryFeesDtls || lineitem.deliveryCharges==0">Delivery Charges<span>$0.00</span></h4>
 									<h4 ng-repeat="(key, val) in lineitem.xp.deliveryFeesDtls">{{key}} <b ng-if="key=='ServiceFee' && lineitem.xp.DeliveryMethod=='Mixed'"> (50+ Items)</b> <span>{{val | currency}}</span></h4>
-									<h4 ng-if="lineitem.xp.Discount">Discount <span>-{{lineitem.xp.Discount | currency}}</span></h4>
+									<!-- <h4 ng-if="lineitem.xp.Discount">Discount <span>-{{lineitem.xp.Discount | currency}}</span></h4> -->
 									<h4 ng-if="lineitem.xp.Tax">Estimated Tax <span>{{ lineitem.xp.Tax | currency }}</span></h4>
 									<h5>Estimate Total<span>{{lineitem.xp.TotalCost | currency}}</span></h5>
 								</div>
-								<!-- <input type="submit" value="SAVE" class="notes" ng-disabled="!buildOrderRight.lineItemForm[lineitem.ID].$valid" /> -->
 							</div>
 						</form>
 						</uib-accordion-group>
@@ -605,69 +524,6 @@
 			</table>
 		</modal>
 		<modal title="Order Details Confirm" visible="buildOrderRight.OrderConfirmPopUp" id="mymodal" class="view-addr-book modal-pop-up order-details-pop-up">
-			<!-- <div class="recipient-details">
-				<uib-accordion close-others="oneAtATime">
-					<uib-accordion-group is-open="isOpen" ng-repeat="(key, val) in buildOrderRight.OrderConfirmGrouping">
-						<uib-accordion-heading>
-						   <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
-						   <svg class="close ng-scope" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-									<path d="M 16 3 C 8.83214 3 3 8.83214 3 16 C 3 23.1679 8.83214 29 16 29 C 23.1679 29 29 23.1679 29 16 C 29 8.83214 23.1679 3 16 3 Z M 16 5 C 22.087 5 27 9.91302 27 16 C 27 22.087 22.087 27 16 27 C 9.91302 27 5 22.087 5 16 C 5 9.91302 9.91302 5 16 5 Z M 15 10 L 15 15 L 10 15 L 10 17 L 15 17 L 15 22 L 17 22 L 17 17 L 22 17 L 22 15 L 17 15 L 17 10 L 15 10 Z"></path>
-								</svg>
-								<svg class="open ng-scope" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-									<path d="M 16 3 C 8.83214 3 3 8.83214 3 16 C 3 23.1679 8.83214 29 16 29 C 23.1679 29 29 23.1679 29 16 C 29 8.83214 23.1679 3 16 3 Z M 16 5 C 22.087 5 27 9.91302 27 16 C 27 22.087 22.087 27 16 27 C 9.91302 27 5 22.087 5 16 C 5 9.91302 9.91302 5 16 5 Z M 10 15 L 10 17 L 22 17 L 22 15 L 10 15 Z"></path>
-								</svg>
- 							</div>
-							<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 recipient-no">
-								Recipient {{$index+1}}
-							</div>
-							<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 recipient-name">
-								{{val[0].ShippingAddress.FirstName}} {{val[0].ShippingAddress.LastName}} | {{val[0].ShippingAddress.Zip}}
-							</div>
-							<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 recipient-val">
-								{{val[0].xp.TotalCost | currency}}
-							</div>
-						</uib-accordion-heading>
-							<div class="recipient-amt col-md-offset-7 col-md-5">
-								<div class="">
-									<span class="col-md-7">Amount </span><span class="col-md-5 amt-val">{{val[0].LineTotal | currency}}</span>
-								</div>
-								<div class="">
-									<span class="col-md-7">Delivery Charges  </span><span class="col-md-5 amt-val">{{val[0].xp.deliveryCharges | currency}}</span>
-								</div>
-								<div class="">
-									<span class="col-md-7">Tax </span><span class="col-md-5 amt-val">{{val[0].xp.Tax | currency}}</span>
-								</div>
-								<div class="">
-								<span class="col-md-7">Sub Total  </span><span class="col-md-5 amt-val">{{val[0].xp.TotalCost | currency}}</span>
-								</div>
-							</div>
-					</uib-accordion-group>
-				</uib-accordion>
-				<div class="recipient-details1">
-					<div class="recipient-amt col-md-offset-7 col-md-5">
-					<div class="">
-						<span class="col-md-7">Total Amount </span><span class="col-md-5 amt-val">{{buildOrderRight.order.Subtotal | currency}}</span>
-					</div>
-					<div class="">
-						<span class="col-md-7">Delivery Charges  </span><span class="col-md-5 amt-val">{{buildOrderRight.order.ShippingCost | currency}}</span>
-					</div>
-					<div class="">
-						<span class="col-md-7">Total Tax </span><span class="col-md-5 amt-val">{{buildOrderRight.order.TaxCost | currency}}</span>
-					</div>
-				</div>
-				</div>
-				<div class="total-content">
-					<div class="total-header col-md-offset-7 col-md-5">
-						<span class="col-md-7">Total</span><span class="col-md-5 amt-val">{{buildOrderRight.order.Total | currency}}</span>
-					</div>
-				</div>
-				<div class="continue-shop">
-					<div class="col-md-6 modify-order" ng-click="buildOrderRight.OrderConfirmPopUp = !buildOrderRight.OrderConfirmPopUp">
-						<a href="">Modify Order</a>
-					</div>
-					<div class="col-md-6 cont-shop" ng-click="gotoCheckout();OrderSummary();">Continue Shopping</div>
-				</div>
-			</div> -->
 			<div class="recipient-details">
 				<uib-accordion close-others="oneAtATime">
 					<uib-accordion-group is-open="isOpen" ng-repeat="(key, val) in buildOrderRight.OrderConfirmGrouping">
@@ -694,17 +550,11 @@
 								<div>
 									<span class="col-md-7">Amount </span><span class="col-md-5 amt-val">{{val[0].LineTotal | currency}}</span>
 								</div>
-								<div ng-if="val[0].xp.Discount">
-									<span class="col-md-7">Shipping Cost  </span><span class="col-md-5 amt-val">{{val[0].xp.deliveryCharges+val[0].xp.Discount | currency}}</span>
-								</div>
-								<div ng-if="!val[0].xp.Discount">
+								<div>
 									<span class="col-md-7">Shipping Cost  </span><span class="col-md-5 amt-val">{{val[0].xp.deliveryCharges | currency}}</span>
 								</div>
 								<div>
 									<span class="col-md-7">Tax </span><span class="col-md-5 amt-val">{{val[0].xp.Tax | currency}}</span>
-								</div>
-								<div ng-if="val[0].xp.Discount">
-									<span class="col-md-7">Discount </span><span class="col-md-5 amt-val">-{{val[0].xp.Discount | currency}}</span>
 								</div>
 								<div>
 									<span class="col-md-7">Total  </span><span class="col-md-5 amt-val">{{val[0].xp.TotalCost | currency}}</span>
@@ -722,6 +572,9 @@
 					</div>
 					<div class="">
 						<span class="col-md-7">Total Tax </span><span class="col-md-5 amt-val">{{buildOrderRight.order.TaxCost | currency}}</span>
+					</div>
+					<div class="" ng-if="buildOrderRight.order.xp.CapTotalDiscount > 0">
+						<span class="col-md-7">Delivery Discount </span><span class="col-md-5 amt-val">{{buildOrderRight.order.xp.CapTotalDiscount | currency}}</span>
 					</div>
 				</div>
 				</div>

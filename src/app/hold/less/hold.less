@@ -7,6 +7,60 @@
 	padding:25px;
 	overflow-y:auto;
 	background-color:@color0;
+	.order-grid{
+		 padding: 0px;
+		 .ui-grid-filter-container{
+			width:15%;
+			margin:0 2%;
+		 }
+		 
+		.ui-grid-render-container-body .ui-grid-viewport{
+			border-bottom:1px solid #eaeaea;
+		}
+		.ui-grid-canvas .ui-grid-row .ui-grid-cell{ 
+			width:12.5%;
+			min-width:12.5%;
+			max-width:12.5%;
+		}
+		.ui-grid-header-canvas .ui-grid-header-cell-wrapper .ui-grid-header-cell{
+				width:12.5%;
+		}
+	 }
+	  .ui-grid-render-container{
+	    border-top: 1px solid #eaeaea;
+	    border-left: 1px solid #eaeaea;
+	    border-right: 1px solid #eaeaea;
+	    float:left;
+	}
+	.ui-grid-filter-input{
+    width: 100% !important;
+    margin: 4px 0 0 0 !important;
+	}
+	.delivery-input{
+	 	padding:0px;
+	 }
+	 .select-florist{
+	 	padding:0 10px;
+		.in-block;
+		margin-right:10px;
+		height:30px;
+		line-height:30px;
+		.helvetica-bold;
+		font-size:12px;
+		border:1px solid @base-bg-purple-light;
+		background-color:transparent;
+		.background-fade;
+		 margin-bottom: 20px;
+		 margin-left: 13%;
+	 }
+	  select{
+	 	    width: 16.5%;
+		    padding: 5px 0px;
+		    margin-bottom: 5px;
+		    background: #f4f4f4;
+		    border: 1px solid #e2e2e2;
+		    .helvetica-regular;
+		}
 	h1{
 		font-family:helvetica-bold;
 		font-size: 25px;
@@ -22,6 +76,7 @@
 	}
 	.item-action{
 		text-align:right;
+		margin-bottom:10px;
 		button{
 			margin-right:0;
 			margin-left:10px;
@@ -34,6 +89,7 @@
 		margin-bottom:10px;
 		a{
 			color:@color1;
+				text-decoration: underline;
 			&:hover{
 				color:@primary-dark-color;
 			}
@@ -71,6 +127,36 @@
 		background-color:transparent;
 		.background-fade;
 		&.unhold{
+			background-color:@base-bg-purple-light;
+			color:@color0;
+			.background-fade;
+			&:hover{
+				background-color:@primary-dark-color;
+			}
+		}
+		&:hover{
+			background-color:@base-bg-purple-light;
+			color:@color0;
+		}
+	}
+}
+.create-user-pop-up{
+	.modal-dialog{
+		width:80%;
+	}
+	button{
+		padding:0 10px;
+		.in-block;
+		margin-right:10px;
+		height:30px;
+		line-height:30px;
+		.helvetica-bold;
+		font-size:12px;
+		border:1px solid @base-bg-purple-light;
+		background-color:transparent;
+		.background-fade;
+		
+		&.cancel{
 			background-color:@base-bg-purple-light;
 			color:@color0;
 			.background-fade;

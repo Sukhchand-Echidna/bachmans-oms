@@ -21,7 +21,7 @@
                 </div>
             </div>
 			<div class="buildordersummaryheader" ng-show="showOrdersummary">
-                <p ng-click="BacktoOrder()">
+                <a ng-click="BacktoOrder()">
 				<span>
 					<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 						 viewBox="-27.9 72.8 42 28" style="enable-background:new -27.9 72.8 42 28;" xml:space="preserve">
@@ -31,10 +31,11 @@
 							<path d="M11.9,88.8h-29.5l7.4,7.5l-2.9,2.9l-12.5-12.5l12.5-12.5l2.9,2.9l-7.4,7.5h29.5V88.8z"/>
 						</g>
 					</svg>
-				</span> Back </p>
+				</span> Back </a>
             </div>
 			<div class="buildordersummaryheader" ng-show="orderDetails">	
-                <p ng-click="backTocreate()">
+                <!-- <a ng-click="backTocreate()"> -->
+				<a href="javascript: window.history.go(-1)">
 				<span>
 					<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 						 viewBox="-27.9 72.8 42 28" style="enable-background:new -27.9 72.8 42 28;" xml:space="preserve">
@@ -44,7 +45,7 @@
 							<path d="M11.9,88.8h-29.5l7.4,7.5l-2.9,2.9l-12.5-12.5l12.5-12.5l2.9,2.9l-7.4,7.5h29.5V88.8z"/>
 						</g>
 					</svg>
-				</span>Back</p>
+				</span>Back</a>
             </div>
         </div>
     </div>

@@ -1,4 +1,8 @@
 <div class="container-fluid order-claim-page">
+	<div class="order-claim-container">
+		<div class="back-common">
+				<a href="javascript: window.history.go(-1)">Back</a>
+		</div>
 	<div ng-repeat="line in orderClaim.lineValsummary track by line">
 		<div class="adress-details">
 			<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
@@ -53,22 +57,23 @@
 		</div>
 	</div>
 	<div class="orderclaimtotal">
-		<h3>Claim Totals</h3>
-		<div>
-			<span>Item Refund Amount</span>
-			<span>{{orderClaim.Item_Refund_Amount | currency}}</span>
-		</div>
-		<div>
-			<span>Delivery Refund</span>
-			<span>$0.00</span>
-		</div>
-		<div>
-			<span>Tax Refund</span>
-			<span>$3.34</span>
-		</div>
-		<div>
-			<span>Total Refund</span>
-			<span>$63.33</span>
-		</div>
+	  <h3>Claim Totals</h3>
+	  <div>
+	   <span>Item Refund Amount</span>
+	   <span>{{orderClaim.Item_Refund_Amount | currency}}</span>
+	  </div>
+	  <div>
+	   <span>Delivery Refund</span>
+	   <span>{{orderClaim.Delivery_Refund | currency}}</span>
+	  </div>
+	  <div>
+	   <span>Tax Refund</span>
+	   <span>{{orderClaim.totaltax | currency}}</span>
+	  </div>
+	  <div>
+	   <span>Total Refund</span>
+	   <span>{{orderClaim.totalrefundcost | currency}}</span>
+	  </div>
+	 </div>
 	</div>
 </div>

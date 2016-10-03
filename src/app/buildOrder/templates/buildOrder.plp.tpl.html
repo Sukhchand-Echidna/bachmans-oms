@@ -31,8 +31,8 @@
 					</div>
 					<div class="plp-product-data">
 						<h2>{{products.Name}}</h2>
-						<h3>Size <span>{{products.Size}}</span></h3>
-						<h4>Color <span>{{products.Color}}</span></h4>
+						<h3><span class="variant">Size</span> <span>{{products.Size}}</span></h3>
+						<h4><span class="variant">Color</span> <span>{{products.Color}}</span></h4>
 					</div>
 					<div class="price_lst">
 						<h5>{{products.Price | currency}}</h5>
@@ -67,7 +67,7 @@
 	</div>
 	<!-- direct pdp- product Searched results based on sequence number -->
 	<div class="home-search-list" ng-if="buildOrder.searchType == 'PDP' &&  buildOrder.searchval.length == 0 && buildOrder.searchSeqList.length>0">
-		<!-- <h1 ng-if="buildOrder.searchSeqList.length > 0">Search Results for <span>"{{buildOrder.searchTxt}}"</span> <span class="count">({{buildOrder.searchSeqList.length}} products)</span></h1> -->
+		<h1 ng-if="buildOrder.searchSeqList.length > 0">Search Results for <span>"{{buildOrder.prodName}}"</span></h1>
 		<!-- <h1 ng-if="buildOrder.searchSeqList.length == 0">No results found for <span>"{{buildOrder.searchTxt}}"</span></h1> -->
 		<ul class="plp-container">
 			<li class="col-md-3" ng-repeat="prod in buildOrder.searchSeqList track by $index">

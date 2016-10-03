@@ -17,28 +17,14 @@ function AddressBookConfig( $stateProvider ) {
 			resolve: {
                 AddressBook: function(OrderCloud, $stateParams, $state, $q) {
                     var arr={};
-					 var dfr = $q.defer();
-						/*OrderCloud.Addresses.ListAssignments(null,$stateParams.ID).then(function(addrList){
-						var addr = [];
-						angular.forEach(addrList.Items, function(value, key) {
-							OrderCloud.Addresses.Get(value.AddressID).then(function(address){
-								// log.push(key + ': ' + final);
-								addr.push(address);
-							 });
-							}, addr);
-							arr["addresses"] = addr;
-							console.log("addresesssssss", arr["addresses"]);
-							dfr.resolve(arr);
-						});
-						*/
-						OrderCloud.As().Me.ListAddresses(null, 1, 100).then(function(addrList){
-							dfr.resolve(addrList);
-							console.log("addrList", addrList);
-						})
-						
-						return dfr.promise;
+					var dfr = $q.defer();
+					OrderCloud.As().Me.ListAddresses(null, 1, 100).then(function(addrList){
+						dfr.resolve(addrList);
+						console.log("addrList", addrList);
+					});
+					return dfr.promise;
                 }
-				}
+			}
 		})
 }
 
@@ -55,10 +41,6 @@ function AddressBookController($scope, $http, $state, $stateParams, $location, $
 	});
 	console.log("vm.defaultAddr", vm.defaultAddr);
 	vm.getLocation=function(addr){
-		//AddressValidationService.Validate($scope.addr).then(function(res){
-			//$scope.addr.City = res.Address.City;
-			//$scope.addr.State = res.Address.Region;
-		//});
 		vm.GetMultipleCities(addr);
 	}
 	vm.GetMultipleCities = function(addr){
@@ -92,14 +74,11 @@ function AddressBookController($scope, $http, $state, $stateParams, $location, $
 		}
 	};
 	vm.getLoactionEdit=function(addr){
-		/*AddressValidationService.Validate(vm.editAddr).then(function(res){
-			vm.editAddr.City = res.Address.City;
-			vm.editAddr.State = res.Address.Region;
-		});*/
 		vm.GetMultipleCities(addr);
 	}
 	$scope.CreateAddress = function(line, form){
 		form.$submitted = true;
+		vm.newaddrerror={};
 		if(form.$valid && line.City != "Select City"){
 			var $this = this;
 			if(line.xp==null)
@@ -108,7 +87,7 @@ function AddressBookController($scope, $http, $state, $stateParams, $location, $
 			line.Phone = "("+line.Phone1+") "+line.Phone2+"-"+line.Phone3;
 			line.xp.NickName = line.NickName;
 				AddressValidationService.Validate(line).then(function(res){
-					var validatedAddress = res.Address;
+					var validatedAddress = res.ResponseBody.Address;
 					var zip = validatedAddress.PostalCode.substring(0, 5);
 					line.Zip = parseInt(zip);
 					line.Street1 = validatedAddress.Line1;
@@ -116,20 +95,15 @@ function AddressBookController($scope, $http, $state, $stateParams, $location, $
 					line.City = validatedAddress.City;
 					line.State = validatedAddress.Region;
 					line.Country = validatedAddress.Country;
-					if(res.ResultCode == 'Success') {
-						/*
-						OrderCloud.Addresses.Create(line).then(function(data){
-						data.Zip = parseInt(data.Zip);
-							var params = {"AddressID": data.ID,"UserID": $stateParams.ID,"IsBilling": false,"IsShipping": true};
-								OrderCloud.Addresses.SaveAssignment(params).then(function(res){
-								$state.go('addressBook', {}, {reload:true});
-								console.log("Address saved for the user....!" +res);
-							});
-						}) */
+					if(res.ResponseBody.ResultCode == 'Success') {
 						OrderCloud.As().Me.CreateAddress(line).then(function(addrList){
-								addAddr=!addAddr;
+								$scope.addAddr=!$scope.addAddr;
+								vm.newaddrerror={};
 								vm.list.push(addrList);
-						})
+						}).catch(function(ex){
+							console.log(ex);
+							vm.newaddrerror=ex;
+						});
 						}else{
 							alert("enter valid address to save..");
 						}
@@ -138,7 +112,6 @@ function AddressBookController($scope, $http, $state, $stateParams, $location, $
 	}
 	vm.makeDefault=function(address){
 		_.filter(vm.list, function(row){
-		// return _.indexOf([true],row.xp.IsDefault) > -1;
 			if(!row.xp)
 				row.xp = {};
 			if(row.xp.IsDefault){
@@ -152,21 +125,11 @@ function AddressBookController($scope, $http, $state, $stateParams, $location, $
 		vm.default(address, dataNew);
 	}
 	vm.default= function(row, obj){
-		//var row=obj;
-		//var data=dataVal;
-		// var oldDefault = {
-			// "FirstName":row.FirstName, "LastName":row.LastName, "Street1":row.Street1, "Street2":row.Street2,"City":row.City, "State":row.State, "Zip":row.Zip, "Phone":row.Phone, "Country": row.Country, "xp":data
-		// };
 		OrderCloud.As().Me.PatchAddress(row.ID, {"xp":{"IsDefault" :obj}}).then(function(res){
-		//console.log("addressaddressaddress111111111", res);
-			//$state.go('addressBook', {}, {reload:true});
-			//vm.list.unshift(res);
-			//vm.defaultAddr = [];
 			if(row.xp.IsDefault){
 				vm.defaultAddr[0]=row;
 			}
-			
-		})
+		});
 	}
 	vm.editAddress = function(editAddr, index){
 		vm.defaultEdit=true;
@@ -205,13 +168,9 @@ function AddressBookController($scope, $http, $state, $stateParams, $location, $
 				saveAddr.State = validatedAddress.Region;
 				saveAddr.Country = validatedAddress.Country;
 				if(res.ResultCode == "Success"){
-					/*OrderCloud.Addresses.Update(saveAddr.ID, saveAddr).then(function(){
-						$state.go('addressBook', {}, {reload:true});
-					})
-					*/
 					OrderCloud.As().Me.UpdateAddress(saveAddr.ID, saveAddr).then(function(addrList){
 						$state.go('addressBook', {}, {reload:true});
-					})
+					});
 				}
 				else{
 					alert("address not found");

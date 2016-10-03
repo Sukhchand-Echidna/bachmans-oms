@@ -1,6 +1,6 @@
 <ui-view id="buildorder">
     <div id="BuildOrderTopNav" ui-view="buildordertop"></div>
-    <div class="buildOrder-plp">
+    <div class="buildOrder-plp" cg-busy="{promise:buildOrder.PLPLoader,templateUrl:'common/loading-indicators/templates/view.loading.tpl.html'}">
         <div class="row">
             <div id="BuildOrderLeftNav" ui-view="buildorderleft"></div>
             <div id="BuildOrderPLP" ui-view="buildorderplp" ng-hide="buildOrder.showPDP" class="buildOrderPlp-main"></div>

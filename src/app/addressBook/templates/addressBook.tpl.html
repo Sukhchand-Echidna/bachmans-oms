@@ -1,6 +1,9 @@
 <div class="container-fluid addressBook-main">
 <div class="addressBook-container row">
 	<div class="addressBook col-xs-12 col-sm-12 col-md-12 col-lg-12">
+		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 back-common">
+			<a href="javascript: window.history.go(-1)">Back</a>
+		</div>
 		<h1>Address Book</h1>
 		<div class="search-block">
 		<div>
@@ -57,7 +60,7 @@
 							<input type="text" name="city" ng-model="addr.City" required ng-if="addr.MultipleCities.length <= 1 || !addr.MultipleCities" ng-class="{error: addAddress.$submitted && addAddress.city.$invalid}" />
 							<div uib-dropdown class="form-control " id="MultipleCities" ng-if="addr.MultipleCities.length > 1" ng-class="{errorCity: addAddress.$submitted && addr.City=='Select City'}">
 								<div id="sort-dropdown" uib-dropdown-toggle>	
-									<p class="sort-active-show" ng-init="addr.City = 'Select City'">{{addr.City}}</p>
+									<p class="sort-active-show" ng-init="addr.City = 'Select City'">{{addr.City}} <i class="fa fa-chevron-down"></i></p>
 								</div>
 								<ul class="dropdown-menu" uib-dropdown-menu aria-labelledby="sort-dropdown">
 									<li ng-repeat="city in addr.MultipleCities" ng-click="addr.City=city"><a href="">{{city}}</a></li>
@@ -70,20 +73,6 @@
 						</div>
 					</div>
 					<div class="addr-top addr-cont">
-						<!--  <label><input type="checkbox" ng-model="addr.Shipping">Shipping Address</label>
-						<label><input type="checkbox" ng-model="addr.Billing">Billing Address</label> --> 
-						<!-- 
-						<div class="check-common">
-						<input type="checkbox" name="shippingaddress" id="shippingaddress"ng-model="addr.Shipping">
-						<label for="shippingaddress" class="check"></label>
-						</div>
-						<span>Shipping Address</span>
-						<div class="check-common billing">
-						<input type="checkbox" name="billingaddress" ng-model="addr.Billing" id="billingaddress">
-						<label for="billingaddress" class="check"></label>
-						</div>
-						<span>Billing Address</span>
-						 -->
 						 <div>
 						 <input type="checkbox" name="shippingaddress" id="shippingaddress" ng-model="addr.Shipping"  class="checkbox-custom">
 						 <label  for="shippingaddress"  class="checkbox-custom-label">Shipping Address</label>
@@ -102,69 +91,11 @@
 							<button type="button" class="save" ng-click="CreateAddress(addr, addAddress)">SAVE</button>
 							<button type="button" ng-click="addAddr = !addAddr">CANCEL</button>
 						</div>
+						<span class="addrerror">{{addressBook.newaddrerror.data.Errors[0].Message}}</span>
 					</div>
 				</div>
 			</div> 
 		</form>
-		<!-- EDIT ADDRESS STARTS -->
-<!-- 		<form ng-hide="showedit" class="edit-address-main">
-			<div class="edit-address-container" id="top">
-				<h2>Edit Address</h2>
-				<div class="inline-div addr-top">
-					<div>
-						<p>FirstName</p>
-						<input type="text" ng-model="addressBook.editAddr.FirstName"/>
-					</div>
-					<div>
-						<p>Last Name</p>
-						<input type="text" ng-model="addressBook.editAddr.LastName"/>
-					</div>
-				</div>
-				<div class="addr-top">
-					<p>ZIP Code</p>
-					<input class="zip-code" type="text" ng-model="addressBook.editAddr.Zip"/>
-				</div>
-				<div class="addr-top">
-					<p>Address</p>
-					<input type="text"  ng-model="addressBook.editAddr.Street1"/>
-				</div>
-				<div class="addr-top">
-					<p>Address 2</p>
-					<input type="text" ng-model="addressBook.editAddr.Street2"/>
-				</div>
-				<div class="inline-div addr-top">
-					<div>
-						<p>City</p>
-						<input type="text"  ng-model="addressBook.editAddr.City"/>
-					</div>
-					<div>
-						<p>State</p>
-						<div uib-dropdown>
-							<a href ng-model="addressBook.editAddr.State" uib-dropdown-toggle>
-								{{addressBook.stateData}}<i class="fa fa-chevron-down"></i>
-							</a>
-							<div uib-dropdown-menu>
-								<ul>
-									<li ng-click="addressBook.stateSelected(addressBook.editAddr.State)">kk</li>
-									<li ng-click="addressBook.stateSelected(addressBook.editAddr.State)">RNR</li>
-									<li ng-click="addressBook.stateSelected(addressBook.editAddr.State)">PVR</li>
-								</ul>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="contact-num addr-top">
-					<p>Phone Number</p>
-					<input type="number" ng-model="addressBook.contact.Phone1"/>
-					<input type="number" ng-model="addressBook.contact.Phone2"/>
-					<input type="number" ng-model="addressBook.contact.Phone3"/>
-				</div>
-			</div>
-			<div class="button-list addr-top">
-				<button type="button" class="save" ng-click="addressBook.saveAddress(addressBook.editAddr, addressBook.contact)">SAVE</button>
-				<button type="button" ng-click="showedit= !showedit">CANCEL</button>
-			</div>
-		</form> -->
 				<!-- searched LIST STARTS -->
 			<table ng-if="addressBook.qeueryLength > 0">
 				<tr ng-repeat="searchedAddr in addressBook.searchedAddr.Items track by $index" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -263,7 +194,7 @@
 										<input type="text" name="city" ng-model="addressBook.editAddr.City" ng-if="addressBook.editAddr.MultipleCities.length <= 1 || !addressBook.editAddr.MultipleCities" ng-class="{error: searchedAddress.$submitted && searchedAddress.firstname.$invalid}" ng-required="addressBook.editAddr.MultipleCities.length <= 1 || !addressBook.editAddr.MultipleCities" />
 										<div uib-dropdown class="form-control " id="MultipleCities" ng-if="addressBook.editAddr.MultipleCities.length > 1" ng-class="{errorCity: searchedAddress.$submitted && addressBook.editAddr.City=='Select City'}">
 											<div id="sort-dropdown" uib-dropdown-toggle>	
-												<p class="sort-active-show" ng-init="addressBook.editAddr.City = 'Select City'">{{addressBook.editAddr.City}}</p>
+												<p class="sort-active-show" ng-init="addressBook.editAddr.City = 'Select City'">{{addressBook.editAddr.City}} <i class="fa fa-chevron-down"></i></p>
 											</div>
 											<ul class="dropdown-menu" uib-dropdown-menu aria-labelledby="sort-dropdown">
 												<li ng-repeat="city in addressBook.editAddr.MultipleCities" ng-click="addressBook.editAddr.City=city"><a href="">{{city}}</a></li>
@@ -273,18 +204,6 @@
 									<div>
 										<p>State<span class="star">*</span></p>
 										<input type="text" ng-model="addressBook.editAddr.State" name="state" ng-class="{error: searchedAddress.$submitted && searchedAddress.state.$invalid}" required />
-<!-- 										<div uib-dropdown>
-											<a href ng-model="addressBook.editAddr.State" uib-dropdown-toggle>
-												{{addressBook.stateData}}<i class="fa fa-chevron-down"></i>
-											</a>
-											<div uib-dropdown-menu>
-												<ul>
-													<li ng-click="addressBook.stateSelected(addressBook.editAddr.State)">kk</li>
-													<li ng-click="addressBook.stateSelected(addressBook.editAddr.State)">RNR</li>
-													<li ng-click="addressBook.stateSelected(addressBook.editAddr.State)">PVR</li>
-												</ul>
-											</div>
-										</div> -->
 									</div>
 								</div>
 								<div class="contact-num addr-top">
@@ -294,13 +213,6 @@
 									<input type="number" ng-model="addressBook.contact.Phone3" name="phone3" ng-class="{error: searchedAddress.$submitted && searchedAddress.phone3.$invalid}" required max-length="4" ng-paste="$event.preventDefault()" />
 								</div>
 								<div class="addr-top addr-cont">
-									<!-- <label><input type="checkbox" ng-model="addressBook.editAddr.Shipping" ng-checked="addressBook.editAddr.Shipping">Shipping Address</label>
-									<label><input type="checkbox" ng-model="addressBook.editAddr.Billing" ng-checked="addressBook.editAddr.Billing">Billing Address</label> -->
-								<!-- <div class="check-common">
-								<input type="checkbox" name="shippingaddress1" id="shippingaddress1" ng-model="addressBook.editAddr.Shipping" ng-checked="addressBook.editAddr.Shipping">
-								<label for="shippingaddress1" class="check"></label>
-								</div>
-								<span>Shipping Address</span> -->
 								<div>
 								 <input type="checkbox" name="shippingaddress1" id="shippingaddress1" ng-model="addressBook.editAddr.Shipping" ng-checked="addressBook.editAddr.Shipping" class="checkbox-custom">
 								 <label  for="shippingaddress1" class="checkbox-custom-label">Shipping Address</label>
@@ -309,11 +221,6 @@
 								 <input type="checkbox" name="billingaddress1" id="billingaddress1" ng-model="addressBook.editAddr.Billing" ng-checked="addressBook.editAddr.Billing" class="checkbox-custom">
 								 <label  for="billingaddress1" class="checkbox-custom-label">Billing Address</label>
 								</div>
-								<!-- <div class="check-common billing">
-								<input type="checkbox" name="billingaddress1" id="billingaddress1" ng-model="addressBook.editAddr.Billing" ng-checked="addressBook.editAddr.Billing">
-								<label for="billingaddress1" class="check"></label>
-								</div>
-								<span>Billing Address</span> -->
 							</div>
 							</div>
 							<div class="button-list addr-top">
@@ -401,7 +308,7 @@
 										<input type="text" ng-model="addressBook.editAddr.City" ng-if="addressBook.editAddr.MultipleCities.length <= 1 || !addressBook.editAddr.MultipleCities" name="firstname" ng-class="{error: deafaultAddress.$submitted && deafaultAddress.firstname.$invalid}" ng-required="addressBook.editAddr.MultipleCities.length <= 1 || !addressBook.editAddr.MultipleCities" />
 										<div uib-dropdown class="form-control " id="MultipleCities" ng-if="addressBook.editAddr.MultipleCities.length > 1" ng-class="{errorCity: deafaultAddress.$submitted && addressBook.editAddr.City=='Select City'}">
 											<div id="sort-dropdown" uib-dropdown-toggle>	
-												<p class="sort-active-show" ng-init="addressBook.editAddr.City = 'Select City'">{{addressBook.editAddr.City}}</p>
+												<p class="sort-active-show" ng-init="addressBook.editAddr.City = 'Select City'">{{addressBook.editAddr.City}}  <i class="fa fa-chevron-down"></i></p>
 											</div>
 											<ul class="dropdown-menu" uib-dropdown-menu aria-labelledby="sort-dropdown">
 												<li ng-repeat="city in addressBook.editAddr.MultipleCities" ng-click="addressBook.editAddr.City=city"><a href="">{{city}}</a></li>
@@ -410,18 +317,6 @@
 									</div>
 									<div>
 										<p>State<span class="star">*</span></p>
-<!-- 										<div uib-dropdown>
-											<a href ng-model="addressBook.editAddr.State" uib-dropdown-toggle>
-												{{addressBook.stateData}}<i class="fa fa-chevron-down"></i>
-											</a>
-											<div uib-dropdown-menu>
-												<ul>
-													<li ng-click="addressBook.stateSelected(addressBook.editAddr.State)">kk</li>
-													<li ng-click="addressBook.stateSelected(addressBook.editAddr.State)">RNR</li>
-													<li ng-click="addressBook.stateSelected(addressBook.editAddr.State)">PVR</li>
-												</ul>
-											</div>
-										</div> -->
 										<input type="text" ng-model="addressBook.editAddr.State" name="state" ng-class="{error: deafaultAddress.$submitted && deafaultAddress.state.$invalid}" required />
 									</div>
 								</div>
@@ -432,13 +327,6 @@
 									<input type="number" ng-model="addressBook.contact.Phone3" name="phone3" ng-class="{error: deafaultAddress.$submitted && deafaultAddress.phone3.$invalid}" required max-length="4" ng-paste="$event.preventDefault()" />
 								</div>
 								<div class="addr-top addr-cont">
-									<!-- <label><input type="checkbox" ng-model="addressBook.editAddr.Shipping" ng-checked="addressBook.editAddr.Shipping">Shipping Address</label>
-									<label><input type="checkbox" ng-model="addressBook.editAddr.Billing" ng-checked="addressBook.editAddr.Billing">Billing Address</label> -->
-									<!-- <div class="check-common">
-									<input type="checkbox" name="shippingaddress2" id="shippingaddress2" ng-model="addressBook.editAddr.Shipping" ng-checked="addressBook.editAddr.Shipping">
-									<label for="shippingaddress2" class="check"></label>
-									</div>
-									<span>Shipping Address</span> -->
 									<div>
 									 <input type="checkbox" name="shippingaddress2" id="shippingaddress2" ng-model="addressBook.editAddr.Shipping" ng-checked="addressBook.editAddr.Shipping" class="checkbox-custom">
 									 <label  for="shippingaddress2" class="checkbox-custom-label">Shipping Address</label>
@@ -447,13 +335,6 @@
 									 <input type="checkbox" name="billingaddress2" id="billingaddress2"  ng-model="addressBook.editAddr.Billing" ng-checked="addressBook.editAddr.Billing" class="checkbox-custom">
 									 <label  for="billingaddress2" class="checkbox-custom-label">Billing Address</label>
 									</div>
-									<!-- 
-									<div class="check-common billing">
-									<input type="checkbox" name="billingaddress2" id="billingaddress2"  ng-model="addressBook.editAddr.Billing" ng-checked="addressBook.editAddr.Billing">
-									<label for="billingaddress2" class="check"></label>
-									</div>
-									<span>Billing Address</span> -->
-
 								</div>
 							</div>
 							<div class="button-list addr-top">
@@ -540,7 +421,7 @@
 										<input type="text" ng-model="addressBook.editAddr.City" name="firstname" ng-class="{error: makeDefault.$submitted && makeDefault.firstname.$invalid}" ng-required="addressBook.editAddr.MultipleCities.length <= 1 || !addressBook.editAddr.MultipleCities" ng-if="addressBook.editAddr.MultipleCities.length <= 1 || !addressBook.editAddr.MultipleCities" />
 										<div uib-dropdown class="form-control " id="MultipleCities" ng-if="addressBook.editAddr.MultipleCities.length > 1" ng-class="{errorCity: makeDefault.$submitted && addressBook.editAddr.City=='Select City'}">
 											<div id="sort-dropdown" uib-dropdown-toggle>	
-												<p class="sort-active-show" ng-init="addressBook.editAddr.City = 'Select City'">{{addressBook.editAddr.City}}</p>
+												<p class="sort-active-show" ng-init="addressBook.editAddr.City = 'Select City'">{{addressBook.editAddr.City}} <i class="fa fa-chevron-down"></i></p>
 											</div>
 											<ul class="dropdown-menu" uib-dropdown-menu aria-labelledby="sort-dropdown">
 												<li ng-repeat="city in addressBook.editAddr.MultipleCities" ng-click="addressBook.editAddr.City=city"><a href="">{{city}}</a></li>
@@ -550,28 +431,9 @@
 									<div>
 										<p>State<span class="star">*</span></p>
 										<input type="text" ng-model="addressBook.editAddr.State"  name="state" ng-class="{error: makeDefault.$submitted && makeDefault.state.$invalid}" required />
-<!-- 										<div uib-dropdown>
-											<a href ng-model="addressBook.editAddr.State" uib-dropdown-toggle>
-												{{addressBook.stateData}}<i class="fa fa-chevron-down"></i>
-											</a>
-											<div uib-dropdown-menu>
-												<ul>
-													<li ng-click="addressBook.stateSelected(addressBook.editAddr.State)">kk</li>
-													<li ng-click="addressBook.stateSelected(addressBook.editAddr.State)">RNR</li>
-													<li ng-click="addressBook.stateSelected(addressBook.editAddr.State)">PVR</li>
-												</ul>
-											</div>
-										</div> -->
 									</div>
 								</div>
 								<div class="addr-top addr-cont">
-									<!-- <label><input type="checkbox" ng-model="addressBook.editAddr.Shipping" ng-checked="addressBook.editAddr.Shipping">Shipping Address</label>
-									<label><input type="checkbox" ng-model="addressBook.editAddr.Billing" ng-checked="addressBook.editAddr.Billing">Billing Address</label> -->
-									<!-- <div class="check-common">
-									<input type="checkbox" name="shippingaddress3" id="shippingaddress3" ng-model="addressBook.editAddr.Shipping" ng-checked="addressBook.editAddr.Shipping">
-									<label for="shippingaddress3" class="check"></label>
-									</div>
-									<span>Shipping Address</span> -->
 									 <div>
 									 <input type="checkbox" name="shippingaddress3" id="shippingaddress3" ng-model="addressBook.editAddr.Shipping" ng-checked="addressBook.editAddr.Shipping" class="checkbox-custom">
 									 <label  for="shippingaddress3" class="checkbox-custom-label">Shipping Address</label>
@@ -580,12 +442,6 @@
 									 <input type="checkbox" name="billingaddress3" id="billingaddress3"  ng-model="addressBook.editAddr.Billing" ng-checked="addressBook.editAddr.Billing" class="checkbox-custom">
 									 <label  for="billingaddress3" class="checkbox-custom-label">Billing Address</label>
 									</div>
-									<!-- 
-									<div class="check-common billing">
-									<input type="checkbox" name="billingaddress3" id="billingaddress3"  ng-model="addressBook.editAddr.Billing" ng-checked="addressBook.editAddr.Billing">
-									<label for="billingaddress3" class="check"></label>
-									</div>
-									<span>Billing Address</span> -->
 								</div>
 								<div class="contact-num addr-top">
 									<p>Phone Number</p>

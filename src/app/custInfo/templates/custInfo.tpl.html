@@ -1,85 +1,139 @@
 <div class="container-fluid customer-info">
 	<div class="cust-info-container row">
+		<div class="col-sm-12 col-xs-12 col-md-12 col-lg-12 back-common">
+			<a href="javascript: window.history.go(-1)">Back</a>
+		</div>
 		<div class="col-sm-6 col-xs-6 col-md-6 col-lg-6">
 			<div class="col-sm-12 col-xs-12 col-md-12 col-lg-12" ng-init="readStatus=true">
-				<div ng-show="custInfo.list.userGroup.length==0">
-					<h1>PERSONAL INFORMATION <button ng-click="custInfo.editAddress(custInfo.list.user.Phone);isEditing = !isEditing" ng-show="!isEditing">EDIT</button></h1>
+				<div ng-show="custInfo.list.userGroup[0].ID=='StoreFront' || custInfo.list.userGroup[0].ID=='Employee'">
+					<h1>PERSONAL INFORMATION <button ng-click="custInfo.editAddress(custInfo.list.user.Phone);" ng-show="!isEditing">EDIT</button></h1>
 				</div>
-				<div ng-show="custInfo.list.userGroup.length>0">
-					<h1>CORPORATE ACCOUNT INFORMATION <button ng-click="custInfo.editAddress(custInfo.list.user.Phone);isEditing = !isEditing" ng-show="!isEditing">EDIT</button></h1>
+				<div ng-show="custInfo.list.userGroup[0].ID!='StoreFront' && custInfo.list.userGroup[0].ID!='Employee'">
+					<h1>CORPORATE ACCOUNT INFORMATION <button ng-click="custInfo.editAddress(custInfo.list.user.Phone);" ng-show="!isEditing">EDIT</button></h1>
 				</div>
-				<form name="CustEditForm" ng-submit="custInfo.Submit()" novalidate>
-					<div class="info-blk form-group col-md-12 cust-form">
-						<p class="col-md-3 cust-del">Email Address:</p>
-					
-						<span ng-show="!isEditing" class="col-md-6">{{custInfo.list.user.Email}}</span>
-						<input ng-show="isEditing" type="email" class="form-control col-md-6" ng-model="custInfo.list.user.Email" placeholder="email">
+				<form name="CustEditForm" ng-submit="custInfo.Submit(CustEditForm)" novalidate>
+					<div ng-show="!isEditing">
+						<p ng-show="custInfo.list.userGroup[0].ID=='Employee'" class="employe">Bachmans's Employee : Yes</p>
+						<div class="info-blk form-group col-md-12 cust-form">
+							<p class="col-md-3 cust-del">Email Address:</p>
 						
-					</div>
-					<p class="cust-top col-md-12" ng-if="custInfo.list.userGroup.length>0">Primary Account Holder</p>
-					<div class="info-blk form-group col-md-12">
-						<p class="col-md-3 cust-del">First Name:</p>
-						
-						<span ng-show="!isEditing" class="col-md-6">{{custInfo.list.user.Email}}</span>
-						<span ng-show="!isEditing" class="col-md-6">{{custInfo.list.user.FirstName}}</span>
-						<input type="text" ng-show="isEditing" name="fname" class="form-control col-md-6" ng-model="custInfo.list.user.FirstName"  placeholder="FirstName">
-					
-					</div>
-					<div class="info-blk form-group col-md-12">
-						<p class="col-md-3 cust-del">Last Name:</p>
-						
-						<span ng-show="!isEditing" class="col-md-6">{{custInfo.list.user.LastName}}</span>
-						<input type="text" ng-show="isEditing" class="form-control col-md-6" ng-model="custInfo.list.user.LastName"  placeholder="LastName">
-						
-					</div>
-					<div class="cust-street cust-top col-md-12">
-						<p class="col-md-3 cust-del">Street Address:</p>
-						<div class="col-md-6 cust-addr">
-							<p ng-show="!isEditing">{{custInfo.list.defaultAddr[0].CompanyName}}</p>
-							<input type="text" ng-show="isEditing" ng-model="custInfo.list.defaultAddr.CompanyName" placeholder="CompanyName" class="cust-addr1">
-							<div>
-								<span ng-show="!isEditing">{{custInfo.list.defaultAddr[0].FirstName}} {{custInfo.list.defaultAddr[0].LastName}}</span>
-								<input type="text" ng-show="isEditing" ng-model="custInfo.list.defaultAddr[0].FirstName" placeholder="FirstName">
-								<input type="text" ng-show="isEditing" ng-model="custInfo.list.defaultAddr[0].LastName" placeholder="LastName">
-							</div>
-							<span ng-show="!isEditing">{{custInfo.list.defaultAddr[0].Street1}} {{custInfo.list.defaultAddr[0].Street2}} {{custInfo.list.defaultAddr[0].City}}</span>
-							<input type="text" ng-show="isEditing" ng-model="custInfo.list.defaultAddr[0].Street1" placeholder="Street1" ng-blur="custInfo.getLocation()" required>
-							<input type="text" ng-show="isEditing" ng-model="custInfo.list.defaultAddr[0].Street2" placeholder="Street2">
-							<input type="text" ng-show="isEditing" ng-model="custInfo.list.defaultAddr[0].City" placeholder="City" ng-if="custInfo.list.defaultAddr[0].MultipleCities.length <= 1 || !custInfo.list.defaultAddr[0].MultipleCities" />
-							<div uib-dropdown class="form-control " id="MultipleCities" ng-if="custInfo.list.defaultAddr[0].MultipleCities.length > 1">
-								<div id="sort-dropdown" uib-dropdown-toggle>	
-									<p class="sort-active-show" ng-init="custInfo.list.defaultAddr[0].City = 'Select City'">{{custInfo.list.defaultAddr[0].City}}</p>
-								</div>
-								<ul class="dropdown-menu" uib-dropdown-menu aria-labelledby="sort-dropdown">
-									<li ng-repeat="city in custInfo.list.defaultAddr[0].MultipleCities" ng-click="custInfo.list.defaultAddr[0].City=city"><a href="">{{city}}</a></li>
-								</ul>
-							</div>
-							<div>
-								<span ng-show="!isEditing">{{custInfo.list.defaultAddr[0].State}} {{custInfo.list.defaultAddr[0].Country}} {{custInfo.list.defaultAddr[0].Zip}}</span>
-								<input type="text" ng-show="isEditing" ng-model="custInfo.list.defaultAddr[0].State" placeholder="State">
-								<input type="text" ng-show="isEditing" ng-model="custInfo.list.defaultAddr[0].Country" placeholder="Country">
-								<input type="text" ng-show="isEditing" ng-model="custInfo.list.defaultAddr[0].Zip" ng-blur="custInfo.getLocation()" placeholder="Zip" required>
-							</div>
-						</div>
-						<div class="info-blk cust-top">
-							<p class="col-md-3">Phone Number:</p>
-						
-							<span ng-show="!isEditing" class="col-md-6 phone-num">{{custInfo.list.user.Phone}}</span><!--
-							<input type="text" ng-show="isEditing" ng-model="custInfo.list.user.Phone"> -->
-							<input type="number" ng-show="isEditing" placeholder="Area Code" ng-model="custInfo.list.user.contact.Phone1" max-length="3" class="col-md-3 phone-val">
-							<input type="number" ng-show="isEditing" placeholder="Prefix" ng-model="custInfo.list.user.contact.Phone2" max-length="3" class="col-md-3 phone-val">
-							<input type="number" ng-show="isEditing" placeholder="Number" ng-model="custInfo.list.user.contact.Phone3" max-length="4" class="col-md-3 phone-val">
+							<span class="col-md-6">{{custInfo.list.user.Email}}</span>
+							<!-- <input ng-show="isEditing" type="email" class="form-control col-md-6" ng-model="custInfo.list.user.Email" placeholder="email"> -->
 							
 						</div>
-						<div class="info-blk" ng-if="custInfo.list.userGroup.length>0">
-							<p class="col-md-3">Tax Exempt Number:</p>
-							<span ng-show="!isEditing" class="col-md-6">{{custInfo.list.user.xp.TaxExemption.TaxExemptionID}}</span>
-							<input type="text" ng-show="isEditing" value="" class="col-md-6 phone-val1">
+						<p class="cust-top col-md-12" ng-if="custInfo.list.userGroup.length>0">Primary Account Holder</p>
+						<div class="info-blk form-group col-md-12">
+							<p class="col-md-3 cust-del">First Name:</p>
+							<span class="col-md-6">{{custInfo.list.user.FirstName}}</span>
+							<!-- <input type="text" ng-show="isEditing" name="fname" class="form-control col-md-6" ng-model="custInfo.list.user.FirstName"  placeholder="FirstName"> -->
+						
 						</div>
-			        <div class="form-group" ng-show="isEditing">
-						<button type="submit" class="save" ng-disabled="CustEditForm.$invalid" ng-click="isEditing = !isEditing">Save</button>			
-					</div>
+						<div class="info-blk form-group col-md-12">
+							<p class="col-md-3 cust-del">Last Name:</p>
+							<span class="col-md-6">{{custInfo.list.user.LastName}}</span>
+							<!-- <input type="text" ng-show="isEditing" class="form-control col-md-6" ng-model="custInfo.list.user.LastName"  placeholder="LastName"> -->
+							
+						</div>
+						<div class="cust-street cust-top col-md-12">
+							<p class="col-md-3 cust-del">Street Address:</p>
+							<div class="col-md-6 cust-addr">
+								<p>{{custInfo.list.defaultAddr[0].CompanyName}}</p>
+								<input type="text" ng-show="isEditing" ng-model="custInfo.list.defaultAddr.CompanyName" placeholder="CompanyName" class="cust-addr1">
+								<div>
+									<span>{{custInfo.list.defaultAddr[0].FirstName}} {{custInfo.list.defaultAddr[0].LastName}}</span>
+	<!-- 								<input type="text" ng-show="isEditing" ng-model="custInfo.list.defaultAddr[0].FirstName" placeholder="FirstName">
+									<input type="text" ng-show="isEditing" ng-model="custInfo.list.defaultAddr[0].LastName" placeholder="LastName"> -->
+								</div>
+								<span>{{custInfo.list.defaultAddr[0].Street1}} {{custInfo.list.defaultAddr[0].Street2}} {{custInfo.list.defaultAddr[0].City}}</span>
+							<!-- 	<input type="text" ng-show="isEditing" ng-model="custInfo.list.defaultAddr[0].Street1" placeholder="Street1" ng-blur="custInfo.getLocation()" required>
+								<input type="text" ng-show="isEditing" ng-model="custInfo.list.defaultAddr[0].Street2" placeholder="Street2">
+								<input type="text" ng-show="isEditing" ng-model="custInfo.list.defaultAddr[0].City" placeholder="City" ng-if="custInfo.list.defaultAddr[0].MultipleCities.length <= 1 || !custInfo.list.defaultAddr[0].MultipleCities" />
+								 -->
+								<div>
+									<span>{{custInfo.list.defaultAddr[0].State}} {{custInfo.list.defaultAddr[0].Country}} {{custInfo.list.defaultAddr[0].Zip}}</span>
+							<!-- 		<input type="text" ng-show="isEditing" ng-model="custInfo.list.defaultAddr[0].State" placeholder="State">
+									<input type="text" ng-show="isEditing" ng-model="custInfo.list.defaultAddr[0].Country" placeholder="Country">
+									<input type="text" ng-show="isEditing" ng-model="custInfo.list.defaultAddr[0].Zip" ng-blur="custInfo.getLocation()" placeholder="Zip" required>
+								 --></div>
+							</div>
+							<div class="info-blk cust-top">
+								<p class="col-md-3">Phone Number:</p>
+							
+								<span class="col-md-6 phone-num">{{custInfo.list.user.Phone}}</span><!--
+								<input type="text" ng-show="isEditing" ng-model="custInfo.list.user.Phone"> -->
+	<!-- 							<input type="number" ng-show="isEditing" placeholder="Area Code" ng-model="custInfo.list.user.contact.Phone1" max-length="3" class="col-md-3 phone-val">
+								<input type="number" ng-show="isEditing" placeholder="Prefix" ng-model="custInfo.list.user.contact.Phone2" max-length="3" class="col-md-3 phone-val">
+								<input type="number" ng-show="isEditing" placeholder="Number" ng-model="custInfo.list.user.contact.Phone3" max-length="4" class="col-md-3 phone-val">
+								 -->
+							</div>
+							<div class="info-blk" ng-if="custInfo.list.userGroup[0].ID!='StoreFront' && custInfo.list.userGroup[0].ID!='Employee' && custInfo.list.user.xp.TaxExemption.TaxExemptionID">
+								<p class="col-md-3">Tax Exempt Number:</p>
+								<span class="col-md-6">{{custInfo.list.user.xp.TaxExemption.TaxExemptionID}}</span>
+								<!-- <input type="text" ng-show="isEditing" value="" class="col-md-6 phone-val1"> -->
+							</div>
+						</div>
 				</div>	
+				<div ng-show="isEditing" class="edit-block">
+					<div class="group-blk">
+						<div class="blk">
+							<p>FirstName <span class="star">*</span></p>
+							<input type="text" name="fname" class="form-control" ng-model="custInfo.list.user.FirstName" placeholder="FirstName" ng-required="isEditing" ng-class="{error: CustEditForm.$submitted && CustEditForm.fname.$invalid}">
+						</div>
+						<div class="blk">
+							<p>LastName <span class="star">*</span></p>
+							<input type="text" name="lname" class="form-control col-md-6" ng-model="custInfo.list.user.LastName"  placeholder="LastName" ng-required="isEditing" ng-class="{error: CustEditForm.$submitted && CustEditForm.lname.$invalid}">
+						</div>
+					</div>
+					<div class="group-blk">
+						<div class="blk">
+							<p>Email Address <span class="star">*</span></p>
+							<input type="email" name="email" class="form-control col-md-6" ng-model="custInfo.list.user.Email" placeholder="email" ng-required="isEditing" ng-class="{error: CustEditForm.$submitted && CustEditForm.email.$invalid}">
+						</div>
+						<div class="blk phone-blk">
+							<p>Phone Number <span class="star">*</span></p>
+							<input type="number" name="phone1" placeholder="Area Code" ng-model="custInfo.list.user.contact.Phone1" max-length="3" class="col-md-3 phone-val" ng-required="isEditing" ng-class="{error: CustEditForm.$submitted && CustEditForm.phone1.$invalid}" ng-minlength="3">
+							<input type="number" name="phone2" placeholder="Prefix" ng-model="custInfo.list.user.contact.Phone2" max-length="3" class="col-md-3 phone-val" ng-required="isEditing" ng-class="{error: CustEditForm.$submitted && CustEditForm.phone2.$invalid}" ng-minlength="3">
+							<input type="number" name="phone3" placeholder="Number" ng-model="custInfo.list.user.contact.Phone3" max-length="4" class="col-md-3 phone-val" ng-required="isEditing" ng-class="{error: CustEditForm.$submitted && CustEditForm.phone3.$invalid}" ng-minlength="4">
+						</div>
+					</div>
+					<div class="full-blk">
+						<div class="blk">
+							<p>Address 1 <span class="star">*</span></p>
+							<input type="text" name="street1" ng-model="custInfo.list.defaultAddr[0].Street1" placeholder="Street1" ng-blur="custInfo.getLocation()" ng-required="isEditing" ng-class="{error: CustEditForm.$submitted && CustEditForm.street1.$invalid}">
+						</div>
+					</div>
+					<div class="full-blk">
+						<div class="blk">
+							<p>Address 2</p>
+							<input type="text" ng-model="custInfo.list.defaultAddr[0].Street2" placeholder="Street2">
+						</div>
+					</div>
+					<div class="full-blk">
+						<p>Zip <span class="star">*</span></p>
+						<input type="number" name="zip" ng-model="custInfo.list.defaultAddr[0].Zip" ng-blur="custInfo.getLocation()" placeholder="Zip" ng-minlength="5" ng-required="isEditing" ng-class="{error: CustEditForm.$submitted && CustEditForm.zip.$invalid}" max-length="5">
+					</div>
+					<div class="group-blk">
+						<div class="blk">
+							<p>City <span class="star">*</span></p>
+							<input type="text" name="city" ng-model="custInfo.list.defaultAddr[0].City" placeholder="City" ng-if="custInfo.list.defaultAddr[0].MultipleCities.length <= 1 || !custInfo.list.defaultAddr[0].MultipleCities" ng-required="isEditing && (custInfo.list.defaultAddr[0].MultipleCities.length <= 1 || !custInfo.list.defaultAddr[0].MultipleCities)" ng-class="{error: CustEditForm.$submitted && CustEditForm.city.$invalid}" />
+							<div uib-dropdown class="form-control" id="MultipleCities" ng-if="custInfo.list.defaultAddr[0].MultipleCities.length > 1" ng-class="{errorCity: CustEditForm.$submitted && custInfo.list.defaultAddr[0].City = 'Select City'}">
+									<div id="sort-dropdown" uib-dropdown-toggle>	
+										<p ng-init="custInfo.list.defaultAddr[0].City = 'Select City'">{{custInfo.list.defaultAddr[0].City}} <i class="fa fa-chevron-down"></i></p>
+									</div>
+									<ul class="dropdown-menu" uib-dropdown-menu aria-labelledby="sort-dropdown">
+										<li ng-repeat="city in custInfo.list.defaultAddr[0].MultipleCities" ng-click="custInfo.list.defaultAddr[0].City=city"><a href="">{{city}}</a></li>
+									</ul>
+							</div>
+						</div>
+						<div class="blk">
+							<p>State <span class="star">*</span></p>
+							<input type="text" name="state" ng-model="custInfo.list.defaultAddr[0].State" placeholder="State" ng-required="isEditing" ng-class="{error: CustEditForm.$submitted && CustEditForm.state.$invalid}">
+						</div>
+					</div>
+					<div class="form-group">
+						<button type="submit" class="save">Save</button>			
+					</div>
+				</div>
 				</form>
 				<div class="cust-change-pwd col-sm-12 col-xs-12 col-md-12 col-lg-12">
 				<h1>PASSWORD</h1>
@@ -87,14 +141,34 @@
 			</div> 
 			<div class="cust-addrlistContainer col-xs-12 col-sm-12 col-md-12 col-lg-12">
 				<h1>ADDRESS BOOK</h1>
-				<div class="cust-addr-list cust-top">
+<!-- 				<div class="cust-addr-list cust-top">
 					<ul ng-repeat="address in custInfo.list.addresses">
 						<li>
 							<p>{{address.FirstName}} {{address.LastName}}</p>
 							<p class="sub-addr">{{address.Street1}}, {{address.Street2}}, {{address.City}}, {{address.State}}, {{address.Country}}, {{address.Zip}}</p>
 						</li>
 					</ul>
-				</div>
+				</div> -->
+				<table class="address-book">
+					<thead>
+						<tr>
+							<th>Name</th>
+							<th>Address</th>
+							<th>Phone</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="address in custInfo.list.addresses">
+							<td>{{address.FirstName}} {{address.LastName}}</td>
+							<td>
+								<p>{{address.Street1}}</p>
+								<p>{{address.Street2}}</p>
+								<p>{{address.City}} {{address.State}} {{address.Country}} {{address.Zip}}</p>
+							</td>
+							<td>{{address.Phone}}</td>
+						</tr>
+					</tbody>
+				</table>
 			</div>
 			<div class="subscription col-xs-12 col-sm-12 col-md-12 col-lg-12">
 				<div class="sub-header">
@@ -150,22 +224,22 @@
 		</div>
 		<div class="col-sm-12 col-xs-12 col-md-12 col-lg-12">
 			<h1>PAYMENT OPTIONS <!-- <button ng-click="add">ADD CARD</button> --></h1>
-			<div ng-repeat="creditCard in custInfo.creditCard" class="credit-card-details">
-				<h4>{{creditCard.CardType}} ENDING IN {{creditCard.PartialAccountNumber }}</h4>
-				<div class="card-left">
+<!-- 			<div ng-repeat="creditCard in custInfo.creditCard" class="credit-card-details">
+				<h4>{{creditCard.CardType}} ENDING IN {{creditCard.PartialAccountNumber }}</h4> -->
+<!-- 				<div class="card-left">
 					<p>Name on Card</p>
 					<p  class="sub-addr">{{creditCard.CardholderName}}</p>
 					<!-- <button ng-click='isEditing = !isEditing'>Edit</button> -->
-				</div>
-				<div>
+				<!-- </div>  -->
+<!-- 				<div>
 					<p>Billing Address:</p>
 					<p class="sub-addr">{{creditCard.billing.FirstName}} {{creditCard.billing.LastName}}</p>
 					<p class="sub-addr">{{creditCard.billing.Street1}}, {{creditCard.billing.Street2}}, {{creditCard.City}}</p>
 					<p class="sub-addr">{{creditCard.billing.State}}, {{creditCard.billing.Country}} {{creditCard.billing.Zip}}</p>
-				</div>
+				</div> -->
 <!-- 				<button ng-click='paymentEdit = !paymentEdit' ng-show="!paymentEdit">Edit</button>
 				<button>Delete</button> -->
-			</div>
+			<!-- </div> -->
 <!--  			<div ng-show="paymentEdit" class="credit-card-edit col-sm-12 col-xs-12 col-md-12 col-lg-12">
 				<div>
 					<h5>Card Information</h5>
@@ -201,25 +275,52 @@
 				<button ng-click='paymentEdit = !paymentEdit' class="save">Save</button>
 				<button ng-click='paymentEdit = !paymentEdit' ng-show="!paymentEdit">cancel</button>
 			</div>  -->
+			<p ng-if="custInfo.creditCard.length==0">No saved credit cards.</p>
+			<div class="payment" ng-if="custInfo.creditCard.length>0">
+				<div class="credit-card-details">
+					<div ng-repeat="creditCard in custInfo.creditCard">
+						<div class="card-left">
+							<p>Name on Card</p>
+							<p class="sub-addr">{{creditCard.CardholderName}}</p>
+							<!-- <button ng-click='isEditing = !isEditing'>Edit</button> -->
+						</div>
+						<h4>{{creditCard.CardType}} ENDING IN {{creditCard.PartialAccountNumber }}</h4>
+						<div class="billing-addr">
+							<div>
+								<p>Name</p>
+								<p class="sub-addr">{{creditCard.billing.FirstName}} {{creditCard.billing.LastName}}</p>
+							</div>
+							<div>
+									<p>Billing Address</p>
+									<p class="sub-addr">{{creditCard.billing.Street1}}</p>
+									<p class="sub-addr">{{creditCard.billing.Street2}}</p>
+									<p class="sub-addr">{{creditCard.City}}, {{creditCard.billing.State}}, {{creditCard.billing.Country}} {{creditCard.billing.Zip}}</p>
+							</div>
+							<div>
+								<p>Phone</p>
+								<p class="sub-addr">{{creditCard.billing.Phone}}</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
-		<div class="col-sm-12 col-xs-12 col-md-12 col-lg-12 corporate-info" ng-if="custInfo.list.userGroup.length>0">
-			<h1>CORPORATE CHARGE INFORMATION  <button>EDIT</button></h1>
+		<div class="col-sm-12 col-xs-12 col-md-12 col-lg-12 corporate-info" ng-if="custInfo.list.userGroup[0].ID!='StoreFront' && custInfo.list.userGroup[0].ID!='Employee'">
+			<h1>CORPORATE CHARGE INFORMATION  <!-- <button>EDIT</button> --></h1>
 			<div class="left">
 				<p>Charge Limit</p>
-				<p class="sub-addr">$1000.00</p>
+				<p class="sub-addr">{{custInfo.spendingAcc.charges.xp.ChargeLimit | currency}}</p>
 				<p>Company</p>
 				<p class="sub-addr">Wells Fargo</p>
 			</div>
-			<div class="right">
+			<div class="right" ng-init="chargelmt=custInfo.spendingAcc.charges.xp.ChargeLimit; balance=custInfo.spendingAcc.charges.Balance">
 				<p>Amount Owed</p>
-				<p class="sub-addr">$1000.00</p>
+				<p class="sub-addr">{{chargelmt - balance | currency}}</p>
 				<p>Authorized Users</p>
-				<p class="sub-addr">Janet Smith</p>
-				<p class="sub-addr">Mark Smith</p>
-				<p class="sub-addr">Thomas Smith</p>
+				<p class="sub-addr" ng-repeat="users in custInfo.list.userGroup[0].xp.AuthorisedUsers">{{users}}</p>
 			</div>
 		</div>
-		<div class="account-credits col-sm-12 col-xs-12 col-md-12 col-lg-12" ng-if="custInfo.list.userGroup.length==0">
+		<div class="account-credits col-sm-12 col-xs-12 col-md-12 col-lg-12" ng-if="custInfo.list.userGroup[0].ID=='StoreFront' || custInfo.list.userGroup[0].ID=='Employee'">
 			<h1>ACCOUNT CREDITS</h1>
 			<h2>CREDIT BALANCE: <span>{{custInfo.spendingAcc.charges.Balance | currency}}</span></h2>
 		</div>
@@ -281,7 +382,7 @@
 	<modal title="Change PO Number" visible="custInfo.showPOModal" class="change-pwd modal-pop-up">
 		<form name="POForm" ng-submit="custInfo.UpdatePONumber()" novalidate>
 			<div class="form-group security-qtn-block">
-				<input type="text" class="form-control" ng-model="custInfo.PoNo" required placeholder="Current PO Number">
+				<input type="text" class="form-control" ng-model="custInfo.list.user.xp.PO.PONumber" required placeholder="Current PO Number">
 		   </div>
 		   <div class="form-group security-qtn-block">
 				<input type="text" class="form-control" ng-model="custInfo.NPoNo" required placeholder="New PO Number">

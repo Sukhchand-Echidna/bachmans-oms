@@ -15,50 +15,6 @@ function HomeConfig( $stateProvider ) {
 			controller: 'HomeCtrl',
 			controllerAs: 'home',
 			resolve: {
-                /*OrderList: function(OrderCloud, $q) {
-					var arr = {};
-					var dd = $q.defer();
-						// OrderCloud.Orders.ListOutgoing(null, null, null, i, 100).then(function(data){
-							// console.log("searched order", data);
-							// arr.saved=_.filter(data.Items, function(obj) {
-								// console.log(i);
-								// if(data.Items.xp)
-								// if(data.xp.SavedOrder)
-									// return _.indexOf([obj.xp.SavedOrder.Flag], true) > -1
-							// });
-							// arr.onHold=_.filter(data.Items, function(obj){
-								// if(data.Items.xp)
-								// if(data.xp.Status)
-									// return _.indexOf([obj.xp.Status], "OnHold") > -1
-							// });
-							// dd.resolve(arr);
-						// });
-					OrderCloud.Orders.ListOutgoing(null, null, null, null, null, null, null, {"xp.SavedOrder.Flag":true}).then(function(data){
-						arr.saved=data.Items;
-						dd.resolve(arr);
-						console.log("ppppppppppppppppp",data);
-						 
-					});
-                    return dd.promise;
-                },*/
-				/*OrdersOnHold: function(OrderCloud, $q){
-					var dd=$q.defer(), onholdorders = [], onholdordersobj = {};
-					OrderCloud.Shipments.List(null, null, null, null, null, null, {"xp.Status":"OnHold"}).then(function(res){
-						angular.forEach(res.Items, function(res, key){
-							angular.forEach(res.Items, function(res1, key1){
-								OrderCloud.Orders.Get(res1.OrderID).then(function(data){
-									onholdordersobj={"ID":data.ID,"DateCreated":data.DateCreated,"FromUserFirstName":data.FromUserFirstName,"Occassions":"","WireStatusCode":"Wire Status Code","CSRID":data.xp.CSRID};
-									onholdorders.push(onholdordersobj);
-								});
-							},true);
-						},true);
-						dd.resolve(onholdorders);
-					});
-					return dd.promise;
-                },*/
-                /*ShipmentList: function(OrderCloud) {
-                    return OrderCloud.Shipments.List();
-                },*/
 				PromotionsList:function(OrderCloud, $q, Underscore){
 					return OrderCloud.Promotions.List(null,1, 100).then(function(promo){
 					var totalCount = promo.Meta.TotalCount;
@@ -66,10 +22,6 @@ function HomeConfig( $stateProvider ) {
 						return [result.reverse(), totalCount];
 					});
 				}
-				/*,
-                LineItemList: function($stateParams, LineItems) {
-                    return LineItems.List('5u_UJNKj902oIbW3Ya16Ew');
-                }*/
             }
 		});
 }
@@ -151,11 +103,11 @@ function HomeController($sce, $rootScope, $state, $compile, $log, Underscore, $s
 	  columnDefs: [ 
 		{ name: 'xp.SavedOrder.Name', displayName:'Order Name'},
 		{ name: 'FromUserFirstName', displayName:'Customer', filter: {placeholder: 'Search Customer'}, enableFiltering:true},
-		{ name: 'Delete', displayName:'', enableFiltering:false, cellTemplate: '<div class="data_cell"><a popover-trigger="none" popover-is-open="grid.appScope.showDeliveryToolTip[row.entity.ID]" ng-click="grid.appScope.showDeliveryToolTip[row.entity.ID] = !grid.appScope.showDeliveryToolTip[row.entity.ID]" uib-popover-template="grid.appScope.deleteAddress.templateUrl" popover-placement="bottom"><img src="../assets/images/icons-svg/cancel.svg">Delete</a></div><script type="text/ng-template" id="deleteAddress.html"><div click-outside="grid.appScope.closePopover()"><h2>Delete this Address</h2><button type="button" ng-click="grid.appScope.deleteOrder(row)">DELETE</button><button type="button" ng-click="grid.appScope.cancelPopUp()">CANCEL</button></div></script>', width: "15%"},
+		{ name: 'Delete', displayName:'', enableFiltering:false, cellTemplate: '<div class="data_cell"><a popover-trigger="none" popover-is-open="grid.appScope.showDeliveryToolTip[row.entity.ID]" ng-click="grid.appScope.showDeliveryToolTip[row.entity.ID] = !grid.appScope.showDeliveryToolTip[row.entity.ID]" uib-popover-template="grid.appScope.deleteAddress.templateUrl" popover-placement="bottom"><img src="../assets/images/icons-svg/cancel.svg">Delete</a></div><script type="text/ng-template" id="deleteAddress.html"><div click-outside="grid.appScope.closePopover()"><h2>Delete this Order</h2><button type="button" ng-click="grid.appScope.deleteOrder(row)">Yes</button><button type="button" ng-click="grid.appScope.cancelPopUp()">No</button></div></script>', width: "15%"},
 		{ name: 'openOrder', displayName:'', enableFiltering:false, cellTemplate: '<div class="data_cell" ui-sref="buildOrder({ID:row.entity.FromUserID,SearchType:grid.appScope.user,orderID:row.entity.ID})"><a> <i class="fa fa-upload"></i> Open Order</a></div>', width: "15.2%"}
 	  ]
 	};
-	var ticket = localStorage.getItem("alf_ticket");
+	//var ticket = localStorage.getItem("alfrescoTicket");
 	// HomeService.GetPromoInfo(ticket).then(function(res){
 		// vm.PromoInformation=[];
 		// for(var i=3;i<res.items.length;i++){

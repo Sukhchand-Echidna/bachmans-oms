@@ -25,10 +25,10 @@ function OrderClaimConfig( $stateProvider ) {
 				},
 				'orderclaimhead@orderClaim': {
 					templateUrl: 'orderClaim/templates/orderClaimHead.tpl.html'
-				}/*,
+				},
 				'orderclaimfooter@orderClaim': {
 					templateUrl: 'orderClaim/templates/orderClaimFooter.tpl.html'
-				}*/
+				}
 			},
 			resolve:{
 				Order:function($q, $stateParams, OrderCloud){
@@ -55,14 +55,19 @@ function OrderClaimConfig( $stateProvider ) {
 			}
 		})
 }
-function OrderClaimController($scope, $stateParams, OrderCloud, Buyer, Order, LineItemHelpers, $uibModal) {
+function OrderClaimController($scope, $stateParams, OrderCloud, CreditCardService, Buyer, Order, LineItemHelpers, $uibModal, alfrescoAccessURL) {
 	var vm = this;
+	vm.alfrecoTct=localStorage.getItem("alfrescoTicket");
+	vm.userID=$stateParams.userID;
+	vm.alfrescoAccessURL=alfrescoAccessURL;
 	vm.orderclaimsummaryshow=false;
 	var refundarr=[];
 	var refundclaimobj={};
 	vm.uname=$stateParams.name;
 	vm.orderID=$stateParams.orderID;
 	vm.refund=Buyer.xp.Refunds;
+	vm.totalrefundcost=0;
+	vm.totaltax=0;
 	var totalCost = 0;
 	vm.selectresolution="";
 	vm.orderclaimarr1 = [];
@@ -93,6 +98,7 @@ function OrderClaimController($scope, $stateParams, OrderCloud, Buyer, Order, Li
 			console.log(vm.orderclaimarr);
 		}
 	}
+
 	vm.continueclaim = function(){
 		if(vm.orderclaimsummaryshow==false){
 			vm.orderclaimsummaryshow=true;
@@ -104,6 +110,9 @@ function OrderClaimController($scope, $stateParams, OrderCloud, Buyer, Order, Li
 						}
 					};
 				refundarr.push(refund);
+				console.log(vm.orderclaimarr[i]);
+				vm.totalrefundcost=vm.totalrefundcost+vm.orderclaimarr[i].xp.TotalCost;
+				vm.totaltax=vm.totaltax+vm.orderclaimarr[i].xp.Tax;
 				vm.Item_Refund_Amount=vm.Item_Refund_Amount+vm.orderclaimarr[i].LineTotal;
 				vm.Delivery_Refund=vm.Delivery_Refund+vm.orderclaimarr[i].xp.deliveryCharges;
 				vm.Tax_Refund=vm.Tax_Refund+vm.orderclaimarr[i].xp.Tax;
@@ -114,10 +123,29 @@ function OrderClaimController($scope, $stateParams, OrderCloud, Buyer, Order, Li
 	}
 	vm.completeclaim = function(orderID){
 		var refundclaimobj={};
-		console.log(vm.orderclaimarr);
+		console.log(vm.totalrefundcost);
 		vm.Item_Refund_Amount=0;
 		vm.Delivery_Refund=0;
 		vm.Tax_Refund=0;
+		/*OrderCloud.As().Payments.List(orderID).then(function(payments){
+			console.log('payments',payments);
+			console.log(vm.orderclaimarr);
+			angular.forEach(payments.Items, function(val, key) {
+				if(val.Type == "CreditCard"){
+					alert("CreditCard");
+					OrderCloud.Me.Get().then(function(me){
+						console.log(me);
+					})
+					OrderCloud.As().Me.GetCreditCard(val.CreditCardID).then(function(ccval){
+						console.log(ccval);
+						CreditCardService.RefundTransaction(ccval,Order,val.Amount).then(function(cc){
+							console.log(cc);
+
+						})
+					})
+				}
+			}, true);
+		})*/
 		if(vm.orderclaimsummaryshow==false){
 			vm.orderclaimsummaryshow=true;
 			refundclaimobj={"Refunds":refundarr};
@@ -138,37 +166,37 @@ function OrderClaimController($scope, $stateParams, OrderCloud, Buyer, Order, Li
 				
 				var match=angular.extend({},res.xp,refundclaimobj);
 				OrderCloud.Orders.Patch(orderID,{"xp":match});
-				var orderParams = {"Type": "Standard", "xp":{"OrderSource":"OMS","Claim": true,"Refunds":refundarr}};
+				var orderParams = {"Type": "Standard", "xp":{"OrderSource":"OMS","Claim": true,"Refunds":refundarr,"Status":"New"}};
 				OrderCloud.As().Orders.Create(orderParams).then(function(res1){
 					var claimorderid=res1.ID+"_CL";
 					console.log(claimorderid);
-					OrderCloud.As().Orders.Patch(res1.ID,{"ID":claimorderid}).then(function(res2){
+					/*OrderCloud.As().Orders.Patch(res1.ID,{"ID":claimorderid}).then(function(res2){*/
 						for (var i=0; i<vm.orderclaimarr.length; i++) {
 							delete vm.orderclaimarr[i].ID;
 							var line1=vm.orderclaimarr[i];
 							var orderParams1=angular.extend({},line1.xp,orderParams.xp.Refunds[i]);
 							delete vm.orderclaimarr[i].xp;
 							var finalxp=angular.extend({},vm.orderclaimarr[i],{"xp":orderParams1});
-							OrderCloud.As().LineItems.Create(res2.ID, finalxp).then(function(da){
+							OrderCloud.As().LineItems.Create(res1.ID, finalxp).then(function(da){
 								console.log(da);
-								OrderCloud.As().Me.ListCreditCards(null, 1, 100).then(function(cards){
-									vm.creditCardsList = cards.Items;
-								});
-								if(vm.creditCardsList.Items.length==0){
-									console.log("test");
-								}
-								else{
-									CreditCardService.RefundTransaction(null, res1.ID, res1.Total)
-					                .then(function(resp4){
-										if(resp4.ResponseBody.messages.resultCode != "Error"){
-											alert("resp4.ResponseBody.messages.resultCode ")
-										}else{
-											/*vm.TransactionError = resp4.ResponseBody.messages.message[0].text;
-											d.resolve("0");*/
-											alert("TransactionError");
-										}
-					                });
-								}
+								// OrderCloud.As().Me.ListCreditCards(null, 1, 100).then(function(cards){
+								// 	vm.creditCardsList = cards.Items;
+								// });
+								// if(vm.creditCardsList.Items.length==0){
+								// 	console.log("test");
+								// }
+								// else{
+								// 	CreditCardService.RefundTransaction(null, res1.ID, res1.Total)
+					   //              .then(function(resp4){
+								// 		if(resp4.ResponseBody.messages.resultCode != "Error"){
+								// 			alert("resp4.ResponseBody.messages.resultCode ")
+								// 		}else{
+								// 			/*vm.TransactionError = resp4.ResponseBody.messages.message[0].text;
+								// 			d.resolve("0");*/
+								// 			alert("TransactionError");
+								// 		}
+					   //              });
+								// }
 								$uibModal.open({
 						            templateUrl: 'orderClaim/templates/orderClaimPopup.tpl.html',
 						            controller: 'orderClaimPopupCtrl',
@@ -184,7 +212,7 @@ function OrderClaimController($scope, $stateParams, OrderCloud, Buyer, Order, Li
 						        });
 							})
 						}
-					})
+					/*})*/
 				});
 			})
 		}
@@ -212,25 +240,25 @@ function orderClaimPopupController($scope, ClaimResolution, userID, $uibModalIns
 	var vm = this;
 	vm.claimResolution = ClaimResolution;
 	if(vm.claimResolution=="Full Refund"){
-		alert("Full Refund");
+		//alert("Full Refund");
 	}
 	else if(vm.claimResolution=="Partial Refund"){
-		alert("Partial Refund");
+		//alert("Partial Refund");
 	}
 	else if(vm.claimResolution=="Full Refund w/Replacement"){
-		alert("Full Refund w/Replacement");
+		//alert("Full Refund w/Replacement");
 	}
 	else if(vm.claimResolution=="Partial Refund w/Replacement"){
-		alert("Partial Refund w/Replacement");
+		//alert("Partial Refund w/Replacement");
 	}
 	else if(vm.claimResolution=="Replacement to Original Value"){
-		alert("Replacement to Original Value");
+		//alert("Replacement to Original Value");
 	}
 	else if(vm.claimResolution=="Replacement Upgraded"){
-		alert("Replacement Upgraded");
+		//alert("Replacement Upgraded");
 	}
 	else{
-		alert("Gift Card Given");
+		//alert("Gift Card Given");
 	}
 	vm.userID=userID;
 	console.log(vm.claimResolution);

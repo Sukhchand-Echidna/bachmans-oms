@@ -2,6 +2,9 @@
 	<!-- <div id="orderclaimhead" ui-view="orderclaimhead"></div> -->
 	<div class="container-fluid order-claim-page" ng-if="!orderClaim.orderclaimsummaryshow">
 		<div class="order-claim-container">
+			<div class="back-common">
+				<a href="javascript: window.history.go(-1)">Back</a>
+			</div>
 			<div class="custom-details">
 				<span class="custom">Creating Order Claim for: </span>
 				<span class="custom-name">{{orderClaim.uname}}, Order # {{orderClaim.orderID}}</span>
@@ -49,14 +52,15 @@
 								<td  class="qty-value">{{orderSummary.Quantity}}</td>
 								<td class="pro-module">
 									<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 product-img">
+										<img ng-model="prodImage" ng-src="{{orderClaim.alfrescoAccessURL}}/imagefinder/{{orderSummary.Product.ID}}?alf_ticket={{orderClaim.alfrecoTct}}"/>
 									</div>
 									<div class="col-xs-7 col-sm-7 col-md-7 col-lg-7 pro-details">
 										<h1>{{orderSummary.Product.Name}}</h1>
-										<p>SKU #123920 </p>
-										<p>Deluxe</p>
-										<p> - Purple</p>
+										<p>SKU #{{orderSummary.Product.ID}} </p>
+										<p>Size: {{orderSummary.Product.xp.SpecsOptions.Size}}</p>
+										<p> - {{orderSummary.Product.xp.SpecsOptions.Color}}</p>
 										<p class="delivery-date">Delivered: {{orderSummary.xp.deliveryDate | date:'MM/dd/yyyy'}}</p>
-										<a href="javascript:void(0)" class="view">View Notes</a>
+										<!-- <a href="javascript:void(0)" class="view">View Notes</a> -->
 									</div>
 								</td>
 								<td class="price" ng-init="priceedit=true">
@@ -219,7 +223,8 @@
 				</div>
 			</div>
 		</div>
-		<div id="orderclaimsummary" ui-view="orderclaimsummary" ng-if="orderClaim.orderclaimsummaryshow"></div>
-		<div id="orderclaimfooter" ui-view="orderclaimfooter"></div>
+		
 	</div>
+	<div id="orderclaimsummary" ui-view="orderclaimsummary" ng-if="orderClaim.orderclaimsummaryshow"></div>
+	<div id="orderclaimfooter" ui-view="orderclaimfooter"></div>
 </ui-view>

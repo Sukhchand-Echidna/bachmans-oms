@@ -22,8 +22,6 @@
 							</uib-accordion-heading>
 							<form name="checkout.lineItemForm[line.ID]" novalidate>
 								<div class="col-sm-6 col-xs-6 col-lg-6 col-md-6 delivery-address" ng-show="!checkout.isAddrShow{{$index}}">
-									<!-- <h3>Delivery Address</h3>
-									<p ng-click="checkout.viewAddrBook($index)" class="view-addr">View Address Book +</p> -->
 									<div class="address-header">
 										<div class=" col-xs-6 col-sm-6 col-md-6 col-lg-6  delivery-address-header">
 											Delivery Address
@@ -79,7 +77,6 @@
 											<label for="business{{$index}}">Business</label>
 											<div class="radio"></div>
 										</label>
-										<!-- <label class="radio-inline"><input type="radio" name="optradio{{$index}}" ng-model="line.xp.addressType" ng-click="checkout.changeAddrType(line)" ng-disabled="{{line.xp.NoDeliveryExInStore}}" value="Shipping" />Standard Shipping</label> -->
 										<label class="radio-inline radio-common">
 											<input type="radio" id="school{{$index}}" name="optradio{{$index}}" ng-model="line.xp.addressType" ng-click="checkout.changeAddrType(line)" ng-disabled="{{line.xp.NoDeliveryExInStore}}" value="School" />
 											<label for="school{{$index}}">School</label>
@@ -113,12 +110,7 @@
 										</div>
 									</div>
 									<div class="check-top state-block">
-										<!-- <p class="check-top">State</p> -->
 										<p class="">State <span class="star">*</span></p>
-										<!--<select ng-model="line.ShippingAddress.State">
-											<option selected>K</option>
-											<option>RNR</option>
-										</select>-->
 										<input type="text" name="state" ng-model="line.ShippingAddress.State" ng-readonly="line.xp.addressType=='InStorePickUp' ? true : false" required ng-class="{error: checkout.lineItemForm[line.ID].$submitted && checkout.lineItemForm[line.ID].state.$invalid}" />
 									</div>
 									<p class="check-top">Phone Number</p>
@@ -149,7 +141,6 @@
 													<div class="modify-tooltip check-top" click-outside="checkout.closePopover()">
 														<div>
 															<p>Delivery Fees</p>
-															<!-- <input type="text" ng-model="line.xp.deliveryCharges" /> -->
 															<div ng-repeat="(key, val) in line.xp.deliveryFeesDtls" class="delivery-handling">
 																<h5>{{key}} <b ng-if="key=='ServiceFee' && line.xp.DeliveryMethod=='Mixed'"> (50+ Items)</b></h5>
 																<input type="text" value="{{val}}" ng-model="line.xp.deliveryFeesDtls[key]" />
@@ -214,23 +205,14 @@
 													<p class="delivery-header">{{checkout.buyerDtls.xp.DeliveryRuns[0].Run3.Name}}</p>
 													<p class="delivery-day">{{checkout.buyerDtls.xp.DeliveryRuns[0].Run3.TimeSlot}}</p>
 												</li>
-												<!-- <li ng-if="(line.xp.addressType=='Funeral' || line.xp.addressType=='Church') && (line.xp.deliveryDate | date)==(tom | date)" ng-click="line.xp.deliveryRun='Run4'" ng-class="{active:line.xp.deliveryRun=='Run4'}" class="preference">
-													<p class="delivery-header">{{checkout.buyerDtls.xp.DeliveryRuns[0].Run4.Name}}</p>
-													<p class="delivery-day">{{checkout.buyerDtls.xp.DeliveryRuns[0].Run4.TimeSlot}}</p>
-													<p class="delivery-day">${{checkout.buyerDtls.xp.DeliveryRuns[0].Run4.charge}}</p>
-												</li> -->
 											</ul>
 										</div>
 										
 										<div ng-if="line.xp.addressType=='InStorePickUp'" class="select-store">
 											 <p>Select Store</p>
-												 <!--<select>
-													<option ng-repeat="store in storeNames" value="{{store.storeName}}" ng-model="line.selected" ng-selected="store.storeName==line.xp.storeName">{{store.storeName}}</option>
-												 </select>-->
 												 <input type="search" ng-model="line.ShippingAddress.CompanyName" autocomplete="off" ng-value="line.xp.addressType=='InStorePickUp' ? line.ShippingAddress.CompanyName : ''" uib-typeahead="st for st in checkout.storeNames | filter:$viewValue" typeahead-on-select="checkout.addStoreAddress($item, line)" />
 											 <p>
 											<fieldset id="group2">
-												<!-- <label class="radio-inline"><input type="radio" name="group2" ng-model="checkout.fromStoreOrOutside" value="1">Product is coming from my store</label> -->
 												<label class="radio-inline radio-common">
 													<input type="radio" name="group2" ng-model="checkout.fromStoreOrOutside" value="1">
 													<span>Product is coming from my store</span>
@@ -241,7 +223,6 @@
 													<span>Product is coming from somewhere else</span>
 													<div class="radio"></div>
 												</label>
-												<!-- <label class="radio-inline"><input type="radio" name="group2" ng-model="checkout.fromStoreOrOutside" value="2">Product is coming from somewhere else</label> -->
 											</fieldset>
 											</p>
 										</div>
@@ -255,8 +236,6 @@
 									<uib-accordion close-others="checkout.oneAtATime">
 										<uib-accordion-group ng-repeat="addr in addressesList | limitTo: line.limit" is-open="addr.isAddrOpen" ng-click="checkout.selectedAddr(line,addr)">
 											<uib-accordion-heading>
-												<!-- <input type="checkbox" ng-checked="addr.isAddrOpen" /> {{addr.FirstName}} {{addr.LastName}} | {{addr.Zip}} <span ng-if="defualtAddressID==addr.ID">(Default)</span> -->
-												
 													<input type="checkbox" id="saved" class="checkbox-custom" ng-checked="addr.isAddrOpen">
 													<label  for="saved" class="checkbox-custom-label"></label>
 													<span ng-if="!addr.CompanyName">{{addr.FirstName}} {{addr.LastName}} | {{addr.Zip}}</span>
@@ -265,10 +244,6 @@
 											</uib-accordion-heading>
 											<div ng-show="!checkout.isDeliAddrShow{{$index}}" class="saved-delivery-addr">	
 												<a ng-click="checkout.deliveryAddr($index)">Edit</a>
-												<!-- <p>{{addr.Street1}}</p>
-												<p>{{addr.Street2}}</p>
-												<p>{{addr.Zip}}</p>
-												<p>{{addr.Phone}}</p> -->
 												<div class="col-xs-8 bill-addr-value">
 												<p>{{addr.Street1}}</p>
 												<p>{{addr.Street2}}</p>
@@ -404,12 +379,6 @@
 									<div ng-init="line.cardMsg=false">
 										<div class="no-msg">
 											<span>Card Message</span>
-											<!-- <input type="checkbox" name="cardmessage" ng-model="cardMsg"></input> -->
-											<!-- <div class="check-common msg">
-												<input type="checkbox" name="cardmessage" ng-model="line.cardMsg" id="noMessage{{$index}}">
-												<label for="noMessage{{$index}}" class="check"></label>
-											</div>
-											<span>No Message</span> -->
 											<div class="no-msg-cont">
  												<input type="checkbox" ng-model="line.cardMsg" id="noMessage{{$index}}" class="checkbox-custom" name="cardmessage">
  												<label  for="noMessage{{$index}}" class="checkbox-custom-label">No Message</label>
@@ -449,7 +418,6 @@
 							</svg>
 							</span> Payment <button ng-click="checkout.paymentInfoEdit($event)" ng-if="checkout.paymentDone && !checkout.status.paymentOpen">Edit</button></h1>
 					</uib-accordion-heading>
-					<!-- <input type="button" value="Review Order" ng-click="review()" /> -->
 					<div class="payment-module">
 					<div class="payment-method col-xs-7 col-sm-7 col-md-7 col-lg-7">
 						<div class="payment-method-header">
@@ -489,13 +457,6 @@
 						<div class="payment-method-container col-xs-12 col-sm-12 col-md-12 col-lg-12" ng-repeat="card in checkout.creditCardsList" ng-if="checkout.paymentOption == 'CreditCard'">
                             <div ng-init="checkout.getBillingAddress(card)">
                                 <div class="payment-container-header">
-                                    <!-- <label>
-                                        <input type="radio" ng-model="checkout.selectedCard" ng-value="card" />
-                                        <span><i class="fa fa-2x" ng-class="{' fa-cc-amex': card.CardType === 'AmericanExpress', ' fa-cc-mastercard': card.CardType === 'MasterCard', ' fa-cc-visa': card.CardType === 'Visa', ' fa-cc-discover': card.CardType === 'Discover'}"></i></span>
-                                        <span>XXXX XXX XXX {{card.PartialAccountNumber}}</span>
-                                        <span>{{card.ExpirationDate | date : 'MM/yy' : 'UTC'}}</span>
-                                        <span>{{card.CardholderName}}</span>
-                                    </label> -->
                                     <label class="radio-inline radio-common">
 										<input type="radio" ng-model="checkout.selectedCard" ng-value="card">
 										<div class="radio"></div>
@@ -605,10 +566,6 @@
 						<div class="add-card-container col-xs-12 col-sm-12 col-md-12 col-lg-12" ng-if="checkout.paymentOption == 'CreditCard'">
                             <div>
                                 <div class="add-card-header">
-                                    <!-- <label>
-                                        <input type="radio" ng-model="checkout.selectedCard" value="createcreditcard" />
-                                        <span>+ Add/Pay with a new card</span>
-                                    </label> -->
                                     <label class="radio-inline radio-common">
 									<input type="radio" ng-model="checkout.selectedCard" value="createcreditcard">
 									<div class="radio"></div>
@@ -675,8 +632,6 @@
 	                                                </svg>
 	                                            </span>
 	                                        </div>
-											
-											
 											<!--Add new Billing address fields ends here  -->
 	                                    </form>
                                      </div>
@@ -693,7 +648,6 @@
 								<div class="payment-container row">
 									<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9 payment-options">
 										<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-										<!-- <label><input type="radio" ng-model="BachmansCharges" name="BachmansCharge" value="Full" />use {{checkout.UserSpendingAcc['Bachman Charges'].Balance | currency}} Bachman's Charge</label> -->
 										<label class="radio-inline radio-common">
 											<input type="radio" ng-model="BachmansCharges" name="BachmansCharge" value="Full" /><span>use {{checkout.UserSpendingAcc['Bachman Charges'].Balance | currency}} Bachman's Charge</span>
 											<div class="radio"></div>
@@ -701,7 +655,6 @@
 										</div>
 										<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 											<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-											<!-- <label><input type="radio" ng-model="BachmansCharges" name="BachmansCharge" value="Custom" /><span>Enter Custom Charge</span></label> -->
 											<label class="radio-inline radio-common">
 											<input type="radio" ng-model="BachmansCharges" name="BachmansCharge" value="Custom" /><span>Enter Custom Charge</span>
 											<div class="radio"></div>
@@ -720,12 +673,9 @@
 							<div>
 								<div class="payment-container-header col-xs-12 col-sm-12 col-md-12 col-lg-12">
 									<span>Gift Card Information</span>
-									<!-- <span class="total">{{checkout.UserSpendingAcc['Gift Card'].Balance | currency}}</span> -->
 								</div>
 								<div class="payment-container row">
 									<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-										<!-- <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12"> -->
-											<!-- <p><label><input type="radio" ng-model="GiftCharges" name="GiftCharge" value="Full" />use {{checkout.UserSpendingAcc['Gift Card'].Balance | currency}} Gift Card balance</label></p> -->
 											<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9 payment-options">
 												<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 													<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 gift-card">
@@ -736,9 +686,6 @@
 												<span style="color:red;" ng-if="checkout.InvalidGiftCard">Gift Card Not Available/Expired...!</span>
 												<button ng-click="checkout.GCApply(GiftCardNo, checkout.orderDtls)">Apply</button>
 											</div>
-										<!-- </div> -->
-										<!-- <span style="color:red;" ng-if="txtGiftCharges > checkout.UserSpendingAcc['Gift Card'].Balance">You cannot exceed your balance limit...!</span> -->
-									
 									</div>
 								</div>
 							</div>
@@ -750,10 +697,6 @@
 									<div class="col-xs-11 col-sm-11 col-md-11 col-lg-11 payment-options1">
 										<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 											<div>
-											<!-- <p class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-											<input type="radio" name="CashCharge" value="PayCash" ng-model="checkout.PayCashCheque" />Pay through Cash </p>
-											<p class="col-xs-4 col-sm-4 col-md-4 col-lg-4">Amount paid through cash</p> 
-											<input type="number" ng-disabled="checkout.PayCashCheque == 'PayCheque'" ng-model="checkout.txtPayCash"  class="col-xs-6 col-sm-6 col-md-6 col-lg-6"/><span></span>-->
 											<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
 												<label class="radio-inline radio-common">
 													<input type="radio" name="CashCharge" value="PayCash" ng-model="checkout.PayCashCheque" />
@@ -765,13 +708,6 @@
 											<input type="number" ng-disabled="checkout.PayCashCheque == 'PayCheque'" ng-model="checkout.txtPayCash"  class="col-xs-6 col-sm-6 col-md-6 col-lg-6"/>
 											</div>
 											<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-												<!-- <p class="col-xs-12 col-sm-12 col-md-12 col-lg-12"><input type="radio" name="CashCharge" ng-model="checkout.PayCashCheque" value="PayCheque" />Pay through Cheque</p>
-												<p class="col-xs-4 col-sm-4 col-md-4 col-lg-4">Check Number</p>
-												<input type="number" class="col-xs-6 col-sm-6 col-md-6 col-lg-6" ng-disabled="checkout.PayCashCheque == 'PayCash'" ng-model="checkout.txtChequeNumber" />
-												<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-													<p class="col-xs-4 col-sm-4 col-md-4 col-lg-4">Amount Paid through Cheque</p>
-													<input ng-disabled="checkout.PayCashCheque == 'PayCash'" type="number" ng-model="checkout.txtChequeAmt" class="col-xs-6 col-sm-6 col-md-6 col-lg-6"/><span></span>
-												</div> -->
 												<div>
 													<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
 													<label class="radio-inline radio-common">
@@ -809,7 +745,6 @@
 								<div class="payment-container row">
 									<div class="col-xs-8 col-sm-8 col-md-8 col-lg-8 payment-options">
 										<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-											<!-- <p><label><input type="radio" name="PurpleCharge" ng-model="PurpleCharges" value="Full" />use {{checkout.UserSpendingAcc['Purple Perks'].Balance | currency}} Purple Perks balance</label></p> -->
 											<div>
 												<label class="radio-inline radio-common">
 													<input type="radio" name="PurpleCharge" ng-model="PurpleCharges" value="Full" /><span>
@@ -819,11 +754,6 @@
 												</label>
 											</div>
 											<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-													<!-- <p class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-														<label><input type="radio" ng-model="PurpleCharges" name="PurpleCharge" value="Custom" />
-														Enter Custom charge</label>
-													</p> -->
-													
 												<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5">
 													 <label class="radio-inline radio-common">
 														<input type="radio" ng-model="PurpleCharges" name="PurpleCharge" value="Custom" /><span>
@@ -845,12 +775,9 @@
 							<div>
 								<div class="payment-container-header col-xs-12 col-sm-12 col-md-12 col-lg-12">
 									<span>Purchase Order</span>
-									<!-- <span class="total">{{checkout.UserSpendingAcc['Gift Card'].Balance | currency}}</span> -->
 								</div>
 								<div class="payment-container row">
 									<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-										<!-- <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12"> -->
-											<!-- <p><label><input type="radio" ng-model="GiftCharges" name="GiftCharge" value="Full" />use {{checkout.UserSpendingAcc['Gift Card'].Balance | currency}} Gift Card balance</label></p> -->
 											<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9 payment-options">
 												<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 													<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 gift-card">
@@ -858,29 +785,16 @@
 													</div>
 													<input ng-model="checkout.CurrentUser.xp.PO.PONumber" type="text" class="col-xs-6 col-sm-6 col-md-6 col-lg-6" />
 												</div>
-												<!-- <span style="color:red;" ng-if="checkout.ValidPOUser==false">Invalid PO Number...!</span>
-												<button ng-click="checkout.PONoValidate(checkout.CurrentUser.xp.PO.PONumber)">Apply</button> -->
 											</div>
-										<!-- </div> -->
-										<!-- <span style="color:red;" ng-if="txtGiftCharges > checkout.UserSpendingAcc['Gift Card'].Balance">You cannot exceed your balance limit...!</span> -->
-									
 									</div>
 								</div>
 							</div>
 						</div>
 					</div>
 					<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 billing-address" ng-if="checkout.selectedCard=='createcreditcard'">
-										<!--<div class="col-xs-12 p0 form-group card-remember">
-	                                           <span ng-if="checkout.ErrorMessage.resultCode=='Error'">{{checkout.ErrorMessage.message[0].text}}</span>
-	                                        </div>
-											<!-- Add new Billing address fields starts here  
-											<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5">
-												<a ng-click="checkout.showAddressModal('getBillingAddressModal', $index)">Billing Addresses</a>
-												<a ng-click="checkout.showAddressModal('getShippingAddressModal', $index)">Shipping Addresses</a>
-											</div>-->
 											<h1>Billing Address</h1>
 											<div class="billing-options col-xs-12">
-											<div class="col-xs-6">
+											<div class="col-xs-6"  ng-if="checkout.creditCardsList.length > 0">
 											<label class="radio-inline radio-common">
 											<input type="radio" id="addressbook" ng-model="checkout.BillingAddresses" value="addressbook" name="address" />
 											<label for="addressbook">Address Book</label>
@@ -990,13 +904,6 @@
 													<input type="text" class="form-control" id="email" placeholder="Email Address" ng-model="checkout.billingAddress.xp.Email" />
 												</div>
 												<div class="col-xs-12 p0 form-group card-remember">
-													<!-- <div class="check-common">
-													
-														<input type="checkbox" id="save" ng-init="checkout.addCard=false" ng-model="checkout.addCard" ng-click="checkout.ValidateAddress(checkout.billingAddress)" ng-disabled="checkout.creditCardsList.length >= 3" />
-														<label for="save" class="check"></label>
-													</div> -->
-												  <!--  <span ng-if="checkout.creditCardsList.length < 3">Save this card for future payments</span>
-												   <span ng-if="checkout.creditCardsList.length >= 3">Cannot add more than 3 cards</span> -->
 												   <div>
 													 <input type="checkbox" id="save" ng-init="checkout.addCard=false" ng-model="checkout.addCard" ng-click="checkout.ValidateAddress(checkout.billingAddress)" ng-disabled="checkout.creditCardsList.length >= 3"  class="checkbox-custom" name="cardmessage">
 													 <label  for="save" class="checkbox-custom-label" ng-if="checkout.creditCardsList.length < 3">Save this card for future payments</label>
@@ -1115,13 +1022,6 @@
 					</uib-accordion>
 				</uib-accordion-group>
 			</uib-accordion>
-
-			<!-- For Place order button section STARTS -->
-			<!-- <div class="row review-content">
-                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                    <button class="place-order" ng-click="checkout.submitOrder()">Place Order</button>
-                </div>
-            </div> -->
 			<!-- For Place order button section ENDS -->
 		</div>
 	</div>
@@ -1150,10 +1050,6 @@
 							<span class="price">{{item.LineTotal | currency}}</span>
 						</div>
 					</div>
-                    <!--  <div class="charges-total">
-                        <p>Recipient Subtotal: <span>{{ checkout.getRecipientSubTotal(lineitems) | currency }}</span></p>
-                        <p>Recipient Tax: <span>{{ checkout.getRecipientTax(lineitems) | currency }}</span></p>
-                    </div> -->
 				</uib-accordion-group>
 				<div class="charges-total">
 					<p>Subtotal  <span>{{checkout.order.Subtotal | currency}}</span></p>

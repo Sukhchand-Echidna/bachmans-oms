@@ -1,11 +1,13 @@
 <div class="oms-plp-left">
-	<div class="plp-left-container">
+	<div class="plp-left-container" ng-class="{disabled: buildOrderLeft.guest}">
 		<div class="order-for">
 			<h1>Order For</h1>
 			<p>{{buildOrderLeft.list.user}}</p>
 		</div>
 		<div class="order-address">
-			<p>{{buildOrderLeft.list.address.Street1}} {{buildOrderLeft.list.address.Street2}} {{buildOrderLeft.list.address.Zip}}</p>
+			<p>{{buildOrderLeft.list.address.Street1}}</p>
+			<p>{{buildOrderLeft.list.address.Street2}}</p>
+			<p>{{buildOrderLeft.list.address.City}} {{buildOrderLeft.list.address.State}} {{buildOrderLeft.list.address.Country}} {{buildOrderLeft.list.address.Zip}}</p>
 		</div>
 		<div class="order-price" ng-if="!buildOrder.disable">
 			<h2>{{buildOrderLeft.spendingAccounts[0].Name}}</h2> <p>{{buildOrderLeft.spendingAccounts[0].Balance | currency}}</p>
@@ -76,7 +78,7 @@
 			<button ng-click="noteinput(); note.descp=''" ng-disabled="buildOrder.disable">ADD NOTE</button>
 		</div>
 		<ul class="order-messages">
-			<form ng-submit="addNote()" ng-show="show">
+			<form ng-submit="addNote(); note.descp=''" ng-show="show">
 				<input type="text" ng-model="note.descp" placeholder="New Note" ng-required/>
 			</form>
 			<li ng-repeat="note in buildOrderLeft.list.Notes | limitTo: itemsLimit() track by $index">
@@ -84,21 +86,74 @@
 					<p>{{note.Date | date:'yyyy-MM-dd'}}</p>
 					<h5>{{note.Description}}</h5>
 				</div>					
-				<a href="javascript:void(0)" popover-trigger="none" popover-is-open="showDeliveryToolTip" ng-click="showDeliveryToolTip = !showDeliveryToolTip" uib-popover-template="deleteNote.templateUrl"><img src="../assets/images/icons-svg/cancel.svg"></a>
+				<a href="javascript:void(0)" popover-trigger="none" popover-is-open="buildOrderLeft.showDeliveryToolTip{{$index}}" ng-click="buildOrderLeft.showDeleteToolTip($index)" uib-popover-template="deleteNote.templateUrl"><img src="../assets/images/icons-svg/cancel.svg"></a>
 			</li>
 		</ul>
 		<script type="text/ng-template" id="deleteNote.html">
-				<div  click-outside="closePopover()">
+				<div click-outside="closePopover($index)">
 					<h2>Delete this Note</h2>
-					<button type="button" ng-click="remove($index)">DELETE</button>
-					<button type="button" ng-click="cancelPopUp()">CANCEL</button>
+					<button type="button" ng-click="remove($index)">Yes</button>
+					<button type="button" ng-click="cancelPopUp($index)">No</button>
 				</div>
 		</script>
 		<a href="javascript: void(0)" ng-show="hasMoreItemsToShow()"  ng-click="showMoreItems()">View All Notes</a>
 	</div>
 </div>
-<modal title="Payment Method" visible="showpayment" id="paymentmethod" class="modal-pop-up">
-	<h3>Credit Cards</h3>
+<modal title="Payment Method - Credit Card" visible="showpayment" id="paymentmethod" class="modal-pop-up payment-method">
+	<!-- <h3>Credit Card</h3> -->
+	<table>
+		<tr>
+			<th></th>
+			<th>Card Image</th>
+			<th>Card Number</th>
+			<th>Name On Card</th>
+			<th>Expiration Date</th>
+		</tr>
+		<div class=" payment-container">
+			<tr ng-repeat="card in buildOrderLeft.cclist" ng-if="card">
+				<td>
+						<!-- <input type="radio" ng-model="buildOrderLeft.defaultUserCardID" name="rad" ng-click="buildOrderLeft.makedefaultcard(card.ID)" value="{{card.ID}}"> -->
+						<div class="radio-btn-container" ng-if="buildOrderLeft.defaultUserCardID==card.ID">
+							<div class="size-box col-xs-12 col-sm-12 col-md-12 col-lg-12">
+								<input type="radio" id="default" name="rad" 
+								ng-model="buildOrderLeft.defaultUserCardID" value="{{card.ID}}">
+								<label for="default">
+									<span class="radioOutline">
+									<span class="radioInside"></span>
+									</span>
+									<span class="default-pay">Default</span>
+								</label>
+							</div>
+						</div>
+						<div class="radio-btn-container" ng-if="buildOrderLeft.defaultUserCardID!=card.ID">
+							<div class="size-box col-xs-12 col-sm-12 col-md-12 col-lg-12">
+								<input type="radio" id="mkDefault" name="mkDefault" 
+								ng-model="buildOrderLeft.defaultUserCardID" value="{{card.ID}}">
+								<label for="mkDefault">
+									<span class="radioOutline">
+									<span class="radioInside"></span>
+									</span>
+									<span class="default-pay">Make Default</span>
+								</label>
+							</div>
+						</div>
+				</td>
+				<td>	
+					<img src="../assets/images/{{card.CardType}}.svg" class="visa-icon" />
+				</td>
+				<td>
+					<p class="addr-line1">XXXX XXXX XXXX {{card.PartialAccountNumber}}</p>
+				</td>			
+				<td>
+					<p class="value">{{card.CardholderName}}</p>
+				</td>
+				<td>
+					<p class="value">{{card.ExpirationDate | date: 'MM/yy' : 'UTC' }}</p>
+				</td>
+			</tr>
+		</div>
+	</table>
+	<!-- <h3>Credit Cards</h3>
 	<div>
 		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 credit-card-list-item" ng-repeat="card in buildOrderLeft.cclist" ng-if="card">
             <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2 default-payment">
@@ -125,5 +180,5 @@
                 <p class="value">{{card.ExpirationDate | date: 'MM/yy' : 'UTC' }}</p>
             </div>
         </div>
-	</div>
+	</div> -->
 </modal>
