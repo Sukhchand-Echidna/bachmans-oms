@@ -1,14 +1,16 @@
 		<div class="oms-plp-right" id="oms-plp-right" ng-show="hideActiveSummary" cg-busy="{promise:buildOrderRight.ActiveOrderCartLoader,templateUrl:'common/loading-indicators/templates/view.loading.tpl.html'}">
-            <h1>ACTIVE ORDER</h1>
+            <h1 id="scrollTop">ACTIVE ORDER</h1>
 			<div ng-if="buildOrderRight.lineItemProducts.length == 0 || buildOrderRight.lineItemProducts.length == null " class="no-items">
 				<p>There are currently no items in your order.</p>
 		   </div>
-			<div ng-repeat="line in buildOrderRight.lineItemProducts track by line">
+			<div ng-repeat="line in buildOrderRight.lineItemProducts track by $index">
 				<div class="pdt_name">
-					<h2>{{buildOrderRight.activeOrders[line][0].Product.Name}}</h2>
+				 <h2>{{buildOrderRight.activeOrders[line][0].Product.Name}}</h2>
+					<div class="prod-variants-del">
 					<p class="prod-variants">Size: <span>{{buildOrderRight.activeOrders[line][0].Product.xp.SpecsOptions.Size}}</span></p>
 					<p class="prod-variants">Color: <span>{{buildOrderRight.activeOrders[line][0].Product.xp.SpecsOptions.Color}}</span></p>
-					<p>Quantity: <span>{{prodQty[line]}}</span></p>
+					<p class="prod-variants">Quantity: <span>{{prodQty[line]}}</span></p>	
+					</div>
 					<div class="note-edit">
 						<button class="notes" ng-hide="buildOrderRight.activeOrders[line][0].Product.xp.productNote || buildOrderRight.prodNoteShow{{$index}}" ng-click="buildOrderRight.showNoteField($index)">Order Product Note</button>
 						<form ng-submit="buildOrderRight.updateProdNote($index,prodNotes,buildOrderRight.activeOrders[line][0].ProductID,line,$parent.buildOrderRight)">
@@ -148,8 +150,46 @@
 					<button class="notes" ng-click="buildOrderRight.GetDeliveryMethods(buildOrderRight.activeOrders[line][0].Product.ID, $index, buildOrderRight.activeOrders[line][0].xp.ProductImageUrl)" popover-trigger="none" popover-placement="bottom-left" popover-is-open="buildOrderRight.showDeliveryToolTip{{$index}}" uib-popover-template="showDeliveryMethods.templateUrl">ADD Recipient</button>
 					<script type="text/ng-template" id="AddRecipientDelMethods.html">
 							<div click-outside="closePopover()">
-								<h4>Delivery Method</h4>
-								<label class="radio-inline radio-common" ng-if="buildOrderRight.Courier">
+							<div class="add-recipient">
+								<h2>Delivery Method</h2>
+								<div class="radio-btn-container"  ng-if="buildOrderRight.Courier">
+									<div class="size-box">
+										<input type="radio" id="courier" name="optradio1" ng-model="buildOrderRight.DeliveryType" value="Courier">
+										<label for="courier">
+											<span class="radioOutline">
+											<span class="radioInside"></span>
+											</span>
+											<span class="courier1">Courier</span>
+										</label>
+									</div>
+								</div>
+								<div class="radio-btn-container" ng-if="buildOrderRight.Faster">
+									<div class="size-box">
+										<input type="radio" id="fast" name="optradio1" ng-model="buildOrderRight.DeliveryType" value="Faster">
+										<label for="fast">
+											<span class="radioOutline">
+											<span class="radioInside"></span>
+											</span>
+											<span class="courier1">Faster Delivery</span>
+										</label>
+									</div>
+								</div>
+								<div class="radio-btn-container">
+									<div class="size-box">
+										<input type="radio" name="optradio1" ng-model="buildOrderRight.DeliveryType" value="Default" ng-init="buildOrderRight.DeliveryType='Default'" id="defaultdel">
+										<label for="defaultdel">
+											<span class="radioOutline">
+											<span class="radioInside"></span>
+											</span>
+											<span class="courier1">Default Delivery</span>
+										</label>
+									</div>
+								</div>
+								<button type="button" ng-click="cancelPopUp(buildOrderRight.activeOrders[line][0].Product.ID, buildOrderRight.DeliveryType, $index)">Yes</button>
+								<button type="button" ng-click="closePopover($index)">No</button>
+							</div>
+								<!-- <h2>Delivery Method</h2> -->
+								<!-- <label class="radio-inline radio-common" ng-if="buildOrderRight.Courier">
 									<input type="radio" id="courier" name="optradio1" ng-model="buildOrderRight.DeliveryType" value="Courier">
 									<label for="courier">Courier</label>
 									<div class="radio"></div>
@@ -158,16 +198,15 @@
 									<input type="radio" id="fast" name="optradio1" ng-model="buildOrderRight.DeliveryType" value="Faster">
 									<label for="fast">Faster Delivery</label>
 									<div class="radio"></div>
-								</label>
-								<label class=""><input type="radio" name="optradio1" ng-model="buildOrderRight.DeliveryType" value="Default" ng-init="buildOrderRight.DeliveryType='Default'">Default Delivery</label>
-								<button type="button" ng-click="cancelPopUp(buildOrderRight.activeOrders[line][0].Product.ID, buildOrderRight.DeliveryType, $index)">Yes</button>
-								<button type="button" ng-click="closePopover($index)">No</button>
+								</label> -->
+								<!-- <label class=""><input type="radio" name="optradio1" ng-model="buildOrderRight.DeliveryType" value="Default" ng-init="buildOrderRight.DeliveryType='Default'">Default Delivery</label> -->
+								
 							</div>
 					</script>
 				</div>
 				<div class="receipient-details">
 					<uib-accordion close-others="oneAtATime">
-					<uib-accordion-group ng-repeat="lineitem in buildOrderRight.activeOrders[line] track by lineitem.ID" is-open="buildOrderRight.isOpen[lineitem.ID]">
+					<uib-accordion-group ng-repeat="lineitem in buildOrderRight.activeOrders[line] track by $index" is-open="buildOrderRight.isOpen[lineitem.ID]">
 						<form role="form" class="lineItemForm" id="lineItemForm_{{lineitem.ID}}" name="buildOrderRight.lineItemForm[lineitem.ID]" disable-dynamic-validation>
 							<uib-accordion-heading>
 								<svg class="close" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
@@ -177,8 +216,8 @@
 									<path d="M 16 3 C 8.83214 3 3 8.83214 3 16 C 3 23.1679 8.83214 29 16 29 C 23.1679 29 29 23.1679 29 16 C 29 8.83214 23.1679 3 16 3 Z M 16 5 C 22.087 5 27 9.91302 27 16 C 27 22.087 22.087 27 16 27 C 9.91302 27 5 22.087 5 16 C 5 9.91302 9.91302 5 16 5 Z M 10 15 L 10 17 L 22 17 L 22 15 L 10 15 Z" />
 								</svg>
 								Item {{$index+1}} of {{buildOrderRight.activeOrders[line].length}} - Recipient <i>{{lineitem.LineTotal | currency}}</i>
-								<span ng-click="buildOrderRight.DeleteToolTipPopOver($event, lineitem.ID)" popover-trigger="none" popover-placement="top-left" popover-is-open="buildOrderRight.CancelDeleteToolTip[lineitem.ID]" uib-popover-template="buildOrderRight.DeleteToolTip.templateUrl">
-									<svg version="1.1" class="delete" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+								<span popover-trigger="none" popover-placement="top-left" popover-is-open="buildOrderRight.CancelDeleteToolTip[lineitem.ID]" uib-popover-template="buildOrderRight.DeleteToolTip.templateUrl">
+									<svg version="1.1" class="delete" ng-click="buildOrderRight.DeleteToolTipPopOver($event, lineitem.ID)" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 											 viewBox="0 0 34 34" style="enable-background:new 0 0 34 34;" xml:space="preserve">
 										<style type="text/css">
 											.st{fill:#F32929;}
@@ -205,19 +244,24 @@
 							<div class="receipient-drpDown">
 								<div class="qty">
 									<p>Quantity <span class="star">*</span></p>
-									<input type="number" ng-class="{error: buildOrderRight.lineItemForm[lineitem.ID].$submitted && buildOrderRight.lineItemForm[lineitem.ID].qty.$invalid}" name="qty" ng-model="lineitem.Quantity" ng-blur="buildOrderRight.GetDeliveryFees(lineitem, buildOrderRight.lineItemForm[lineitem.ID])" ng-min="1" ng-max="999" ng-required="true" />
+									<input type="number"  ng-class="{error: buildOrderRight.lineItemForm[lineitem.ID].$submitted && buildOrderRight.lineItemForm[lineitem.ID].qty.$invalid}" name="qty" ng-model="lineitem.Quantity" ng-blur="buildOrderRight.GetDeliveryFees(lineitem, buildOrderRight.lineItemForm[lineitem.ID])" ng-min="1" ng-max="999" ng-required="true" />
+									<input type="checkbox" ng-model="lineitem.xp.notifyMe" ng-checked="lineitem.xp.notifyMe=='true'" ng-if="lineitem.Product.xp.notifyMe==true" />
 									<p ng-if="buildOrderRight.lineItemForm[lineitem.ID].qty.$error.min" style="color:red;"><span>Minimum 1 Quantity</span></p>
 									<p ng-if="buildOrderRight.lineItemForm[lineitem.ID].qty.$error.max" style="color:red;"><span>Maximum 999 Quantity</span></p>
+								</div>
+								<div class="address-cart">
+									<a ng-click="buildOrderRight.viewAddrBook(lineitem)" ng-if="lineitem.xp.addressType=='Residence' && buildOrderRight.addressbook && buildOrderRight.addressesList.length > 0">Address Book</a>
+									<a ng-click="buildOrderRight.GetAboveAddresses(lineitem)" ng-if="lineitem.xp.addressType=='Residence'">Address From Cart</a>
 								</div>
 								<div class="receipient-name" ng-init="buildOrderRight.changeAddrType(lineitem.xp.addressType, lineitem, buildOrderRight.lineItemForm[lineitem.ID], 'onload')">
 									<!-- <h3>In Memory Of</h3> -->
 									<div class="firstNm">
 										<p>First Name <span class="star">*</span></p>
-										<input type="text" ng-blur="buildOrderRight.GetDeliveryFees(lineitem, buildOrderRight.lineItemForm[lineitem.ID])" ng-model="lineitem.ShippingAddress.FirstName" name="FirstName" ng-required="true" max-length="100" ng-class="{error: buildOrderRight.lineItemForm[lineitem.ID].$submitted && buildOrderRight.lineItemForm[lineitem.ID].FirstName.$invalid}" />
+										<input type="text"  ng-blur="buildOrderRight.GetDeliveryFees(lineitem, buildOrderRight.lineItemForm[lineitem.ID])" ng-model="lineitem.ShippingAddress.FirstName" name="FirstName" ng-required="true" max-length="100" ng-class="{error: buildOrderRight.lineItemForm[lineitem.ID].$submitted && buildOrderRight.lineItemForm[lineitem.ID].FirstName.$invalid}" />
 									</div>
 									<div>
 										<p>Last Name <span class="star">*</span></p>
-										<input type="text" ng-blur="buildOrderRight.GetDeliveryFees(lineitem, buildOrderRight.lineItemForm[lineitem.ID])" ng-model="lineitem.ShippingAddress.LastName" name="LastName" ng-required="true" max-length="100" ng-class="{error: buildOrderRight.lineItemForm[lineitem.ID].$submitted && buildOrderRight.lineItemForm[lineitem.ID].LastName.$invalid}" />
+										<input type="text"  ng-blur="buildOrderRight.GetDeliveryFees(lineitem, buildOrderRight.lineItemForm[lineitem.ID])" ng-model="lineitem.ShippingAddress.LastName" name="LastName" ng-required="true" max-length="100" ng-class="{error: buildOrderRight.lineItemForm[lineitem.ID].$submitted && buildOrderRight.lineItemForm[lineitem.ID].LastName.$invalid}" />
 									</div>
 								</div>
 								<div class="receipient-location" ng-init="lineitem.xp.addressType ? '' : lineitem.xp.addressType='Residence'">
@@ -261,7 +305,7 @@
 										<label for="store{{lineitem.ID}}">In-Store Pick Up</label>
 										<div class="radio"></div>
 									</label>
-									<p ng-show="lineitem.DeliveryNotAvailable" ng-if="lineitem.DeliveryNotAvailable ? buildOrderRight.lineItemForm[lineitem.ID].DeliveryNotAvailable = true : buildOrderRight.lineItemForm[lineitem.ID].DeliveryNotAvailable = false" style="color:red;"><span>Delivery Not Available For This Address</span></p>
+									<p ng-show="lineitem.DeliveryNotAvailable && lineitem.ShippingAddress.City != 'Select City'" ng-if="lineitem.DeliveryNotAvailable ? buildOrderRight.lineItemForm[lineitem.ID].DeliveryNotAvailable = true : buildOrderRight.lineItemForm[lineitem.ID].DeliveryNotAvailable = false" class="error"><span>Delivery Not Available For This Address</span></p>
 								</div>
 								<div ng-if="lineitem.xp.addressType=='Hospital' || lineitem.xp.addressType=='Funeral' || lineitem.xp.addressType=='Church'" class="outgoing-wire" ng-init="buildOrderRight.TempAddrType = lineitem.xp.addressType">
 									<div>
@@ -273,12 +317,12 @@
 									<div class="residence-address">
 										<div class="hospital-search" ng-if="lineitem.xp.addressType!='Residence' && lineitem.xp.addressType!='InStorePickUp'" >
 											<h1>Find {{lineitem.xp.addressType}} <span class="star">*</span></h1>
-											<input type="search" name="{{lineitem.xp.addressType}}" autocomplete="off" uib-typeahead="hosp for hosp in buildOrderRight[lineitem.xp.addressType+'Names'] | filter:$viewValue" typeahead-on-select="buildOrderRight.AllDtls($item, lineitem, buildOrderRight.lineItemForm[lineitem.ID])" ng-model="lineitem.ShippingAddress.CompanyName" ng-required="lineitem.xp.addressType!='Residence' && lineitem.xp.addressType!='InStorePickUp'" ng-class="{error: buildOrderRight.lineItemForm[lineitem.ID].$submitted && buildOrderRight.lineItemForm[lineitem.ID][lineitem.xp.addressType].$invalid}" />
+											<input type="search" name="{{lineitem.xp.addressType}}" autocomplete="off" uib-typeahead="hosp for hosp in buildOrderRight[lineitem.xp.addressType+'Names'] | filter:$viewValue" typeahead-on-select="buildOrderRight.AllDtls($item, lineitem, buildOrderRight.lineItemForm[lineitem.ID])"  ng-model="lineitem.ShippingAddress.CompanyName" ng-required="lineitem.xp.addressType!='Residence' && lineitem.xp.addressType!='InStorePickUp'" ng-class="{error: buildOrderRight.lineItemForm[lineitem.ID].$submitted && buildOrderRight.lineItemForm[lineitem.ID][lineitem.xp.addressType].$invalid}" />
 										</div>
 										<div class="willCall-address" ng-show="lineitem.xp.addressType=='InStorePickUp'" ng-if="lineitem.xp.addressType=='InStorePickUp' ? DeliveryMethod = 'InStorePickUp' : DeliveryMethod = 'LocalDelivery'">
 											<div class="willCall-search">
 												<h1>Find store <span class="star">*</span></h1>
-												<input type="search" name="store" autocomplete="off" ng-model="lineitem.willSearch" uib-typeahead="st for st in storeNames | filter:$viewValue" typeahead-on-select="storesDtls($item, lineitem)" ng-required="lineitem.xp.addressType=='InStorePickUp'" ng-class="{error: buildOrderRight.lineItemForm[lineitem.ID].$submitted && buildOrderRight.lineItemForm[lineitem.ID].store.$invalid}" />
+												<input type="search" name="store" autocomplete="off" ng-model="lineitem.willSearch" uib-typeahead="st for st in buildOrderRight.storeNames | filter:$viewValue" typeahead-on-select="storesDtls($item, lineitem)" ng-required="lineitem.xp.addressType=='InStorePickUp'"  ng-class="{error: buildOrderRight.lineItemForm[lineitem.ID].$submitted && buildOrderRight.lineItemForm[lineitem.ID].store.$invalid}" />
 											</div>
 											<div class="pick-up-date">
 												<h1>Pick-up Date <span class="star">*</span></h1>
@@ -307,20 +351,20 @@
 											</div>
 										</div>
 										<div class="location-Code" ng-if="lineitem.xp.addressType!='InStorePickUp' ? DeliveryMethod = 'LocalDelivery' : DeliveryMethod = 'InStorePickUp'">
-											<div class="address-cart">
+											<!-- <div class="address-cart">
 												<a ng-click="buildOrderRight.viewAddrBook(lineitem)" ng-if="lineitem.xp.addressType=='Residence' && buildOrderRight.addressbook && buildOrderRight.addressesList.length > 0">Address Book</a>
 												<a ng-click="buildOrderRight.GetAboveAddresses(lineitem)" ng-if="lineitem.xp.addressType=='Residence'">Address From Cart</a>
-											</div>
+											</div> -->
 										<div class="col-md-6 zipcont">
 											<div class="zipCode">
 												<p>Zip Code <span class="star">*</span></p>
-												<input type="number" name="zip" ng-minlength="5" ng-model="lineitem.ShippingAddress.Zip" max-length="5" autocomplete="off" ng-blur="buildOrderRight.GetDeliveryFees(lineitem, buildOrderRight.lineItemForm[lineitem.ID])" required ng-class="{error: buildOrderRight.lineItemForm[lineitem.ID].$submitted && buildOrderRight.lineItemForm[lineitem.ID].zip.$invalid}"></input>
+												<input type="number" name="zip" ng-minlength="5"  ng-model="lineitem.ShippingAddress.Zip" max-length="5" autocomplete="off" ng-blur="buildOrderRight.GetDeliveryFees(lineitem, buildOrderRight.lineItemForm[lineitem.ID])" required ng-class="{error: buildOrderRight.lineItemForm[lineitem.ID].$submitted && buildOrderRight.lineItemForm[lineitem.ID].zip.$invalid}"></input>
 											</div>
 											</div>
 											<div class="delivery-date col-md-6" ng-if="lineitem.xp.addressType!='InStorePickUp'">
 												<p>Delivery Date <span class="star">*</span></p>
 												<p class="input-group">
-												  <input type="text" name="deliverydate" readonly class="form-control" placeholder="MM/DD/YYYY" uib-datepicker-popup="MM/dd/yyyy" ng-model="lineitem.xp.deliveryDate" is-open="lineitem.openCalenderPopUp" datepicker-options="{formatYear: 'yy', minDate: lineitem.xp.MinDays.MinToday, startingDay: 0, dateDisabled:buildOrderRight.disabledDates}" ng-required="lineitem.xp.addressType!='InStorePickUp'" ng-change="buildOrderRight.GetDeliveryFees(lineitem, buildOrderRight.lineItemForm[lineitem.ID])" ng-class="{error: buildOrderRight.lineItemForm[lineitem.ID].$submitted && buildOrderRight.lineItemForm[lineitem.ID].deliverydate.$invalid}" />
+												  <input type="text" name="deliverydate"  readonly class="form-control" placeholder="MM/DD/YYYY" uib-datepicker-popup="MM/dd/yyyy" ng-model="lineitem.xp.deliveryDate" is-open="lineitem.openCalenderPopUp" datepicker-options="{formatYear: 'yy', minDate: lineitem.xp.MinDays.MinToday, startingDay: 0, dateDisabled:buildOrderRight.disabledDates}" ng-required="lineitem.xp.addressType!='InStorePickUp'" ng-change="buildOrderRight.GetDeliveryFees(lineitem, buildOrderRight.lineItemForm[lineitem.ID])" ng-class="{error: buildOrderRight.lineItemForm[lineitem.ID].$submitted && buildOrderRight.lineItemForm[lineitem.ID].deliverydate.$invalid}" />
 												  <span class="input-group-btn">
 													<button type="button" class="btn btn-default" ng-click="lineitem.openCalenderPopUp=!lineitem.openCalenderPopUp"><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 													 viewBox="0 0 33 36" style="enable-background:new 0 0 33 36;" xml:space="preserve">
@@ -343,21 +387,21 @@
 										</div>
 										<div class="location-addressL1">
 											<h1>Address <span class="star">*</span></h1>
-											<input type="text" name="street1" ng-model="lineitem.ShippingAddress.Street1" ng-blur="buildOrderRight.GetDeliveryFees(lineitem, buildOrderRight.lineItemForm[lineitem.ID])" placeholder="Street1" required max-length="100" ng-class="{error: buildOrderRight.lineItemForm[lineitem.ID].$submitted && buildOrderRight.lineItemForm[lineitem.ID].street1.$invalid}" />
-											<input type="text" ng-model="lineitem.ShippingAddress.Street2" ng-blur="buildOrderRight.GetDeliveryFees(lineitem, buildOrderRight.lineItemForm[lineitem.ID])" placeholder="Street2 (optional)" />
+											<input type="text" name="street1" ng-model="lineitem.ShippingAddress.Street1"  ng-blur="buildOrderRight.GetDeliveryFees(lineitem, buildOrderRight.lineItemForm[lineitem.ID])" placeholder="Street1" required max-length="100" ng-class="{error: buildOrderRight.lineItemForm[lineitem.ID].$submitted && buildOrderRight.lineItemForm[lineitem.ID].street1.$invalid}" />
+											<input type="text" ng-model="lineitem.ShippingAddress.Street2"  ng-blur="buildOrderRight.GetDeliveryFees(lineitem, buildOrderRight.lineItemForm[lineitem.ID])" placeholder="Street2 (optional)" />
 											<div class="location-addressL2">
 											<h6 style="color:red;" ng-if="buildOrderRight.lineItemForm[lineitem.ID].invalidAddress && lineitem.ShippingAddress.Street1 && lineitem.ShippingAddress.Zip">Invalid Address/Zip</h6>
-												<div class="location-state col-md-6">
-													<p>State <span class="star">*</span></p>
-													<input type="text" name="state" ng-model="lineitem.ShippingAddress.State" required ng-class="{error: buildOrderRight.lineItemForm[lineitem.ID].$submitted && buildOrderRight.lineItemForm[lineitem.ID].state.$invalid}" ng-blur="buildOrderRight.AssemblyDtlsAutoPopulate(lineitem)" />
-												</div>
 												<div class="location-city col-md-6" ng-if="lineitem.MultipleCities.length <= 1 || !lineitem.MultipleCities">
 													<p>City <span class="star">*</span></p>
-													<input type="text" name="city" ng-model="lineitem.ShippingAddress.City" ng-required="lineitem.MultipleCities.length <= 1 || !lineitem.MultipleCities" ng-class="{error: buildOrderRight.lineItemForm[lineitem.ID].$submitted && buildOrderRight.lineItemForm[lineitem.ID].city.$invalid}" ng-blur="buildOrderRight.AssemblyDtlsAutoPopulate(lineitem)" />
+													<input type="text" name="city"  ng-model="lineitem.ShippingAddress.City" ng-required="lineitem.MultipleCities.length <= 1 || !lineitem.MultipleCities" ng-class="{error: buildOrderRight.lineItemForm[lineitem.ID].$submitted && buildOrderRight.lineItemForm[lineitem.ID].city.$invalid}" ng-blur="buildOrderRight.AssemblyDtlsAutoPopulate(lineitem)" />
+												</div>
+												<div class="location-state col-md-6">
+													<p>State <span class="star">*</span></p>
+													<input type="text" name="state"  ng-model="lineitem.ShippingAddress.State" required ng-class="{error: buildOrderRight.lineItemForm[lineitem.ID].$submitted && buildOrderRight.lineItemForm[lineitem.ID].state.$invalid}" ng-blur="buildOrderRight.AssemblyDtlsAutoPopulate(lineitem)" />
 												</div>
 												<div class="location-city col-md-6" ng-if="lineitem.MultipleCities.length > 1">
-													<p>Select City <span class="star">*</span></p>
-													<div uib-dropdown class="form-control " id="MultipleCities" ng-class="{errorCity: buildOrderRight.lineItemForm[lineitem.ID].$submitted && lineitem.ShippingAddress.City = 'Select City'}">
+													<p>Select City <span class="star">*</span></p><span ng-if="lineitem.ShippingAddress.City == 'Select City' ? buildOrderRight.lineItemForm[lineitem.ID].$valid = false : ''"></span>
+													<div uib-dropdown class="form-control " id="MultipleCities" ng-class="{errorCity: buildOrderRight.lineItemForm[lineitem.ID].$submitted && lineitem.ShippingAddress.City == 'Select City'}">
 														<div id="sort-dropdown" uib-dropdown-toggle>	
 															<p class="sort-active-show" ng-init="lineitem.ShippingAddress.City = 'Select City'">{{lineitem.ShippingAddress.City}} <i class="fa fa-chevron-down"></i></p>
 														</div>
@@ -365,13 +409,14 @@
 															<li ng-repeat="city in lineitem.MultipleCities" ng-click="buildOrderRight.SelectedCity(city, lineitem, buildOrderRight.lineItemForm[lineitem.ID])"><a href="">{{city}}</a></li>
 														</ul>
 													</div>
-												</div>	
+												</div>
+													
 											</div>
 											<div class="location-contact">
 												<p>Recipients Phone Number</p>
-												<input type="number" name="phone1" ng-model="lineitem.ShippingAddress.Phone1" placeholder="Area Code" max-length="3" ng-paste="$event.preventDefault()" ng-class="{error: buildOrderRight.lineItemForm[lineitem.ID].$submitted && buildOrderRight.lineItemForm[lineitem.ID].phone1.$invalid}" ng-minlength="3" required ng-blur="buildOrderRight.AssemblyDtlsAutoPopulate(lineitem)"></input>
-												<input type="number" name="phone2" ng-model="lineitem.ShippingAddress.Phone2" placeholder="Prefix" max-length="3" ng-paste="$event.preventDefault()" ng-class="{error: buildOrderRight.lineItemForm[lineitem.ID].$submitted && buildOrderRight.lineItemForm[lineitem.ID].phone2.$invalid}" ng-minlength="3" required ng-blur="buildOrderRight.AssemblyDtlsAutoPopulate(lineitem)"></input>
-												<input type="number" name="phone3" ng-model="lineitem.ShippingAddress.Phone3" placeholder="Number" max-length="4" ng-paste="$event.preventDefault()" ng-class="{error: buildOrderRight.lineItemForm[lineitem.ID].$submitted && buildOrderRight.lineItemForm[lineitem.ID].phone3.$invalid}" ng-minlength="4" required ng-blur="buildOrderRight.AssemblyDtlsAutoPopulate(lineitem)"></input>
+												<input type="number" name="phone1"  ng-model="lineitem.ShippingAddress.Phone1" placeholder="Area Code" max-length="3" ng-paste="$event.preventDefault()" ng-class="{error: buildOrderRight.lineItemForm[lineitem.ID].$submitted && buildOrderRight.lineItemForm[lineitem.ID].phone1.$invalid}" ng-minlength="3" required ng-blur="buildOrderRight.AssemblyDtlsAutoPopulate(lineitem)"></input>
+												<input type="number" name="phone2"  ng-model="lineitem.ShippingAddress.Phone2" placeholder="Prefix" max-length="3" ng-paste="$event.preventDefault()" ng-class="{error: buildOrderRight.lineItemForm[lineitem.ID].$submitted && buildOrderRight.lineItemForm[lineitem.ID].phone2.$invalid}" ng-minlength="3" required ng-blur="buildOrderRight.AssemblyDtlsAutoPopulate(lineitem)"></input>
+												<input type="number" name="phone3"  ng-model="lineitem.ShippingAddress.Phone3" placeholder="Number" max-length="4" ng-paste="$event.preventDefault()" ng-class="{error: buildOrderRight.lineItemForm[lineitem.ID].$submitted && buildOrderRight.lineItemForm[lineitem.ID].phone3.$invalid}" ng-minlength="4" required ng-blur="buildOrderRight.AssemblyDtlsAutoPopulate(lineitem)"></input>
 											</div>
 										</div>
 										<!-- <div class="church-del">
@@ -391,11 +436,11 @@
 											<h3 ng-if="lineitem.xp.addressType=='Funeral' || lineitem.xp.addressType=='Cemetery'">In Memory of:</h3>
 											<div class="firstNm">
 												<p>First Name</p>
-												<input type="text" ng-model="lineitem.xp.PatientFName" ng-blur="buildOrderRight.AssemblyDtlsAutoPopulate(lineitem)"></input>
+												<input type="text"  ng-model="lineitem.xp.PatientFName" ng-blur="buildOrderRight.AssemblyDtlsAutoPopulate(lineitem)"></input>
 											</div>
 											<div>
 												<p>Last Name</p>
-												<input type="text" ng-model="lineitem.xp.PatientLName" ng-blur="buildOrderRight.AssemblyDtlsAutoPopulate(lineitem)"></input>
+												<input type="text"  ng-model="lineitem.xp.PatientLName" ng-blur="buildOrderRight.AssemblyDtlsAutoPopulate(lineitem)" ></input>
 											</div>
 										</div>
 									</div>
@@ -467,14 +512,18 @@
 									<h4 ng-repeat="(key, val) in lineitem.xp.deliveryFeesDtls">{{key}} <b ng-if="key=='ServiceFee' && lineitem.xp.DeliveryMethod=='Mixed'"> (50+ Items)</b> <span>{{val | currency}}</span></h4>
 									<!-- <h4 ng-if="lineitem.xp.Discount">Discount <span>-{{lineitem.xp.Discount | currency}}</span></h4> -->
 									<h4 ng-if="lineitem.xp.Tax">Estimated Tax <span>{{ lineitem.xp.Tax | currency }}</span></h4>
-									<h5>Estimate Total<span>{{lineitem.xp.TotalCost | currency}}</span></h5>
+									<h4>Estimate Total<span>{{lineitem.xp.TotalCost | currency}}</span></h4>
 								</div>
 							</div>
 						</form>
 						</uib-accordion-group>
 					</uib-accordion>
+					
 				</div>
+
 			</div>
+
+			<!-- <button ng-click="buildOrderRight.scrollUp('scrollTop')">scroll</button>  -->
         </div>
 		<modal title="Address Book" visible="showModal" id="mymodal" class="view-addr-book modal-pop-up">
 			<table>

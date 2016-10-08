@@ -54,14 +54,6 @@ input.error, .errorCity {
 			overflow-y:auto;
 			top:0px;
 			bottom:0px;
-			h4{
-				font-size:15px;
-				.helvetica-bold;
-				.in-block;
-				width:49%;
-				text-align:right;
-				margin-top:0;
-			}
 			.billing-addr{
 				border:1px solid @color25;
 				background-color:rgba(244, 244, 244, 0.17);
@@ -149,7 +141,7 @@ input.error, .errorCity {
 			}
 			span{
 				.helvetica-regular;
-				font-size: 14px;
+				font-size: 15px;
 				height: 21px;
                line-height: 17px;
 			}
@@ -157,7 +149,7 @@ input.error, .errorCity {
 				width:auto;
 			}
 			.cust-del{
-			 width:16%;
+			 width:17%;
 			}
 			.phone-num{
 			 padding:0px;
@@ -171,6 +163,9 @@ input.error, .errorCity {
 			}
 			.phone-val1{
 			 width:50%;
+			}
+			.phone-num{
+				width:28%;
 			}
 		}
 		.cust-street{
@@ -210,10 +205,10 @@ input.error, .errorCity {
 			}
 		span{
 				.helvetica-regular;
-				font-size: 13px;
+				font-size: 15px;
 			}
 			.cust-del{
-			 width:16%;
+			 width:18%;
 			}
 			.cust-addr{
 		      margin-top: -22px;
@@ -232,18 +227,22 @@ input.error, .errorCity {
 					color:@color1;
 					padding:0 5px 5px;
 				}
-				th,td{
+					th,td{
 						
 						&:first-child{
 							width:30%;
+							float:left;
 						}
 						&:nth-child(2){
 							width:50%;
+							float:left;
 						}
 						&:last-child{
 							width:20%;
+							float:left;
 						}
 				}
+			
 				td{
 					padding:5px;
 					font-size:14px;
@@ -263,6 +262,8 @@ input.error, .errorCity {
 						border:1px solid @color25;
 						background-color:rgba(244, 244, 244, 0.17);
 						margin-bottom:5px;
+						float:left;
+						width:98%;
 						p{
 							margin-bottom:5px;
 						}
@@ -344,7 +345,7 @@ input.error, .errorCity {
 					th, td{
 						width:20%;
 						.helvetica-regular;
-						font-size: 13px;
+						font-size: 15px;
 					}
 					th{
 						.helvetica-bold;
@@ -362,7 +363,7 @@ input.error, .errorCity {
 		}
 		.sub-addr{	
 			.helvetica-regular;
-			font-size: 14px;
+			font-size: 15px;
 			margin-bottom:4px;
 		}
 		.payment{
@@ -374,6 +375,9 @@ input.error, .errorCity {
 					width:49%;
 					vertical-align: top;
 					.in-block;
+					&.expires p{
+						text-align:right;
+					}
 				}
 				p{
 					margin-bottom:3px;

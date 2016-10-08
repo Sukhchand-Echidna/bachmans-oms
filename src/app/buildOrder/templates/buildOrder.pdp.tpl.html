@@ -1,5 +1,5 @@
 <ui-view>
-	<div class="oms_main_container buildOrder-pdp-container" id="buildOrder-pdp-container">
+	<div class="oms_main_container buildOrder-pdp-container" id="buildOrder-pdp-container" cg-busy="{promise:buildOrder.PLPLoader,templateUrl:'common/loading-indicators/templates/view.loading.tpl.html'}">
 		<div class="upselloverlay" ng-show="!buildOrder.upsell || !buildOrder.similar" ng-click="buildOrder.HideUpsellNCross()"></div>
 		<div class="buildOrder-pdp" ng-if="buildOrder.UpsellSimilar!=true">
 			<h1>
@@ -223,31 +223,30 @@
 						</div>
 					</div>
 				</div>
-				<!--  -->
 				<div class="row faster-delivery-content" ng-if="buildOrder.hidePdpblock==false">
                                     <div class="assembly" ng-if="buildOrder.Assembly" ng-init="buildOrder.IsAssembly='Not Assembled'">
                                         <h5>Assembly:</h5>
 										<div class="radio-btn-container">
 											<div class="size-box" ng-click="buildOrder.AssemblyItems()">
 												<input type="radio" id="assembled" name="assembly" 
-												 ng-model="buildOrder.IsAssembly" value="Assembled">
+												 ng-model="buildOrder.IsAssembly" value="Assembled" />
 												<label for="assembled">
 													<span class="radioOutline">
 													<span class="radioInside"></span>
 													</span>
-													<span class="courier">Assembled</span>
+													<span class="assembled">Assembled</span>
 												</label>
 											</div>
 										</div>
 										<div class="radio-btn-container">
 											<div class="size-box">
 												<input type="radio" id="notAssembled" name="assembly" 
-												 ng-model="buildOrder.IsAssembly" value="Not Assembled">
+												 ng-model="buildOrder.IsAssembly" value="Not Assembled" />
 												<label for="notAssembled">
 													<span class="radioOutline">
 													<span class="radioInside"></span>
 													</span>
-													<span class="courier">Not Assembled</span>
+													<span class="assembled">Not Assembled</span>
 												</label>
 											</div>
 										</div>
@@ -263,7 +262,7 @@
 													<span class="radioOutline">
 													<span class="radioInside"></span>
 													</span>
-													<span class="courier">Placed</span>
+													<span class="assembled">Placed</span>
 												</label>
 											</div>
 										</div>
@@ -275,22 +274,23 @@
 													<span class="radioOutline">
 													<span class="radioInside"></span>
 													</span>
-													<span class="courier">Not Placed</span>
+													<span class="assembled">Not Placed</span>
 												</label>
 											</div>
 										</div>
                                         <textarea placeholder="Placement Instruction" rows="4" cols="10" ng-model="buildOrder.PlacementInstruction"></textarea>
                                         <p class="note"><span>Note:&nbsp;</span>Placement Charges Will be applicable</p>
                                     </div>
-                                        <div class="fastDelivery">
-                                        <div class="radio-btn-container">
-											<div class="size-box" ng-click="buildOrder.AssemblyItems()">
-												<input type="radio" name="deliverytype" id="fastDelivery" ng-model="pdp.DeliveryType" value="Mixed"  ng-true-value="'Mixed'" ng-false-value="'NO'">
+                                        <div class="fastDelivery" ng-if="!buildOrder.hidePdpblock && (buildOrder.Courier || buildOrder.Faster)">
+                                        <div class="radio-btn-container" ng-if="buildOrder.Faster">
+											<div class="size-box">
+												<!-- <input type="radio" name="deliverytype" id="fastDelivery" ng-model="pdp.DeliveryType" value="Mixed"  ng-true-value="'Mixed'" ng-false-value="'NO'" /> -->
+												<input type="radio" id="fastDelivery" name="optradio1" ng-model="buildOrder.DeliveryType" value="Faster Delivery" />
 												<label for="fastDelivery">
 													<span class="radioOutline">
 													<span class="radioInside"></span>
 													</span>
-													<span class="courier">Select Faster Delivery</span>
+													<span class="assembled">Select Faster Delivery</span>
 												</label>
 											</div>
 										</div>
@@ -302,17 +302,15 @@
                                             <div class="Checkbox-visible"></div>
                                          </div>
                                          <label class="fastDelivery" for="fastDelivery">Select Faster Delivery</label> -->
-                                         <p class="note"><span>Note:&nbsp;</span>Faster Delivery Charges Will be applicable</p>
-                                         <div class="radio-btn-container">
-											<div class="size-box" ng-click="buildOrder.AssemblyItems()">
-												<input type="radio" id="courier" 
-												name="courier" 
-												 >
+                                         <p class="note" ng-if="buildOrder.Faster"><span>Note:&nbsp;</span>Faster Delivery Charges Will be applicable</p>
+                                         <div class="radio-btn-container" ng-if="buildOrder.Courier">
+											<div class="size-box">
+												<input type="radio" id="courier" name="optradio1" ng-model="buildOrder.DeliveryType" value="Courier">
 												<label for="courier">
 													<span class="radioOutline">
 													<span class="radioInside"></span>
 													</span>
-													<span class="courier">Select Courier</span>
+													<span class="assembled">Select Courier</span>
 												</label>
 											</div>
 										</div>
@@ -619,7 +617,7 @@
 		</div>
 	</div>
 </ui-view>
-<modal title="Order Details Confirm" visible="buildOrder.OrderConfirmPopUp" id="OrderConfirmPopUp" class="create-user-pop-up modal-pop-up">
+<modal title="Order Details Confirmation" visible="buildOrder.OrderConfirmPopUp" id="OrderConfirmPopUp" class="create-user-pop-up modal-pop-up">
 	My details goes here.......
 </modal>
 <modal title="View Care Guide" visible="buildOrderPDP.viewCareGuide" id="careGuide" class="modal-pop-up view-care-guide" ng-init="buildOrderPDP.showArticle=false;">
@@ -656,8 +654,8 @@
 		<ul>
 			<li ng-repeat="items in buildOrder.AssemblyProducts" ng-click="">
 				<div class="check">
-					<input type="checkbox" id="saved" class="checkbox-custom" ng-model="buildOrder.ItemSelected[items.ID]">
-					<label  for="saved" class="checkbox-custom-label"></label>
+					<input type="checkbox" id="saved{{$index}}" class="checkbox-custom" ng-model="buildOrder.ItemSelected[items.ID]">
+					<label  for="saved{{$index}}" class="checkbox-custom-label"></label>
 				</div>
 				<div class="prod_img">
 					<img src="assets/images/flowers.jpg" />

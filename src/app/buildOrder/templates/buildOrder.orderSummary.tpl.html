@@ -1138,7 +1138,7 @@
                     </div>
                 </div>
 			</div>
-			<a class="create" ng-click="userEdit=!userEdit">Create New User</a>
+			<a class="create" ng-click="userEdit=!userEdit;showUser=false;clearData()">Create New User</a>
 		</div>
 		<div ng-hide="!showUser" class="showUserDetails">
 			<p>First Name: <span>{{buildordersummary.showDetails.FirstName}}</span></p>

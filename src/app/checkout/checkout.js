@@ -101,8 +101,8 @@ function checkoutConfig( $stateProvider ) {
 	});
 }
 
-function checkoutController($scope, $state, Underscore, Order, OrderLineItems, ProductInfo, CreditCardService, TaxService, AddressValidationService, OrderCloud, $stateParams, BuildOrderService, $q, AlfrescoFact, $http, checkoutService, LineItemHelpers, GetCstDateTime, GC_PP_Redemption, PPBalance, GCBalance) {
-	var vm = this;
+function checkoutController($scope, $state, Underscore, Order, OrderLineItems, ProductInfo, CreditCardService, TaxService, AddressValidationService, OrderCloud, $stateParams, BuildOrderService, $q, AlfrescoFact, $http, checkoutService, LineItemHelpers, GetCstDateTime, GC_PP_Redemption, PPBalance, GCBalance, alfrescoAccessURL, BuyerListURL) {
+	var vm = this, Promotions = [];
 	vm.logo=AlfrescoFact.logo;
     vm.order = Order;
     vm.orderID = Order.ID;
@@ -129,11 +129,21 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 	vm.initDate = new Date(angular.copy(GetCstDateTime.datetime));//day after tomorrow
 	var tomorrow = $scope.tom;
 	tomorrow = tomorrow.getMonth()+1+"/"+tomorrow.getDate()+"/"+tomorrow.getFullYear();
+	vm.alfticket = localStorage.getItem("alfrescoTicket");
+	vm.alfrescoAccessURL=alfrescoAccessURL;
 	BuildOrderService.GetBuyerDtls().then(function(res){
 		vm.buyerDtls = res;
 		vm.buyerXp = res.xp;
 		vm.buyerDtls.xp.deliveryChargeAdjReasons.unshift("---select---");
 	});
+	angular.forEach(ProductInfo, function(val, key){
+		if(val.Product.xp.couponID){
+			if(val.Product.xp.couponID[0].coupon)
+				Promotions.push(OrderCloud.Promotions.Get(val.Product.xp.couponID[0].coupon));
+		}	
+		if(val.xp.PromoCode)
+			Promotions.push(OrderCloud.Promotions.Get(val.xp.PromoCode));
+	}, true);
 	OrderCloud.As().Me.ListCreditCards(null, 1, 100).then(function(cards){
 		vm.creditCardsList = cards.Items;
 	});
@@ -159,7 +169,13 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 						if(res2=="1"){
 							vm.CheckOutLoader = checkoutService.CreditCardPayment(vm).then(function(res3){
 								if(res3=="1"){
-									console.log("-========>");
+									var obj = {"xp":{}};
+									obj.xp.PrintStatus=false;
+									if(vm.order.Total > 0)
+										vm.orderDtls.SpendingAccounts['CreditCard'] = {"Amount": vm.order.Total};
+									obj.xp.SpendingAccounts = vm.orderDtls.SpendingAccounts;
+									OrderCloud.Orders.Patch(vm.order.ID, obj);
+									vm.buyerList(vm.order.ID);
 								}
 							});
 						}
@@ -172,7 +188,13 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 					if(res1=="1"){
 						vm.CheckOutLoader = checkoutService.CreditCardPayment(vm).then(function(res2){
 							if(res2=="1"){
-								console.log("-========>");
+								var obj = {"xp":{}};
+								obj.xp.PrintStatus=false;
+								if(vm.order.Total > 0)
+									vm.orderDtls.SpendingAccounts['CreditCard'] = {"Amount": vm.order.Total};
+								obj.xp.SpendingAccounts = vm.orderDtls.SpendingAccounts;
+								OrderCloud.Orders.Patch(vm.order.ID, obj);
+								vm.buyerList(vm.order.ID);
 							}
 						});
 					}
@@ -181,9 +203,18 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 				vm.CheckOutLoader = OrderCloud.Orders.Submit(vm.order.ID).then(function(){
 					vm.CheckOutLoader = TaxService.CollectTax(vm.order.ID).then(function(){
 						vm.CheckOutLoader = $q.all(vm.ShipmentsPromise).then(function(results){
-							vm.order.xp.PONumber = vm.CurrentUser.xp.PO.PONumber;
-							OrderCloud.Orders.Update(vm.order.ID, vm.order);
 							$state.go('orderConfirmation' , {userID: vm.order.FromUserID ,ID: vm.orderID});
+							var obj = {"xp":{}};
+							if(vm.paymentOption == 'PO'){
+								obj.xp.PO = {};
+								obj.xp.PO.PONumber = vm.CurrentUser.xp.PO.PONumber;
+							}	
+							obj.xp.PrintStatus=false;
+							if(vm.order.Total > 0)
+								vm.orderDtls.SpendingAccounts['CreditCard'] = {"Amount": vm.order.Total};
+							obj.xp.SpendingAccounts = vm.orderDtls.SpendingAccounts;
+							OrderCloud.Orders.Patch(vm.order.ID, obj);
+							vm.buyerList(vm.order.ID);
 						});
 					});
 				});
@@ -192,8 +223,17 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 		vm.CheckOutLoader = OrderCloud.Orders.Submit(vm.order.ID).then(function(){
 			vm.CheckOutLoader = TaxService.CollectTax(vm.order.ID).then(function(){
 				$state.go('orderConfirmation' , {userID: vm.order.FromUserID ,ID: vm.orderID});
-				vm.order.xp.PONumber = vm.CurrentUser.xp.PO.PONumber;
-					OrderCloud.Orders.Update(vm.order.ID, vm.order);
+				var obj = {"xp":{}};
+				if(vm.paymentOption == 'PO'){
+					obj.xp.PO = {};
+					obj.xp.PO.PONumber = vm.CurrentUser.xp.PO.PONumber;
+				}	
+				obj.xp.PrintStatus=false;
+				if(vm.order.Total > 0)
+					vm.orderDtls.SpendingAccounts['CreditCard'] = {"Amount": vm.order.Total};
+				obj.xp.SpendingAccounts = vm.orderDtls.SpendingAccounts;
+				OrderCloud.Orders.Patch(vm.order.ID, obj);
+				vm.buyerList(vm.order.ID);
 				/*vm.CheckOutLoader = $q.all(vm.ShipmentsPromise).then(function(results){
 					vm.order.xp.PONumber = vm.CurrentUser.xp.PO.PONumber;
 					OrderCloud.Orders.Update(vm.order.ID, vm.order);
@@ -444,7 +484,7 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 		var line = lineitems[index];
 		line.ShippingAddress = lineitems[0].ShippingAddress;
 		var deliverySum = 0;
-		if(line.cardMsg != true){
+		if(line.cardMsg == true){
 			delete line.xp.CardMessage;
 		}
 		/*if(line.xp.deliveryRun=='Run4' && vm.TodayDate.getHours() >= 12){
@@ -922,6 +962,37 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 		line.ShippingAddress.City = city;
 		vm.GetDeliveryFees(line, form);
 	};
+	vm.buyerList = function(orderID){
+		$http({
+			method: 'POST',
+			dataType:"json",
+			url:  BuyerListURL,
+			data: {"Order_ID": orderID},
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		}).success(function (data, status, headers, config) {
+			console.log("Success");
+		}).error(function (data, status, headers, config) {
+			console.log("error");
+		});
+	};
+	// Product Levels Promotions Apply.......
+	if(Promotions.length > 0){
+		$q.all(Promotions).then(function(result){
+			Promotions = [];
+			angular.forEach(result, function(val){
+				if(new Date(val.StartDate) <= new Date(GetCstDateTime.datetime) && new Date(val.ExpirationDate) >= new Date(GetCstDateTime.datetime))
+					Promotions.push(OrderCloud.As().Orders.AddPromotion(vm.order.ID, val.Code));
+			}, true);
+			$q.all(Promotions).then(function(result2){
+				vm.SumSpendingAccChrgs(vm.orderDtls);
+				OrderCloud.As().Orders.Get(vm.order.ID).then(function(res){
+					vm.order = res;
+				});
+			});
+		});
+	}
 }
 
 function checkoutService(CreditCardService, $q, OrderCloud, $state, TaxService, $http, GC_PP_Redemption){

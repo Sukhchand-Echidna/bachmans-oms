@@ -329,6 +329,7 @@ input.error, .errorCity {
 				padding: 0 0 10px;
 				.plp-product-data{
 					padding:5px 15px 0; 
+					height:91px;
 					h2 {
 						.helvetica-bold;
 						font-size: 15px;
@@ -337,13 +338,17 @@ input.error, .errorCity {
 						margin: 5px 0;
 						overflow: hidden;
 					}
+					h3,h4{
+						display:block !important;
+					}
 					h3,
 					h4 , h3 span, h4 span{
 						.helvetica-regular;
 						font-size: 10px;
 						color: #54565d;
-						margin: 3px 0;
+						margin:0 0 2px 0;
 						text-transform:lowercase;
+						.in-block;
 						&:first-letter{
 							text-transform:uppercase;
 						}
@@ -365,7 +370,7 @@ input.error, .errorCity {
 
 				}
 				.price_lst h5{
-					padding:0 15px;
+					padding:0 15px 0 0;
 					.helvetica-bold;
 					font-size:12px;
 					color:@primary-dark-color;
@@ -554,6 +559,9 @@ input.error, .errorCity {
 									color: #000;
 									margin-top: 5px;
 									font-size:14px;
+									white-space: nowrap;
+									overflow: hidden;
+									text-overflow: ellipsis;
 								}
 							}
 							ul{
@@ -919,11 +927,14 @@ input.error, .errorCity {
 				right: 5px;
 				span {
 					.rotate(180deg);
-					left: 5px;
+					left:0;
 				}
 			}
 			.owl-prev {
 				left: 0;
+				span{
+					left:3px;
+				}
 			}
 		}
 		.pdp-tabs {
@@ -1175,7 +1186,7 @@ input.error, .errorCity {
 						text-align: right;
 						button {
 							.helvetica-bold;
-							font-size: 10px;
+							font-size: 12px;
 							line-height: 24px;
 						    border-radius: 4px;
 						    color: #fff;
@@ -1288,7 +1299,7 @@ input.error, .errorCity {
 													button {
 														padding: 2px 6px;
 														border-radius: 3px;
-														font-size: 11px;
+														font-size: 12px;
 														.helvetica-medium;
 														color: #fff;
 														background: #b0b3bd;
@@ -1433,7 +1444,7 @@ input.error, .errorCity {
 						text-align: right;
 						button {
 							.helvetica-bold;
-							font-size: 10px;
+							font-size:12px;
 							line-height: 24px;
 						    border-radius: 4px;
 						    color: #fff;
@@ -1570,9 +1581,7 @@ input.error, .errorCity {
 		.position-common;
 		right: 0;
 		background-color: @color0;
-		.prod-variants span{
-			text-transform:lowercase;
-		}
+		
 		.btn-default[disabled].active{
 			background: #9f64cc;
 		}
@@ -1636,6 +1645,23 @@ input.error, .errorCity {
 				border-radius: 5px;
 				background-color: #fff;
 			}
+			.prod-variants-del{
+				 margin: 10px 0;
+				.prod-variants{
+					margin:0;
+					.helvetica-bold;
+					span{
+						text-transform:lowercase;
+						display:inline-block;
+						.helvetica-regular;
+						    margin-left: 4px;
+						&:first-letter{
+							text-transform:uppercase;
+
+						}
+					}
+				}
+			}
 			.note-edit{
 				height:30px;
 				button{
@@ -1667,7 +1693,7 @@ input.error, .errorCity {
 					input{
 						width:100%;
 						border:1px solid @color21;
-						font-size: 11px;
+						font-size: 12px;
 						line-height:25px;
 						.helvetica-medium;
 						color:@color1;
@@ -1693,10 +1719,11 @@ input.error, .errorCity {
 				overflow: hidden;
 				text-overflow: ellipsis;
 				margin:0;
+				height:22px;
 			}
 			p {
 				.helvetica-medium;
-				font-size: 11px;
+				font-size: 13px;
 				color: @color1;
 			}
 			.edit {
@@ -1745,20 +1772,21 @@ input.error, .errorCity {
 					span {
 						span {
 							.helvetica-regular;
-							font-size: 12.5px;
+							font-size: 13px;
 							line-height:40px;
-							padding: 0 10px 0 10px;
+							padding: 0 5px 0 5px;
 							color: @color2;
+							display: inline-block;
 						}
 						i {
 							.helvetica-regular;
-							font-size: 12.5px;
+						    font-size: 13px;
 							color: @color2;
 						}
 						svg.close {
 							width: 15px;
 							height: 15px;
-							margin: 12px 0 0 8px;
+							margin: 12px 0 0 5px;
 							float: left;
 							display: inline-block;
 							opacity:1;
@@ -1769,10 +1797,11 @@ input.error, .errorCity {
 							fill:#5b5e63;
 						}
 						svg.delete {
-							float: right;
-							width: 15px;
-							height: 15px;
-							margin: 12px 8px 0 0px;
+							
+							width: 12px;
+							height: 12px;
+							margin: -1px 4px 0 0px;
+							vertical-align: middle; 
 						}
 					}
 				}
@@ -1785,7 +1814,7 @@ input.error, .errorCity {
 							display: inline-block;
 							width: 15px;
 							height: 15px;
-							margin: 12px 0 0 8px;
+							margin: 14px 0 0 8px;
 							float: left;
 						}
 						svg.close {
@@ -1802,17 +1831,18 @@ input.error, .errorCity {
 				}
 			}
 			.receipient-drpDown {
-				padding: 10px 18px;
+				padding: 15px 10px;
 					.form-control{
 						box-shadow: none;
 					}
 				.star{
 				   color:#f32929;
+				   font-size:14px;
 				 }
 				.qty {
-					margin-top: 15px;
+					
 					p {
-						font-size: 11px ;
+						font-size: 13px ;
 						line-height:20px;
 						.helvetica-medium;
 						color: @color3;
@@ -1824,6 +1854,19 @@ input.error, .errorCity {
 						height:29px;
 					}
 				}
+					.address-cart{
+							display: block;
+							margin-top: 15px;
+							height:10px;
+							width:100%;
+							a{
+							font-size:13px;
+							.helvetica-bold;
+							&:last-child{
+								float:right;
+							}
+							}
+						}
 				> a {
 					.helvetica-bold;
 					font-size: 12.5px;
@@ -1834,17 +1877,10 @@ input.error, .errorCity {
 					padding-top:4px;
 					
 				}
-				.receipient-name{
-					div{
-						p{
-							margin:0 0 5px 0 !important;
-							line-height:15px !important;
-						}
-					}
-				}
+				
 				.receipient-name,
 				.location-recipientName {
-					margin: 0 0 15px;
+					margin: 15px 0px;
 					  h3{
 					  	.helvetica-bold;
 						font-size: 15px;
@@ -1861,17 +1897,18 @@ input.error, .errorCity {
 						width: 47%;
 						display: inline-block;
 						p {
-							margin: 15px 0 5px 0;
+							margin: 0px 0 5px 0;
 						}
 						p,
 						input {
-							font-size: 11px;
-							line-height:25px;
+							font-size: 13px;
+							line-height:20px;
 							.helvetica-regular;
 							color: @color3;
 							width: 100%;
 						}
 						input {
+							font-size:12px;
 							color: @color1;
 							border-radius: 5px;
 							border: 1px solid @color21;
@@ -1880,14 +1917,17 @@ input.error, .errorCity {
 					}
 				}
 				.receipient-location {
-					margin: 20px 0 20px;
+					margin: 15px 0px;
 					label.radio-common {
 						font-size: 11px;
 						line-height:11px;
-						.helvetica-medium;
+						.helvetica-regular;
 						color: @color3;
 					    margin: 0;
 						width: 49%;
+						>label{
+							margin-bottom:0px !important;
+						}
 					}
 					
 				}
@@ -1903,13 +1943,13 @@ input.error, .errorCity {
 				.product-cost {
 					border-top: 1px solid @color21;
 					border-bottom: 1px solid @color21;
-					padding-top: 8px;
+					padding:10px 0;
 					color: @color1;
 					margin-top:10px;
 					h4,
 					span {
 						.helvetica-regular;
-						font-size: 12.5px ;
+						font-size: 13px ;
 						line-height:20px;
 						display: inline-block;
 						margin: 0;
@@ -1923,7 +1963,7 @@ input.error, .errorCity {
 					}
 					h5,
 					span {
-						font-size: 12.5px ;
+						font-size: 13px ;
 						line-height:20px;
 						.helvetica-medium;
 						.in-block;
@@ -1934,6 +1974,10 @@ input.error, .errorCity {
 					input[type="radio"] {
 						margin-right: 5px;
 						vertical-align: sub;
+					}
+					uib-accordion{
+						 width: 100%;
+    					float: left;
 					}
 					.panel-group{
 						margin-bottom:0;
@@ -1954,20 +1998,10 @@ input.error, .errorCity {
 						height: 25px;
 					}
 					.location-Code {
-						.address-cart{
-							display: block;
-							height:20px;
-							a{
-							font-size:12px;
-							.helvetica-bold;
-							&:last-child{
-								float:right;
-							}
-							}
-						}
+					
 						.zipcont{
 							padding:0px;
-							width:25%;
+							width:30%;
 							.zipCode {
 							input{
 								height:29px;
@@ -1975,8 +2009,8 @@ input.error, .errorCity {
 						  }
 						}
 						.delivery-date{
-							width:75%;
-							
+							width:68%;
+							padding: 0 0 0 14px;
 							.btn{
 								padding:4px 12px;
 								line-height:9px;
@@ -1993,7 +2027,7 @@ input.error, .errorCity {
 						input {
 							width: 100%;
 							border: 1px solid @color21;
-							font-size:11px;
+							font-size:12px;
 							line-height:23px;
 							.helvetica-regular;
 						}
@@ -2005,12 +2039,13 @@ input.error, .errorCity {
 					.delivery-date,
 					.location-contact {
 						.in-block;
-						margin: 10px 0 0;
+						
 						p {
-							font-size: 12px;
+							font-size: 13px;
 							.helvetica-medium;
 							margin-bottom: 5px;
 							color: @color3;
+							line-height:20px;
 						}
 						input[type="search"],
 						input[type="text"] {
@@ -2031,6 +2066,9 @@ input.error, .errorCity {
 							font-size: 11px;
 						}
 						.location-addressL2 {
+							    margin: 15px 0px;
+							    float: left;
+							    width: 100%;
 							.location-city {
 								width: 59%;
 							    margin-right: 3%;
@@ -2140,18 +2178,21 @@ input.error, .errorCity {
 							border: 1px solid @color21;
 							margin-right: 3%;
 							height:29px;
+							font-size:12px;
 						}
 					}
 					.location-note {
 						&.add-card{
 							h3{
 								.helvetica-bold;
-								font-size: 15px;
+								font-size: 13px;
 								color: @primary-dark-color;
 								white-space: nowrap;
 								overflow: hidden;
 								text-overflow: ellipsis;
-								margin:10px 0;
+								 margin: 10px 0px 0 0;
+								 float:left;
+								 width:100%;
 							}
 						}
 						.panel{
@@ -2212,7 +2253,9 @@ input.error, .errorCity {
 						}
 					}
 					.no-message {
-						margin-top:20px;
+						float: left;
+					    width: 100%;
+					    margin: 20px 0 10px 0;
 						span {
 							font-size: 12px;
 							.helvetica-medium;
@@ -2222,6 +2265,9 @@ input.error, .errorCity {
 						}
 						label{
 							margin-left:0;
+							&.checkbox-custom-label{
+								margin:0;
+							}
 						}
 						.checkbox-custom-label{
 							.helvetica-regular;
@@ -2232,10 +2278,12 @@ input.error, .errorCity {
 						margin:0;
 						color: @color2;
 						p {
-							font-size: 12px;
+							font-size: 13px;
 							.helvetica-medium;
 							margin: 5px 0 8px;
 							color: @color3;
+							float: left;
+                            width: 100%;
 						}
 						input {
 							.helvetica-regular;
@@ -2252,7 +2300,9 @@ input.error, .errorCity {
 					.residence-address{
 						.location-addressL1{
 									clear:both;
-									padding-top:10px;
+									margin: 10px 0 15px 0px;
+								    float: left;
+								    width: 100%;
 							}	
 						}
 					.hospital-address,
@@ -2265,7 +2315,7 @@ input.error, .errorCity {
 							width: @width0;
 							border: 1px solid @color21;
 							.helvetica-regular;
-							font-size: 11px;
+							font-size: 12px;
 							height:29px;
 							background:#fff;
 						}
@@ -2281,10 +2331,10 @@ input.error, .errorCity {
 							.in-block;
 						}
 						h1 {
-							font-size: 12px;
+							font-size: 13px;
 							line-height:20px;
 							.helvetica-medium;
-							margin: 10px 0 5px;
+							margin:0px 0 5px;
 							color: @color3;
 						}
 						.hospital-search,
@@ -2353,6 +2403,21 @@ input.error, .errorCity {
 			label{
 				line-height:12px;
 				margin-left:0;
+			}
+			.add-recipient{
+				float:left;
+				width:100%;
+				 margin:5px 0px 15px 0;
+				button{
+					float:left;
+					margin-top: 5px;
+				}
+				.radio-btn-container{
+					margin:0 0 5px 0px;
+				}
+				h2{
+					margin:0 !important;
+				}
 			}
 		}
 	}
@@ -2456,8 +2521,8 @@ input.error, .errorCity {
 			margin-left: 4px;
 		}
 		svg.footer-svg {
-			width: 15px;
-			height: 15px;
+			width: 12px;
+			height: 12px;
 			.in-block;
 			.st0 {
 				fill: #F32929;
@@ -2553,7 +2618,7 @@ input.error, .errorCity {
 				background-color: #7a43a3;
 			}
 			p {
-				font-size: 11px;
+				font-size: 13px;
 				.helvetica-medium;
 				margin: 7px 0 0;
 				color: @color0;
@@ -3182,6 +3247,9 @@ input.error, .errorCity {
 		}
 		 .radioOutline{
 		    position: relative;
+		    display: inline-block;
+			width: 18px;
+			height: 18px;
 		}
 		input[type=radio]:not(old)+label .radioOutline .radioInside{
 		    border: 1px solid #8c58b5;
@@ -3200,7 +3268,7 @@ input.error, .errorCity {
 			width: 18px;
 			height: 18px;
 			text-align: center;
-			top:4px;
+			top:0px;
 		}
 		input[type=radio]:not(old):checked+label .radioOutline .radioInside{
 		    width: 10px;
@@ -3229,17 +3297,32 @@ input.error, .errorCity {
 			margin: auto;
 		  }
 		  input[type=radio]:not(old)+label{
+		  	
 		  	 h5,.courier,.faster-del{
-		  	 		padding-left: 30px;
-		  			
+	  	 		padding-left: 10px;	
+		  	 }
+		  	 h5{
+		  	 	vertical-align:top;
+		  	 	line-height:22px;
 		  	 }
 		  	  .default-pay{
-		  	 	padding-left:4px;
+		  	 	padding-left:10px;
 		  	 }
+		  	 .assembled{
+		  	 	padding-left:5px;
+		  	 	vertical-align: top;
+		  	 }
+		  	 .courier1{
+			   	  vertical-align:top;
+			   	  line-height:22px;
+			   	  padding-left:5px;
+			   }
+			   
 		   }
 		  input[type=radio]:not(old):checked+label{
+		  			vertical-align: top;
 			   h5,.courier,.faster-del{
-			   	 	padding-left: 10px;
+			   	 	padding-left:10px;
 			   }
 			   h5, .price{
 			   		color:#54565d;
@@ -3248,9 +3331,19 @@ input.error, .errorCity {
 			   		top:5px;
 			   }
 			   .default-pay{
-			   		padding-left:5px;
-			   		top:3px;
+			   		padding-left:10px;
+			   		
 			   }
+			   .assembled{
+			   	  padding-left:5px;
+			   	  vertical-align: top;
+			   }
+			   .courier1{
+			   	  vertical-align:top;
+			   	  line-height:23px;
+			   	  padding-left:5px;
+			   }
+			   
 			}
 		.hidden-sm{
 			display:inline-block !important;
@@ -3281,6 +3374,7 @@ input.error, .errorCity {
 		.price{
 			margin-left:20px;
 			.helvetica-bold;
+			vertical-align: top;
 		}
 		.courier,.faster-del{
 		  text-transform:capitalize;
@@ -3288,6 +3382,10 @@ input.error, .errorCity {
 		.courier,.faster-del{
 			position: absolute;
     		top: -9px;
+		}
+		.courier1{
+	   	    font-size: 14px;
+	   	    .helvetica-bold;
 		}
 	}
 }
@@ -3473,10 +3571,15 @@ input.error, .errorCity {
 								float:left;
                                 width:100%;	
 								margin-top:20px;
+								p{
+									margin-top:0;
+								}
+								.size-box{
+									padding: 4px 0 0 0;							}
                             }
                             .note{
-                            font-size:11px;
-                                //font: 0.85em @proxima-regular;
+                              font-size:11px;
+							  .helvetica-regular;
                                 color: #666666;
                                 margin-top: 7px;
                                 float:left;
@@ -3511,7 +3614,7 @@ input.error, .errorCity {
 								width: 18px;
 								height: 18px;
 								text-align: center;
-								top:4px;
+								top:0px;
 							}
 							input[type=radio]:not(old):checked+label .radioOutline .radioInside{
 								width: 10px;
@@ -3708,6 +3811,8 @@ input.error, .errorCity {
 			border-left:1px solid #EAEAEA;
 			border-right:1px solid #EAEAEA;
 			border-bottom:1px solid #EAEAEA;
+			float: left;
+   			width: 100%;
 			&:nth-child(odd){
 				background-color: #f7f8fa;
 			}
@@ -3716,12 +3821,14 @@ input.error, .errorCity {
 			}
 			.check{
 				width:20%;
-				.in-block;
-				vertical-align:top;
+				float: left;
+				vertical-align: middle;
+				margin-top: 45px;
+				text-align:center;
 			}
 			.prod_img{
 				width:20%;
-				.in-block;
+				 float: left;
 				vertical-align:top;
 				img{
 					max-width:100%;
@@ -3729,22 +3836,29 @@ input.error, .errorCity {
 			}
 			.prod-info{
 				width:58.7%;
-				.in-block;
+				 float: left;
 				padding:5px 10px;
 				h2{
-					font-size:14px;
+					font-size:16px;
 					.helvetica-bold;
 					margin:3px 0;
 					color:@color1;
 				}
 				h3, h5, h4{
 					font-size:14px;
-					.helvetica-regular;
+					.helvetica-bold;
 					color:@color1;
 					margin:5px 0;
 					span{
-						.helvetica-medium;
+						.helvetica-medium !important;
+						margin-left: 7px;
+						display: inline-block;
+						text-transform:lowercase;
+						&:first-letter{
+							text-transform:uppercase;
+						}
 					}
+					
 				}
 			}
 		}
@@ -3754,6 +3868,7 @@ input.error, .errorCity {
 		background-color:@primary-color;
 		padding:5px 10px;
 		color:@color0;
+		margin-top: 11px;
 		&:hover{
 			background-color:@primary-dark-color;
 		}
@@ -3800,8 +3915,8 @@ input.error, .errorCity {
 					}
 				td{
 					padding: 15px 10px 15px 10px;
-					vertical-align: top;
-					font-size: 14px;
+					vertical-align: middle;
+					font-size: 15px;
 					.helvetica-regular;
 					img{
 						max-width:100%;

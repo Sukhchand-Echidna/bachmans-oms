@@ -19,7 +19,7 @@ function CustInfoConfig( $stateProvider ) {
 				loadingMessage: 'Loading...'
 			},
 			resolve: {
-                UserList: function( OrderCloud, $state, $q) {
+                UserList: function( OrderCloud, $state, $q, $stateParams) {
                     var arr={};
 					var dfr = $q.defer();
                     OrderCloud.As().Me.Get().then(function(data){
@@ -27,24 +27,24 @@ function CustInfoConfig( $stateProvider ) {
 						arr["user"] = data;
 						console.log("userssss", arr);
 						OrderCloud.As().Me.ListUserGroups(null, 1, 100).then(function(usergrp){
-							// if(usergrp.Items[0].ID="StoreFront"){
-								
-							// }
 							arr["userGroup"]=usergrp.Items;
-						})
-						OrderCloud.As().Me.ListAddresses(null, 1, 100).then(function(addrList){
-							arr["addresses"]=addrList.Items;
-								arr["defaultAddr"]=_.filter(addrList.Items, function(obj) {
-									if(obj.xp && obj.xp!=null)
-									if(obj.xp.IsDefault != null)
-									return _.indexOf([obj.xp.IsDefault], true) > -1
-									// if(arr["user"].xp)
-										// if(arr["user"].xp.ContactAddr)
-										// return _.indexOf([obj.ID], arr["user"].xp.ContactAddr) > -1
+						});
+						OrderCloud.Addresses.ListAssignments(null, $stateParams.ID).then(function(addrList){
+							var temp = [];
+							angular.forEach(addrList.Items, function(val){
+								temp.push(OrderCloud.Addresses.Get(val.AddressID));
+							}, true);
+							$q.all(temp).then(function(result){
+								arr["addresses"] = result;
+								arr["defaultAddr"]=_.filter(result, function(obj) {
+									if(obj.xp && obj.xp!=null){
+										if(obj.xp.IsDefault != null)
+											return _.indexOf([obj.xp.IsDefault], true) > -1
+									}
 								});
-							console.log("addrList", addrList);
-							dfr.resolve(arr);
-						})
+								dfr.resolve(arr);
+							});
+						});
                     });
                     return dfr.promise;
                 },
@@ -154,16 +154,17 @@ function CustInfoController($scope, $exceptionHandler, $stateParams, $state, Use
 					vm.list.user.Phone = "("+vm.list.user.contact.Phone1+") "+vm.list.user.contact.Phone2+"-"+vm.list.user.contact.Phone3;
 					vm.list.user.TermsAccepted = today;
 						OrderCloud.As().Me.Update(vm.list.user).then(function(){
-							OrderCloud.As().Me.UpdateAddress(vm.list.defaultAddr[0].ID,vm.list.defaultAddr[0]).then(function(){
+							OrderCloud.Addresses.Update(vm.list.defaultAddr[0].ID,vm.list.defaultAddr[0]).then(function(){
 								//$state.go('custInfo', {}, {reload:true});
 								$scope.isEditing = !$scope.isEditing;
-							})
-						})
+							});
+						});
 				}
 			});
 		}
      }
 	vm.editAddress = function(editAddr){
+		vm.list.defaultAddr[0].Zip = parseInt(vm.list.defaultAddr[0].Zip);
 		$scope.isEditing = !$scope.isEditing;
 		vm.list.user.contact={};
 		BuildOrderService.GetPhoneNumber(editAddr).then(function(res){

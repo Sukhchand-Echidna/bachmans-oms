@@ -287,7 +287,7 @@ input.error, .errorMMyy {
 				padding:0;
 				.panel-body{
 					position:relative;
-				padding:35px 0px;
+				padding:25px 0px;
 				 .delivery-address{
 				 	.zip-code{
 				 		width:46%;
@@ -893,17 +893,51 @@ input.error, .errorMMyy {
 						    top: 0px;
 						    left: -30px;
 						    border-right-color: #a576ca;
+
 					     }
+					  &:hover{
+					  	background:#8c58b5;
+					  	&:before{
+					  		border-right-color:#8c58b5;
+					  	}
+
+					  }  
+
 				}
+				
+			}
+			.back-button{
+				font-size:16px;
+				a{
+				    color:#54565d;
+				    cursor: pointer;
+				    text-decoration: none;
+				    &:hover{
+				       color:@primary-color;
+				    }
+				  }
+				  svg{
+			    	     width: 10px;
+   					     height: 11px;
+					    color: #54565d;
+					    display: inline-block;
+					    transform: rotate(180deg);
+					    
+				 }
+				   &:hover{
+					   	svg{
+							fill:@primary-color;
+						}
+				 }
 			}
 			.saved-addr{
 				padding:0 0 10px 16px;
-				margin:20px 50px 0 0;
+				margin:5px 50px 0 0;
 				h3{
 					
 					font-family: "Helvetica-Bold";
 				    font-size: 18px;
-				    margin: 0px 0px 20px 0;
+				    margin:0;
 				}
 				.accordion-toggle .checkbox-custom-label{
 					margin:0;
@@ -1155,17 +1189,33 @@ input.error, .errorMMyy {
 						top:-7px;
 					}
 				}
+				.bachmans-charges{
+					 margin-left: 10% !important;
+				    .charges-cont{
+				       margin: 5px 0 0 0;
+				    }
+				    button{
+				    	 margin-bottom: 20px;
+				    }
+				}
 				.payment-options{
-					margin-left:15% !important;
+					margin-left:10% !important;
 					input{
 						width:40%;
 					}
 					.gift-card{
-						margin:0px;
+						margin: 0 10px 0 0;
 					}
+					.po-num{
+						margin:5px 0 0 0;
+					}
+					.charges-cont{
+				       margin: 5px 0 0 0;
+				    }
 				}
 				.payment-options1{
 					margin:20px 0 0 4% !important;
+					padding:0;
 					label{
 						margin-top: -30px;
 					}
@@ -1192,7 +1242,7 @@ input.error, .errorMMyy {
 					  }
 					  .phone-book{
 					     input{
-					     	width:32.5%;
+					     	width:32.7%;
 					     	margin-bottom:20px;
 					     }
 					     label{
@@ -1608,7 +1658,7 @@ input.error, .errorMMyy {
 	  }
 	  .phone-book{
 	     input{
-	     	width:32%;
+	     	width:32.6%;
 	     	margin-bottom:20px;
 	     }
 	     label{

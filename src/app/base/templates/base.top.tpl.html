@@ -50,7 +50,7 @@
 											</svg>
 										</button>
 										<li ng-repeat="subchildcategories in subcategories.children" ng-if="($index < (baseTop.page2 * baseTop.numRecords)) && ($index >= ((baseTop.page2 - 1) * baseTop.numRecords))">
-											<a ui-sref="buildOrder({ID:subchildcategories.ID,SearchType:'plp'})" ng-click="base.isopen=false">{{subchildcategories.Name}}</a>	 
+											<a ui-sref="buildOrder({ID:subchildcategories.ID,SearchType:'plp', catName:subchildcategories.Name})" ng-click="base.isopen=false">{{subchildcategories.Name}}</a>	 
 										</li>
 										<button class="down-arrow" ng-click="baseTop.next2()" ng-show="subcategories.children.length > (baseTop.page2 * baseTop.numRecords)">
 											<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"

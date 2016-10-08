@@ -13,5 +13,6 @@
   "GC_PP_Redemption": "https://Four51TRIAL104401.jitterbit.net/Bachmans_Dev/GiftCard_PurplePerks_Redemption",
   "PPBalance" : "https://Four51TRIAL104401.jitterbit.net/BachmansOnPrem/PurplePerksBalanceCheck",
   "GCBalance" : "https://Four51TRIAL104401.jitterbit.net/BachmansOnPrem/GiftCardBalance",
-  "GoogleAPI": "https://maps.googleapis.com/maps/api/geocode/json?address=" 
+  "GoogleAPI": "https://maps.googleapis.com/maps/api/geocode/json?address=",
+  "BuyerListURL": "https://four51trial104401.jitterbit.net/Bachmans_Dev/OrderIntegrationAndBuyersData_onDemand_file"
 }

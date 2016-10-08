@@ -7,7 +7,7 @@ function AddressBookConfig( $stateProvider ) {
 	$stateProvider
 		.state( 'addressBook', {
 			parent: 'base',
-			url: '/addressBook',
+			url: '/addressBook/:ID',
 			templateUrl: 'addressBook/templates/addressBook.tpl.html',
 			controller: 'AddressBookCtrl',
 			controllerAs: 'addressBook',

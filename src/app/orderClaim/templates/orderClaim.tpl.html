@@ -29,6 +29,7 @@
 							  <th>Quantity</th>
 							  <th>Products<span class="star">*</span></th>
 							  <th>Price<span class="star">*</span></th>
+							  <th>Paid Through</th>
 							  <th>Select Claim Resolution<span class="star">*</span></th>
 							  <th>Reason Code<span class="star">*</span></th>
 							  <th>Enter Reason for Claim<span class="star">*</span></th>     
@@ -153,6 +154,9 @@
 
 								</button>
 									<button class="save" ng-click="priceedit=true" ng-show="!priceedit">save</button>
+								</td>
+								<td class="item">
+									{{orderClaim.order}}
 								</td>
 								<td class="item">
 									<select name="singleSelect" ng-init="orderSummary.selectresolution=''" ng-model="orderSummary.selectresolution" ng-options="resolution for resolution in orderClaim.refund.Resolutions" ng-change="orderSummary.resolution(resolution)">

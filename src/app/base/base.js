@@ -160,14 +160,18 @@ function BaseService($q, $localForage, Underscore, OrderCloud) {
     return service;
 }
 
-function BaseController($sce, CurrentUser, defaultErrorMessageResolver, ProductList, AlfrescoFact, $scope, AlfrescoCommon) {
+function BaseController($sce, $state, CurrentUser, defaultErrorMessageResolver, ProductList, AlfrescoFact, $scope, AlfrescoCommon) {
     var vm = this;
 	vm.logo=AlfrescoCommon;
     vm.currentUser = CurrentUser;
-	$scope.search = {
+	/*$scope.search = {
         'query' : '',
         'hits' : []
-    };
+    };*/
+     vm.goTo=function(userID){
+        angular.element(document.getElementById("ordercloudsearch")).scope().$parent.search='';
+        $state.go('buildOrder',{ID:userID,SearchType:'User',showOrdersummary: false});
+    }
     defaultErrorMessageResolver.getErrorMessages().then(function (errorMessages) {
         errorMessages['customPassword'] = 'Password must be at least eight characters long and include at least one letter and one number';
         //regex for customPassword = ^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!$%@#£€*?&]{8,}$

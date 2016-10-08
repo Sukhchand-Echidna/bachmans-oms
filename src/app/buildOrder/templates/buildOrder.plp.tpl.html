@@ -33,9 +33,9 @@
 						<h2>{{products.Name}}</h2>
 						<h3><span class="variant">Size</span> <span>{{products.Size}}</span></h3>
 						<h4><span class="variant">Color</span> <span>{{products.Color}}</span></h4>
-					</div>
-					<div class="price_lst">
-						<h5>{{products.Price | currency}}</h5>
+						<div class="price_lst">
+							<h5>{{products.Price | currency}}</h5>
+						</div>
 					</div>
 				</div>
 			</li>
@@ -56,10 +56,10 @@
 							<h2 class="product-name-plp"><span>{{prod.Name}}</span></h2>
 							<h3>Color <span>{{prod.Color}}</span></h3>
 							<h4>Size <span>{{prod.Size}}</span></h4>
+							<div class="price_lst">
+								<h5 class="Price">{{prod.Price | currency}}</h5>
+							</div>	
 						</div>
-						<div class="price_lst">
-							<h5 class="Price">{{prod.Price | currency}}</h5>
-						</div>	
 					</div>
 				</div>
 			</li>
@@ -80,10 +80,10 @@
 							<h2 class="product-name-plp"><span>{{prod.Name}}</span></h2>
 							<h3>Color <span>{{prod.xp.SpecsOptions.Color}}</span></h3>
 							<h4>Size <span>{{prod.xp.SpecsOptions.Size}}</span></h4>
+							<div class="price_lst">
+								<h5 class="Price">{{prod.StandardPriceSchedule.PriceBreaks[0].Price | currency}}</h5>
+							</div>	
 						</div>
-						<div class="price_lst">
-							<h5 class="Price">{{prod.StandardPriceSchedule.PriceBreaks[0].Price | currency}}</h5>
-						</div>	
 					</div>
 				</div>
 			</li>
@@ -91,7 +91,7 @@
 	</div>
 	<!-- category Product List starts -->
 	<div class="home-search-list" ng-if="buildOrder.searchType == 'plp' &&  buildOrder.searchval.length == 0 && buildOrder.catList.length>0">
-		<h1 ng-if="buildOrder.catList.length > 0">Products under the category <span>"{{buildOrder.catList[0].Category}}"</span> <span class="count">({{buildOrder.catList.length}} products)</span></h1>
+		<h1 ng-if="buildOrder.catList.length > 0">Products under the category <span>"{{buildOrder.catName}}"</span> <span class="count">({{buildOrder.catList.length}} products)</span></h1>
 		<!-- <h1 ng-if="buildOrder.catList.length == 0">No Products found</span></h1> -->
 		<ul class="plp-container">
 			<li class="col-md-3" ng-repeat="prod in buildOrder.catList track by $index">
@@ -104,10 +104,10 @@
 							<h2 class="product-name-plp"><span>{{prod.Name}}</span></h2>
 							<h3>Color <span>{{prod.Color}}</span></h3>
 							<h4>Size <span>{{prod.Size}}</span></h4>
+							<div class="price_lst">
+								<h5 class="Price">{{prod.Price | currency}}</h5>
+							</div>	
 						</div>
-						<div class="price_lst">
-							<h5 class="Price">{{prod.Price | currency}}</h5>
-						</div>	
 					</div>
 				</div>
 			</li>

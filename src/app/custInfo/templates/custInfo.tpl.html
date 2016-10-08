@@ -57,7 +57,7 @@
 								 --></div>
 							</div>
 							<div class="info-blk cust-top">
-								<p class="col-md-3">Phone Number:</p>
+								<p class="col-md-4 phone-num">Phone Number:</p>
 							
 								<span class="col-md-6 phone-num">{{custInfo.list.user.Phone}}</span><!--
 								<input type="text" ng-show="isEditing" ng-model="custInfo.list.user.Phone"> -->
@@ -110,7 +110,7 @@
 					</div>
 					<div class="full-blk">
 						<p>Zip <span class="star">*</span></p>
-						<input type="number" name="zip" ng-model="custInfo.list.defaultAddr[0].Zip" ng-blur="custInfo.getLocation()" placeholder="Zip" ng-minlength="5" ng-required="isEditing" ng-class="{error: CustEditForm.$submitted && CustEditForm.zip.$invalid}" max-length="5">
+						<input type="number" name="zip" ng-model="custInfo.list.defaultAddr[0].Zip" ng-blur="custInfo.getLocation()" placeholder="Zip" ng-minlength="5" ng-required="isEditing" ng-class="{error: CustEditForm.$submitted && CustEditForm.zip.$invalid}" max-length="5" />
 					</div>
 					<div class="group-blk">
 						<div class="blk">
@@ -284,7 +284,10 @@
 							<p class="sub-addr">{{creditCard.CardholderName}}</p>
 							<!-- <button ng-click='isEditing = !isEditing'>Edit</button> -->
 						</div>
-						<h4>{{creditCard.CardType}} ENDING IN {{creditCard.PartialAccountNumber }}</h4>
+						<div class="card-left expires">
+							<p>{{creditCard.CardType}} ENDING IN {{creditCard.PartialAccountNumber }}</p>
+							<p>EXPIRES ON {{creditCard.ExpirationDate | date: MM/dd/yyyy}}</p>
+						</div>
 						<div class="billing-addr">
 							<div>
 								<p>Name</p>

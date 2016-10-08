@@ -71,6 +71,7 @@ function OrderClaimController($scope, $stateParams, OrderCloud, CreditCardServic
 	var totalCost = 0;
 	vm.selectresolution="";
 	vm.orderclaimarr1 = [];
+	vm.order=Order;
 	OrderCloud.As().LineItems.List(Order.ID).then(function(res){
 		$scope.val=res;
 		LineItemHelpers.GetProductInfo(res.Items).then(function(data){
@@ -127,9 +128,11 @@ function OrderClaimController($scope, $stateParams, OrderCloud, CreditCardServic
 		vm.Item_Refund_Amount=0;
 		vm.Delivery_Refund=0;
 		vm.Tax_Refund=0;
-		/*OrderCloud.As().Payments.List(orderID).then(function(payments){
+		OrderCloud.As().Payments.List(orderID).then(function(payments){
 			console.log('payments',payments);
 			console.log(vm.orderclaimarr);
+			console.log(vm.totalrefundcost);
+			vm.totalrefundcost1=vm.totalrefundcost;
 			angular.forEach(payments.Items, function(val, key) {
 				if(val.Type == "CreditCard"){
 					alert("CreditCard");
@@ -140,19 +143,30 @@ function OrderClaimController($scope, $stateParams, OrderCloud, CreditCardServic
 						console.log(ccval);
 						CreditCardService.RefundTransaction(ccval,Order,val.Amount).then(function(cc){
 							console.log(cc);
+							vm.totalrefundcost1=vm.totalrefundcost1-val.Amount;
+						})
+					})
+				}
+				else if(val.Type == "SpendingAccount"){
+					alert("SpendingAccount");
+					/*OrderCloud.As().Me.GetCreditCard(val.CreditCardID).then(function(ccval){
+						console.log(ccval);
+						CreditCardService.RefundTransaction(ccval,Order,val.Amount).then(function(cc){
+							console.log(cc);
 
+						})
+					})*/
+					OrderCloud.SpendingAccounts.Get(val.SpendingAccountID).then(function(res){
+						console.log(res);
+						OrderCloud.SpendingAccounts.Patch(res.ID, {"Balance":res.Balance+val.Amount}).then(function(res1){
+							console.log(res1);
+							vm.totalrefundcost1=vm.totalrefundcost1-val.Amount;
 						})
 					})
 				}
 			}, true);
-		})*/
-		if(vm.orderclaimsummaryshow==false){
-			vm.orderclaimsummaryshow=true;
-			refundclaimobj={"Refunds":refundarr};
-			vm.orderclaimsummaryfunc(vm.orderclaimarr);
-		}
-		else{
-			OrderCloud.As().Orders.Get(orderID).then(function(res){
+		})
+		OrderCloud.As().Orders.Get(orderID).then(function(res){
 				/*for(var i=0; i<vm.orderclaimarr.length; i++){
 					var refund ={
 							"ID":"refund_"+vm.orderclaimarr[i].ID, 
@@ -170,14 +184,14 @@ function OrderClaimController($scope, $stateParams, OrderCloud, CreditCardServic
 				OrderCloud.As().Orders.Create(orderParams).then(function(res1){
 					var claimorderid=res1.ID+"_CL";
 					console.log(claimorderid);
-					/*OrderCloud.As().Orders.Patch(res1.ID,{"ID":claimorderid}).then(function(res2){*/
+					OrderCloud.As().Orders.Patch(res1.ID,{"ID":claimorderid}).then(function(res2){
 						for (var i=0; i<vm.orderclaimarr.length; i++) {
 							delete vm.orderclaimarr[i].ID;
 							var line1=vm.orderclaimarr[i];
 							var orderParams1=angular.extend({},line1.xp,orderParams.xp.Refunds[i]);
 							delete vm.orderclaimarr[i].xp;
 							var finalxp=angular.extend({},vm.orderclaimarr[i],{"xp":orderParams1});
-							OrderCloud.As().LineItems.Create(res1.ID, finalxp).then(function(da){
+							OrderCloud.As().LineItems.Create(res2.ID, finalxp).then(function(da){
 								console.log(da);
 								// OrderCloud.As().Me.ListCreditCards(null, 1, 100).then(function(cards){
 								// 	vm.creditCardsList = cards.Items;
@@ -212,28 +226,27 @@ function OrderClaimController($scope, $stateParams, OrderCloud, CreditCardServic
 						        });
 							})
 						}
-					/*})*/
+					})
 				});
 			})
-		}
 	}
 	vm.orderclaimsummaryfunc=function(data){
 		console.log(data);
 		data = _.groupBy(data, function(value){
-				if(value.ShippingAddress != null){
-					//totalCost += value.xp.TotalCost;
-					return value.ShippingAddress.FirstName + ' ' + value.ShippingAddress.LastName + ' ' + value.ShippingAddress.Zip;
-				}
-			});
-			//angular.element(document.getElementById("order-checkout")).scope().orderTotal = totalCost;
-			delete data.undefined;
-			vm.groupsummary = data;
-			vm.lineValsummary = [];
-			$scope.lineTotalsummary = {};
-			for(var n in data){
-				vm.lineValsummary.push(n);
-				$scope.lineTotalsummary[n] = _.reduce(_.pluck(data[n], 'LineTotal'), function(memo, num){ return memo + num; }, 0);
+			if(value.ShippingAddress != null){
+				//totalCost += value.xp.TotalCost;
+				return value.ShippingAddress.FirstName + ' ' + value.ShippingAddress.LastName + ' ' + value.ShippingAddress.Zip;
 			}
+		});
+		//angular.element(document.getElementById("order-checkout")).scope().orderTotal = totalCost;
+		delete data.undefined;
+		vm.groupsummary = data;
+		vm.lineValsummary = [];
+		$scope.lineTotalsummary = {};
+		for(var n in data){
+			vm.lineValsummary.push(n);
+			$scope.lineTotalsummary[n] = _.reduce(_.pluck(data[n], 'LineTotal'), function(memo, num){ return memo + num; }, 0);
+		}
 	}
 }
 function orderClaimPopupController($scope, ClaimResolution, userID, $uibModalInstance){
