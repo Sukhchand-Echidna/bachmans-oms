@@ -242,12 +242,19 @@
 								<!-- <img src="../assets/images/error.png" ng-if="buildOrderRight.lineItemForm[lineitem.ID].formError" /> -->
 							</uib-accordion-heading>
 							<div class="receipient-drpDown">
+								<div class="buyers-list" ng-if="lineitem.Product.xp.notifyMe==true">
+									<!-- <input type="checkbox" ng-model="lineitem.xp.notifyMe" ng-checked="lineitem.xp.notifyMe=='true'" ng-if="lineitem.Product.xp.notifyMe==true" /> -->
+									<div>
+									<input  type="checkbox" ng-model="lineitem.xp.notifyMe" ng-checked="lineitem.xp.notifyMe=='true'" class="checkbox-custom" id="buyerslist"/>
+									<label for="buyerslist" class="checkbox-custom-label"> 
+									Buyers List</label>
+									</div>
+								</div>
 								<div class="qty">
 									<p>Quantity <span class="star">*</span></p>
 									<input type="number"  ng-class="{error: buildOrderRight.lineItemForm[lineitem.ID].$submitted && buildOrderRight.lineItemForm[lineitem.ID].qty.$invalid}" name="qty" ng-model="lineitem.Quantity" ng-blur="buildOrderRight.GetDeliveryFees(lineitem, buildOrderRight.lineItemForm[lineitem.ID])" ng-min="1" ng-max="999" ng-required="true" />
-									<input type="checkbox" ng-model="lineitem.xp.notifyMe" ng-checked="lineitem.xp.notifyMe=='true'" ng-if="lineitem.Product.xp.notifyMe==true" />
-									<p ng-if="buildOrderRight.lineItemForm[lineitem.ID].qty.$error.min" style="color:red;"><span>Minimum 1 Quantity</span></p>
-									<p ng-if="buildOrderRight.lineItemForm[lineitem.ID].qty.$error.max" style="color:red;"><span>Maximum 999 Quantity</span></p>
+									<p ng-if="buildOrderRight.lineItemForm[lineitem.ID].qty.$error.min" style="color:red;"><span>Minimum 1 Qty</span></p>
+									<p ng-if="buildOrderRight.lineItemForm[lineitem.ID].qty.$error.max" style="color:red;"><span>Maximum 999 Qty</span></p>
 								</div>
 								<div class="address-cart">
 									<a ng-click="buildOrderRight.viewAddrBook(lineitem)" ng-if="lineitem.xp.addressType=='Residence' && buildOrderRight.addressbook && buildOrderRight.addressesList.length > 0">Address Book</a>

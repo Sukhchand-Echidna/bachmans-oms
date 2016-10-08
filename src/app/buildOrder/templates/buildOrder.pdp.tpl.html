@@ -206,6 +206,13 @@
 										<p ng-init="buildOrder.AddExtra[$index] = {'Name':'Select'}">{{buildOrder.AddExtra[$index].Name}}</p>
 									</button>
 									<ul class="pdp-extra-menu" uib-dropdown-menu="" role="menu" aria-labelledby="single-button" >
+										<li role="menuitem" ng-click="buildOrder.AddExtra[$index] = {'Name':'Select'}">
+											<div class="row pro-del">
+												<div class="col-xs-10 col-sm-9 col-md-9 col-lg-9">
+													<h5>---Select---</h5>
+												</div>
+											</div>
+										</li>
 										<li role="menuitem" ng-repeat="upsell in buildOrder.CategoryItemsUpsell[$index]" ng-click="buildOrder.AddExtra[$parent.$index] = upsell">
 											<div class="row pro-del">
 												<div class="col-xs-2 col-sm-3 col-md-3 col-lg-3 img-cont">

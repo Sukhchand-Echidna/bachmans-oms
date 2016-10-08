@@ -248,7 +248,7 @@ function buildOrderConfig( $stateProvider ) {
 	});
 }
 
-function buildOrderController($scope, $rootScope, $state, buyerid, $controller, $stateParams, ProductList, LineItemHelpers, $q, BuildOrderService, $timeout, OrderCloud, SearchData, algolia, CurrentOrder, alfrescoAccessURL, Underscore, ProductImages, productList, AlfrescoFact, AddressValidationService, GoogleAPI, $http) {
+function buildOrderController($scope, $rootScope, $state, buyerid, $controller, $stateParams, ProductList, LineItemHelpers, $q, BuildOrderService, $timeout, OrderCloud, SearchData, algolia, CurrentOrder, alfrescoAccessURL, Underscore, ProductImages, productList, AlfrescoFact, AddressValidationService, GoogleAPI, $http, CstDateTime) {
 	var vm = this;
 	vm.upselloverlay=false;
 	vm.selected = undefined;
@@ -266,6 +266,7 @@ function buildOrderController($scope, $rootScope, $state, buyerid, $controller, 
 	$scope.showOrdersummary = $stateParams.showOrdersummary;
 	$scope.hideActiveSummary = true;
 	$scope.showplp = true;
+	vm.MinDate = CstDateTime;
 	$scope.gotoCheckout=function(){
 		if($scope.showOrdersummary == true){
 			if($stateParams.SearchType == 'Products' || $stateParams.SearchType == 'BuildOrder' || $stateParams.SearchType == 'PDP' || $stateParams.SearchType == 'plp'){
@@ -560,7 +561,8 @@ function buildOrderController($scope, $rootScope, $state, buyerid, $controller, 
 			DeliveryMethod = "Courier";
 		vm.AddExtraList = [];
 		angular.forEach(vm.AddExtra, function(val, key){
-			vm.AddExtraList.push(val.ID);
+			if(val.ID)
+				vm.AddExtraList.push(val.ID);
 		}, true);
 		angular.element(document.getElementById("oms-plp-right")).scope().beforeAddToCart(prodID, DeliveryMethod);
 	};
@@ -1012,10 +1014,12 @@ function buildOrderController($scope, $rootScope, $state, buyerid, $controller, 
 		});	
 	};
 	vm.CalendarSelect = function(date, ProductID){
-		if(!_.isArray(vm.MultipleCities) || !vm.MultipleCities)
-			vm.CheckDeliveryAvailable(vm.city, ProductID);
-		else
-			vm.CheckDeliveryAvailable(vm.Mcity, ProductID);
+		if((vm.city || vm.Mcity) && vm.Mcity!="Select City" && vm.ZipCodeCheck){
+			if(!_.isArray(vm.MultipleCities) || !vm.MultipleCities)
+				vm.CheckDeliveryAvailable(vm.city, ProductID);
+			else
+				vm.CheckDeliveryAvailable(vm.Mcity, ProductID);
+		}		
 	};
 	// Assembly & promotions critical part don't touch (Start here).....
 	vm.AssemblyItems = function(param){
