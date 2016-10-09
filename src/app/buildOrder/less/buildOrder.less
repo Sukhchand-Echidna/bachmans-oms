@@ -600,7 +600,18 @@ input.error, .errorCity {
 									p{
 									     margin: 11px 0 0 10px;
 									}
-
+									&.select-option-in-menu {
+										.pro-del {
+											div.col-xs-10 {
+												width: 100%;
+												h5 {
+													margin: 0;
+													text-align: center;
+													padding: 2px 0 7px 0;
+												}
+											}
+										}
+									}
 								}
 							}
 						}
@@ -1698,6 +1709,9 @@ input.error, .errorCity {
 						.helvetica-medium;
 						color:@color1;
 						height:29px;
+						&:focus {
+							border-color: #aaa;
+						}
 					}
 				}
 			}
@@ -1762,6 +1776,11 @@ input.error, .errorCity {
 			.collapse{
  				transition:5s linear all !important;
 			}
+			.panel-open {
+				.panel-heading {
+					background-color: #ccc;
+				}
+			}
 			.panel-heading {
 				background-color: @color11;
 				padding: 0;
@@ -1769,6 +1788,7 @@ input.error, .errorCity {
 				.panel-title a {
 					text-decoration: none;
 					display: block;
+					border: 1px solid transparent;
 					span {
 						span {
 							.helvetica-regular;
@@ -1803,6 +1823,9 @@ input.error, .errorCity {
 							margin: -1px 4px 0 0px;
 							vertical-align: middle; 
 						}
+					}
+					&:focus {
+						border: 1px solid #aaa;
 					}
 				}
 			}
@@ -1860,6 +1883,9 @@ input.error, .errorCity {
 						width: 40px;
 						border: 1px solid @color21;
 						height:29px;
+						&:focus {
+							border-color: #aaa;
+						}
 					}
 				}
 					.address-cart{
@@ -1921,6 +1947,9 @@ input.error, .errorCity {
 							border-radius: 5px;
 							border: 1px solid @color21;
 							height:29px;
+							&:focus {
+								border-color: #aaa;
+							}
 						}
 					}
 				}
@@ -2038,6 +2067,9 @@ input.error, .errorCity {
 							font-size:12px;
 							line-height:23px;
 							.helvetica-regular;
+							&:focus {
+								border-color: #aaa;
+							}
 						}
 						
 					}
@@ -2187,6 +2219,9 @@ input.error, .errorCity {
 							margin-right: 3%;
 							height:29px;
 							font-size:12px;
+							&:focus {
+								border-color: #aaa;
+							}
 						}
 					}
 					.location-note {
@@ -2257,6 +2292,9 @@ input.error, .errorCity {
 								text-indent:5px;
 								text-align: justify;
 								padding: 5px;
+								&:focus {
+									border-color: #aaa;
+								}
 							}
 						}
 					}
@@ -2300,6 +2338,9 @@ input.error, .errorCity {
 							border: 1px solid @color21;
 							height: 27px;
 							margin-bottom:10px;
+							&:focus {
+								border-color: #aaa;
+							}
 						}
 						&.hideItem {
 						  display: block;
@@ -2326,6 +2367,9 @@ input.error, .errorCity {
 							font-size: 12px;
 							height:29px;
 							background:#fff;
+							&:focus {
+								border-color: #aaa;
+							}
 						}
 						
 						label {
@@ -3809,6 +3853,18 @@ input.error, .errorCity {
 						fill: #8c58b5;
 					}
 				}
+			}
+			.delivery-success {
+				color: #008000;
+				font-size: 12px;
+				.helvetica-medium;
+				margin: 5px 0;
+			}
+			.delivery-failure {
+				color: #ff0000;
+				font-size: 12px;
+				.helvetica-medium;
+				margin: 5px 0;
 			}
 		}
 .modal-pop-up.assembled-popup{

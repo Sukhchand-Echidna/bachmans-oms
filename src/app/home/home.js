@@ -31,6 +31,11 @@ function HomeController($sce, $rootScope, $state, $compile, $uibModal,$log, Unde
 	var vm = this;
 	vm.showcalendarModal = false;
 	vm.showpromotionsmodal = false;
+	$scope.$parent.base.list = ' ';
+	if($scope.$parent.base.search){
+		$scope.$parent.base.search.query = ' ';
+	}
+	$scope.$parent.base.selectChange('customer');
 	OrderCloud.Auth.RemoveImpersonationToken();
 	//$scope.events=[];
     //$scope.events = EventList.events;

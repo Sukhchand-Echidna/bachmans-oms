@@ -128,6 +128,11 @@ function CustInfoController($scope, $exceptionHandler, $stateParams, $state, Use
 	var vm = this;
 	vm.list = UserList;
 	vm.subscribedList=userSubscription;
+	$scope.$parent.base.list = ' ';
+	if($scope.$parent.base.search){
+		$scope.$parent.base.search.query = ' ';
+	}
+	$scope.$parent.base.selectChange('customer');
 	vm.spendingAcc=spendingAccounts;
 	vm.creditCard=creditCard.Items;
 	  var userid = vm.list.user.ID;

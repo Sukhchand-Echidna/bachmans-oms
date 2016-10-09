@@ -65,7 +65,7 @@
 									</div>
 								</td>
 								<td class="price" ng-init="priceedit=true">
-									<input ng-model="orderSummary.LineTotal" value="{{orderSummary.LineTotal | currency}}" ng-disabled="priceedit">
+									<input ng-model="orderSummary.xp.TotalCost" value="{{orderSummary.LineTotal | currency}}" ng-disabled="priceedit">
 									<button ng-click="priceedit=false" ng-show="priceedit">
 									<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 									 viewBox="0 0 140.5 140" style="enable-background:new 0 0 140.5 140;" xml:space="preserve">
@@ -156,7 +156,38 @@
 									<button class="save" ng-click="priceedit=true" ng-show="!priceedit">save</button>
 								</td>
 								<td class="item">
-									{{orderClaim.order}}
+									<div ng-if="orderClaim.order.xp.SpendingAccounts.BachmansCharges">
+										<span>Bachmans Charges amount :</span>
+										<span>{{orderClaim.order.xp.SpendingAccounts.BachmansCharges.Amount | currency}}</span>
+									</div>
+									<div ng-if="orderClaim.order.xp.SpendingAccounts.BachmansCharges1">
+										<span>Bachmans Charges amount :</span>
+										<span>{{orderClaim.order.xp.SpendingAccounts.BachmansCharges.Amount | currency}}</span>
+									</div>
+									<div ng-if="orderClaim.order.xp.SpendingAccounts.GiftCard">
+										<span>Gift Card amount :</span>
+										<span>{{orderClaim.order.xp.SpendingAccounts.GiftCard.Amount | currency}}</span>
+									</div>
+									<div ng-if="orderClaim.order.xp.SpendingAccounts.PurplePerks">
+										<span>Purple Perks amount :</span>
+										<span>{{orderClaim.order.xp.SpendingAccounts.PurplePerks.Amount | currency}}</span>
+									</div>
+									<div ng-if="orderClaim.order.xp.SpendingAccounts.PaidCash">
+										<span>Cash amount :</span>
+										<span>{{orderClaim.order.xp.SpendingAccounts.PaidCash.Amount | currency}}</span>
+									</div>
+									<div ng-if="orderClaim.order.xp.SpendingAccounts.Cheque">
+										<span>Cheque amount :</span>
+										<span>{{orderClaim.order.xp.SpendingAccounts.Cheque.Amount | currency}}</span>
+									</div>
+									<div ng-if="orderClaim.order.xp.SpendingAccounts.CreditCard">
+										<span>Credit Card amount :</span>
+										<span>{{orderClaim.order.xp.SpendingAccounts.CreditCard.Amount | currency}}</span>
+									</div>
+									<div ng-if="orderClaim.order.xp.SpendingAccounts.PO">
+										<span>Purchase Order amount :</span>
+										<span>{{orderClaim.order.Total | currency}}</span>
+									</div>
 								</td>
 								<td class="item">
 									<select name="singleSelect" ng-init="orderSummary.selectresolution=''" ng-model="orderSummary.selectresolution" ng-options="resolution for resolution in orderClaim.refund.Resolutions" ng-change="orderSummary.resolution(resolution)">

@@ -149,7 +149,7 @@
 					</div>
 					<button class="notes" ng-click="buildOrderRight.GetDeliveryMethods(buildOrderRight.activeOrders[line][0].Product.ID, $index, buildOrderRight.activeOrders[line][0].xp.ProductImageUrl)" popover-trigger="none" popover-placement="bottom-left" popover-is-open="buildOrderRight.showDeliveryToolTip{{$index}}" uib-popover-template="showDeliveryMethods.templateUrl">ADD Recipient</button>
 					<script type="text/ng-template" id="AddRecipientDelMethods.html">
-							<div click-outside="closePopover()">
+							<div click-outside="closePopover($index)">
 							<div class="add-recipient">
 								<h2>Delivery Method</h2>
 								<div class="radio-btn-container"  ng-if="buildOrderRight.Courier">

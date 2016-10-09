@@ -48,6 +48,11 @@ function OrderHistoryConfig( $stateProvider ) {
 function OrderHistoryController($scope, $stateParams, Order) {
 	var vm = this;
 	vm.order=Order;
+	$scope.$parent.base.list = ' ';
+	if($scope.$parent.base.search){
+		$scope.$parent.base.search.query = ' ';
+	}
+	$scope.$parent.base.selectChange('customer');
 	if(vm.order.length>0){
 		console.log("oredr", vm.order);
 		$scope.uname=vm.order[0].FromUserFirstName + " " + vm.order[0].FromUserLastName;

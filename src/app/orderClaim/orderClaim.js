@@ -58,6 +58,11 @@ function OrderClaimConfig( $stateProvider ) {
 function OrderClaimController($scope, $stateParams, OrderCloud, CreditCardService, Buyer, Order, LineItemHelpers, $uibModal, alfrescoAccessURL) {
 	var vm = this;
 	vm.alfrecoTct=localStorage.getItem("alfrescoTicket");
+	$scope.$parent.base.list = ' ';
+	if($scope.$parent.base.search){
+		$scope.$parent.base.search.query = ' ';
+	}
+	$scope.$parent.base.selectChange('customer');
 	vm.userID=$stateParams.userID;
 	vm.alfrescoAccessURL=alfrescoAccessURL;
 	vm.orderclaimsummaryshow=false;
@@ -133,8 +138,63 @@ function OrderClaimController($scope, $stateParams, OrderCloud, CreditCardServic
 			console.log(vm.orderclaimarr);
 			console.log(vm.totalrefundcost);
 			vm.totalrefundcost1=vm.totalrefundcost;
-			angular.forEach(payments.Items, function(val, key) {
-				if(val.Type == "CreditCard"){
+			console.log(vm.order);
+			if(vm.order.xp.SpendingAccounts.BachmansCharges){
+				alert("BachmansCharges");
+				OrderCloud.SpendingAccounts.Get(vm.order.xp.SpendingAccounts.BachmansCharges.ID).then(function(res){
+					console.log(res);
+					OrderCloud.SpendingAccounts.Patch(res.ID, {"Balance":res.Balance+vm.order.xp.SpendingAccounts.BachmansCharges.Amount}).then(function(res1){
+						console.log(res1);
+					})
+				})
+			}
+			if(vm.order.xp.SpendingAccounts.GiftCard){
+				alert("GiftCard");
+				OrderCloud.SpendingAccounts.Get(vm.order.xp.SpendingAccounts.GiftCard.ID).then(function(res){
+					console.log(res);
+					OrderCloud.SpendingAccounts.Patch(res.ID, {"Balance":res.Balance+vm.order.xp.SpendingAccounts.GiftCard.Amount}).then(function(res1){
+						console.log(res1);
+					})
+				})
+			}
+			if(vm.order.xp.SpendingAccounts.PurplePerks){
+				alert("PurplePerks");
+				OrderCloud.SpendingAccounts.Get(vm.order.xp.SpendingAccounts.PurplePerks.ID).then(function(res){
+					console.log(res);
+					OrderCloud.SpendingAccounts.Patch(res.ID, {"Balance":res.Balance+vm.order.xp.SpendingAccounts.PurplePerks.Amount}).then(function(res1){
+						console.log(res1);
+					})
+				})
+			}
+			if(vm.order.xp.SpendingAccounts.PaidCash){
+				alert("PaidCash");
+				OrderCloud.As().SpendingAccounts.Create({"Name": vm.order.FromUserID+"cash_GC","Balance": vm.order.xp.SpendingAccounts.PaidCash.Amount}).then(function(res){
+					console.log(res);
+				})
+			}
+			if(vm.order.xp.SpendingAccounts.Cheque){
+				alert("Cheque");
+				OrderCloud.As().SpendingAccounts.Create({"Name": vm.order.FromUserID+"cheque_GC","Balance": vm.order.xp.SpendingAccounts.Cheque.Amount}).then(function(res){
+					console.log(res);
+				})
+			}
+			if(vm.order.xp.SpendingAccounts.PO){
+				alert("PO");
+				OrderCloud.As().SpendingAccounts.Create({"Name": vm.order.FromUserID+"PO_GC","Balance": vm.order.Total}).then(function(res){
+					console.log(res);
+				})
+			}
+			if(vm.order.xp.SpendingAccounts.CreditCard){
+				alert("CreditCard");
+				OrderCloud.As().Me.GetCreditCard(vm.order.xp.SpendingAccounts.CreditCard.ID).then(function(ccval){
+					console.log(ccval);
+					CreditCardService.RefundTransaction(ccval,Order,vm.order.xp.SpendingAccounts.CreditCard.Amount).then(function(cc){
+						console.log(cc);
+					})
+				})
+			}
+			/*angular.forEach(payments.Items, function(val, key) {
+				if(val.Type == "CreditCard" && vm.totalrefundcost1>1){
 					alert("CreditCard");
 					OrderCloud.Me.Get().then(function(me){
 						console.log(me);
@@ -149,13 +209,13 @@ function OrderClaimController($scope, $stateParams, OrderCloud, CreditCardServic
 				}
 				else if(val.Type == "SpendingAccount"){
 					alert("SpendingAccount");
-					/*OrderCloud.As().Me.GetCreditCard(val.CreditCardID).then(function(ccval){
+					OrderCloud.As().Me.GetCreditCard(val.CreditCardID).then(function(ccval){
 						console.log(ccval);
 						CreditCardService.RefundTransaction(ccval,Order,val.Amount).then(function(cc){
 							console.log(cc);
 
 						})
-					})*/
+					})
 					OrderCloud.SpendingAccounts.Get(val.SpendingAccountID).then(function(res){
 						console.log(res);
 						OrderCloud.SpendingAccounts.Patch(res.ID, {"Balance":res.Balance+val.Amount}).then(function(res1){
@@ -165,6 +225,12 @@ function OrderClaimController($scope, $stateParams, OrderCloud, CreditCardServic
 					})
 				}
 			}, true);
+			if(vm.totalrefundcost1>0){
+				var createspendingacc={"Name": vm.order.FromUserID+"_GC","Balance": vm.totalrefundcost1};
+				OrderCloud.As().SpendingAccounts.Create(createspendingacc).then(function(res){
+					console.log(res);
+				})
+			}*/
 		})
 		OrderCloud.As().Orders.Get(orderID).then(function(res){
 				/*for(var i=0; i<vm.orderclaimarr.length; i++){

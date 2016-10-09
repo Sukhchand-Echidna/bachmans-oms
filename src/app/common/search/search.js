@@ -206,7 +206,9 @@ function ordercloudSearch () {
             placeholder: '@',
             servicename: "@",
 			attribute:'@',
-            controlleras: "="
+            controlleras: "=",
+			search: '=?search',
+			change: '&'
         },
         restrict: 'E',
         templateUrl: 'common/search/templates/search.tpl.html',
@@ -233,6 +235,9 @@ function ordercloudSearchCtrl($state, $timeout, $scope, TrackSearch, OrderCloud,
 			'query' : '',
 			'hits' : []
 		};
+		if($scope.search.query.length>0){
+			$scope.controlleras.search.query=="";
+		}
 		// if($scope.servicename=='products' && $scope.attribute=='buildorder-search'){
 			// var ticket = localStorage.getItem("alfrescoTicket");
 			// console.log("searchController", ticket);
@@ -245,11 +250,15 @@ function ordercloudSearchCtrl($state, $timeout, $scope, TrackSearch, OrderCloud,
 				// if (searching) $timeout.cancel(searching);
 			// } else {
 		$scope.$watch('search.query', function(n,o) {
+			if($scope.search && $scope.search.query){
 			$scope.controlleras.qeueryLength=$scope.search.query.length;
 			if($scope.search.query.length==0){
 				$scope.controlleras.list=="";
+				}
 			}
+			if($scope.search && $scope.search.query){
 			$scope.controlleras.searchval=$scope.search.query;
+			}
 			if (n == o) {
 				if (searching) $timeout.cancel(searching);
 			} else {
@@ -257,7 +266,7 @@ function ordercloudSearchCtrl($state, $timeout, $scope, TrackSearch, OrderCloud,
 				searching = $timeout(function() {
 					n == '' ? n = null : angular.noop();
 					TrackSearch.SetTerm(n);
-			$scope.index.search($scope.search.query)
+			$scope.index.search($scope.search.query, {hitsPerPage: 1000})
 			.then(function searchSuccess(content) {
 				console.log(content);
 				// $scope.SearchResults= function(seqId){
@@ -296,18 +305,29 @@ function ordercloudSearchCtrl($state, $timeout, $scope, TrackSearch, OrderCloud,
 				if($scope.servicename=='products' && $scope.attribute=='buildorder-search'){
 					//var ticket = localStorage.getItem("alfrescoTicket");
 						//BuildOrderService.GetProductList(content.hits, vm.imagesList).then(function(prodList){
-							$scope.controlleras.buildorderSearch=content.hits;
+							// $scope.controlleras.buildorderSearch=content.hits;
 					//})
+					if($scope.search && $scope.search.query){
+						if($scope.search.query.length>2){
+							$scope.controlleras.buildorderSearch=content.hits;
+						}
+					}
 				}
 				else if($scope.servicename=='products'){
 					// var ticket = localStorage.getItem("alf_ticket");
 						// BuildOrderService.GetProductList(content.hits, vm.imagesList).then(function(prodList){
 							// $scope.controlleras.searchList=prodList;
 						// })
-					$scope.controlleras.searchList=content.hits;
+					if($scope.search && $scope.search.query){
+						if($scope.search.query.length>2){
+							$scope.controlleras.searchList=content.hits;
+						}
+					}
 				}
-				else{
-					$scope.controlleras.list = content.hits;
+				else if($scope.search && $scope.search.query){
+					if($scope.search.query.length>2){
+						$scope.controlleras.list = content.hits;
+					}
 				}
 				console.log("dddddd", $scope.controlleras.list);
 				// $scope.showProducts = function(){

@@ -152,7 +152,7 @@ function buildOrderConfig( $stateProvider ) {
 					OrderCloud.Users.GetAccessToken($stateParams.ID, impersonation).then(function(data){
 						OrderCloud.Auth.SetImpersonationToken(data['access_token']);
 						OrderCloud.As().Me.ListOutgoingOrders(null, 1, 100, null, null, {"Status":"Unsubmitted"}).then(function(res){
-							var temp = [], filt = _.filter(res.Items, function(row){
+							var temp = [], temp2 = [], filt = _.filter(res.Items, function(row){
 								if(row.xp.SavedOrder){
 									if(!row.xp.SavedOrder.Flag)
 										temp.push(row);
@@ -162,7 +162,21 @@ function buildOrderConfig( $stateProvider ) {
 							});
 							if(temp.length != 0){
 								CurrentOrder.Set(temp[0].ID);
-								d.resolve(temp[0]);
+								if(temp[0].PromotionDiscount > 0){
+									//Remove promotions for the order
+									OrderCloud.As().Orders.ListPromotions(temp[0].ID).then(function(res1){
+										angular.forEach(res1.Items, function(val){
+											temp2.push(OrderCloud.As().Orders.RemovePromotion(temp[0].ID, val.Code));
+										});
+										$q.all(temp2).then(function(result1){
+											OrderCloud.As().Orders.Get(temp[0].ID).then(function(res3){
+												d.resolve(res3);
+											});
+										});
+									});
+								}else{
+									d.resolve(temp[0]);
+								}
 							}else{
 								d.resolve();
 							}
@@ -253,13 +267,18 @@ function buildOrderController($scope, $rootScope, $state, buyerid, $controller, 
 	vm.upselloverlay=false;
 	vm.selected = undefined;
 	vm.hidePdpblock=false;
+	$scope.$parent.base.list = ' ';
+	if($scope.$parent.base.search){
+		$scope.$parent.base.search.query = ' ';
+	}
+	$scope.$parent.base.selectChange('customer');
 	if($stateParams.SearchType == 'Workshop'){
 			vm.hidePdpblock=true;
 	}
-	$scope.search = {
-        'query' : '',
-        'hits' : []
-    };
+	// $scope.search = {
+        // 'query' : '',
+        // 'hits' : []
+    // };
 	vm.productSearchData = [];
 	vm.showPDP = false;
 	$scope.hideSearchBox=false;
@@ -546,7 +565,7 @@ function buildOrderController($scope, $rootScope, $state, buyerid, $controller, 
 	/*----End of Upsell Data----*/
 	$scope.gotoplp = function(){
 		vm.showPDP = false;
-		if($stateParams.SearchType == 'PDP' && vm.seqProducts !='' && vm.searchval == ""){
+		if($stateParams.SearchType == 'PDP' && vm.seqProducts !='' && vm.searchval == undefined){
 			vm.searchSeqList=vm.seqProducts;
 		}
 		if($stateParams.SearchType == 'Workshop' && vm.hidePdpblock==true){
@@ -1391,6 +1410,9 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 		}
 	};
 	$scope.createListItem = function(prodID, DeliveryMethod){
+		// Data clear Starts
+		vm.DuplicateActiveOrders = angular.copy(vm.activeOrders);
+		// Data clear ends
 		var lineItemParams = {"ProductID": prodID,"Quantity": 1,"xp":{"TotalCost":0}}, buildorderVM = angular.element(document.getElementById("buildOrder-pdp-container")).scope().$parent.$parent.$parent.buildOrder, TempArr = [];
 		if(buildorderVM.ProductPromotionCatID){
 			lineItemParams.xp.PromoId = buildorderVM.ProductPromotionCatID;
@@ -1419,31 +1441,7 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 						}
 						vm.ActiveOrderCartLoader = OrderCloud.LineItems.Patch(vm.order.ID, res.ID, lineItemParams).then(function(res2){
 							if(buildorderVM.AssemblyList.length == 0 || buildorderVM.IsAssembly == 'Not Assembled'){
-								//vm.getLineItems();
-								//---------------Data clear work around starts here-----------
-								var arr = [];
-								arr.push(res2);
-								if(!vm.activeOrders)
-									vm.activeOrders = {};
-								vm.ActiveOrderCartLoader = LineItemHelpers.GetProductInfo(arr).then(function(data){
-									if(vm.activeOrders[data[0].ProductID]){
-										angular.forEach(vm.activeOrders, function(val, key){
-											if(key == data[0].ProductID){
-												val.push(data[0]);
-											}
-										}, true);
-										if(!_.contains(vm.lineItemProducts, data[0].ProductID))
-											vm.lineItemProducts.push(data[0].ProductID);
-									}else{
-										vm.lineItemProducts = _.without(vm.lineItemProducts, data[0].ProductID);
-										vm.lineItemProducts.push(data[0].ProductID);
-										vm.activeOrders[data[0].ProductID] = [data[0]];
-									}
-									angular.forEach(vm.activeOrders, function(val, key){
-										$scope.prodQty[key] = _.reduce(_.pluck(vm.activeOrders[key], 'Quantity'), function(memo, num){ return memo + num; }, 0);
-									});
-								});	
-								//---------------Data clear work around ends here------------
+								vm.getLineItems();
 							}else{
 								vm.CreateAssemblyItems(buildorderVM, res2.ID);
 							}
@@ -1467,31 +1465,7 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 						}
 						vm.ActiveOrderCartLoader = OrderCloud.As().LineItems.Patch(vm.order.ID, res.ID, lineItemParams).then(function(res2){
 							if(buildorderVM.AssemblyList.length == 0 || buildorderVM.IsAssembly == 'Not Assembled'){
-								//vm.getLineItems();
-								//---------------Data clear work around starts here-----------
-								var arr = [];
-								arr.push(res2);
-								if(!vm.activeOrders)
-									vm.activeOrders = {};
-								vm.ActiveOrderCartLoader = LineItemHelpers.GetProductInfo(arr).then(function(data){
-									if(vm.activeOrders[data[0].ProductID]){
-										angular.forEach(vm.activeOrders, function(val, key){
-											if(key == data[0].ProductID){
-												val.push(data[0]);
-											}
-										}, true);
-										if(!_.contains(vm.lineItemProducts, data[0].ProductID))
-											vm.lineItemProducts.push(data[0].ProductID);
-									}else{
-										vm.lineItemProducts = _.without(vm.lineItemProducts, data[0].ProductID);
-										vm.lineItemProducts.push(data[0].ProductID);
-										vm.activeOrders[data[0].ProductID] = [data[0]];
-									}
-									angular.forEach(vm.activeOrders, function(val, key){
-										$scope.prodQty[key] = _.reduce(_.pluck(vm.activeOrders[key], 'Quantity'), function(memo, num){ return memo + num; }, 0);
-									});
-								});
-								//---------------Data clear work around ends here------------
+								vm.getLineItems();
 							}else{
 								vm.CreateAssemblyItems(buildorderVM, res2.ID);
 							}
@@ -1531,31 +1505,11 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 				TempArr.push(OrderCloud.LineItems.Patch(vm.order.ID, val.ID, {"xp":{"TotalCost":val.LineTotal}}));
 				AssemblyLineItems.push(val.ID);
 			}, true);
-			TempArr.push(OrderCloud.LineItems.Patch(vm.order.ID, BaseLineItemID, {"xp":{"AssemblyLineItemsList":AssemblyLineItems}}));
+			TempArr.unshift(OrderCloud.LineItems.Patch(vm.order.ID, BaseLineItemID, {"xp":{"AssemblyLineItemsList":AssemblyLineItems}}));
 			vm.ActiveOrderCartLoader = $q.all(TempArr).then(function(result2){
-				//vm.getLineItems();
-				//---------------Data clear work around starts here-----------
-				vm.ActiveOrderCartLoader = LineItemHelpers.GetProductInfo(result2).then(function(data){
-					angular.forEach(data, function(val1, key1){
-						if(vm.activeOrders[val1.ProductID]){
-							angular.forEach(vm.activeOrders, function(val, key){
-								if(key == val1.ProductID){
-									val.push(val1);
-								}
-							}, true);
-							if(!_.contains(vm.lineItemProducts, val1.ProductID))
-								vm.lineItemProducts.push(val1.ProductID);
-						}else{
-							vm.lineItemProducts = _.without(vm.lineItemProducts, val1.ProductID);
-							vm.lineItemProducts.push(val1.ProductID);
-							vm.activeOrders[val1.ProductID] = [val1];
-						}
-					}, true);
-					angular.forEach(vm.activeOrders, function(val, key){
-						$scope.prodQty[key] = _.reduce(_.pluck(vm.activeOrders[key], 'Quantity'), function(memo, num){ return memo + num; }, 0);
-					});
-				});
-				//---------------Data clear work around ends here------------
+				vm.getLineItems();
+			}).catch(function(){
+				vm.getLineItems();
 			});
 		});
 	};
@@ -1581,29 +1535,9 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 				TempArr.push(OrderCloud.LineItems.Patch(vm.order.ID, val.ID, {"xp":{"TotalCost":val.LineTotal}}));
 			}, true);
 			vm.ActiveOrderCartLoader = $q.all(TempArr).then(function(result2){
-				//vm.getLineItems();
-				//---------------Data clear work around starts here-----------
-				vm.ActiveOrderCartLoader = LineItemHelpers.GetProductInfo(result2).then(function(data){
-					angular.forEach(data, function(val1, key1){
-						if(vm.activeOrders[val1.ProductID]){
-							angular.forEach(vm.activeOrders, function(val, key){
-								if(key == val1.ProductID){
-									val.push(val1);
-								}
-							}, true);
-							if(!_.contains(vm.lineItemProducts, val1.ProductID))
-								vm.lineItemProducts.push(val1.ProductID);
-						}else{
-							if(!_.contains(vm.lineItemProducts, val1.ProductID))
-								vm.lineItemProducts.push(val1.ProductID);
-							vm.activeOrders[val1.ProductID] = [val1];
-						}
-					}, true);
-					angular.forEach(vm.activeOrders, function(val, key){
-						$scope.prodQty[key] = _.reduce(_.pluck(vm.activeOrders[key], 'Quantity'), function(memo, num){ return memo + num; }, 0);
-					});					
-				});
-				//---------------Data clear work around ends here------------
+				vm.getLineItems();
+			}).catch(function(){
+				vm.getLineItems();
 			});
 		});
 	};
@@ -1613,117 +1547,57 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 		vm.CancelDeleteToolTip[listItem.ID] = false;
 		if(!listItem.xp.AssemblyLineItemsList){
 			vm.ActiveOrderCartLoader = OrderCloud.As().LineItems.Delete(vm.order.ID, listItem.ID).then(function(res){
-				//---------------Data clear work around starts here------------
-				angular.forEach(vm.activeOrders, function(val, key){
-					if(key == listItem.ProductID){
-						val = _.without(val, _.findWhere(val, {ID: listItem.ID}));
-						if(val.length == 0){
-							vm.lineItemProducts = _.without(vm.lineItemProducts, key);
-							delete vm.activeOrders[key];
-						}	
-						else
-							vm.activeOrders[key] = val;
-					}
-					$scope.prodQty[key] = _.reduce(_.pluck(vm.activeOrders[key], 'Quantity'), function(memo, num){ return memo + num; }, 0);
+				// Data clear Starts
+				vm.DuplicateActiveOrders = angular.copy(vm.activeOrders);
+				angular.forEach(vm.DuplicateActiveOrders, function(val, key){
+					vm.DuplicateActiveOrders[key] = _.without(val, _.findWhere(val, {ID: listItem.ID}));
+					if(vm.DuplicateActiveOrders[key].length == 0)
+						delete vm.DuplicateActiveOrders[key];
 				}, true);
-				//---------------Data clear work around ends here--------------
+				// Data clear ends
 				//Assembly multiple lineitems in base item remove
-				delete vm.lineItemForm[listItem.ID];
 				if(listItem.xp.BaseLineItemID){
-					var dat = _.without(listItem.xp.AssemblyLineItemsList, listItem.ID);
-					vm.ActiveOrderCartLoader = OrderCloud.As().LineItems.Patch(vm.order.ID, listItem.ID, {"xp":{"AssemblyLineItemsList": dat}}).then(function(res){
-						//vm.getLineItems();
-						if(vm.lineItemForm[listItem.ID])
-							vm.lineItemForm[listItem.ID].$setPristine();
-						vm.ActiveOrderCartLoader = OrderCloud.LineItems.List(vm.order.ID).then(function(res){
-							if(res.Items.length == 0)
-								angular.element(document.getElementById("build-order-footer")).scope().buildOrderDown.buildorderfooter = true;
-							vm.ActiveOrderCartLoader = LineItemHelpers.GetProductInfo(res.Items).then(function(data){
-								vm.OrderConfirmFunction(data);
-							});
-						});	
+					vm.ActiveOrderCartLoader = OrderCloud.As().LineItems.Get(vm.order.ID, listItem.xp.BaseLineItemID).then(function(res){
+						var dat = _.without(res.xp.AssemblyLineItemsList, listItem.ID);
+						listItem.xp.AssemblyLineItemsList = dat;
+						vm.ActiveOrderCartLoader = OrderCloud.As().LineItems.Patch(vm.order.ID, res.ID, {"xp":{"AssemblyLineItemsList": dat}}).then(function(res){
+							vm.getLineItems();
+							//vm.lineItemForm[listItem.ID].$setPristine();
+						});
 					});
 				}else{
-					//vm.getLineItems();
-					if(vm.lineItemForm[listItem.ID])
-						vm.lineItemForm[listItem.ID].$setPristine();
-					vm.ActiveOrderCartLoader = OrderCloud.LineItems.List(vm.order.ID).then(function(res){
-						if(res.Items.length == 0)
-							angular.element(document.getElementById("build-order-footer")).scope().buildOrderDown.buildorderfooter = true;
-						vm.ActiveOrderCartLoader = LineItemHelpers.GetProductInfo(res.Items).then(function(data){
-							vm.OrderConfirmFunction(data);
-						});
-					});	
+					vm.getLineItems();
+					//vm.lineItemForm[listItem.ID].$setPristine();
 				}
-			}).catch(function(errMsg){
-				if(errMsg.status==404){
-					angular.forEach(vm.activeOrders, function(val, key){
-						if(key == listItem.ProductID){
-							val = _.without(val, _.findWhere(val, {ID: listItem.ID}));
-							if(val.length == 0){
-								vm.lineItemProducts = _.without(vm.lineItemProducts, key);
-								delete vm.activeOrders[key];
-							}	
-							else
-								vm.activeOrders[key] = val;
-						}
-						$scope.prodQty[key] = _.reduce(_.pluck(vm.activeOrders[key], 'Quantity'), function(memo, num){ return memo + num; }, 0);
-					}, true);
-				}	
+				delete vm.lineItemForm[listItem.ID];
+			}).catch(function(){
+				vm.getLineItems();
 			});
 		}else{
 			var TempArr = [];
 			angular.forEach(listItem.xp.AssemblyLineItemsList, function(val){
-				delete vm.lineItemForm[val];
 				TempArr.push(OrderCloud.As().LineItems.Delete(vm.order.ID, val));
-				angular.forEach(vm.activeOrders, function(val1, key1){
-					val1 = _.without(val1, _.findWhere(val1, {ID: val}));
-					vm.activeOrders[key1] = val1;
-					if(vm.activeOrders[key1].length == 0)
-						vm.lineItemProducts = _.without(vm.lineItemProducts, key1);
+				delete vm.lineItemForm[val];
+				// Data clear Starts
+				vm.DuplicateActiveOrders = angular.copy(vm.activeOrders);
+				angular.forEach(vm.DuplicateActiveOrders, function(val, key){
+					vm.DuplicateActiveOrders[key] = _.without(val, _.findWhere(val, {ID: listItem.ID}));
+					if(vm.DuplicateActiveOrders[key].length == 0)
+						delete vm.DuplicateActiveOrders[key];
 				}, true);
+				// Data clear ends
 			}, true);
 			TempArr.push(OrderCloud.As().LineItems.Delete(vm.order.ID, listItem.ID));
 			delete vm.lineItemForm[listItem.ID];
+			// Data clear Starts
+			angular.forEach(vm.DuplicateActiveOrders, function(val, key){
+				vm.DuplicateActiveOrders[key] = _.without(val, _.findWhere(val, {ID: listItem.ID}));
+			}, true);
+			// Data clear ends
 			vm.ActiveOrderCartLoader = $q.all(TempArr).then(function(result){
-				//vm.getLineItems();
-				//---------------Data clear work around starts here------------	
-				angular.forEach(vm.activeOrders, function(val, key){
-					if(key == listItem.ProductID){
-						val = _.without(val, _.findWhere(val, {ID: listItem.ID}));
-						if(val.length == 0){
-							vm.lineItemProducts = _.without(vm.lineItemProducts, key);
-							delete vm.activeOrders[key];
-						}	
-						else
-							vm.activeOrders[key] = val;
-					}
-					$scope.prodQty[key] = _.reduce(_.pluck(vm.activeOrders[key], 'Quantity'), function(memo, num){ return memo + num; }, 0);
-				}, true);
-				//---------------Data clear work around ends here--------------
-				vm.ActiveOrderCartLoader = OrderCloud.LineItems.List(vm.order.ID).then(function(res){
-					if(res.Items.length == 0)
-						angular.element(document.getElementById("build-order-footer")).scope().buildOrderDown.buildorderfooter = true;
-					vm.ActiveOrderCartLoader = LineItemHelpers.GetProductInfo(res.Items).then(function(data){
-						vm.OrderConfirmFunction(data);
-					});
-				});
-				console.log("succces");
-			}).catch(function(errMsg){
-				if(errMsg.status==404){
-					angular.forEach(vm.activeOrders, function(val, key){
-						if(key == listItem.ProductID){
-							val = _.without(val, _.findWhere(val, {ID: listItem.ID}));
-							if(val.length == 0){
-								vm.lineItemProducts = _.without(vm.lineItemProducts, key);
-								delete vm.activeOrders[key];
-							}	
-							else
-								vm.activeOrders[key] = val;
-						}
-						$scope.prodQty[key] = _.reduce(_.pluck(vm.activeOrders[key], 'Quantity'), function(memo, num){ return memo + num; }, 0);
-					}, true);
-				}	
+				vm.getLineItems();
+			}).catch(function(){
+				vm.getLineItems();
 			});
 		}
 	};
@@ -1750,7 +1624,7 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 						if(res.Items.length==0)
 							angular.element(document.getElementById("build-order-footer")).scope().buildOrderDown.buildorderfooter=true;
 						vm.AvoidMultipleDelryChrgs = [];	
-						if(res.Items.length==0 && vm.order.TaxCost != 0){
+						if(res.Items.length==0 && (vm.order.TaxCost != 0 || vm.order.ShippingCost != 0)){
 							OrderCloud.Orders.Patch(vm.order.ID, {"ShippingCost": 0, "TaxCost": 0, "xp":{"CapTotalDiscount": 0}}).then(function(res){
 								vm.order = res;
 							}).catch(function(){
@@ -1775,6 +1649,32 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 							data = _.groupBy(data, function(obj){
 								return obj.ProductID;
 							});
+							// Data clear Starts
+							if(vm.DuplicateActiveOrders){
+								angular.forEach(data, function(val, key){
+									angular.forEach(vm.DuplicateActiveOrders, function(val1, key1){
+										if(val.length == val1.length && key==key1){
+											data[key] = val1;
+										}
+										if(val.length > val1.length && key==key1){
+											var diff = val.filter(function(item1){
+												for (var i in val1) {
+													if (item1.ID === val1[i].ID) { return false; }
+												};
+												return true;
+											});
+											angular.forEach(diff, function(val2, key2){
+												if(!vm.DuplicateActiveOrders[val2.ProductID])
+													vm.DuplicateActiveOrders[val2.ProductID] = [];
+												vm.DuplicateActiveOrders[val2.ProductID].push(val2);
+												data[val2.ProductID] = vm.DuplicateActiveOrders[val2.ProductID];
+											});
+										}
+									}, true);
+									//vm.DuplicateActiveOrders[key] = _.without(val, _.findWhere(val, {ID: listItem.ID}));
+								}, true);
+							}
+							// Data clear ends
 							BuildOrderService.OrderOnHoldRemove(res.Items, vm.order.ID).then(function(dt){
 								console.log("Order OnHold Removed....");
 							});
@@ -1832,9 +1732,11 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 									}
 									if(val.ShippingAddress!=null){
 										BuildOrderService.GetPhoneNumber(val.ShippingAddress.Phone).then(function(res){
-											val.ShippingAddress.Phone1 = res[0];
-											val.ShippingAddress.Phone2 = res[1];
-											val.ShippingAddress.Phone3 = res[2];
+											if(res){
+												val.ShippingAddress.Phone1 = res[0];
+												val.ShippingAddress.Phone2 = res[1];
+												val.ShippingAddress.Phone3 = res[2];
+											}	
 										});
 										val.ShippingAddress.Zip = parseInt(val.ShippingAddress.Zip);
 									}
@@ -1884,6 +1786,32 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 							data = _.groupBy(data, function(obj){
 								return obj.ProductID;
 							});
+							// Data clear Starts
+							if(vm.DuplicateActiveOrders){
+								angular.forEach(data, function(val, key){
+									angular.forEach(vm.DuplicateActiveOrders, function(val1, key1){
+										if(val.length == val1.length && key==key1){
+											data[key] = val1;
+										}
+										if(val.length > val1.length && key==key1){
+											var diff = val.filter(function(item1){
+												for (var i in val1) {
+													if (item1.ID === val1[i].ID) { return false; }
+												};
+												return true;
+											});
+											angular.forEach(diff, function(val2, key2){
+												if(!vm.DuplicateActiveOrders[val2.ProductID])
+													vm.DuplicateActiveOrders[val2.ProductID] = [];
+												vm.DuplicateActiveOrders[val2.ProductID].push(val2);
+												data[val2.ProductID] = vm.DuplicateActiveOrders[val2.ProductID];
+											});
+										}
+									}, true);
+									//vm.DuplicateActiveOrders[key] = _.without(val, _.findWhere(val, {ID: listItem.ID}));
+								}, true);
+							}
+							// Data clear ends
 							BuildOrderService.OrderOnHoldRemove(res.Items, vm.order.ID).then(function(dt){
 								console.log("Order OnHold Removed....");
 							});
@@ -1941,9 +1869,11 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 									}
 									if(val.ShippingAddress!=null){
 										BuildOrderService.GetPhoneNumber(val.ShippingAddress.Phone).then(function(res){
-											val.ShippingAddress.Phone1 = res[0];
-											val.ShippingAddress.Phone2 = res[1];
-											val.ShippingAddress.Phone3 = res[2];
+											if(res){
+												val.ShippingAddress.Phone1 = res[0];
+												val.ShippingAddress.Phone2 = res[1];
+												val.ShippingAddress.Phone3 = res[2];
+											}
 										});
 										val.ShippingAddress.Zip = parseInt(val.ShippingAddress.Zip);
 									}
@@ -2452,7 +2382,7 @@ function buildOrderSummaryController($scope, $state, ocscope, buyerid, $cookieSt
 				totalCost += value.xp.TotalCost;
 				value.xp.deliveryCharges = 0;
 				angular.forEach(value.xp.deliveryFeesDtls, function(val, key){
-					value.xp.deliveryCharges += parseFloat(val);
+					value.xp.deliveryCharges += Math.floor(parseFloat(val) * 100) / 100;;
 				});
 				value.ShippingAddress.deliveryDate = value.xp.deliveryDate;
 				value.ShippingAddress.lineID = value.ID;
@@ -2477,7 +2407,7 @@ function buildOrderSummaryController($scope, $state, ocscope, buyerid, $cookieSt
 			var totalcost = 0;
 			_.each(data[n], function(val,index){
 				vm.TotalCost[n] += val.xp.deliveryCharges+val.xp.Tax+val.LineTotal;
-				vm.TotalTax[n] += parseFloat(val.xp.Tax);
+				vm.TotalTax[n] += Math.floor(parseFloat(val.xp.Tax) * 100) / 100;
 				if(val.xp.deliveryFeesDtls){
 					data[n] = _.reject(data[n], val);
 					data[n].unshift(val);
@@ -2526,7 +2456,7 @@ function buildOrderSummaryController($scope, $state, ocscope, buyerid, $cookieSt
 		var deliverySum = 0, TempArr = [];
 		angular.forEach(recipient, function(val, key){
 			angular.forEach(val.xp.deliveryFeesDtls, function(val1, key1){
-				deliverySum += parseFloat(val1);
+				deliverySum += Math.floor(parseFloat(val1) * 100) / 100;;
 			});
 			delete val.xp.Discount;
 			val.ShipFromAddressID = "testShipFrom";
@@ -2544,7 +2474,7 @@ function buildOrderSummaryController($scope, $state, ocscope, buyerid, $cookieSt
 						var row = _.findWhere(result2, {ID: val.LineNo});
 						row.xp.deliveryCharges = 0;
 						_.filter(row.xp.deliveryFeesDtls, function(val){
-							row.xp.deliveryCharges += parseFloat(val);
+							row.xp.deliveryCharges += Math.floor(parseFloat(val) * 100) / 100;;
 						});
 						TempArr.push(OrderCloud.As().LineItems.Patch(vm.order.ID, val.LineNo, {"xp":{"Tax":val.Tax, "TotalCost":row.xp.deliveryCharges+row.LineTotal+val.Tax}}));
 					}, true);
@@ -2728,16 +2658,20 @@ function BuildOrderService( $q, $window, $stateParams, ocscope, buyerid, OrderCl
 	
 	function _GetPhoneNumber(phn){
 		var d = $q.defer();
-		var arr = [];
-		var init = phn.indexOf('(');
-		var fin = phn.indexOf(')');
-		arr.push(parseInt(phn.substr(init+1,fin-init-1)));
-		init = phn.indexOf(')');
-		fin = phn.indexOf('-');
-		arr.push(parseInt(phn.substr(init+1,fin-init-1)));
-		init = phn.indexOf('-');
-		arr.push(parseInt(phn.substr(init+1,phn.length)));
-		d.resolve(arr);
+		if(phn){
+			var arr = [];
+			var init = phn.indexOf('(');
+			var fin = phn.indexOf(')');
+			arr.push(parseInt(phn.substr(init+1,fin-init-1)));
+			init = phn.indexOf(')');
+			fin = phn.indexOf('-');
+			arr.push(parseInt(phn.substr(init+1,fin-init-1)));
+			init = phn.indexOf('-');
+			arr.push(parseInt(phn.substr(init+1,phn.length)));
+			d.resolve(arr);
+		}else{
+			d.resolve();
+		}	
 		return d.promise;
 	}
 	function _GetBuyerDtls(){
@@ -2817,7 +2751,7 @@ function BuildOrderService( $q, $window, $stateParams, ocscope, buyerid, OrderCl
 		var d = $q.defer(), delChrgs = 0, CapTotalDiscount = 0;
 		angular.forEach(data.Items, function(val, key){
 			angular.forEach(val.xp.deliveryFeesDtls, function(val1, key1){
-				delChrgs += parseFloat(val1);
+				delChrgs += Math.floor(parseFloat(val1) * 100) / 100;;
 			},true);
 		},true);
 		if(delChrgs > 250){
@@ -3126,7 +3060,7 @@ function BuildOrderService( $q, $window, $stateParams, ocscope, buyerid, OrderCl
 								line.xp.TotalCost = 0;
 								line.xp.deliveryCharges = 0;
 								angular.forEach(line.xp.deliveryFeesDtls, function(val, key){
-									line.xp.deliveryCharges += parseFloat(val);
+									line.xp.deliveryCharges += Math.floor(parseFloat(val) * 100) / 100;;
 								}, true);
 								if(vm.NoDeliveryFees == true || line.xp.addressType=="InStorePickUp"){
 									if(line.xp.deliveryFeesDtls['Placement Charges']){
@@ -3221,7 +3155,7 @@ function BuildOrderService( $q, $window, $stateParams, ocscope, buyerid, OrderCl
 			'hits' : []
 		};
 		search.query=data;
-		return index.search(search.query);
+		return index.search(search.query, {hitsPerPage: 1000});
 	}
 	function _getUnsubmittedOrder(){
 		var temp = [], filt, d = $q.defer();

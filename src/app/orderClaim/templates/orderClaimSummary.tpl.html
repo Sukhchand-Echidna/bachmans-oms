@@ -18,12 +18,13 @@
 			<table class="table table-bordered">
 				<thead class="thead-default">
 				    <tr>
-				      <th>Quantity</th>
-				      <th>Products*</th>
-				      <th>Price*</th>
-				      <th>Select Claim Resolution*</th>
-				      <th>Reason Code*</th>
-				      <th>Enter Reason for Claim*</th>     
+						<th>Quantity</th>
+						<th>Products*</th>
+						<th>Price*</th>
+						<th>Paid Through</th>
+						<th>Select Claim Resolution*</th>
+						<th>Reason Code*</th>
+						<th>Enter Reason for Claim*</th>     
 				    </tr>
 				</thead>
 				<tbody>
@@ -42,6 +43,40 @@
 				      		</div>
 				  		</td>
 				    	<td class="price">{{orderSummary.LineTotal | currency}}</td>
+				    	<td class="item">
+							<div ng-if="orderClaim.order.xp.SpendingAccounts.BachmansCharges">
+								<span>Bachmans Charges amount :</span>
+								<span>{{orderClaim.order.xp.SpendingAccounts.BachmansCharges.Amount | currency}}</span>
+							</div>
+							<div ng-if="orderClaim.order.xp.SpendingAccounts.BachmansCharges1">
+								<span>Bachmans Charges amount :</span>
+								<span>{{orderClaim.order.xp.SpendingAccounts.BachmansCharges.Amount | currency}}</span>
+							</div>
+							<div ng-if="orderClaim.order.xp.SpendingAccounts.GiftCard">
+								<span>Gift Card amount :</span>
+								<span>{{orderClaim.order.xp.SpendingAccounts.GiftCard.Amount | currency}}</span>
+							</div>
+							<div ng-if="orderClaim.order.xp.SpendingAccounts.PurplePerks">
+								<span>Purple Perks amount :</span>
+								<span>{{orderClaim.order.xp.SpendingAccounts.PurplePerks.Amount | currency}}</span>
+							</div>
+							<div ng-if="orderClaim.order.xp.SpendingAccounts.PaidCash">
+								<span>Cash amount :</span>
+								<span>{{orderClaim.order.xp.SpendingAccounts.PaidCash.Amount | currency}}</span>
+							</div>
+							<div ng-if="orderClaim.order.xp.SpendingAccounts.Cheque">
+								<span>Cheque amount :</span>
+								<span>{{orderClaim.order.xp.SpendingAccounts.Cheque.Amount | currency}}</span>
+							</div>
+							<div ng-if="orderClaim.order.xp.SpendingAccounts.CreditCard">
+								<span>Credit Card amount :</span>
+								<span>{{orderClaim.order.xp.SpendingAccounts.CreditCard.Amount | currency}}</span>
+							</div>
+							<div ng-if="orderClaim.order.xp.SpendingAccounts.PO">
+								<span>Purchase Order amount :</span>
+								<span>{{orderClaim.order.Total | currency}}</span>
+							</div>
+						</td>
 				    	<td class="item">
 				    		<p>{{orderSummary.selectresolution}}</p>
 				    	</td>

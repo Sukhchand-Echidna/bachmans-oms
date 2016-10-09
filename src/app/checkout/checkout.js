@@ -361,9 +361,9 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 				vm['data'+index] = "selDate"+index;
 			}
 			index++;
-			orderDtls.subTotal += parseFloat(obj.LineTotal);
+			orderDtls.subTotal += Math.floor(parseFloat(obj.LineTotal) * 100) / 100;
 			angular.forEach(obj.xp.deliveryFeesDtls, function(val, key){
-				deliverySum += parseFloat(val);
+				deliverySum += Math.floor(parseFloat(val) * 100) / 100;
 			},true);
 			orderDtls.deliveryCharges += deliverySum;
 			obj.xp.MinDays = {};
@@ -491,7 +491,7 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 			line.xp.deliveryFeesDtls['Priority Delivery'] = vm.buyerDtls.xp.DeliveryRuns[0].Run4.charge;
 		}*/
 		angular.forEach(line.xp.deliveryFeesDtls, function(val, key){
-			deliverySum += parseFloat(val);
+			deliverySum += Math.floor(parseFloat(val) * 100) / 100;
 		});
 		line.xp.TotalCost = deliverySum + line.LineTotal + line.TaxCost;
 		if(line.xp.deliveryChargeAdjReason == "---select---")
@@ -859,7 +859,7 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 		var sum=0;
 		angular.forEach(vm.orderDtls.SpendingAccounts, function(val, key){
 			//if(key!="Cheque")
-			sum = sum + parseFloat(val.Amount);
+			sum = sum + Math.floor(parseFloat(val.Amount) * 100) / 100;
 		}, true);
 		if(_.isEmpty(vm.orderDtls.SpendingAccounts)){
 			vm.order.Total = vm.order.Subtotal + vm.order.ShippingCost + vm.order.TaxCost + vm.order.PromotionDiscount;
@@ -1086,13 +1086,13 @@ function checkoutService(CreditCardService, $q, OrderCloud, $state, TaxService, 
 						if(val.Description=="PurplePerks"){
 							params.redemption = "P";
 							params.cardNumber = "";// Add to card number dynamic
-							params.cardAmount = parseFloat(vm.UserSpendingAcc['Purple Perks'].Balance) - parseFloat(val.Amount);// Remaining amount in card
+							params.cardAmount = Math.floor(parseFloat(vm.UserSpendingAcc['Purple Perks'].Balance) * 100) / 100 - Math.floor(parseFloat(val.Amount) * 100) / 100;// Remaining amount in card
 							TempStoredArray.push($http.post(GC_PP_Redemption, params));
 						}
 						if(val.Description=="GiftCard"){
 							params.redemption = "G";
 							params.cardNumber = "";// Add to card number dynamic
-							params.cardAmount =  parseFloat(vm.UserSpendingAcc['Gift Card'].Balance) - parseFloat(val.Amount);// Remaining amount in card
+							params.cardAmount = Math.floor(parseFloat(vm.UserSpendingAcc['Gift Card'].Balance) * 100) / 100 - Math.floor(parseFloat(val.Amount) * 100) / 100;// Remaining amount in card
 							TempStoredArray.push($http.post(GC_PP_Redemption, params));
 						}
 					}, true);

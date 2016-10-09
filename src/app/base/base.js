@@ -208,9 +208,16 @@ function BaseController($sce, $state, CurrentUser, defaultErrorMessageResolver, 
 	$scope.switchSearch = 'customer';
     $scope.selectChange = function (confirmed) {
 		$scope.base.list="";
+		$scope.base.searchList='';
         $scope.switchSearch = confirmed;
-        console.log("qqueryyyyy", $scope.search.query);
     };
+	vm.selectChange = function (confirmed) {
+		$scope.base.list="";
+		$scope.base.searchList='';
+        $scope.switchSearch = confirmed;
+		if($scope.base.search)
+			$scope.base.search.query='';
+		}
 }
 
 function BaseLeftController(ComponentList) {

@@ -442,7 +442,7 @@
 									<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14"><path d="M5.378 11.37L2 7.59l1.438-1.286L5.374 8.47l5.185-5.84L12 3.91l-6.622 7.46" fill="#fff"/></svg>
 								</span>
 							</div>
-							<div ng-click="checkout.paymentOption = 'PurplePerk'" ng-show="checkout.UserSpendingAcc['Purple Perks'] && checkout.buyerDtls.xp.PaymentMethods.PurplePerks.OMS" ng-class="{'active-tab': checkout.orderDtls.SpendingAccounts.PurplePerks, 'highlight': checkout.paymentOption == 'PurplePerk'}">Purple Perks
+							<div ng-click="checkout.paymentOption = 'PurplePerk'" ng-show="checkout.UserSpendingAcc['Purple Perks'] && checkout.buyerDtls.xp.PaymentMethods.PurplePerks.OMS && checkout.UserSpendingAcc['Purple Perks'].Balance > 0" ng-class="{'active-tab': checkout.orderDtls.SpendingAccounts.PurplePerks, 'highlight': checkout.paymentOption == 'PurplePerk'}">Purple Perks
 								<span class="selected">
 									<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14"><path d="M5.378 11.37L2 7.59l1.438-1.286L5.374 8.47l5.185-5.84L12 3.91l-6.622 7.46" fill="#fff"/></svg>
 								</span>

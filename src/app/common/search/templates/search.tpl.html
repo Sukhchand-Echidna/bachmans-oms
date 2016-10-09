@@ -1,7 +1,7 @@
 <form name="OrderCloudSearchFrom" ng-submit="showProducts()">
     <div class="form-group">
 		 <!-- <input type="search" class="form-control" placeholder="{{placeholder}}" ng-model="searchTerm"/> -->
-        <input type="search" class="form-control" placeholder="{{placeholder}}" ng-model="search.query"/>
+        <input type="search" class="form-control" placeholder="{{placeholder}}" ng-model="search.query" autocomplete="off" ng-minlength="3"/>
 		<a class="clear" ng-click="clearData()" ng-if="search.query.length>0">
 			<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 				 viewBox="-502.4 514.1 26.2 26.2" style="enable-background:new -502.4 514.1 26.2 26.2;" xml:space="preserve">

@@ -86,7 +86,7 @@
 					<i class="fa fa-search"></i>
 					<!-- algolia search for customer -->
 					<div ng-switch-when="customer" uib-dropdown>
-						<ordercloud-search servicename="customer" controlleras="base" placeholder="Search user" uib-dropdown-toggle></ordercloud-search>
+						<ordercloud-search servicename="customer" controlleras="base" placeholder="Search user" search="base.search" change="base.selectChange" uib-dropdown-toggle></ordercloud-search>
 						<div class="search_dropdown" uib-dropdown-menu>
 							<div class="searchelement"  ng-repeat="user in base.list track by $index" ng-if="base.qeueryLength > 0 && base.list.length != 0">
 								<a ui-sref="buildOrder({ID:user.ID,SearchType:'User',showOrdersummary: false})" class="search_result">
@@ -98,7 +98,7 @@
 					</div>
 					<!-- algolia search for order -->
 					<div ng-switch-when="order" uib-dropdown>
-						<ordercloud-search servicename="orders" controlleras="base" placeholder="Search orders" uib-dropdown-toggle></ordercloud-search>
+						<ordercloud-search servicename="orders" controlleras="base" placeholder="Search orders" search="base.search" change="base.selectChange" uib-dropdown-toggle></ordercloud-search>
 						<div class="search_dropdown" uib-dropdown-menu>
 							<div class="searchelement"  ng-repeat="orders in base.list track by $index" ng-if="base.qeueryLength > 0 && base.list.length != 0">
 								<a ng-click="baseTop.searchGoTo(orders.FromUserID, orders.ID)" class="search_result">
@@ -110,7 +110,7 @@
 					</div>
 					<!-- algolia search for recipient -->
 					<div ng-switch-when="recipient" uib-dropdown>
-						<ordercloud-search servicename="orders_recepient" controlleras="base" placeholder="Search recipient" uib-dropdown-toggle></ordercloud-search>
+						<ordercloud-search servicename="orders_recepient" controlleras="base" placeholder="Search recipient" search="base.search" change="base.selectChange" uib-dropdown-toggle></ordercloud-search>
 						<div class="search_dropdown recipient-dropdown" uib-dropdown-menu>
 							<div class="searchelement"  ng-repeat="recipient in base.list track by $index" ng-if="base.qeueryLength > 0 && base.list.length != 0">
 								<a ng-click="baseTop.searchGoTo(recipient.FromUserID, recipient.ID)" class="search_result">
@@ -161,7 +161,7 @@
 					</div>
 					<!-- algolia search for products -->
 					<div ng-switch-when="product" uib-dropdown>
-						<ordercloud-search servicename="products" controlleras="base" placeholder="Search products" uib-dropdown-toggle></ordercloud-search>
+						<ordercloud-search servicename="products" controlleras="base" placeholder="Search products" search="base.search" change="base.selectChange" uib-dropdown-toggle></ordercloud-search>
 						<div class="search_dropdown" uib-dropdown-menu>
 							<div class="searchelement"  ng-repeat="products in base.searchList track by $index" ng-if="base.qeueryLength > 0 && base.searchList.length != 0">
 								<a ui-sref="buildOrder({ID:products.ID,SearchType:'PDP'})" class="search_result">
@@ -172,7 +172,7 @@
 					</div>
 					<!-- algolia search for phone -->
 					<div ng-switch-when="phone" uib-dropdown>
-						<ordercloud-search servicename="customer_phonenumber" controlleras="base" placeholder="Search phone number" uib-dropdown-toggle></ordercloud-search>
+						<ordercloud-search servicename="customer_phonenumber" controlleras="base" placeholder="Search phone number" search="base.search" change="base.selectChange" uib-dropdown-toggle></ordercloud-search>
 						<div class="search_dropdown" uib-dropdown-menu>
 							<div class="searchelement"  ng-repeat="phone in base.list track by $index" ng-if="base.qeueryLength > 0 && base.list.length != 0">
 								<a ui-sref="buildOrder({ID:phone.ID,SearchType:'User',showOrdersummary: false})" class="search_result">
