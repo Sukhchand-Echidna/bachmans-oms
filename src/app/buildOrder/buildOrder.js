@@ -510,52 +510,22 @@ function buildOrderController($scope, $rootScope, $state, buyerid, $controller, 
 	};
 	
 	vm.UpsellSimilar = false;
-	vm.UpsellProductItem = function(obj, arr){
-		vm.UpsellProdDtls = {};
-		vm.UpsellProdDtls.UpsellCarousel = [];
-		//vm.UpsellSimilar = true;
-		//var temparr = [];
-		/*angular.forEach(arr, function(row,index){
-			BuildOrderService.GetProductDetails("30_30A_30BARB_575").then(function(result){
-				var result = {"data":result};
-				vm.UpsellProdDtls.UpsellCarousel.push(result);
-				if((index+1) == 2){
-					$('#pdpCarouselView').trigger('destroy.owl.carousel');
-					$('#pdpCarouselView').find('.owl-stage-outer').children().unwrap();
-					setTimeout(function(){
-						$("#pdpCarouselView").owlCarousel({
-							items:1,
-							center: false,
-							loop: false,
-							nav: true,
-							navText: ['<span class="events-arrow-prev" aria-hidden="true"></span>','<span class="events-arrow-next" aria-hidden="true"></span>']	
-						});
-						$('.owl-item').css('display','inline-block');
-					},600);
-				}
+	vm.UpsellProductItem = function(obj, arr, index){
+		vm.PDPCarousel = arr;
+		vm.UpsellSimilar = true;
+		$('#pdpCarouselView').trigger('destroy.owl.carousel');
+		$('#pdpCarouselView').find('.owl-stage-outer').children().unwrap();
+		setTimeout(function(){
+			$("#pdpCarouselView").owlCarousel({
+				items:1,
+				startPosition: index,
+				center: false,
+				loop: false,
+				nav: true,
+				navText: ['<span class="events-arrow-prev" aria-hidden="true"></span>','<span class="events-arrow-next" aria-hidden="true"></span>']	
 			});
-		},true);*/
-		/*angular.forEach(arr, function(row,index){
-			temparr.push(OrderCloud.Products.Get("30_30A_30BARB_575"));
-		}, true);
-		$q.all(temparr).then(function(result){
-			var result = {"data":result};
-			vm.UpsellProdDtls.UpsellCarousel = result;
-			$('#pdpCarouselView').trigger('destroy.owl.carousel');
-			$('#pdpCarouselView').find('.owl-stage-outer').children().unwrap();
-			setTimeout(function(){
-				$("#pdpCarouselView").owlCarousel({
-					items:1,
-					center: false,
-					loop: false,
-					nav: true,
-					navText: ['<span class="events-arrow-prev" aria-hidden="true"></span>','<span class="events-arrow-next" aria-hidden="true"></span>']	
-				});
-				$('.owl-item').css('display','inline-block');
-			},600);
-		});*/
-		obj.ProductCode = obj.xp.ProductCode;
-		vm.prouctsList(obj);
+			$('.owl-item').css('display','inline-block');
+		},200);
 		vm.HideUpsellNCross();
 	}
 	
@@ -1156,7 +1126,7 @@ function buildOrderTopController($scope, $stateParams,$rootScope, AlfrescoFact) 
 	}
 }
 
-function buildOrderDownController($scope, $stateParams, $state, $q, OrderCloud) {
+function buildOrderDownController($scope, $stateParams, $state, $q, OrderCloud, BuildOrderService) {
 	var vm = this;
 	vm.buildorderfooter=false;
 	if($stateParams.orderDetails){
@@ -1199,10 +1169,12 @@ function buildOrderDownController($scope, $stateParams, $state, $q, OrderCloud) 
 				if(res2 != 0){
 					angular.forEach(res1.Items, function(val){
 						delChrgs += val.xp.deliveryCharges;
-						tempArr.push(OrderCloud.As().LineItems.Update(res2.ID, val.ID, val));
-						tempArr2.push(OrderCloud.As().LineItems.SetShippingAddress(res2.ID, val.ID, val.ShippingAddress));
+						tempArr.push(OrderCloud.LineItems.Update(res2.ID, val.ID, val));
 					}, true);
 					$q.all(tempArr).then(function(result){
+						angular.forEach(res1.Items, function(val){
+							tempArr2.push(OrderCloud.LineItems.SetShippingAddress(res2.ID, val.ID, val.ShippingAddress));
+						}, true);
 						$q.all(tempArr2).then(function(result2){
 							console.log("Success");
 							delChrgs = delChrgs+res2.ShippingCost
@@ -1222,10 +1194,12 @@ function buildOrderDownController($scope, $stateParams, $state, $q, OrderCloud) 
 					OrderCloud.As().Orders.Create(orderParams).then(function(res3){
 						angular.forEach(res1.Items, function(val){
 							delChrgs += val.xp.deliveryCharges;
-							tempArr.push(OrderCloud.As().LineItems.Update(res3.ID, val.ID, val));
-							tempArr2.push(OrderCloud.As().LineItems.SetShippingAddress(res3.ID, val.ID, val.ShippingAddress));
+							tempArr.push(OrderCloud.LineItems.Update(res3.ID, val.ID, val));
 						}, true);
 						$q.all(tempArr).then(function(result){
+							angular.forEach(res1.Items, function(val){
+								tempArr2.push(OrderCloud.LineItems.SetShippingAddress(res3.ID, val.ID, val.ShippingAddress));
+							}, true);
 							$q.all(tempArr2).then(function(result2){
 								console.log("Success");
 								delChrgs = delChrgs+res3.ShippingCost
@@ -3044,8 +3018,8 @@ function BuildOrderService( $q, $window, $stateParams, ocscope, buyerid, OrderCl
 									if(line.xp.deliveryFeesDtls['Placement Charges'])
 										obj['Placement Charges'] = line.xp.deliveryFeesDtls['Placement Charges'];
 								}
-								dt = angular.copy(CstDateTime).setHours(0, 0, 0, 0);
-								if(angular.copy(CstDateTime).getHours() < 10 && dt == new Date(line.deliveryDate) && (line.xp.DeliveryMethod=="LocalDelivery" || line.xp.DeliveryMethod=="Faster")){
+								dt = angular.copy(new Date(CstDateTime)).setHours(0, 0, 0, 0);
+								if(angular.copy(new Date(CstDateTime)).getHours() < 10 && dt == new Date(line.deliveryDate) && (line.xp.DeliveryMethod=="LocalDelivery" || line.xp.DeliveryMethod=="Faster")){
 									obj['Same Day Delivery'] = vm.buyerXp.Shippers.LocalDelivery.StandardDeliveryFees;
 									if(line.xp.addressType == "Funeral" || line.xp.addressType == "Church"){
 										if(vm.buyerXp.Shippers.LocalDelivery.StandardDeliveryFees > 0){

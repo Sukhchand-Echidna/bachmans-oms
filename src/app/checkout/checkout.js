@@ -668,32 +668,34 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 		}
 		if(line){
 			if(line.xp.addressType == "InStorePickUp"){
-				vm.GetDeliveryFees(line);
+				vm.GetDeliveryFees(line, vm.lineItemForm[line.ID]);
 			}
 		}
 	};
 	vm.getStores();
 	vm.addStoreAddress = function(item, line){
 		var filt = _.filter(storesData, function(row){
-			return _.indexOf([item],row.storeName) > -1;
+			return _.indexOf([item], row.CompanyName) > -1;
 		});
 		if(line.ShippingAddress == null)
 			line.ShippingAddress = {};
-		line.ShippingAddress.Street1 = filt[0].storeAddress;
-		line.ShippingAddress.City = filt[0].city;
-		line.ShippingAddress.State = filt[0].state;
-		line.ShippingAddress.Zip = parseInt(filt[0].zipCode);
-		BuildOrderService.GetPhoneNumber(filt[0].phoneNumber).then(function(res){
+		line.ShippingAddress.Street1 = filt[0].Street1;
+		line.ShippingAddress.Street2 = filt[0].Street2;
+		line.ShippingAddress.City = filt[0].City;
+		line.ShippingAddress.State = filt[0].State;
+		line.ShippingAddress.Zip = parseInt(filt[0].Zip);
+		BuildOrderService.GetPhoneNumber(filt[0].Phone).then(function(res){
 			line.ShippingAddress.Phone1 = res[0];
 			line.ShippingAddress.Phone2 = res[1];
 			line.ShippingAddress.Phone3 = res[2];
 		});
-		vm.GetDeliveryFees(line);
+		line.invalidAddress = false;
+		vm.GetDeliveryFees(line, vm.lineItemForm[line.ID]);
 	};
 	vm.changeAddrType = function(line){
 		if(line.xp.addressType!="Church" && line.xp.addressType!="Funeral")
 			delete line.xp.deliveryRun;
-		vm.GetDeliveryFees(line);
+		vm.GetDeliveryFees(line, vm.lineItemForm[line.ID]);
 	}
 	vm.selectedAddr = function(line,addr){
 		if(addr.isAddrOpen){
@@ -937,7 +939,7 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 	};
 	vm.UserSpendingAccounts();
 	vm.GetDeliveryFees = function(line, form){
-		if(line.ShippingAddress.City != "Select City" && form.$valid && !line.xp.BaseLineItemID){
+		if(line.ShippingAddress.City != "Select City" && !line.xp.BaseLineItemID){
 			vm.CheckOutLoader = BuildOrderService.DeliveryFeesService(line, form, vm, GetCstDateTime.datetime).then(function(res){
 				console.log(res);
 			});

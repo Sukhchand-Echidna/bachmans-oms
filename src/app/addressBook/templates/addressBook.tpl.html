@@ -5,12 +5,37 @@
 			<a href="javascript: window.history.go(-1)">Back</a>
 		</div>
 		<h1>Address Book</h1>
-		<div class="search-block">
+<!-- 		<div class="search-block">
 		<div>
-<!-- 			<i class="fa fa-search"></i>
-			<input type="text" placeholder="Search Address" ng-model="searchAddr.$"/> -->
 			<ordercloud-search servicename="Addresses" controlleras="addressBook" placeholder="Search address" uib-dropdown-toggle></ordercloud-search>
 			<i class="fa fa-search"></i>
+		</div>
+		<a ng-click="addAddr = !addAddr; addr=''" class="addNewLink">
+			<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 24 24" style="enable-background:new 0 0 24 24;" xml:space="preserve">
+				<g>
+					<rect x="10" width="4" height="24" />
+					<rect y="10" width="24" height="4" />
+				</g>
+			</svg>
+		Add New Address</a>
+		</div> -->
+		<div class="search-block">
+		<div>
+			<i class="fa fa-search"></i>
+			<input type="text" placeholder="Search Address" ng-model="searchAddr.$"/> 
+			<a class="clear" ng-click="searchAddr.$=null" ng-if="searchAddr">
+				<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+					 viewBox="-502.4 514.1 26.2 26.2" style="enable-background:new -502.4 514.1 26.2 26.2;" xml:space="preserve">
+				<style type="text/css">
+					.st0{fill:none;enable-background:new ;}
+					.st1{fill:#CEB9E2;}
+				</style>
+				<path class="st0" d="z"/>
+				<path class="st1" d="M-489.3,515.1c-6.7,0-12.1,5.4-12.1,12.1c0,6.7,5.4,12.1,12.1,12.1c6.7,0,12.1-5.4,12.1-12.1
+					C-477.2,520.5-482.6,515.1-489.3,515.1z M-484.2,531.3l-1,1l-4.1-4.1l-4.1,4.1l-1-1l4.1-4.1l-4.1-4.1l1-1l4.1,4.1l4.1-4.1l1,1
+					l-4.1,4.1L-484.2,531.3z"/>
+				</svg>
+			</a>
 		</div>
 		<a ng-click="addAddr = !addAddr; addr=''" class="addNewLink">
 			<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 24 24" style="enable-background:new 0 0 24 24;" xml:space="preserve">
@@ -74,31 +99,31 @@
 					</div>
 					<div class="addr-top addr-cont">
 						 <div>
-						 <input type="checkbox" name="shippingaddress" id="shippingaddress" ng-model="addr.Shipping"  class="checkbox-custom">
+						 <input type="checkbox" name="shippingaddress" id="shippingaddress" ng-init="addrType.IsShipping=false" ng-model="addrType.IsShipping" ng-checked="false" class="checkbox-custom">
 						 <label  for="shippingaddress"  class="checkbox-custom-label">Shipping Address</label>
 						</div>
 						<div>
-						 <input type="checkbox" name="billingaddress" ng-model="addr.Billing" id="billingaddress" class="checkbox-custom">
+						 <input type="checkbox" name="billingaddress" ng-model="addrType.IsBilling" ng-init="addrType.IsBilling=false" id="billingaddress" class="checkbox-custom" ng-checked="false">
 						 <label  for="billingaddress"  class="checkbox-custom-label">Billing Address</label>
 						</div>
 					</div>
+					<span class="addrerror" ng-if="addressBook.error">Atleast one address type should be selected.</span>
 					<div class="contact-num addr-top">
 						<p>Phone Number <span class="star">*</span></p>
 						<input type="number" name="phone1" ng-model="addr.Phone1" ng-class="{error: addAddress.$submitted && addAddress.phone1.$invalid}" required max-length="3" ng-paste="$event.preventDefault()" />
 						<input type="number" name="phone2" ng-model="addr.Phone2" ng-class="{error: addAddress.$submitted && addAddress.phone2.$invalid}" required max-length="3" ng-paste="$event.preventDefault()" />
 						<input type="number" name="phone3" ng-model="addr.Phone3" ng-class="{error: addAddress.$submitted && addAddress.phone3.$invalid}" required max-length="4" ng-paste="$event.preventDefault()" />
 						<div class="addr-top">
-							<button type="button" class="save" ng-click="CreateAddress(addr, addAddress)">SAVE</button>
+							<button type="button" class="save" ng-click="CreateAddress(addr, addAddress, addrType)">SAVE</button>
 							<button type="button" ng-click="addAddr = !addAddr">CANCEL</button>
 						</div>
-						<span class="addrerror">{{addressBook.newaddrerror.data.Errors[0].Message}}</span>
 					</div>
 				</div>
 			</div> 
 		</form>
 				<!-- searched LIST STARTS -->
-			<table ng-if="addressBook.qeueryLength > 0">
-				<tr ng-repeat="searchedAddr in addressBook.searchedAddr.Items track by $index" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+<!-- 			<table ng-if="addressBook.qeueryLength > 0">
+				<tr ng-repeat="searchedAddr in addressBook.searchedAddr.Items | filter:searchAddr track by $index" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 					<td>
 						<div ng-if="searchedAddr.xp.IsDefault==true">
 							<h4>Default Address</h4>
@@ -156,7 +181,7 @@
 						<a popover-trigger="none" popover-is-open="showDeliveryToolTip"  ng-click="showDeliveryToolTip = !showDeliveryToolTip; addressList.ID=searchedAddr.ID" uib-popover-template="deleteAddress.templateUrl">Delete</a>
 					</td>
 					<td>
-						<!-- EDIT ADDRESS STARTS -->
+						
 						<form ng-show="addressBook.showedit{{$index}}" class="edit-address-main" name="searchedAddress">
 							<div class="edit-address-container">
 								<h2>Edit Address</h2>
@@ -214,11 +239,11 @@
 								</div>
 								<div class="addr-top addr-cont">
 								<div>
-								 <input type="checkbox" name="shippingaddress1" id="shippingaddress1" ng-model="addressBook.editAddr.Shipping" ng-checked="addressBook.editAddr.Shipping" class="checkbox-custom">
+								 <input type="checkbox" name="shippingaddress1" id="shippingaddress1" ng-model="addressBook.editAddr.IsShipping" ng-checked="addressBook.editAddr.IsShipping" class="checkbox-custom">
 								 <label  for="shippingaddress1" class="checkbox-custom-label">Shipping Address</label>
 								</div>
 								<div>
-								 <input type="checkbox" name="billingaddress1" id="billingaddress1" ng-model="addressBook.editAddr.Billing" ng-checked="addressBook.editAddr.Billing" class="checkbox-custom">
+								 <input type="checkbox" name="billingaddress1" id="billingaddress1" ng-model="addressBook.editAddr.IsBilling" ng-checked="addressBook.editAddr.IsBilling" class="checkbox-custom">
 								 <label  for="billingaddress1" class="checkbox-custom-label">Billing Address</label>
 								</div>
 							</div>
@@ -230,10 +255,10 @@
 						</form> 
 					</td>
 				</tr>
-			</table>
+			</table> -->
 		<!-- ADDRESS LIST STARTS -->
-			<table ng-if="addressBook.qeueryLength ==0 && addressBook.defaultAddr.length>0">
-				<tr class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+			<table ng-if="addressBook.defaultAddr.length>0">
+				<tr class="col-xs-12 col-sm-12 col-md-12 col-lg-12" ng-repeat="addressList in addressBook.defaultAddr | filter:searchAddr:strict">
 					<td>
 						<h4>Default Address</h4>
 						<div class="custom-ceckbox">
@@ -328,14 +353,15 @@
 								</div>
 								<div class="addr-top addr-cont">
 									<div>
-									 <input type="checkbox" name="shippingaddress2" id="shippingaddress2" ng-model="addressBook.editAddr.Shipping" ng-checked="addressBook.editAddr.Shipping" class="checkbox-custom">
+									 <input type="checkbox" name="shippingaddress2" id="shippingaddress2" ng-model="addressBook.editAddr.IsShipping" ng-checked="addressBook.editAddr.IsShipping" class="checkbox-custom">
 									 <label  for="shippingaddress2" class="checkbox-custom-label">Shipping Address</label>
 									</div>
 									<div>
-									 <input type="checkbox" name="billingaddress2" id="billingaddress2"  ng-model="addressBook.editAddr.Billing" ng-checked="addressBook.editAddr.Billing" class="checkbox-custom">
+									 <input type="checkbox" name="billingaddress2" id="billingaddress2"  ng-model="addressBook.editAddr.IsBilling" ng-checked="addressBook.editAddr.IsBilling" class="checkbox-custom">
 									 <label  for="billingaddress2" class="checkbox-custom-label">Billing Address</label>
 									</div>
 								</div>
+								<span class="addrerror" ng-if="!addressBook.editAddr.IsBilling&&!addressBook.editAddr.IsShipping">Atleast one address type should be selected.</span>
 							</div>
 							<div class="button-list addr-top">
 								<button type="button" class="save" ng-click="addressBook.saveAddress(addressBook.editAddr, addressBook.contact, deafaultAddress)">SAVE</button>
@@ -345,7 +371,7 @@
 					</td>
 				</tr>
 			</table>
-			<table ng-if="addressBook.qeueryLength ==0">
+			<table>
 				<tr ng-repeat="addressList in addressBook.list | filter:searchAddr:strict" ng-if="!addressList.xp.IsDefault" ng-init="addressBook.showedit[$index]=false" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 					<td>
 						<h4>Make Default Address</h4>
@@ -435,14 +461,15 @@
 								</div>
 								<div class="addr-top addr-cont">
 									 <div>
-									 <input type="checkbox" name="shippingaddress3" id="shippingaddress3" ng-model="addressBook.editAddr.Shipping" ng-checked="addressBook.editAddr.Shipping" class="checkbox-custom">
+									 <input type="checkbox" name="shippingaddress3" id="shippingaddress3" ng-model="addressBook.editAddr.IsShipping" ng-checked="addressBook.editAddr.IsShipping" class="checkbox-custom">
 									 <label  for="shippingaddress3" class="checkbox-custom-label">Shipping Address</label>
 									 </div>
 									 <div>
-									 <input type="checkbox" name="billingaddress3" id="billingaddress3"  ng-model="addressBook.editAddr.Billing" ng-checked="addressBook.editAddr.Billing" class="checkbox-custom">
+									 <input type="checkbox" name="billingaddress3" id="billingaddress3"  ng-model="addressBook.editAddr.IsBilling" ng-checked="addressBook.editAddr.IsBilling" class="checkbox-custom">
 									 <label  for="billingaddress3" class="checkbox-custom-label">Billing Address</label>
 									</div>
 								</div>
+								<span class="addrerror" ng-if="!addressBook.editAddr.IsBilling&&!addressBook.editAddr.IsShipping">Atleast one address type should be selected.</span>
 								<div class="contact-num addr-top">
 									<p>Phone Number</p>
 									<input type="number" ng-model="addressBook.contact.Phone1" name="phone1" ng-class="{error: makeDefault.$submitted && makeDefault.phone1.$invalid}" required max-length="3" ng-paste="$event.preventDefault()" />

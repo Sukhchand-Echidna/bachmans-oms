@@ -185,58 +185,76 @@ function HomeController($sce, $rootScope, $state, $compile, $uibModal,$log, Unde
 
 	}
 	$scope.saveCalendarData=function(){
-		var arr={}, events=[], dfr = $q.defer();
-		OrderCloud.Categories.ListProductAssignments('WorkshopsEvents', null, 1 ,100).then(function(assign){
-			angular.forEach(assign.Items, function(res, key){
-				events.push(OrderCloud.Products.Get(res.ProductID));
-			},true);
-			$q.all(events).then(function(result){
-				var count=0,events = [];
-				angular.forEach(result, function(data, key){
+		var events=[], dfr = $q.defer(), count=0;
+		// OrderCloud.Categories.ListProductAssignments('WorkshopsEvents', null, 1 ,100).then(function(assign){
+			// angular.forEach(assign.Items, function(res, key){
+				// events.push(OrderCloud.Products.Get(res.ProductID));
+			// },true);
+			// $q.all(events).then(function(result){
+				// var count=0,events = [];
+				// angular.forEach(result, function(data, key){
+					// if(!_.isEmpty(data.xp)){
+						// if(data.xp.EventDate!=null){
+							// events.push({
+								// id: data.ID,
+								// title: data.Name,
+								// start: new Date(data.xp.EventDate),
+								// //end : new Date(cat.xp.EndDate) // Uncomment if we have date range 
+								// productcode : data.xp.ProductCode?data.xp.ProductCode:"",
+								// description: data.Description,
+								// startTime:data.xp.Slot?data.xp.Slot.StartTime:null,
+								// endTime:data.xp.Slot?data.xp.Slot.EndTime:null
+							// })
+						// }
+					// }
+					// count++;
+				// },true);
+				// if(count==assign.Items.length){
+						// var groupName=_.groupBy(events, function(value){
+							// return value.start;
+						// });
+						// var data;
+						// var result=[];
+						// var cont=1;
+						// var keys = Object.keys(groupName);
+						// angular.forEach(groupName, function(val){
+							// data=_.uniq(val, function(item){
+								// return item.productcode;
+							// });
+							// result = _.union(result, data);
+							// if(cont==keys.length){
+								// dfr.resolve(result);
+							// }
+							// cont++;
+							// console.log("result", result);
+						// });
+					// }
+					// vm.showcalendarModal = !vm.showcalendarModal;
+			// });
+	// });
+		OrderCloud.Products.List(null,null,null,null,null,{"xp.IsDefaultProduct":true}).then(function(defaultprod){
+			console.log("defaultprod", defaultprod);
+				angular.forEach(defaultprod.Items, function(data, key){
 					if(!_.isEmpty(data.xp)){
-						if(data.xp.EventDate!=null){
-							events.push({
-								id: data.ID,
-								title: data.Name,
-								start: new Date(data.xp.EventDate),
-								//end : new Date(cat.xp.EndDate) // Uncomment if we have date range 
-								productcode : data.xp.ProductCode?data.xp.ProductCode:"",
-								description: data.Description,
-								startTime:data.xp.Slot?data.xp.Slot.StartTime:null,
-								endTime:data.xp.Slot?data.xp.Slot.EndTime:null
-							})
-						}
+						events.push({
+							id: data.ID,
+							title: data.Name,
+							start: new Date(data.xp.EventDate),
+							 //end : new Date(cat.xp.EndDate) // Uncomment if we have date range 
+							//productcode : data.xp.ProductCode?data.xp.ProductCode:"",
+							//description: data.Description,
+							//startTime:data.xp.Slot?data.xp.Slot.StartTime:null,
+							//endTime:data.xp.Slot?data.xp.Slot.EndTime:null
+						})
 					}
-					count++;
-				},true);
-				if(count==assign.Items.length){
-						var groupName=_.groupBy(events, function(value){
-							return value.start;
-						});
-						var data;
-						var result=[];
-						var cont=1;
-						var keys = Object.keys(groupName);
-						angular.forEach(groupName, function(val){
-							data=_.uniq(val, function(item){
-								return item.productcode;
-							});
-							result = _.union(result, data);
-							if(cont==keys.length){
-								dfr.resolve(result);
-							}
-							cont++;
-							console.log("result", result);
-						});
-					}
-					vm.showcalendarModal = !vm.showcalendarModal;
-			});
-	});
+				count++;
+			},true);
+			if(count==defaultprod.Items.length){
+				dfr.resolve(events);
+			}
+		});
 		return dfr.promise;
 	}
-	
-
-
 	$scope.viewpromotions=function(){
 		vm.page = 1;
 		vm.showpromotionsmodal = !vm.showpromotionsmodal;
@@ -293,25 +311,25 @@ function eventCalenderModalController($scope , $http, events, $state, $uibModalI
     };
     /* config object */
     $scope.uiConfig = {
-		      calendar:{
-		        height: 550,
-		        editable: false,
-		        header:{
-		          left: 'prev',
-		          center: 'title',
-		          right: 'next',
-		          buttonIcons: false
-		        },
-		        //dayClick: $scope.dayClick,
-		        eventClick: $scope.eventClick,
-				eventRender: $scope.eventRender,
-		        viewRender: $scope.renderView,
-		        eventLimit: 4, // If you set a number it will hide the itens
-			    eventLimitText: "Events available",
-			    columnFormat: {
-				   month: 'dddd'
-				} 
-		      }    
+		calendar:{
+			height: 550,
+			editable: false,
+			header:{
+			  left: 'prev',
+			  center: 'title',
+			  right: 'next',
+			  buttonIcons: false
+			},
+			//dayClick: $scope.dayClick,
+			eventClick: $scope.eventClick,
+			eventRender: $scope.eventRender,
+			viewRender: $scope.renderView,
+			eventLimit: 4, // If you set a number it will hide the itens
+			eventLimitText: "Events available",
+			columnFormat: {
+			   month: 'dddd'
+			} 
+		}    
 	};
 
     /* event sources array*/

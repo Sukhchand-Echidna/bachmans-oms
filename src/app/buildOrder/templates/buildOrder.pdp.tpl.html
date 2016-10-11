@@ -129,32 +129,6 @@
 							</ul>
 						</div>
 					</div>
-					<!-- <div class="delivery-methods" ng-if="!buildOrder.hidePdpblock && (buildOrder.Courier || buildOrder.Faster)">
-							<h5 ng-if="buildOrder.Courier || buildOrder.Faster">Delivery Methods Available:</h5>
-							<div class="radio-btn-container" ng-if="buildOrder.Courier">
-							<div class="size-box col-xs-12 col-sm-12 col-md-12 col-lg-12">
-							<input type="radio" id="courier" name="optradio1" 
-							ng-model="buildOrder.DeliveryType" value="Courier">
-							<label for="courier">
-								<span class="radioOutline">
-								<span class="radioInside"></span>
-								</span>
-								<span class="courier">Courier</span>
-							</label>
-							</div>
-							</div>
-							<div class="radio-btn-container" ng-if="buildOrder.Faster">
-							<div class="size-box col-xs-12 col-sm-12 col-md-12 col-lg-12">
-								<input type="radio" id="faster" name="optradio1" ng-model="buildOrder.DeliveryType" value="Faster Delivery">
-								<label for="faster" >
-									<span class="radioOutline">
-									<span class="radioInside"></span>
-									</span>
-									<span class="faster-del">Faster Delivery</span>
-								</label>
-								</div>
-							</div>
-					</div> -->
 					<div class="row price-block" ng-if="buildOrder.productDetails[0].length == 1 &&  buildOrder.productDetails.length == 1">
 						<ul ng-repeat="priceItem in buildOrder.productDetails[0][0].StandardPriceSchedule.PriceBreaks">
 							<li class="new-price">{{priceItem.Price | currency}}</li>
@@ -170,32 +144,6 @@
 					</div>
 					<div class="dropdown-box" ng-if="!buildOrder.hidePdpblock">
 						<h5>Add Something Extra</h5>
-						<!-- <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-							<div class="row" >
-								<div ng-repeat="extras in buildOrder.productExtras track by $index" class="col-lg-8 btn-holder" >
-									<p class="visible-xs visible-sm mobile-show-title">Balloons</p>
-									<div class="btn-group btn-block dropdown" uib-dropdown>
-										<button id="single-button{{$index}}" type="button" class="btn  btn-block dropdown-toggle" uib-dropdown-toggle=""  ng-disabled="disabled" aria-haspopup="true" aria-expanded="false">
-											<span class="category-name hidden-xs hidden-sm">{{extras[0].CategoryName}}</span>
-											<p>Select</p>
-										</button>
-										<ul class="pdp-extra-menu" uib-dropdown-menu="" role="menu" aria-labelledby="single-button" >
-											<li role="menuitem" ng-repeat="extra in extras" ng-click="buildOrder.SelectExtra(extra.Title, $event);">
-												<div class="row pro-del">
-													<div class="col-xs-2 col-sm-3 col-md-3 col-lg-3 img-cont">
-														<img ng-src="{{buildOrderPDP.alfrescoAccessURL}}/imagefinder/{{extra.Skuid}}?alf_ticket={{buildOrderPDP.alfticket}}" class="img-responsive" title="img">
-													</div>
-													<div class="col-xs-10 col-sm-9 col-md-9 col-lg-9">
-														<h5>{{extra.Title}}</h5>
-														<p>{{extra.Price}}</p>
-													</div>
-												</div>
-											</li>
-										</ul>
-									</div>
-								</div> 
-						</div>
-					</div> -->
 					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 						<div class="row" >
 							<div ng-repeat="cat in buildOrder.Categories | limitTo:3" class="col-lg-8 btn-holder">
@@ -291,7 +239,6 @@
                                         <div class="fastDelivery" ng-if="!buildOrder.hidePdpblock && (buildOrder.Courier || buildOrder.Faster)">
                                         <div class="radio-btn-container" ng-if="buildOrder.Faster">
 											<div class="size-box">
-												<!-- <input type="radio" name="deliverytype" id="fastDelivery" ng-model="pdp.DeliveryType" value="Mixed"  ng-true-value="'Mixed'" ng-false-value="'NO'" /> -->
 												<input type="radio" id="fastDelivery" name="optradio1" ng-model="buildOrder.DeliveryType" value="Faster Delivery" />
 												<label for="fastDelivery">
 													<span class="radioOutline">
@@ -301,14 +248,6 @@
 												</label>
 											</div>
 										</div>
-										 
-                                         
-                                        <!--  <div class="Checkbox">
-                                            <input type="checkbox" name="deliverytype" id="fastDelivery" ng-model="pdp.DeliveryType" value="Mixed"  ng-true-value="'Mixed'" ng-false-value="'NO'" />
-                                           
-                                            <div class="Checkbox-visible"></div>
-                                         </div>
-                                         <label class="fastDelivery" for="fastDelivery">Select Faster Delivery</label> -->
                                          <p class="note" ng-if="buildOrder.Faster"><span>Note:&nbsp;</span>Faster Delivery Charges Will be applicable</p>
                                          <div class="radio-btn-container" ng-if="buildOrder.Courier">
 											<div class="size-box">
@@ -521,40 +460,23 @@
 			</a>
 			</h1>
 			<div class="owl-theme" id="pdpCarouselView">
-				<div class="buildOrder-pdp-content row" ng-repeat="prods in buildOrder.UpsellProdDtls.UpsellCarousel">
+				<div class="buildOrder-pdp-content row" ng-repeat="prods in buildOrder.PDPCarousel">
 					<div class="pdp-left col-md-7 col-lg-7">
-						<img src="assets/images/flowers.jpg">
+						<img src="{{buildOrderPDP.alfrescoAccessURL}}/imagefinder/{{prods.ID}}?alf_ticket={{buildOrderPDP.alfticket}}" />
 					</div>
 					<div class="pdp-right col-md-5 col-lg-5">
-						<h2>{{prods.data.Name}}</h2>
-						<div class="pdp-type" ng-repeat="opt in prods.data.options" ng-if="opt.Type=='contentSize'">	
-							<h3>{{opt.Type}}:</h3>
-							<ul>
-								<li ng-repeat="sizeopt in opt.Option">
-									<label>
-										<input type="radio" name="sizeopt" ng-model="prods.data.sizeval" value="{{sizeopt}}" ng-init="$index==0?(prods.data.sizeval=sizeopt):''" ng-change="selectVarients('upsell',$parent.$parent.$index)">{{sizeopt}}
-									</label>
-								</li>
-							</ul>
-						</div>
+						<h2>{{prods.Name}}</h2>	
+						<h3>Size: <span>{{prods.Size}}</span></h3>
+						<h3>Color: <span>{{prods.Color}}</span></h3>
 						<div class="price">
-							<h3>{{prods.data.prodPrice | currency}}</h3>
+							<h3>{{prods.Price | currency}}</h3>
 						</div>
-						<div class="pdp-color" ng-repeat="opt in prods.data.options" ng-if="opt.Type=='delMethods'">
-							<div>
-								<h3>{{opt.Type}}:</h3>
-								<span ng-repeat="coloropt in opt.Option">
-									<input type="radio" id="color1" name="coloropt" ng-model="prods.data.colorval" value="{{coloropt}}" ng-init="$index==0?(prods.data.colorval=coloropt):''" ng-change="selectVarients('upsell',$parent.$parent.$index)" />
-									<label for="color1"><span ng-style="{'background-color': coloropt}"></span></label>
-								</span>
-							</div>
-						</div>
-						<button class="addCart" ng-click="AddtoCart(prods.data.ID, prods.data.specID, prods.data.varientsOption)">ADD TO CART</button>
+						<button class="addCart" ng-click="AddtoCart(prods.ID)">ADD TO CART</button>
 					</div>
 					<div class="pdp-description col-xs-12 col-md-12 col-lg-12 p0">
-						<p ng-class="{'footer-minus': status.open1, 'footer-plus': !status.open1}">Description:
+						<p class="pdp-desc-title">Description:
 						</p>
-						<p>{{prods.data.Description}}</p>
+						<p class="pdp-desc-cont">{{prods.Description}}</p>
 					</div>
 				</div>
 			</div>
@@ -592,7 +514,7 @@
 					</div>
 					<ul class="pdp-upsell-container" ng-repeat="cat in buildOrder.Categories" ng-if="$index==buildOrder.UpsellIndex" id="owl-carousel-upsell{{$index}}">
 						<li class="item" ng-repeat="upsell in buildOrder.CategoryItemsUpsell[$index]">
-							<div class="pdp-upsell-block" ng-click="buildOrder.UpsellProductItem(upsell, buildOrder.CategoryItemsUpsell[$index])">
+							<div class="pdp-upsell-block" ng-click="buildOrder.UpsellProductItem(upsell, buildOrder.CategoryItemsUpsell[$index], $index)">
 								<div class="product_img"><img ng-src="{{buildOrderPDP.alfrescoAccessURL}}/imagefinder/{{upsell.ID}}?alf_ticket={{buildOrderPDP.alfticket}}" class="owl-lazy"></div>
 								<h2>{{upsell.Name}}</h2>
 								<h3>{{upsell.Size}}</h3>
@@ -608,7 +530,7 @@
 				<div ng-hide='buildOrder.similar' class="pdp-similarItems col-md-12" ng-class="{upsellAnimation:buildOrder.similar == false}">
 					<ul class="pdp-upsell-container" id="owl-carousel-similar">
 						<li class="item" ng-repeat="cross in buildOrder.CategoryItemsSimilar">
-							<div class="pdp-upsell-block" ng-click="buildOrder.UpsellProductItem(cross, CategoryItemsSimilar)">
+							<div class="pdp-upsell-block" ng-click="buildOrder.UpsellProductItem(cross, buildOrder.CategoryItemsSimilar, $index)">
 								<div class="product_img"><img ng-src="{{buildOrderPDP.alfrescoAccessURL}}/imagefinder/{{cross.ID}}?alf_ticket={{buildOrderPDP.alfticket}}" class="owl-lazy"></div>
 								<h2>{{cross.Name}}</h2>
 								<h3>{{cross.xp.SpecsOptions.Size}}</h3>
