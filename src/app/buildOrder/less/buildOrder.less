@@ -576,6 +576,7 @@ input.error, .errorCity {
 									top: 100%;
 									left: 0;
 									float: left;
+									z-index: 11 !important;
 								}
 								li{
 									border-bottom: 1px solid #e5e5e5;
@@ -1406,9 +1407,15 @@ input.error, .errorCity {
 							}
 							&:nth-of-type(5) {
 								width: 12%;
+								vertical-align: middle;
+								padding-left: 0;
 								ul li .row div:first-child {
 									text-align: right;
 									width:100%;
+								}
+								ul li .row div h5 {
+									text-align: center;
+									margin: 0 !important;
 								}
 							}
 						}
@@ -1790,23 +1797,27 @@ input.error, .errorCity {
 					display: block;
 					border: 1px solid transparent;
 					span {
+						display:block;
 						span {
 							.helvetica-regular;
-							font-size: 13px;
+							font-size: 14px;
 							line-height:40px;
 							padding: 0 5px 0 5px;
 							color: @color2;
 							display: inline-block;
 						}
+						.cancel-item{
+							float:right;
+						}
 						i {
 							.helvetica-regular;
-						    font-size: 13px;
+						    font-size: 14px;
 							color: @color2;
 						}
 						svg.close {
 							width: 15px;
 							height: 15px;
-							margin: 12px 0 0 5px;
+							margin:13px 10px 0 8px;
 							float: left;
 							display: inline-block;
 							opacity:1;
@@ -1815,11 +1826,12 @@ input.error, .errorCity {
 						svg.open {
 							display: none;
 							fill:#5b5e63;
+							margin:13px 10px 0 8px !important;
 						}
 						svg.delete {
 							
-							width: 12px;
-							height: 12px;
+							width: 13px;
+							height: 13px;
 							margin: -1px 4px 0 0px;
 							vertical-align: middle; 
 						}
@@ -1922,7 +1934,9 @@ input.error, .errorCity {
 						white-space: nowrap;
 						overflow: hidden;
 						text-overflow: ellipsis;
-						margin:10px 0;	
+						margin:10px 0;
+						float:left;
+						width:100%;	
 					  }
 					.firstNm {
 						margin-right: 3%;
@@ -1982,7 +1996,8 @@ input.error, .errorCity {
 					border-bottom: 1px solid @color21;
 					padding:10px 0;
 					color: @color1;
-					margin-top:10px;
+					float: left;
+    				width: 100%;
 					h4,
 					span {
 						.helvetica-regular;
@@ -2021,9 +2036,9 @@ input.error, .errorCity {
 					}
 					.location-recipientName {
 						p {
-							font-size: 11px ;
+							font-size: 13px ;
 							line-height:15px;
-							.helvetica-medium;
+							.helvetica-regular;
 							margin-top: 0;
 						}
 					}
@@ -2058,7 +2073,7 @@ input.error, .errorCity {
 								  }
 							}
 							.uib-datepicker-popup{
-								left:-90px !important;
+								left:-95px !important;
 							}
 						}
 						input {
@@ -2352,7 +2367,11 @@ input.error, .errorCity {
 									margin: 10px 0 15px 0px;
 								    float: left;
 								    width: 100%;
-							}	
+							}
+							.hospital-search,.willCall-search{
+								margin:15px 0;
+							}
+							
 						}
 					.hospital-address,
 					.residence-address,
@@ -2428,6 +2447,9 @@ input.error, .errorCity {
 							}
 						}
 						.pick-up-date{
+							width: 68%;
+						    float: right;
+						    padding: 0 0 0 14px;
 							.btn{
 								  padding:4px 12px;
 								  line-height:10px;
@@ -2438,7 +2460,7 @@ input.error, .errorCity {
 								  }
 							}
 							.uib-datepicker-popup{
-								left:-20px !important;
+								left:-100px !important;
 							}
 						}
 					}
@@ -3826,6 +3848,7 @@ input.error, .errorCity {
 				.input-group{
 					width:100%;
 					border-radius:0;
+					z-index: 10;
 					input{
 						width: 100%;
 						border: 1px solid #EAEAEA;
@@ -3834,6 +3857,7 @@ input.error, .errorCity {
 						height: 29px;
 						background: #fff;
 						box-shadow:none;
+					    border-radius: 0px;
 					}
 				}
 			}

@@ -216,7 +216,7 @@
 									<path d="M 16 3 C 8.83214 3 3 8.83214 3 16 C 3 23.1679 8.83214 29 16 29 C 23.1679 29 29 23.1679 29 16 C 29 8.83214 23.1679 3 16 3 Z M 16 5 C 22.087 5 27 9.91302 27 16 C 27 22.087 22.087 27 16 27 C 9.91302 27 5 22.087 5 16 C 5 9.91302 9.91302 5 16 5 Z M 10 15 L 10 17 L 22 17 L 22 15 L 10 15 Z" />
 								</svg>
 								Item {{$index+1}} of {{buildOrderRight.activeOrders[line].length}} - Recipient <i>{{lineitem.LineTotal | currency}}</i>
-								<span popover-trigger="none" popover-placement="top-left" popover-is-open="buildOrderRight.CancelDeleteToolTip[lineitem.ID]" uib-popover-template="buildOrderRight.DeleteToolTip.templateUrl">
+								<span class="cancel-item" popover-trigger="none" popover-placement="top-left" popover-is-open="buildOrderRight.CancelDeleteToolTip[lineitem.ID]" uib-popover-template="buildOrderRight.DeleteToolTip.templateUrl">
 									<svg version="1.1" class="delete" ng-click="buildOrderRight.DeleteToolTipPopOver($event, lineitem.ID)" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 											 viewBox="0 0 34 34" style="enable-background:new 0 0 34 34;" xml:space="preserve">
 										<style type="text/css">
@@ -331,7 +331,7 @@
 												<h1>Find store <span class="star">*</span></h1>
 												<input type="search" name="store" autocomplete="off" ng-model="lineitem.willSearch" uib-typeahead="st for st in buildOrderRight.storeNames | filter:$viewValue" typeahead-on-select="storesDtls($item, lineitem)" ng-required="lineitem.xp.addressType=='InStorePickUp'"  ng-class="{error: buildOrderRight.lineItemForm[lineitem.ID].$submitted && buildOrderRight.lineItemForm[lineitem.ID].store.$invalid}" />
 											</div>
-											<div class="pick-up-date">
+											<div class="pick-up-date col-md-6">
 												<h1>Pick-up Date <span class="star">*</span></h1>
 												<p class="input-group">
 												  <input type="text" name="pickupdate" readonly class="form-control" placeholder="MM/DD/YYYY" uib-datepicker-popup="MM/dd/yyyy" ng-model="lineitem.xp.pickupDate" is-open="lineitem.openCalenderPopUp" datepicker-options="{formatYear: 'yy', minDate: lineitem.xp.MinDays.InStorePickUp, startingDay: 0, dateDisabled:buildOrderRight.disabledDates}" ng-change="buildOrderRight.GetDeliveryFees(lineitem, buildOrderRight.lineItemForm[lineitem.ID])" ng-required="lineitem.xp.addressType=='InStorePickUp'" ng-class="{error: buildOrderRight.lineItemForm[lineitem.ID].$submitted && buildOrderRight.lineItemForm[lineitem.ID].pickupdate.$invalid}" />
