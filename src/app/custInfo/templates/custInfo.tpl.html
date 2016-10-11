@@ -35,26 +35,28 @@
 							
 						</div>
 						<div class="cust-street cust-top col-md-12">
+							<div ng-if="custInfo.list.defaultAddr.length>0">
 							<p class="col-md-3 cust-del">Street Address:</p>
-							<div class="col-md-6 cust-addr">
-								<p>{{custInfo.list.defaultAddr[0].CompanyName}}</p>
-								<input type="text" ng-show="isEditing" ng-model="custInfo.list.defaultAddr.CompanyName" placeholder="CompanyName" class="cust-addr1">
-								<div>
-									<span>{{custInfo.list.defaultAddr[0].FirstName}} {{custInfo.list.defaultAddr[0].LastName}}</span>
-	<!-- 								<input type="text" ng-show="isEditing" ng-model="custInfo.list.defaultAddr[0].FirstName" placeholder="FirstName">
-									<input type="text" ng-show="isEditing" ng-model="custInfo.list.defaultAddr[0].LastName" placeholder="LastName"> -->
+								<div class="col-md-6 cust-addr">
+									<!-- <p>{{custInfo.list.defaultAddr[0].CompanyName}}</p> -->
+									<!-- <input type="text" ng-show="isEditing" ng-model="custInfo.list.defaultAddr.CompanyName" placeholder="CompanyName" class="cust-addr1"> -->
+									<div>
+										<span>{{custInfo.list.defaultAddr[0].FirstName}} {{custInfo.list.defaultAddr[0].LastName}}</span>
+		<!-- 								<input type="text" ng-show="isEditing" ng-model="custInfo.list.defaultAddr[0].FirstName" placeholder="FirstName">
+										<input type="text" ng-show="isEditing" ng-model="custInfo.list.defaultAddr[0].LastName" placeholder="LastName"> -->
+									</div>
+									<span>{{custInfo.list.defaultAddr[0].Street1}} {{custInfo.list.defaultAddr[0].Street2}} {{custInfo.list.defaultAddr[0].City}}</span>
+								<!-- 	<input type="text" ng-show="isEditing" ng-model="custInfo.list.defaultAddr[0].Street1" placeholder="Street1" ng-blur="custInfo.getLocation()" required>
+									<input type="text" ng-show="isEditing" ng-model="custInfo.list.defaultAddr[0].Street2" placeholder="Street2">
+									<input type="text" ng-show="isEditing" ng-model="custInfo.list.defaultAddr[0].City" placeholder="City" ng-if="custInfo.list.defaultAddr[0].MultipleCities.length <= 1 || !custInfo.list.defaultAddr[0].MultipleCities" />
+									 -->
+									<div>
+										<span>{{custInfo.list.defaultAddr[0].State}} {{custInfo.list.defaultAddr[0].Country}} {{custInfo.list.defaultAddr[0].Zip}}</span>
+								<!-- 		<input type="text" ng-show="isEditing" ng-model="custInfo.list.defaultAddr[0].State" placeholder="State">
+										<input type="text" ng-show="isEditing" ng-model="custInfo.list.defaultAddr[0].Country" placeholder="Country">
+										<input type="text" ng-show="isEditing" ng-model="custInfo.list.defaultAddr[0].Zip" ng-blur="custInfo.getLocation()" placeholder="Zip" required>
+									 --></div>
 								</div>
-								<span>{{custInfo.list.defaultAddr[0].Street1}} {{custInfo.list.defaultAddr[0].Street2}} {{custInfo.list.defaultAddr[0].City}}</span>
-							<!-- 	<input type="text" ng-show="isEditing" ng-model="custInfo.list.defaultAddr[0].Street1" placeholder="Street1" ng-blur="custInfo.getLocation()" required>
-								<input type="text" ng-show="isEditing" ng-model="custInfo.list.defaultAddr[0].Street2" placeholder="Street2">
-								<input type="text" ng-show="isEditing" ng-model="custInfo.list.defaultAddr[0].City" placeholder="City" ng-if="custInfo.list.defaultAddr[0].MultipleCities.length <= 1 || !custInfo.list.defaultAddr[0].MultipleCities" />
-								 -->
-								<div>
-									<span>{{custInfo.list.defaultAddr[0].State}} {{custInfo.list.defaultAddr[0].Country}} {{custInfo.list.defaultAddr[0].Zip}}</span>
-							<!-- 		<input type="text" ng-show="isEditing" ng-model="custInfo.list.defaultAddr[0].State" placeholder="State">
-									<input type="text" ng-show="isEditing" ng-model="custInfo.list.defaultAddr[0].Country" placeholder="Country">
-									<input type="text" ng-show="isEditing" ng-model="custInfo.list.defaultAddr[0].Zip" ng-blur="custInfo.getLocation()" placeholder="Zip" required>
-								 --></div>
 							</div>
 							<div class="info-blk cust-top">
 								<p class="col-md-4 phone-num">Phone Number:</p>
@@ -94,6 +96,17 @@
 							<input type="number" name="phone1" placeholder="Area Code" ng-model="custInfo.list.user.contact.Phone1" max-length="3" class="col-md-3 phone-val" ng-required="isEditing" ng-class="{error: CustEditForm.$submitted && CustEditForm.phone1.$invalid}" ng-minlength="3">
 							<input type="number" name="phone2" placeholder="Prefix" ng-model="custInfo.list.user.contact.Phone2" max-length="3" class="col-md-3 phone-val" ng-required="isEditing" ng-class="{error: CustEditForm.$submitted && CustEditForm.phone2.$invalid}" ng-minlength="3">
 							<input type="number" name="phone3" placeholder="Number" ng-model="custInfo.list.user.contact.Phone3" max-length="4" class="col-md-3 phone-val" ng-required="isEditing" ng-class="{error: CustEditForm.$submitted && CustEditForm.phone3.$invalid}" ng-minlength="4">
+						</div>
+					</div>
+					<p>Edit Address</p>
+					<div class="group-blk">
+						<div class="blk">
+							<p>FirstName <span class="star">*</span></p>
+							<input type="text" name="addrfname" class="form-control" ng-model="custInfo.list.defaultAddr[0].FirstName" placeholder="FirstName" ng-required="isEditing" ng-class="{error: CustEditForm.$submitted && CustEditForm.addrfname.$invalid}">
+						</div>
+						<div class="blk">
+							<p>LastName <span class="star">*</span></p>
+							<input type="text" name="addrlname" class="form-control col-md-6" ng-model="custInfo.list.defaultAddr[0].LastName"  placeholder="LastName" ng-required="isEditing" ng-class="{error: CustEditForm.$submitted && CustEditForm.addrlname.$invalid}">
 						</div>
 					</div>
 					<div class="full-blk">
@@ -136,9 +149,9 @@
 				</div>
 				</form>
 				<div class="cust-change-pwd col-sm-12 col-xs-12 col-md-12 col-lg-12">
-				<h1>PASSWORD</h1>
-				<a ng-click="viewChangePassword()">change password</a>
-			</div> 
+					<h1>PASSWORD</h1>
+					<a ng-click="viewChangePassword()">change password</a>
+				</div> 
 			<div class="cust-addrlistContainer col-xs-12 col-sm-12 col-md-12 col-lg-12">
 				<h1>ADDRESS BOOK</h1>
 <!-- 				<div class="cust-addr-list cust-top">

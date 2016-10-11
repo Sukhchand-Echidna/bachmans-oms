@@ -199,15 +199,25 @@ function buildOrderConfig( $stateProvider ) {
 						arr["user"] = data.FirstName+" "+data.LastName;
 						arr["ID"] =data.ID;
 						arr["Notes"] = data.xp.Notes;
-						OrderCloud.As().Me.ListAddresses().then(function(res){
-							angular.forEach(res.Items, function(val, key) {
-								if(val.xp != null){
-									if(val.xp.IsDefault)
-										arr["address"] = val;
-								}
-							}, true);
-							d.resolve(arr);
-						});
+						if(data.xp != null){
+							if(data.xp.ContactAddr && data.xp.ContactAddr!=''){
+								OrderCloud.Addresses.Get(data.xp.ContactAddr).then(function(val){
+									arr["address"] = val;
+									d.resolve(arr);
+								});
+							}
+							else{d.resolve(arr);}
+						}
+						else{d.resolve(arr);}
+						// OrderCloud.As().Me.ListAddresses().then(function(res){
+							// angular.forEach(res.Items, function(val, key) {
+								// if(val.xp != null){
+									// if(val.xp.IsDefault)
+										// arr["address"] = val;
+								// }
+							// }, true);
+							// d.resolve(arr);
+						// });
 					});  
 				}else{
 					arr["productID"]=$stateParams.ID;
@@ -222,7 +232,6 @@ function buildOrderConfig( $stateProvider ) {
 				});
 				return dfr.promise;
 			},
-
 			productList: function (OrderCloud, $stateParams, BuildOrderService, $q, ProductImages) {
 				if($stateParams.SearchType == 'plp' || $stateParams.SearchType == 'Products'|| $stateParams.SearchType == 'BuildOrder' || $stateParams.SearchType =='Workshop' || $stateParams.SearchType =='PDP'){
 					var dfr = $q.defer();
@@ -1991,8 +2000,14 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 			vm.recipFields = line;
 		$scope.showModal = !$scope.showModal;
 		if(!vm.addressesList){
-			OrderCloud.As().Me.ListAddresses().then(function(res){
-				vm.addressesList = res.Items;
+			OrderCloud.Addresses.ListAssignments(null, $stateParams.ID, null, null, true, null, 1, 100).then(function(res){
+				var tempArr = [];
+				angular.forEach(res.Items, function(val, key){
+					tempArr.push(OrderCloud.Addresses.Get(val.AddressID));
+				}, true);
+				$q.all(tempArr).then(function(result){
+					vm.addressesList = result;
+				});
 			});
 		}	
 	};
@@ -2407,6 +2422,7 @@ function buildOrderSummaryController($scope, $state, ocscope, buyerid, $cookieSt
 			vm.OrderSummaryLoader = BuildOrderService.GetUnsubmittedOrder().then(function(res2){
 				if(res2 != 0){
 					vm.order = res2;
+					CurrentOrder.Set(res2.ID);
 					vm.orderSummaryShow();
 				}
 			});
@@ -3133,21 +3149,30 @@ function BuildOrderService( $q, $window, $stateParams, ocscope, buyerid, OrderCl
 	}
 	function _getUnsubmittedOrder(){
 		var temp = [], filt, d = $q.defer();
-		OrderCloud.As().Me.ListOutgoingOrders(null, 1, 100, null, null, {"Status":"Unsubmitted"}).then(function(res){
-			filt = _.filter(res.Items, function(row){
-				if(row.xp.SavedOrder){
-					if(!row.xp.SavedOrder.Flag)
+		if($stateParams.SearchType == 'Products' || $stateParams.SearchType == 'BuildOrder' || $stateParams.SearchType == 'PDP' || $stateParams.SearchType == 'plp'){
+			var orderParams = {"Type":"Standard","xp":{"OrderSource":"OMS","CSRID":$cookieStore.get('OMS.CSRID')}};
+			OrderCloud.As().Orders.Create(orderParams).then(function(res1){
+				d.resolve(res1);
+			});	
+		}else{
+			OrderCloud.As().Me.ListOutgoingOrders(null, 1, 100, null, null, {"Status":"Unsubmitted"}).then(function(res){
+				filt = _.filter(res.Items, function(row){
+					if(row.xp != null){
+						if(row.xp.SavedOrder){
+							if(!row.xp.SavedOrder.Flag)
+								temp.push(row);
+						}
+					}else{
 						temp.push(row);
+					}
+				});
+				if(temp.length != 0){
+					d.resolve(temp[0]);
 				}else{
-					temp.push(row);
+					d.resolve(0);
 				}
 			});
-			if(temp.length != 0){
-				d.resolve(temp[0]);
-			}else{
-				d.resolve(0);
-			}
-		});
+		}
 		return d.promise;
 	}
     return service;

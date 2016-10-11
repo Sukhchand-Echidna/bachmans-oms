@@ -414,18 +414,15 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 		}
 		vm.activeOrders = groups;
 		vm.recipients = [];
-		vm.ShipmentsPromise = [];
 		for(var n in groups){
 			var items = [], Status = null;
 			vm.recipients.push(n);
-			angular.forEach(groups[n], function(val, key){
-				items.push({"OrderID": vm.order.ID, "LineItemID": val.ID, "QuantityShipped": val.Quantity});
+			/*angular.forEach(groups[n], function(val, key){
 				if(val.xp.Status == "OnHold")
 					Status = {"Status":"OnHold"};
 				else
 					Status = {"Status": null};
-			}, true);
-			vm.ShipmentsPromise.push(OrderCloud.Shipments.Create({"Items":items, "xp":Status}));
+			}, true);*/
 		}
 	};
     vm.Grouping(ProductInfo);
@@ -478,6 +475,20 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 			vm.status.reviewOpen = true;
 			vm.status.isSecondDisabled = true;
 			vm.status.isThirdDisabled = false;
+		}
+		//Create Shipments for order
+		vm.ShipmentsPromise = [];
+		vm.recipients = [];
+		for(var n in vm.activeOrders){
+			var items = [], Status = null;
+			angular.forEach(vm.activeOrders[n], function(val, key){
+				items.push({"OrderID": vm.order.ID, "LineItemID": val.ID, "QuantityShipped": val.Quantity});
+				if(val.xp.Status == "OnHold")
+					Status = {"Status":"OnHold"};
+				else
+					Status = {"Status": null};
+			}, true);
+			vm.ShipmentsPromise.push(OrderCloud.Shipments.Create({"Items":items, "xp":Status}));
 		}
 	};
 	vm.lineDtlsSubmit = function(lineitems, index){
@@ -537,9 +548,13 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 		vm['isAddrShow'+Index] = true;
 		line.limit = 3;
 		$scope.addressesList = [];
-		OrderCloud.As().Me.ListAddresses().then(function(data){
-			OrderCloud.Me.Get().then(function(defAddress){
-				angular.forEach(data.Items, function(val, key){
+		OrderCloud.Addresses.ListAssignments(null, $stateParams.ID, null, null, true, null, 1, 100).then(function(res){
+			var tempArr = [];
+			angular.forEach(res.Items, function(val, key){
+				tempArr.push(OrderCloud.Addresses.Get(val.AddressID));
+			}, true);
+			$q.all(tempArr).then(function(result){
+				angular.forEach(result, function(val, key){
 					val.Zip = parseInt(val.Zip);
 					var defualtAddressID;
 					if(defAddress.xp)

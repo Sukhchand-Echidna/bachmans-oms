@@ -66,11 +66,14 @@ function OrderHistoryController($scope, $stateParams, Order, OrderCloud) {
 						console.log("resitem",resitem);
 						orderHistorydetails.DestinationCode=resitem.xp.addressType;
 						orderHistorydetails.uname=resitem.ShippingAddress.FirstName+" "+resitem.ShippingAddress.LastName;
-						orderHistorydetails.userID=completedOdr.FromUserID;
+						orderHistorydetails.userID=val.FromUserID;
 						orderHistorydetails.shipmentID=val1.ID;
 						orderHistorydetails.Total=val.Total;
 						orderHistorydetails.DateCreated=val.DateCreated;
 						orderHistorydetails.Status=val1.xp.Status;
+						orderHistorydetails.SearchType='User';
+						orderHistorydetails.ID=val.ID;
+
 					})
 					console.log(orderHistorydetails);
 					vm.completeshipment.push(orderHistorydetails);
@@ -79,20 +82,20 @@ function OrderHistoryController($scope, $stateParams, Order, OrderCloud) {
 		})
 		$scope.uname=vm.order[0].FromUserFirstName + " " + vm.order[0].FromUserLastName;
 		console.log("vm.uname", vm.completeshipment);
-		$scope.userID=$stateParams.userID;
-		$scope.searchType='User';
+		vm.userID=$stateParams.userID;
+		vm.searchType='User';
 		$scope.dateFormat="dd/MM/yyyy";
 		$scope.gridHistory = {
 			data: vm.completeshipment,
 			enableSorting: true,
 			columnDefs: [
-				{ name: 'shipmentID', displayName:'Shipment Number', cellTemplate: '<div class="data_cell" ui-sref="buildOrder({ID:grid.appScope.userID,SearchType:grid.appScope.searchType,orderID:row.entity.ID,orderDetails:true})">{{row.entity.shipmentID}}</div>', width:"14.28%"},
+				{ name: 'shipmentID', displayName:'Shipment Number', cellTemplate: '<div class="data_cell" ui-sref="buildOrder({ID:row.entity.userID,SearchType:row.entity.SearchType,orderID:row.entity.ID,orderDetails:true})">{{row.entity.shipmentID}}</div>', width:"14.28%"},
 				{ name: 'DateCreated', displayName:'Order Placed On', cellTemplate: '<div class="data_cell">{{row.entity.DateCreated | date:grid.appScope.dateFormat}}</div>', width:"14.28%"},
 				{ name: 'DestinationCode', displayName:'Destination Code', width:"14.28%"},
 				{ name: 'uname', displayName:'Recipient Name', cellTemplate: '<div class="data_cell">{{row.entity.uname}}</div>', width:"14.28%"},
 				{ name: 'Total', displayName:'Total', cellTemplate: '<div class="data_cell">{{row.entity.Total | currency:$}}</div>', width:"14.28%"},
 				{ name: 'Status', displayName:'Order Status', width:"14.28%"},
-				{ name: 'orderClaim', displayName:'', cellTemplate: '<div class="data_cell"><button ui-sref="orderClaim({userID:grid.appScope.userID, name:grid.appScope.uname, orderID:row.entity.ID})">Create Order Claim</button></div>', width:"14.28%"}
+				{ name: 'orderClaim', displayName:'', cellTemplate: '<div class="data_cell"><button ui-sref="orderClaim({userID:row.entity.userID, name:row.entity.uname, orderID:row.entity.ID})">Create Order Claim</button></div>', width:"14.28%"}
 		]
 	}
 	}
