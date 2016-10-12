@@ -1736,6 +1736,7 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 							angular.element(document.getElementById("order-checkout")).scope().orderTotal = data.Total;
 							vm.orderTotal = data.Total;
 							vm.order = data;
+							angular.element(document.getElementById("order-summary")).scope().$parent.buildordersummary.order = data;
 						});
 					});
 				}
@@ -1873,6 +1874,7 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 							angular.element(document.getElementById("order-checkout")).scope().orderTotal = data.Total;
 							vm.orderTotal = data.Total;
 							vm.order = data;
+							angular.element(document.getElementById("order-summary")).scope().$parent.buildordersummary.order = data;
 						});
 					});
 				}
@@ -2410,7 +2412,7 @@ function buildOrderSummaryController($scope, $state, ocscope, buyerid, $cookieSt
 	vm.orderSummaryShow = function(order){
 		if(vm.order){
 			console.log(vm.order);
-			vm.OrderSummaryLoader = OrderCloud.As().LineItems.List(vm.order.ID).then(function(res){
+			vm.OrderSummaryLoader = OrderCloud.LineItems.List(vm.order.ID).then(function(res){
 				vm.OrderSummaryLoader = LineItemHelpers.GetProductInfo(res.Items).then(function(data){
 					vm.grouping(data);
 				});
@@ -3149,12 +3151,7 @@ function BuildOrderService( $q, $window, $stateParams, ocscope, buyerid, OrderCl
 	}
 	function _getUnsubmittedOrder(){
 		var temp = [], filt, d = $q.defer();
-		if($stateParams.SearchType == 'Products' || $stateParams.SearchType == 'BuildOrder' || $stateParams.SearchType == 'PDP' || $stateParams.SearchType == 'plp'){
-			var orderParams = {"Type":"Standard","xp":{"OrderSource":"OMS","CSRID":$cookieStore.get('OMS.CSRID')}};
-			OrderCloud.As().Orders.Create(orderParams).then(function(res1){
-				d.resolve(res1);
-			});	
-		}else{
+		if($stateParams.SearchType != 'Products' && $stateParams.SearchType != 'BuildOrder' && $stateParams.SearchType != 'PDP' && $stateParams.SearchType != 'plp'){
 			OrderCloud.As().Me.ListOutgoingOrders(null, 1, 100, null, null, {"Status":"Unsubmitted"}).then(function(res){
 				filt = _.filter(res.Items, function(row){
 					if(row.xp != null){
@@ -3172,6 +3169,8 @@ function BuildOrderService( $q, $window, $stateParams, ocscope, buyerid, OrderCl
 					d.resolve(0);
 				}
 			});
+		}else{
+			d.resolve(0);
 		}
 		return d.promise;
 	}

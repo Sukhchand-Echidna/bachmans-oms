@@ -75,7 +75,7 @@ function HomeController($sce, $rootScope, $state, $compile, $uibModal,$log, Unde
 							res3.xp = {};
 						if(!res2.xp)
 							res2.xp = {};	
-						onholdorders.push({"ID":res.ID,"OrderID":res1.OrderID,"LineItemID":res1.LineItemID,"DateCreated":res2.DateCreated,"FromUserFirstName":res2.FromUserFirstName,"Destination":res3.xp.addressType,"WireStatusCode":res3.xp.WireService,"CSRID":res2.xp.CSRID});
+						onholdorders.push({"ID":res.ID,"DeliveryDate":res3.deliveryDate,"RecipientName":res3.ShippingAddress.FirstName+" "+res3.ShippingAddress.LastName,"OrderID":res1.OrderID,"LineItemID":res1.LineItemID,"DateCreated":res2.DateCreated,"FromUserFirstName":res2.FromUserFirstName,"Destination":res3.xp.addressType,"WireStatusCode":res3.xp.WireService,"CSRID":res2.xp.CSRID});
 					})
 				})
 				//onholdorders.push(OrderCloud.Orders.Get(res1.OrderID));
@@ -89,12 +89,14 @@ function HomeController($sce, $rootScope, $state, $compile, $uibModal,$log, Unde
 	  enableSorting: true,
 	  columnDefs: [
 	   { name: 'ID', displayName:'Shipment'},
-	   { name: 'DateCreated', displayName:'Order Placed On', cellTemplate: '<div class="data_cell">{{row.entity.DateCreated | date:grid.appScope.dateFormat}}</div>', width:"14.2%"},
-	   { name: 'FromUserFirstName', displayName:'Sender Name',width:"14.2%"},
-	   { name: 'Destination', displayName:'Destination',width:"14.2%"},
-	   { name: 'WireStatusCode', displayName:'Wire Status Code',width:"14.2%"},
-	   { name: 'CSRID', displayName:'CSR ID',width:"14.2%"},
-	   { name: 'ShippingCost', displayName:'', cellTemplate: '<div class="data_cell" ui-sref="hold({ID:row.entity.ID,LineItemID:row.entity.LineItemID,OrderID:row.entity.OrderID})"><a> <i class="fa fa-upload"></i> Open Order</a></div>', width:"14.2%"}
+	   { name: 'DateCreated', displayName:'Order Placed On', cellTemplate: '<div class="data_cell">{{row.entity.DateCreated | date:grid.appScope.dateFormat}}</div>', width:"11.11%"},
+	   { name: 'FromUserFirstName', displayName:'Sender Name',width:"11.11%"},
+	   { name: 'DeliveryDate', displayName:'Delivery Date',width:"11.11%"},
+	   { name: 'RecipientName', displayName:'Recipient Name',width:"11.11%"},
+	   { name: 'Destination', displayName:'Destination',width:"11.11%"},
+	   { name: 'WireStatusCode', displayName:'Wire Status Code',width:"11.11%"},
+	   { name: 'CSRID', displayName:'CSR ID',width:"11.11%"},
+	   { name: 'ShippingCost', displayName:'', cellTemplate: '<div class="data_cell" ui-sref="hold({ID:row.entity.ID,LineItemID:row.entity.LineItemID,OrderID:row.entity.OrderID})"><a> <i class="fa fa-upload"></i> Open Order</a></div>', width:"11.11%"}
 	  ]
 	 };
 	//vm.saved = OrderList.saved;

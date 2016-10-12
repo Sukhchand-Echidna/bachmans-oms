@@ -37,7 +37,7 @@
 						<div class="cust-street cust-top col-md-12">
 							<div ng-if="custInfo.list.defaultAddr.length>0">
 							<p class="col-md-3 cust-del">Street Address:</p>
-								<div class="col-md-6 cust-addr">
+								<div class="col-md-6 cust-addrs">
 									<!-- <p>{{custInfo.list.defaultAddr[0].CompanyName}}</p> -->
 									<!-- <input type="text" ng-show="isEditing" ng-model="custInfo.list.defaultAddr.CompanyName" placeholder="CompanyName" class="cust-addr1"> -->
 									<div>
@@ -45,7 +45,9 @@
 		<!-- 								<input type="text" ng-show="isEditing" ng-model="custInfo.list.defaultAddr[0].FirstName" placeholder="FirstName">
 										<input type="text" ng-show="isEditing" ng-model="custInfo.list.defaultAddr[0].LastName" placeholder="LastName"> -->
 									</div>
+									<div>
 									<span>{{custInfo.list.defaultAddr[0].Street1}} {{custInfo.list.defaultAddr[0].Street2}} {{custInfo.list.defaultAddr[0].City}}</span>
+									</div>
 								<!-- 	<input type="text" ng-show="isEditing" ng-model="custInfo.list.defaultAddr[0].Street1" placeholder="Street1" ng-blur="custInfo.getLocation()" required>
 									<input type="text" ng-show="isEditing" ng-model="custInfo.list.defaultAddr[0].Street2" placeholder="Street2">
 									<input type="text" ng-show="isEditing" ng-model="custInfo.list.defaultAddr[0].City" placeholder="City" ng-if="custInfo.list.defaultAddr[0].MultipleCities.length <= 1 || !custInfo.list.defaultAddr[0].MultipleCities" />
