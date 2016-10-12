@@ -7,6 +7,7 @@
 			<span class="order-header">Order History for:</span> {{uname}}
 			<button class="create-claim">Create Non-Order Claim</button>
 		</h5>
+		<input type="text" ng-model="orderHistory.searchText">
 		<div ui-grid="gridHistory" class="order-grid col-md-12 col-sm-12"></div>
 	</div>
 	<p class="no-items" ng-if="orderHistory.order.length==0">There are currently no order in your order history.</p>

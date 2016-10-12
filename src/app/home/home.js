@@ -91,7 +91,7 @@ function HomeController($sce, $rootScope, $state, $compile, $uibModal,$log, Unde
 	   { name: 'ID', displayName:'Shipment'},
 	   { name: 'DateCreated', displayName:'Order Placed On', cellTemplate: '<div class="data_cell">{{row.entity.DateCreated | date:grid.appScope.dateFormat}}</div>', width:"11.11%"},
 	   { name: 'FromUserFirstName', displayName:'Sender Name',width:"11.11%"},
-	   { name: 'DeliveryDate', displayName:'Delivery Date', cellTemplate: '<div class="data_cell">{{row.entity}}</div>', width:"11.11%"},
+	   { name: 'DeliveryDate', displayName:'Delivery Date', cellTemplate: '<div class="data_cell">{{row.entity.DeliveryDate | date:grid.appScope.dateFormat}}</div>', width:"11.11%"},
 	   { name: 'RecipientName', displayName:'Recipient Name',width:"11.11%"},
 	   { name: 'Destination', displayName:'Destination',width:"11.11%"},
 	   { name: 'WireStatusCode', displayName:'Wire Status Code',width:"11.11%"},

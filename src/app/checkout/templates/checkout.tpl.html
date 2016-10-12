@@ -404,7 +404,7 @@
 									</div>
 								</div>
 								<div class="col-lg-12 col-md-12">
-									<input type="button" ng-disabled="!line.xp.deliveryRun && line.xp.addressType!='InStorePickUp'" ng-value="checkout.recipients.length == $index+1 ? 'Continue to Payment' : 'Next'" ng-click="checkout.ProceedToPayment(lineitems, $index, checkout.lineItemForm[line.ID])" />
+									<input type="button" ng-disabled="!line.xp.deliveryRun && line.xp.addressType!='InStorePickUp'" ng-value="checkout.recipients.length == $index+1 ? 'Continue to Payment' : 'Next Recipient'" ng-click="checkout.ProceedToPayment(lineitems, $index, checkout.lineItemForm[line.ID])" id="nextrecipient" />
 								</div>
 							</form>
 						</uib-accordion-group>

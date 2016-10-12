@@ -45,7 +45,7 @@ function OrderHistoryConfig( $stateProvider ) {
 			}
 		})
 }
-function OrderHistoryController($scope, $stateParams, Order, OrderCloud) {
+function OrderHistoryController($scope, $stateParams, Order, OrderCloud, $filter) {
 	var vm = this;
 	vm.order=Order;
 	$scope.$parent.base.list = ' ';
@@ -73,7 +73,6 @@ function OrderHistoryController($scope, $stateParams, Order, OrderCloud) {
 						orderHistorydetails.Status=val1.xp.Status;
 						orderHistorydetails.SearchType='User';
 						orderHistorydetails.ID=val.ID;
-
 					})
 					console.log(orderHistorydetails);
 					vm.completeshipment.push(orderHistorydetails);
@@ -96,7 +95,14 @@ function OrderHistoryController($scope, $stateParams, Order, OrderCloud) {
 				{ name: 'Total', displayName:'Total', cellTemplate: '<div class="data_cell">{{row.entity.Total | currency:$}}</div>', width:"14.28%"},
 				{ name: 'Status', displayName:'Order Status', width:"14.28%"},
 				{ name: 'orderClaim', displayName:'', cellTemplate: '<div class="data_cell"><button ui-sref="orderClaim({userID:row.entity.userID, name:row.entity.uname, orderID:row.entity.ID})">Create Order Claim</button></div>', width:"14.28%"}
-		]
+			]
+		}
 	}
-	}
+	$scope.$watch(angular.bind(this, function () {
+        return this.searchText;
+    }), function (newVal, oldVal) {
+        if (newVal) {
+        	vm.saved = $filter('filter')(vm.completeshipment, newVal, undefined);
+        }
+    });
 }

@@ -43,6 +43,11 @@
 							</li>
 						</ul>
 					</div>
+					<div class="productdescp">
+						<h1>Description:</h1>
+						<p>{{buildOrder.prodDesription}}</p>
+						<span>View More +</span>
+					</div>
 				</div>
 				<div class="pdp-right col-md-5 col-lg-5">
 					<div ng-if="buildOrder.hidePdpblock==false">
@@ -142,6 +147,8 @@
 							<li>Comes with seat cushions</li>
 						</ul>
 					</div>
+					<button class="addCart" ng-if="buildOrder.hidePdpblock">REGISTER</button>
+					<button class="addCart" ng-click="AddtoCart(buildOrder.selectedProductId)" ng-if="!buildOrder.hidePdpblock">ADD TO CART</button>
 					<div class="dropdown-box" ng-if="!buildOrder.hidePdpblock">
 						<h5>Add Something Extra</h5>
 					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -315,8 +322,8 @@
 							<p class="delivery-success" style="color:red;" ng-if="buildOrder.DeliveryNotAvailable">Delivery Not Available To The Specified Zip...</p>
 							<p class="delivery-failure" style="color:green;" ng-if="buildOrder.DeliveryNotAvailable==false">Delivery Available...!</p>
 						</div>
-				<button class="addCart" ng-if="buildOrder.hidePdpblock">REGISTER</button>
-				<button class="addCart" ng-click="AddtoCart(buildOrder.selectedProductId)" ng-if="!buildOrder.hidePdpblock">ADD TO CART</button>
+				<!-- <button class="addCart" ng-if="buildOrder.hidePdpblock">REGISTER</button>
+				<button class="addCart" ng-click="AddtoCart(buildOrder.selectedProductId)" ng-if="!buildOrder.hidePdpblock">ADD TO CART</button> -->
 				</div>
 				<div class="key-product col-xs-12 p0" ng-if="buildOrder.hidePdpblock==false">
 					<h3>Key Product Info:</h3>
@@ -329,7 +336,7 @@
 				</div>
 				<div class="pdp-description col-xs-12 col-md-12 col-lg-12 p0">
 					<uib-accordion>
-						<uib-accordion-group is-open="status.open1">
+						<!-- <uib-accordion-group is-open="status.open1">
 							<uib-accordion-heading>
 								<p ng-class="{'footer-minus': status.open1, 'footer-plus': !status.open1}">Description:
 									<svg class="plus" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 24 24" style="enable-background:new 0 0 24 24;" xml:space="preserve">
@@ -350,7 +357,7 @@
 								</li>
 
 							</ul>
-						</uib-accordion-group>
+						</uib-accordion-group> -->
 						<uib-accordion-group is-open="status.open2" class="specification" ng-if="buildOrder.hidePdpblock==false">
 							<uib-accordion-heading>
 								<p ng-class="{'footer-minus': status.open2, 'footer-plus': !status.open2}">Specifications:
@@ -465,7 +472,7 @@
 						<img src="{{buildOrderPDP.alfrescoAccessURL}}/imagefinder/{{prods.ID}}?alf_ticket={{buildOrderPDP.alfticket}}" />
 					</div>
 					<div class="pdp-right col-md-5 col-lg-5">
-						<h2>{{prods.Name}}</h2>	
+						<h2>{{prods.Name}}</h2>
 						<h3>Size: <span>{{prods.Size}}</span></h3>
 						<h3>Color: <span>{{prods.Color}}</span></h3>
 						<div class="price">
@@ -517,6 +524,7 @@
 							<div class="pdp-upsell-block" ng-click="buildOrder.UpsellProductItem(upsell, buildOrder.CategoryItemsUpsell[$index], $index)">
 								<div class="product_img"><img ng-src="{{buildOrderPDP.alfrescoAccessURL}}/imagefinder/{{upsell.ID}}?alf_ticket={{buildOrderPDP.alfticket}}" class="owl-lazy"></div>
 								<h2>{{upsell.Name}}</h2>
+								<h3>SKU #{{upsell.ID}}</h3>
 								<h3>{{upsell.Size}}</h3>
 								<h4>{{upsell.Color}}</h4>
 								<div class="price_lst">
@@ -533,6 +541,7 @@
 							<div class="pdp-upsell-block" ng-click="buildOrder.UpsellProductItem(cross, buildOrder.CategoryItemsSimilar, $index)">
 								<div class="product_img"><img ng-src="{{buildOrderPDP.alfrescoAccessURL}}/imagefinder/{{cross.ID}}?alf_ticket={{buildOrderPDP.alfticket}}" class="owl-lazy"></div>
 								<h2>{{cross.Name}}</h2>
+								<h3>SKU #{{cross.ID}}</h3>
 								<h3>{{cross.xp.SpecsOptions.Size}}</h3>
 								<h4>{{cross.xp.SpecsOptions.Color}}</h4>
 								<div class="price_lst">
