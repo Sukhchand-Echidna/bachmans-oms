@@ -75,7 +75,7 @@ function HomeController($sce, $rootScope, $state, $compile, $uibModal,$log, Unde
 							res3.xp = {};
 						if(!res2.xp)
 							res2.xp = {};	
-						onholdorders.push({"ID":res.ID,"DeliveryDate":res3.deliveryDate,"RecipientName":res3.ShippingAddress.FirstName+" "+res3.ShippingAddress.LastName,"OrderID":res1.OrderID,"LineItemID":res1.LineItemID,"DateCreated":res2.DateCreated,"FromUserFirstName":res2.FromUserFirstName,"Destination":res3.xp.addressType,"WireStatusCode":res3.xp.WireService,"CSRID":res2.xp.CSRID});
+						onholdorders.push({"ID":res.ID,"DeliveryDate":res3.xp.deliveryDate,"RecipientName":res3.ShippingAddress.FirstName+" "+res3.ShippingAddress.LastName,"OrderID":res1.OrderID,"LineItemID":res1.LineItemID,"DateCreated":res2.DateCreated,"FromUserFirstName":res2.FromUserFirstName,"Destination":res3.xp.addressType,"WireStatusCode":res3.xp.WireService,"CSRID":res2.xp.CSRID});
 					})
 				})
 				//onholdorders.push(OrderCloud.Orders.Get(res1.OrderID));
@@ -91,7 +91,7 @@ function HomeController($sce, $rootScope, $state, $compile, $uibModal,$log, Unde
 	   { name: 'ID', displayName:'Shipment'},
 	   { name: 'DateCreated', displayName:'Order Placed On', cellTemplate: '<div class="data_cell">{{row.entity.DateCreated | date:grid.appScope.dateFormat}}</div>', width:"11.11%"},
 	   { name: 'FromUserFirstName', displayName:'Sender Name',width:"11.11%"},
-	   { name: 'DeliveryDate', displayName:'Delivery Date',width:"11.11%"},
+	   { name: 'DeliveryDate', displayName:'Delivery Date', cellTemplate: '<div class="data_cell">{{row.entity}}</div>', width:"11.11%"},
 	   { name: 'RecipientName', displayName:'Recipient Name',width:"11.11%"},
 	   { name: 'Destination', displayName:'Destination',width:"11.11%"},
 	   { name: 'WireStatusCode', displayName:'Wire Status Code',width:"11.11%"},
