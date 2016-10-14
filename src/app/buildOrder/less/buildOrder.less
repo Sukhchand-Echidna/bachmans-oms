@@ -422,8 +422,8 @@ input.error, .errorCity {
 				color: @color1;
 				margin: 10px 0;
 				svg {
-					width: 10px;
-					height: 9px;
+					width: 15px;
+					height: 10px;
 					color: @color1;
 					.in-block;
 					.rotate(180deg);
@@ -433,7 +433,7 @@ input.error, .errorCity {
 					cursor: pointer;
 					text-decoration: none;
 					.font-spacing;
-					
+					font-size:14px;
 				}
 				&:hover{
 					svg{
@@ -476,6 +476,37 @@ input.error, .errorCity {
 									border:1px solid @color23;
 									width:80px;
 								}
+							}
+						}
+					}
+					.productdescp {
+						.title {
+							.helvetica-bold;
+							color: #8c58b5;
+							font-size: 16px;
+						}
+						.desc-text {
+							.helvetica-regular;
+							font-size: 14px;
+							display: -webkit-box;
+						    -webkit-line-clamp: 3;
+						    -webkit-box-orient: vertical;
+						    overflow: hidden;
+						    &.expanded {
+						    	display: block;
+						    }
+						}
+						.view-more-link {
+							.helvetica-regular;
+							font-size: 13px;
+							color: #a77bca;
+							text-decoration: underline;
+							cursor: pointer;
+							&:hover {
+								color: #8c58b5;
+							}
+							&:disabled {
+								cursor: default;
 							}
 						}
 					}
@@ -821,7 +852,7 @@ input.error, .errorCity {
     							}
     						}
     						label{
-								font-family: "Helvetica-Bold";
+								.helvetica-bold;
 								font-size:13px;
 								text-transform: capitalize;
     						}					
@@ -959,7 +990,7 @@ input.error, .errorCity {
 			position: absolute;
 			bottom: 0;
 			width: 100%;
-			z-index:10;
+			z-index: 13;
 			.nav.nav-pills.nav-stacked {
 				padding-left:2%;
 				li {
@@ -1076,9 +1107,12 @@ input.error, .errorCity {
 					h3,
 					h4 {
 						.helvetica-regular;
-						font-size: 10px;
+						font-size: 11px;
 						color: #54565d;
 						margin: 5px 0;
+						& > span {
+							font-size: 13px;
+						}
 					}
 					h5 {
 						.helvetica-bold;
@@ -2565,7 +2599,7 @@ input.error, .errorCity {
 	   .popover-content{
 		   h2{
 			     font-size: 15px;
-		         font-family: "Helvetica Medium";
+		         .helvetica-medium;
 			     margin: 10px 0;
 			     color: initial;
 		   }
@@ -2842,7 +2876,7 @@ input.error, .errorCity {
 					padding-top:5px;
 				 	p{
 					    color: #464646;
-					    font-family: "Helvetica-regular";
+					    .helvetica-regular;
 					    font-size: 16px;
 					    margin-bottom: 10px;
 					}
@@ -3209,7 +3243,7 @@ input.error, .errorCity {
 					    background:#f5f5f5;
 					    padding:10px 0;
 					    .modify-order{
-					     		font-family: "Helvetica-Bold";
+					     		.helvetica-bold;
 		    					font-size: 14px;
 		    					text-align: center;
 		    					transition: background-color 0.5s ease-out;
@@ -3392,8 +3426,8 @@ input.error, .errorCity {
 		  	 	line-height:22px;
 		  	 }
 		  	  .default-pay{
-		  	 	padding-left:10px;
-		  	 }
+		  	 	vertical-align:top;
+			  }
 		  	 .assembled{
 		  	 	padding-left:5px;
 		  	 	vertical-align: top;
@@ -3417,9 +3451,8 @@ input.error, .errorCity {
 			   		top:5px;
 			   }
 			   .default-pay{
-			   		padding-left:10px;
-			   		
-			   }
+			   		vertical-align:top;
+			   	 }
 			   .assembled{
 			   	  padding-left:5px;
 			   	  vertical-align: top;
@@ -3541,24 +3574,30 @@ input.error, .errorCity {
 		    	
 			}
 			.page_header_back{
-					font-family: "Helvetica-regular";
-				    font-size: 13px;
+					.helvetica-regular;
+				    font-size: 14px;
 				    color: #54565d;
 				    margin: 10px 0;
 				    a{
 				    	color: #54565d;
 					    cursor: pointer;
 					    text-decoration: none;
-					    &:hover{
-					        color: #a77bca;
-					    }
-					    svg{
-					    width: 10px;
-					    height: 9px;
+						svg{
+					    width: 15px;
+					    height: 10px;
 					    color: rgb(84, 86, 93);
 					    display: inline-block;
 					    transform: rotate(180deg);
 					    }
+				    }
+				    &:hover{
+				    	a{
+				    		color:#a77bca;
+				    		text-decoration:underline;
+				    	}
+				    	svg{
+				    		fill:#a77bca;
+				    	}
 				    }
 			}
 			
@@ -3567,7 +3606,7 @@ input.error, .errorCity {
 		    padding: 5px;
 		    border: 0;
 		    vertical-align: middle;
-		    font-family: "Helvetica-regular";
+		    .helvetica-regular;
 		    font-size: 16px;
 		   
 		    margin: 10px 0px;
@@ -3588,7 +3627,7 @@ input.error, .errorCity {
 		width:100%;
 		.content-body-block{
 		       text-align: justify;
-			     font-family: "Helvetica-regular";
+			     .helvetica-regular;
 			     font-size:13px;
 			     padding-right:14px;
 			     table{
@@ -3624,7 +3663,7 @@ input.error, .errorCity {
     top: 0;
     bottom: 0;
     background: #000;
-    z-index: 9;
+    z-index: 12;
     opacity: 0.2;
 }
 .oms_main_container .faster-delivery-content{
@@ -3863,7 +3902,7 @@ input.error, .errorCity {
 					input{
 						width: 100%;
 						border: 1px solid #EAEAEA;
-						font-family: "Helvetica-regular";
+						.helvetica-regular;
 						font-size: 11px;
 						height: 29px;
 						background: #fff;
@@ -3980,16 +4019,15 @@ input.error, .errorCity {
 	.modal-dialog{
 			width:70% !important;
 	}
-	input[type=radio]:not(old)+label .radioOutline{
-		margin-right:20px;
-	}
-	input[type=radio]:not(old):checked+label .radioOutline{
-		margin-right:0px;
-	}
+	
+	
 	.modal-body{
 		position:static !important;
 		height:450px;
 		max-height:450px;
+		.radio-btn-container{
+			margin:7px 0 8px 0;
+		}
 		h3{
 			font-size:15px;
 			.helvetica-bold;
@@ -4016,7 +4054,7 @@ input.error, .errorCity {
 					line-height: 48px;
 					}
 				td{
-					padding: 15px 10px 15px 10px;
+					padding: 15px 10px 15px 15px;
 					vertical-align: middle;
 					font-size: 15px;
 					.helvetica-regular;
@@ -4083,6 +4121,115 @@ input.error, .errorCity {
 			.pdp-desc-cont {
 				.helvetica-regular;
 				font-size: 14px;
+			}
+		}
+	}
+}
+.workshop-elp-main {
+	ul.row {
+		width: 98%;
+		margin: 0;
+		.event-item {
+			border: 1px solid #ccc;
+			box-shadow: 0 3px 8px #aaa;
+			background-color: #fff;
+			position: relative;
+			margin-bottom: 20px;
+			.event-img {
+				padding: 0;
+			}
+			.event-details {
+				padding: 10px 15px;
+				position: static;
+				h1 {
+					color: #8c58b5;
+					.helvetica-bold;
+					text-transform: capitalize;
+					margin-bottom: 10px;
+				}
+				p {
+					.helvetica-regular;
+				}
+				.more-details-link {
+					.helvetica-regular;
+					color: #666;
+					text-decoration: none;
+					letter-spacing: normal;
+					font-weight: bold;
+					cursor: pointer;
+				}
+				.public-link {
+					.helvetica-regular;
+					display: block;
+					text-transform: uppercase;
+					margin-top: 10px;
+					cursor: pointer;
+					&:hover {
+						color: #7a43a3;
+					}
+				}
+				.btn-grp {
+					float: right;
+					margin-top: 10px;
+					button {
+						font-size: 12px;
+						line-height: 24px;
+						letter-spacing: normal;
+					}
+				}
+				.date {
+					text-transform: uppercase;
+					color: #4c4c4c;
+					.helvetica-medium;
+					letter-spacing: normal;
+					font-weight: bold;
+					display: inline-block;
+					font-size: 20px;
+				}
+				.price {
+					.helvetica-medium;
+					letter-spacing: normal;
+					font-weight: bold;
+					text-align: right;
+					color: #8c58b5;
+					margin-top: 10px;
+				}
+				.abs-bottom {
+					position: absolute;
+					bottom: 0;
+    				width: 63%;
+    				.time {
+    					display: block;
+    					.day {
+    						color: #afafaf;
+    						font-size: 10px;
+    						.helvetica-regular;
+						    text-transform: uppercase;
+    					}
+    					.timings {
+    						svg {
+    							fill: none;
+							    stroke: #000;
+							    stroke-width: 3;
+							    width: 15px;
+							    height: 15px;
+							    position: relative;
+							    top: 3px;
+    						}
+    						.etime {
+							    text-transform: uppercase;
+								color: #333;
+								font-size: 13px;
+								.helvetica-regular;
+    						}
+    					}
+    				}
+    				.btn-grp {
+    					position: absolute;
+    					right: 0;
+    					bottom: 10px;
+    				}
+				}
 			}
 		}
 	}

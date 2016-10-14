@@ -1,6 +1,6 @@
 <div id="orderConfirmationTopNav" ui-view="orderConfirmationtop"></div>
 <div class="container-fluid orderConfirmation-Wrap">
-	<div class="col-lg-12 col-md-12 orderConfirm">
+	<div class="col-lg-12 col-md-12 orderConfirm" ng-class="{orderConfirm2: orderConfirmation.ShowStorePrinters}">
 		<p class="orderConfirm-title">Order Successfully Placed</p>
 		<p class="orderConfirm-ID">Order Confirmation #: <span> {{orderConfirmation.order.ID}}</span></p>
 		<div class="orderConfirm-mailContent">

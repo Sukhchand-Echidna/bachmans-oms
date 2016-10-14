@@ -1,13 +1,21 @@
 <div class="container-fluid order-history-main">
 	<div class="back-common">
-		<a href="javascript: window.history.go(-1)">Back</a>
+		<a href="javascript: window.history.go(-1)">
+		<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+					viewBox="0 0 14 21" style="enable-background:new 0 0 14 21;" xml:space="preserve">
+						<style type="text/css">
+							.st0{fill:#8B8E96;}
+						</style>
+						<g>
+							<path d="M0.7,18.3l7.8-7.8L0.7,2.7L3,0.3l10.2,10.2L3,20.7L0.7,18.3z"/>
+						</g>
+		</svg>Back To Previous Page</a>
 	</div>
 	<div class="order-history" ng-if="orderHistory.order.length>0">
 		<h5>
 			<span class="order-header">Order History for:</span> {{uname}}
 			<button class="create-claim">Create Non-Order Claim</button>
 		</h5>
-		<input type="text" ng-model="orderHistory.searchText">
 		<div ui-grid="gridHistory" class="order-grid col-md-12 col-sm-12"></div>
 	</div>
 	<p class="no-items" ng-if="orderHistory.order.length==0">There are currently no order in your order history.</p>

@@ -171,6 +171,7 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 								if(res3=="1"){
 									var obj = {"xp":{}};
 									obj.xp.PrintStatus=false;
+									obj.xp.PaymentStatus="Completed";
 									if(vm.order.Total > 0)
 										vm.orderDtls.SpendingAccounts['CreditCard'] = {"Amount": vm.order.Total};
 									obj.xp.SpendingAccounts = vm.orderDtls.SpendingAccounts;
@@ -190,6 +191,7 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 							if(res2=="1"){
 								var obj = {"xp":{}};
 								obj.xp.PrintStatus=false;
+								obj.xp.PaymentStatus="Completed";
 								if(vm.order.Total > 0)
 									vm.orderDtls.SpendingAccounts['CreditCard'] = {"Amount": vm.order.Total};
 								obj.xp.SpendingAccounts = vm.orderDtls.SpendingAccounts;
@@ -210,6 +212,7 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 								obj.xp.PO.PONumber = vm.CurrentUser.xp.PO.PONumber;
 							}	
 							obj.xp.PrintStatus=false;
+							obj.xp.PaymentStatus="Pending";
 							if(vm.order.Total > 0)
 								vm.orderDtls.SpendingAccounts['CreditCard'] = {"Amount": vm.order.Total};
 							obj.xp.SpendingAccounts = vm.orderDtls.SpendingAccounts;
@@ -229,6 +232,7 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 					obj.xp.PO.PONumber = vm.CurrentUser.xp.PO.PONumber;
 				}	
 				obj.xp.PrintStatus=false;
+				obj.xp.PaymentStatus="Completed";
 				if(vm.order.Total > 0)
 					vm.orderDtls.SpendingAccounts['CreditCard'] = {"Amount": vm.order.Total};
 				obj.xp.SpendingAccounts = vm.orderDtls.SpendingAccounts;
@@ -508,11 +512,11 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 		if(line.xp.deliveryChargeAdjReason == "---select---")
 			delete line.xp.deliveryChargeAdjReason;
 		if(line.selectedAddrID){
-			OrderCloud.As().LineItems.Patch(vm.order.ID, line.ID, {"ShippingAddressID":line.selectedAddrID,"xp":line.xp}).then(function(res){
+			OrderCloud.LineItems.Patch(vm.order.ID, line.ID, {"ShippingAddressID":line.selectedAddrID,"xp":line.xp}).then(function(res){
 				if((lineitems.length)-1 > index){
 					vm.lineDtlsSubmit(lineitems, index+1);
 				}else{
-					OrderCloud.As().LineItems.List(vm.order.ID).then(function(res){
+					OrderCloud.LineItems.List(vm.order.ID).then(function(res){
 						LineItemHelpers.GetProductInfo(res.Items).then(function(res2){
 							vm.Grouping(res2);
 						});
@@ -521,8 +525,8 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 			});
 		}else{
 			line.ShipFromAddressID = 'testShipFrom';
-			OrderCloud.As().LineItems.Update(vm.order.ID, line.ID, line).then(function(dat){
-				OrderCloud.As().LineItems.SetShippingAddress(vm.order.ID, line.ID, line.ShippingAddress).then(function(data){
+			OrderCloud.LineItems.Update(vm.order.ID, line.ID, line).then(function(dat){
+				OrderCloud.LineItems.SetShippingAddress(vm.order.ID, line.ID, line.ShippingAddress).then(function(data){
 					if(line.xp.Status){
 						OrderCloud.As().Orders.Patch(vm.order.ID, {"xp": {"Status": line.xp.Status}}).then(function(res){
 							if((lineitems.length)-1 > index){
@@ -557,8 +561,8 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 				angular.forEach(result, function(val, key){
 					val.Zip = parseInt(val.Zip);
 					var defualtAddressID;
-					if(defAddress.xp)
-						defualtAddressID = defAddress.xp.DefaultAddress;
+					if(val.xp)
+						defualtAddressID = val.xp.DefaultAddress;
 					BuildOrderService.GetPhoneNumber(val.Phone).then(function(res){
 						val.Phone1 = res[0];
 						val.Phone2 = res[1];
@@ -596,7 +600,7 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 				addr.City = validatedAddress.City;
 				addr.State = validatedAddress.Region;
 				addr.Country = validatedAddress.Country;
-				line.Shipping = true;
+				addr.Shipping = true;
 				if(!form.invalidAddress && form.$valid){
 					OrderCloud.Addresses.Update(addr.ID,addr).then(function(res){
 						var params = {"AddressID": res.ID,"UserID": vm.order.FromUserID,"IsBilling": false,"IsShipping": true};

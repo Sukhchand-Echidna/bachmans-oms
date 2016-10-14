@@ -20,15 +20,35 @@ input.error, .errorCity {
 	background-color:@color0;
 	.cust-info-container{
 		.back-common{
-			a{
-				color:@color0;
-				text-decoration:none;
-				&:hover{
-				color:@color0;
-				}
-			}
+			.helvetica-regular;
+		    font-size: 14px;
+		    color: #54565d;
+		    margin: 10px 0;
+		    a{
+		    	color: #54565d;
+			    cursor: pointer;
+			    text-decoration: none;
+			     font-size: 14px;
+			     .helvetica-regular;
+				svg{
+			    width: 15px;
+			    height: 10px;
+			    color: rgb(84, 86, 93);
+			    display: inline-block;
+			    transform: rotate(180deg);
+			    }
+		    }
+		    &:hover{
+		    	a{
+		    		color:#a77bca;
+		    		text-decoration:underline;
+		    	}
+		    	svg{
+		    		fill:#a77bca;
+		    	}
+		    }
 		}
-		.employe{
+		 .employe{
 			padding-left:15px;
 		}
 		padding: 15px 0px 35px 15px;
@@ -127,7 +147,7 @@ input.error, .errorCity {
 			}
 			input{
 				border: 1px solid #e4e6ea;
-			    font-family: "Helvetica-regular";
+			   .helvetica-regular;
 			    font-size: 14px;
 			    line-height: 25px;
 			    text-indent: 5px;
@@ -165,7 +185,7 @@ input.error, .errorCity {
 			 width:50%;
 			}
 			.phone-num{
-				width:28%;
+				width:26%;
 			}
 		}
 		.cust-street{
@@ -208,11 +228,10 @@ input.error, .errorCity {
 				font-size: 15px;
 			}
 			.cust-del{
-			 width:27%;
+			 width:23%;
 			}
 			.cust-addrs{
-				width:30%;
-				padding:0;
+			  width: 50%;
 			}
 			.cust-addr{
 		      margin-top: -22px;
@@ -319,7 +338,7 @@ input.error, .errorCity {
 			    padding: 10px;
 				h1{
 					float:left;
-					font-family: "Helvetica-Bold";
+					.helvetica-bold;
 				    font-size: 15px;
 				    padding: 5px 0 0 0;
 				    margin: 0px;
@@ -327,7 +346,7 @@ input.error, .errorCity {
 				}
 				.save {
 			       padding: 5px 10px;
-				    font-family: "Helvetica-Bold";
+				   .helvetica-bold;
 				    font-size: 11px;
 				    color: #ffffff;
 				    background-color: #a77bca;
@@ -482,7 +501,7 @@ input.error, .errorCity {
 						margin:0;
 						box-shadow:none;
 						background-color: #f4f4f4;
-						font-family: "Helvetica-regular";
+						.helvetica-regular;
 						font-size: 16px;
 						line-height: 35px;
 						color: #464646;

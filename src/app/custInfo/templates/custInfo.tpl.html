@@ -1,7 +1,17 @@
 <div class="container-fluid customer-info">
 	<div class="cust-info-container row">
 		<div class="col-sm-12 col-xs-12 col-md-12 col-lg-12 back-common">
-			<a href="javascript: window.history.go(-1)">Back</a>
+			<a href="javascript: window.history.go(-1)">
+			<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+					viewBox="0 0 14 21" style="enable-background:new 0 0 14 21;" xml:space="preserve">
+						<style type="text/css">
+							.st0{fill:#8B8E96;}
+						</style>
+						<g>
+							<path d="M0.7,18.3l7.8-7.8L0.7,2.7L3,0.3l10.2,10.2L3,20.7L0.7,18.3z"/>
+						</g>
+			</svg>Back To Previous Page
+			</a>
 		</div>
 		<div class="col-sm-6 col-xs-6 col-md-6 col-lg-6">
 			<div class="col-sm-12 col-xs-12 col-md-12 col-lg-12" ng-init="readStatus=true">
@@ -100,7 +110,7 @@
 							<input type="number" name="phone3" placeholder="Number" ng-model="custInfo.list.user.contact.Phone3" max-length="4" class="col-md-3 phone-val" ng-required="isEditing" ng-class="{error: CustEditForm.$submitted && CustEditForm.phone3.$invalid}" ng-minlength="4">
 						</div>
 					</div>
-					<p>Edit Address</p>
+<!-- 					<p>Edit Address</p>
 					<div class="group-blk">
 						<div class="blk">
 							<p>FirstName <span class="star">*</span></p>
@@ -110,7 +120,7 @@
 							<p>LastName <span class="star">*</span></p>
 							<input type="text" name="addrlname" class="form-control col-md-6" ng-model="custInfo.list.defaultAddr[0].LastName"  placeholder="LastName" ng-required="isEditing" ng-class="{error: CustEditForm.$submitted && CustEditForm.addrlname.$invalid}">
 						</div>
-					</div>
+					</div> -->
 					<div class="full-blk">
 						<div class="blk">
 							<p>Address 1 <span class="star">*</span></p>
@@ -312,7 +322,7 @@
 									<p>Billing Address</p>
 									<p class="sub-addr">{{creditCard.billing.Street1}}</p>
 									<p class="sub-addr">{{creditCard.billing.Street2}}</p>
-									<p class="sub-addr">{{creditCard.City}}, {{creditCard.billing.State}}, {{creditCard.billing.Country}} {{creditCard.billing.Zip}}</p>
+									<p class="sub-addr">{{creditCard.billing.City}}, {{creditCard.billing.State}}, {{creditCard.billing.Country}} {{creditCard.billing.Zip}}</p>
 							</div>
 							<div>
 								<p>Phone</p>

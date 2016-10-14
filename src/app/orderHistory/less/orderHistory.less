@@ -6,21 +6,7 @@
     box-sizing: border-box;
     width: 100%;
 	overflow:auto;
-	.back-common{
-		margin-top:5px;
-		a{
-			color:@color0;
-			text-decoration:none;
-			&:hover{
-				color:@color0;
-			}
-			&:before{
-				border-left:16px solid #e4e6ea;
-				border-top:16px solid #e4e6ea;
-				border-bottom:16px solid #e4e6ea;
-			}
-		}
-	}
+	
 	.order-history {
 		h5 {
 			overflow: hidden;
@@ -36,7 +22,7 @@
 				padding: 8px;
 				color: #54565d;
 			    font-size: 16px;
-			    font-family: "Helvetica-regular";
+			    .helvetica-regular;
 			    line-height:15px;
 			    transition: background-color .5s ease-out;
 				&:hover{
@@ -100,7 +86,7 @@
 	}
 	.no-items{
 		font-size:16px;
-		font-family: "Helvetica Medium";
+		.helvetica-medium;
 		margin-top:15px;
 	}
 }

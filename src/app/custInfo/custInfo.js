@@ -83,7 +83,7 @@ function CustInfoConfig( $stateProvider ) {
 						angular.forEach(response.Items, function(value, key) {
 							if(value.xp){
 								if(value.xp.BillingAddressID)
-									TempArr.push(OrderCloud.As().Me.GetAddress(value.xp.BillingAddressID));
+									TempArr.push(OrderCloud.Addresses.Get(value.xp.BillingAddressID));
 							}	
 						}, true);
 						$q.all(TempArr).then(function(result){
@@ -147,6 +147,8 @@ function CustInfoController($scope, $exceptionHandler, $stateParams, $state, Use
 		 console.log(vm.list.TermsAccepted);
     }	
      vm.Submit = function(form) {
+		vm.list.defaultAddr[0].FirstName=vm.list.user.FirstName;
+		vm.list.defaultAddr[0].LastName=vm.list.user.LastName;
 		form.$submitted = true;
 		if(form.$valid){
 			AddressValidationService.Validate(vm.list.defaultAddr[0]).then(function(res){

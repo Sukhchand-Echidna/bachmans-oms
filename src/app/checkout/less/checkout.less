@@ -22,19 +22,20 @@ input.error, .errorMMyy {
 		    width: 220px;
 			display: inline-block;
 			a{
-				height: 40px;
-				.helvetica-regular;
-				font-size:21px;
-				padding: 9px 0px 0 10px;
-				margin: 16px 0 0 20px;
-				color:@color0;
-				display: block;
+				    height: 40px;
+				    .helvetica-regular;
+				    font-size: 17px;
+				    margin: 20px 0 0 20px;
+				    color: #ffffff;
+				    display: block;
 				&:hover{
-					text-decoration:none;
+					text-decoration:underline;
 				}
 				svg{
-					fill:@color0;
-					width:20px;
+					fill: #ffffff;
+				    width: 15px;
+				    transform: rotate(-180deg);
+				    height: 13px;
 				}
 			}
 		}
@@ -537,7 +538,7 @@ input.error, .errorMMyy {
 						p{
 							margin-top:10px;
 							color: #464646;
-						    font-family: "Helvetica-regular";
+						   .helvetica-regular;
 						    font-size: 16px;
 						    margin-bottom: 10px;
 						}
@@ -893,9 +894,6 @@ input.error, .errorMMyy {
 							background-color:@primary-dark-color;
 						}
 				}
-				#nextrecipient{
-				 font-size:16px;
-				}
 			}
 			.page_header_back{
 					margin-left: 15px;
@@ -932,36 +930,40 @@ input.error, .errorMMyy {
 				}
 				
 			}
-			.back-button{
-				font-size:16px;
-				a{
-				    color:#54565d;
+			.back-common{
+				.helvetica-regular;
+			    font-size: 14px;
+			    color: #54565d;
+			    margin: 10px 0;
+			    margin:-12px 0 20px 14px;
+			    a{
+			    	color: #54565d;
 				    cursor: pointer;
 				    text-decoration: none;
-				    &:hover{
-				       color:@primary-color;
+					svg{
+				    width: 15px;
+				    height: 10px;
+				    color: rgb(84, 86, 93);
+				    display: inline-block;
+				    transform: rotate(180deg);
 				    }
-				  }
-				  svg{
-			    	     width: 10px;
-   					     height: 11px;
-					    color: #54565d;
-					    display: inline-block;
-					    transform: rotate(180deg);
-					    
-				 }
-				   &:hover{
-					   	svg{
-							fill:@primary-color;
-						}
-				 }
+			    }
+			    &:hover{
+			    	a{
+			    		color:#a77bca;
+			    		text-decoration:underline;
+			    	}
+			    	svg{
+			    		fill:#a77bca;
+			    	}
+			    }
 			}
 			.saved-addr{
 				padding:0 0 10px 16px;
 				margin:5px 50px 0 0;
 				h3{
 					
-					font-family: "Helvetica-Bold";
+					.helvetica-bold;
 				    font-size: 18px;
 				    margin:0;
 				}
@@ -1069,7 +1071,7 @@ input.error, .errorMMyy {
 					input{
 					   width:100% !important;
 						border: 1px solid #e4e6ea;
-						font-family: "Helvetica-regular";
+						.helvetica-regular;
 						font-size: 16px;
 						line-height: 25px;
 						text-indent: 5px;
@@ -1735,7 +1737,7 @@ input.error, .errorMMyy {
 	     	}
 	     	.view-more{
 			    color: #464646;
-			    font-family: "Helvetica-regular";
+			    .helvetica-regular;
 			    font-size: 16px;
 			    margin-bottom: 10px;
 			    span{

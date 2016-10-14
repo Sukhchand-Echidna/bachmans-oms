@@ -230,12 +230,12 @@
 								<!-- <div ng-click="checkout.back($index)" ng-show="checkout.isAddrShow{{$index}}" class="page_header_back">
 									<a type="button" href="">Back</a>
 								</div> -->
-								<div ng-click="checkout.back($index)" ng-show="checkout.isAddrShow{{$index}}" class="back-button">
+								<div ng-click="checkout.back($index)" ng-show="checkout.isAddrShow{{$index}}" class="back-common">
 								    <a type="button" href="">
 									<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 14 21" style="enable-background:new 0 0 14 21" xml:space="preserve"><style type="text/css">.st0{fill:#8B8E96;}</style><g><path d="M0.7,18.3l7.8-7.8L0.7,2.7L3,0.3l10.2,10.2L3,20.7L0.7,18.3z"></path></g></svg>
 									Back</a>
 								</div>
-								<div class="saved-addr col-sm-5 col-xs-5 col-lg-5 col-md-5vi" ng-show="checkout.isAddrShow{{$index}}">
+								<div class="saved-addr col-sm-5 col-xs-5 col-lg-5 col-md-5vi" ng-show="checkout.isAddrShow{{$index}} && addressesList.length > 0">
 										<h3>Saved Delivery Address</h3>
 									<uib-accordion close-others="checkout.oneAtATime">
 										<uib-accordion-group ng-repeat="addr in addressesList | limitTo: line.limit" is-open="addr.isAddrOpen" ng-click="checkout.selectedAddr(line,addr)">
@@ -380,7 +380,7 @@
 									<h3>Delivery Instructions</h3>
 									<p>Delivery Instructions:</p>
 									<textarea rows="3" ng-model="line.xp.deliveryNote"></textarea>
-									<div ng-init="line.xp.CardMessage ? line.cardMsg=true : line.cardMsg=false">
+									<div ng-init="line.xp.CardMessage ? line.cardMsg=false : line.cardMsg=true">
 										<div class="no-msg">
 											<span>Card Message</span>
 											<div class="no-msg-cont">
@@ -404,7 +404,7 @@
 									</div>
 								</div>
 								<div class="col-lg-12 col-md-12">
-									<input type="button" ng-disabled="!line.xp.deliveryRun && line.xp.addressType!='InStorePickUp'" ng-value="checkout.recipients.length == $index+1 ? 'Continue to Payment' : 'Next Recipient'" ng-click="checkout.ProceedToPayment(lineitems, $index, checkout.lineItemForm[line.ID])" id="nextrecipient" />
+									<input type="button" ng-disabled="!line.xp.deliveryRun && line.xp.addressType!='InStorePickUp'" ng-value="checkout.recipients.length == $index+1 ? 'Continue to Payment' : 'Next'" ng-click="checkout.ProceedToPayment(lineitems, $index, checkout.lineItemForm[line.ID])" />
 								</div>
 							</form>
 						</uib-accordion-group>
@@ -1048,7 +1048,7 @@
 						</div>
 						<div class="prod-details">
 							<p>{{item.Product.Name}}</p>
-							<p>Item no: 141927</p>
+							<p>Item no: {{item.Product.ID}}</p>
 							<p>Type: Deluxe</p>
 							<span class="qty">Qty: {{item.Quantity}}</span>
 							<span class="price">{{item.LineTotal | currency}}</span>
