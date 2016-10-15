@@ -106,6 +106,7 @@ function OrderClaimController($scope, $stateParams, OrderCloud, CreditCardServic
 	}
 
 	vm.continueclaim = function(){
+		vm.totalrefundcost=0;
 		if(vm.orderclaimsummaryshow==false){
 			vm.orderclaimsummaryshow=true;
 			for(var i=0; i<vm.orderclaimarr.length; i++){

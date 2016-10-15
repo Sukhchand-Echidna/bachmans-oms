@@ -3,6 +3,7 @@
 		<div class="buildOrder-order-summary-content">
 			<div class="order-info">
 				<h1>Active Order Summary</h1>
+				<p ng-if="buildordersummary.activeOrders.length==0">No Saved Orders To Proceed.</p>
 				<div ng-repeat="line in buildordersummary.activeOrders track by $index">
 				<div class="order-header  row">
 					<div class="col-xs-2 name">
@@ -271,7 +272,7 @@
 </svg>
 </span>Edit</button>
 <button  ng-disabled="buildordersummary.invalidAddress" ng-click="buildordersummary.lineDtlsSubmit(line, 0); isProEdit = !isProEdit" ng-show="isProEdit">Save</button>
-														<button class="remove" ng-click="buildordersummary.deleteProduct(orderSummary)"><span>	<?xml version="1.0" ?><!DOCTYPE svg  PUBLIC '-//W3C//DTD SVG 1.1//EN'  'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'><svg enable-background="new 0 0 128 128" height="128px" id="Layer_1" version="1.1" viewBox="0 0 128 128" width="128px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M81.646,64l22.248-22.249c3.48-3.48,3.474-9.131-0.019-12.623l-5.006-5.005  c-3.489-3.49-9.142-3.499-12.622-0.019L64,46.354L41.753,24.106c-3.484-3.483-9.133-3.472-12.624,0.018l-5.005,5.005  c-3.491,3.492-3.501,9.14-0.018,12.623L46.354,64L24.108,86.246c-3.483,3.484-3.472,9.133,0.018,12.623l5.005,5.006  c3.492,3.492,9.14,3.502,12.623,0.018L64,81.647l22.247,22.246c3.48,3.481,9.131,3.475,12.622-0.019l5.006-5.006  c3.489-3.489,3.498-9.142,0.019-12.622L81.646,64z" fill="#232323"/></svg></span>Remove</button>
+														<button class="remove" ng-click="buildordersummary.removeProd()" popover-trigger="none" uib-popover-template="buildordersummary.ToolTip.templateUrl" popover-is-open="buildordersummary.ShowRemoveTool"><span>	<?xml version="1.0" ?><!DOCTYPE svg  PUBLIC '-//W3C//DTD SVG 1.1//EN'  'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'><svg enable-background="new 0 0 128 128" height="128px" id="Layer_1" version="1.1" viewBox="0 0 128 128" width="128px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M81.646,64l22.248-22.249c3.48-3.48,3.474-9.131-0.019-12.623l-5.006-5.005  c-3.489-3.49-9.142-3.499-12.622-0.019L64,46.354L41.753,24.106c-3.484-3.483-9.133-3.472-12.624,0.018l-5.005,5.005  c-3.491,3.492-3.501,9.14-0.018,12.623L46.354,64L24.108,86.246c-3.483,3.484-3.472,9.133,0.018,12.623l5.005,5.006  c3.492,3.492,9.14,3.502,12.623,0.018L64,81.647l22.247,22.246c3.48,3.481,9.131,3.475,12.622-0.019l5.006-5.006  c3.489-3.489,3.498-9.142,0.019-12.622L81.646,64z" fill="#232323"/></svg></span>Remove</button>
 													</li>
 												</ul>
 											</div>
@@ -1131,7 +1132,7 @@
 				<ordercloud-search servicename="customer" controlleras="buildordersummary" placeholder="Search user" uib-dropdown-toggle></ordercloud-search>
                 <div class="search_dropdown" uib-dropdown-menu>
                     <div class="searchelement"  ng-repeat="user in buildordersummary.list track by $index">
-                        <a class="search_result" ng-click="buildordersummary.selectUser(user);">
+                        <a class="search_result" ng-click="buildordersummary.selectUser(user)">
                             <p>{{user.Username}}</p>
                             <div>{{user.Email}}</div>
                         </a>
@@ -1140,6 +1141,8 @@
 			</div>
 			<a class="create" ng-click="userEdit=!userEdit;showUser=false;clearData()">Create New User</a>
 		</div>
+		{{showUser}}
+		{{userEdit}}
 		<div ng-hide="!showUser" class="showUserDetails">
 			<p>First Name: <span>{{buildordersummary.showDetails.FirstName}}</span></p>
 			<p>Last Name: <span>{{buildordersummary.showDetails.LastName}}</span></p>
@@ -1150,103 +1153,114 @@
 			<button type="button" class="save" ng-hide="!showUser" ng-click="buildordersummary.openUser(buildordersummary.showDetails)">Login</button>
 			<button type="button" ng-click="buildordersummary.statechange()">Continue as Guest</button>
 		</div>
-		<form ng-hide="!userEdit" name="GuestUserForm" class="create-user">
-			<h1>Enter user Sign Up details</h1>
-			<div class="inline-div user-top">
-					<div>
-						<p>Enter username<span class="star">*</span></p>
-						<input type="text" ng-model="create.Username" name="username" ng-required="userEdit" ng-class="{error: GuestUserForm.$submitted && GuestUserForm.username.$invalid}" />
-					</div>
-			</div>
-			<div class="create-user-container" id="top">
+		<div ng-hide="!userEdit">
+		{{userEdit}}
+			<form name="GuestUserForm" class="create-user">
+				<h1>Enter user Sign Up details</h1>
 				<div class="inline-div user-top">
-					<div>
-						<p>First Name<span class="star">*</span></p>
-						<input type="text" ng-model="create.FirstName" name="fname" ng-required="userEdit" ng-class="{error: GuestUserForm.$submitted && GuestUserForm.fname.$invalid}"/>
+						<div>
+							<p>Enter username<span class="star">*</span></p>
+							<input type="text" ng-model="create.Username" name="username" ng-required="userEdit" ng-class="{error: GuestUserForm.$submitted && GuestUserForm.username.$invalid}" />
+						</div>
+				</div>
+				<div class="create-user-container" id="top">
+					<div class="inline-div user-top">
+						<div>
+							<p>First Name<span class="star">*</span></p>
+							<input type="text" ng-model="create.FirstName" name="fname" ng-required="userEdit" ng-class="{error: GuestUserForm.$submitted && GuestUserForm.fname.$invalid}"/>
+						</div>
+						<div>
+							<p>Last Name<span class="star">*</span></p>
+							<input type="text" ng-model="create.LastName" name="lname" ng-required="userEdit" ng-class="{error: GuestUserForm.$submitted && GuestUserForm.lname.$invalid}" />
+						</div>
 					</div>
-					<div>
-						<p>Last Name<span class="star">*</span></p>
-						<input type="text" ng-model="create.LastName" name="lname" ng-required="userEdit" ng-class="{error: GuestUserForm.$submitted && GuestUserForm.lname.$invalid}" />
+					<p>{{selectedUser}}</p>
+					<div class="inline-div user-top">
+						<div>
+							<p>Enter email address<span class="star">*</span></p>
+							<input type="text" ng-model="create.Email" name="email" ng-required="userEdit" ng-class="{error: GuestUserForm.$submitted && GuestUserForm.email.$invalid}"/>
+						</div>
+						<div class="contact-num user-top">
+							<p>Phone number<span class="star">*</span></p>
+							<input type="number" ng-model="create.Phone1" name="phone1" ng-required="userEdit" ng-class="{error: GuestUserForm.$submitted && GuestUserForm.phone1.$invalid}" ng-minlength="3" max-length="3" />
+							<input type="number" ng-model="create.Phone2" name="phone2" ng-required="userEdit" ng-class="{error: GuestUserForm.$submitted && GuestUserForm.phone2.$invalid}" ng-minlength="3" max-length="3" />
+							<input type="number" ng-model="create.Phone3" name="phone3" ng-required="userEdit" ng-class="{error: GuestUserForm.$submitted && GuestUserForm.phone3.$invalid}" ng-minlength="4" max-length="4" />
+						</div>
+					</div>
+					<div class="inline-div user-top">
+						<div>
+							<p>Enter password<span class="star">*</span></p>
+							<input type="password" ng-model="create.Password" name="password" ng-required="userEdit" ng-class="{error: GuestUserForm.$submitted && GuestUserForm.password.$invalid}" />
+						</div>
+						<div>
+							<p>Confirm password<span class="star">*</span></p>
+							<input type="password" ng-model="create.Password" name="cpassword" ng-required="userEdit" ng-class="{error: GuestUserForm.$submitted && GuestUserForm.cpassword.$invalid}" />
+						</div>
+					</div>
+					<h1>Enter user address details</h1>
+					<div class="inline-div user-top">
+						<div>
+							<p>Company name</p>
+							<input type="text" ng-model="createaddr.CompanyName"/>
+						</div>
+						<div>
+							<p>ZIP Code<span class="star">*</span></p>
+							<input class="zip-code" type="number" ng-model="createaddr.Zip" name="zip" ng-required="userEdit" ng-class="{error: GuestUserForm.$submitted && GuestUserForm.zip.$invalid}"/>
+						</div>
+					</div>
+					<div class="user-addr user-top">
+					 <div>
+					 	<p>Address 1<span class="star">*</span></p>
+						<input type="text" ng-model="createaddr.Street1" name="street1" ng-required="userEdit" ng-class="{error: GuestUserForm.$submitted && GuestUserForm.street1.$invalid}"/>
+					 </div>
+					</div>
+					<div class="user-addr user-top">
+						<div>
+							<p>Address 2</p>
+							<input type="text" ng-model="createaddr.Street2"/>	
+						</div>
+					</div>
+					<div class="inline-div user-top">
+						<div>
+							<p>City<span class="star">*</span></p>
+							<input type="text"  ng-model="createaddr.City" name="city" ng-required="userEdit" ng-class="{error: GuestUserForm.$submitted && GuestUserForm.city.$invalid}" />
+						</div>
+						<div>
+							<p>State<span class="star">*</span></p>
+							<input type="text" ng-model="createaddr.State" name="state" ng-required="userEdit" ng-class="{error: GuestUserForm.$submitted && GuestUserForm.state.$invalid}" class="state-code" />
+						</div>
+						<div>
+							<p>Country<span class="star">*</span></p>
+							<input type="text" ng-model="createaddr.Country" name="country" ng-required="userEdit" ng-class="{error: GuestUserForm.$submitted && GuestUserForm.country.$invalid}" />
+						</div>
+					</div>
+					<div class="user-top addr-dropdown">
+						<div>
+						 <input type="checkbox" id="shippingaddr" ng-model="createaddr.IsShipping" class="checkbox-custom">
+						 <label  for="shippingaddr" class="checkbox-custom-label">Shipping Address</label>
+						</div>
+						<div>
+							 <input  type="checkbox" id="Billingaddr" ng-model="createaddr.IsBilling" class="checkbox-custom">
+							 <label  for="Billingaddr" class="checkbox-custom-label">Billing Address</label>
+						</div>
+						<div>
+							 <input  type="checkbox" id="Defaultaddr" ng-model="createaddr.IsDefault" class="checkbox-custom">
+							 <label  for="Defaultaddr" class="checkbox-custom-label">Default Address</label>
+						</div>
 					</div>
 				</div>
-				<p>{{selectedUser}}</p>
-				<div class="inline-div user-top">
-					<div>
-						<p>Enter email address<span class="star">*</span></p>
-						<input type="text" ng-model="create.Email" name="email" ng-required="userEdit" ng-class="{error: GuestUserForm.$submitted && GuestUserForm.email.$invalid}"/>
-					</div>
-					<div class="contact-num user-top">
-						<p>Phone number<span class="star">*</span></p>
-						<input type="number" ng-model="create.Phone1" name="phone1" ng-required="userEdit" ng-class="{error: GuestUserForm.$submitted && GuestUserForm.phone1.$invalid}" ng-minlength="3" max-length="3" />
-						<input type="number" ng-model="create.Phone2" name="phone2" ng-required="userEdit" ng-class="{error: GuestUserForm.$submitted && GuestUserForm.phone2.$invalid}" ng-minlength="3" max-length="3" />
-						<input type="number" ng-model="create.Phone3" name="phone3" ng-required="userEdit" ng-class="{error: GuestUserForm.$submitted && GuestUserForm.phone3.$invalid}" ng-minlength="4" max-length="4" />
-					</div>
+				<div class="button-list user-top">
+					<button type="button" class="save" ng-click="buildOrder.createUser(create, createaddr, GuestUserForm)">SAVE</button>
+					<button type="button" ng-click="userEdit=!userEdit">CANCEL</button>
 				</div>
-				<div class="inline-div user-top">
-					<div>
-						<p>Enter password<span class="star">*</span></p>
-						<input type="password" ng-model="create.Password" name="password" ng-required="userEdit" ng-class="{error: GuestUserForm.$submitted && GuestUserForm.password.$invalid}" />
-					</div>
-					<div>
-						<p>Confirm password<span class="star">*</span></p>
-						<input type="password" ng-model="create.Password" name="cpassword" ng-required="userEdit" ng-class="{error: GuestUserForm.$submitted && GuestUserForm.cpassword.$invalid}" />
-					</div>
-				</div>
-				<h1>Enter user address details</h1>
-				<div class="inline-div user-top">
-					<div>
-						<p>Company name</p>
-						<input type="text" ng-model="createaddr.CompanyName"/>
-					</div>
-					<div>
-						<p>ZIP Code<span class="star">*</span></p>
-						<input class="zip-code" type="number" ng-model="createaddr.Zip" name="zip" ng-required="userEdit" ng-class="{error: GuestUserForm.$submitted && GuestUserForm.zip.$invalid}"/>
-					</div>
-				</div>
-				<div class="user-addr user-top">
-				 <div>
-				 	<p>Address 1<span class="star">*</span></p>
-					<input type="text" ng-model="createaddr.Street1" name="street1" ng-required="userEdit" ng-class="{error: GuestUserForm.$submitted && GuestUserForm.street1.$invalid}"/>
-				 </div>
-				</div>
-				<div class="user-addr user-top">
-					<div>
-						<p>Address 2</p>
-						<input type="text" ng-model="createaddr.Street2"/>	
-					</div>
-				</div>
-				<div class="inline-div user-top">
-					<div>
-						<p>City<span class="star">*</span></p>
-						<input type="text"  ng-model="createaddr.City" name="city" ng-required="userEdit" ng-class="{error: GuestUserForm.$submitted && GuestUserForm.city.$invalid}" />
-					</div>
-					<div>
-						<p>State<span class="star">*</span></p>
-						<input type="text" ng-model="createaddr.State" name="state" ng-required="userEdit" ng-class="{error: GuestUserForm.$submitted && GuestUserForm.state.$invalid}" class="state-code" />
-					</div>
-					<div>
-						<p>Country<span class="star">*</span></p>
-						<input type="text" ng-model="createaddr.Country" name="country" ng-required="userEdit" ng-class="{error: GuestUserForm.$submitted && GuestUserForm.country.$invalid}" />
-					</div>
-				</div>
-				<div class="user-top addr-dropdown">
-					<div>
-					 <input type="checkbox" id="shippingaddr" ng-model="createaddr.IsShipping" class="checkbox-custom">
-					 <label  for="shippingaddr" class="checkbox-custom-label">Shipping Address</label>
-					</div>
-					<div>
-						 <input  type="checkbox" id="Billingaddr" ng-model="createaddr.IsBilling" class="checkbox-custom">
-						 <label  for="Billingaddr" class="checkbox-custom-label">Billing Address</label>
-					</div>
-					<div>
-						 <input  type="checkbox" id="Defaultaddr" ng-model="createaddr.IsDefault" class="checkbox-custom">
-						 <label  for="Defaultaddr" class="checkbox-custom-label">Default Address</label>
-					</div>
-				</div>
-			</div>
-			<div class="button-list user-top">
-				<button type="button" class="save" ng-click="buildOrder.createUser(create, createaddr, GuestUserForm)">SAVE</button>
-				<button type="button" ng-click="userEdit=!userEdit">CANCEL</button>
-			</div>
-		</form>
+			</form>
+		</div>
+		
 </modal>
+<script type="text/ng-template" id="removeProd.html">
+	<div click-outside="buildordersummary.closePopover()">
+		<h2>Are you sure to delete?</h2>
+		<button type="button" ng-click="buildordersummary.deleteProduct(orderSummary)">Yes</button>
+		<button type="button" ng-click="buildordersummary.closePopover()">No</button>
+	</div>
+</script>

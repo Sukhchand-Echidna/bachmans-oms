@@ -148,7 +148,7 @@ function buildOrderConfig( $stateProvider ) {
 		resolve: {
 			Order: function($rootScope, $q, $state, toastr, $stateParams, CurrentOrder, OrderCloud) {
 				var d = $q.defer();
-				if($stateParams.SearchType != 'Products' && $stateParams.SearchType != 'BuildOrder' && $stateParams.SearchType != 'PDP' && $stateParams.SearchType != 'plp' && $stateParams.SearchType!='Workshop' && !$stateParams.orderDetails){
+				if($stateParams.SearchType != 'Products' && $stateParams.SearchType != 'BuildOrder' && $stateParams.SearchType != 'PDP' && $stateParams.SearchType != 'plp' && $stateParams.SearchType!='Workshop' && !$stateParams.orderDetails && $stateParams.SearchType != 'elp'){
 					OrderCloud.Users.GetAccessToken($stateParams.ID, impersonation).then(function(data){
 						OrderCloud.Auth.SetImpersonationToken(data['access_token']);
 						OrderCloud.As().Me.ListOutgoingOrders(null, 1, 100, null, null, {"Status":"Unsubmitted"}).then(function(res){
@@ -233,7 +233,7 @@ function buildOrderConfig( $stateProvider ) {
 				return dfr.promise;
 			},
 			productList: function (OrderCloud, $stateParams, BuildOrderService, $q, ProductImages) {
-				if($stateParams.SearchType == 'plp' || $stateParams.SearchType == 'Products'|| $stateParams.SearchType == 'BuildOrder' || $stateParams.SearchType =='Workshop' || $stateParams.SearchType =='PDP'){
+				if($stateParams.SearchType == 'plp' || $stateParams.SearchType == 'Products'|| $stateParams.SearchType == 'BuildOrder' || $stateParams.SearchType =='Workshop' || $stateParams.SearchType =='PDP' || $stateParams.SearchType == 'elp'){
 					var dfr = $q.defer();
 					OrderCloud.Users.GetAccessToken('gby8nYybikCZhjMcwVPAiQ', impersonation).then(function(data) {
 						OrderCloud.Auth.SetImpersonationToken(data['access_token']);
@@ -247,13 +247,8 @@ function buildOrderConfig( $stateProvider ) {
 						        else 
 									dfr.resolve();
 						    });
-						}else if($stateParams.SearchType =='Workshop'){
-							OrderCloud.As().Me.GetProduct($stateParams.ID).then(function(prod){
-								OrderCloud.As().Me.ListProducts(null, null, null, null, null, {"xp.ProductCode":prod.xp.ProductCode}).then(function(res){
-									dfr.resolve(res.Items);
-								});
-							});
-						}else{
+						}
+						else{
 							dfr.resolve();
 						}
 					});
@@ -275,15 +270,11 @@ function buildOrderController($scope, $rootScope, $state, buyerid, $controller, 
 	var vm = this;
 	vm.upselloverlay=false;
 	vm.selected = undefined;
-	vm.hidePdpblock=false;
 	$scope.$parent.base.list = ' ';
 	if($scope.$parent.base.search){
 		$scope.$parent.base.search.query = ' ';
 	}
 	$scope.$parent.base.selectChange('customer');
-	if($stateParams.SearchType == 'Workshop'){
-			vm.hidePdpblock=true;
-	}
 	// $scope.search = {
         // 'query' : '',
         // 'hits' : []
@@ -296,8 +287,11 @@ function buildOrderController($scope, $rootScope, $state, buyerid, $controller, 
 	$scope.showplp = true;
 	vm.MinDate = CstDateTime;
 	$scope.gotoCheckout=function(){
+		vm.checkoutpopup=angular.element(document.getElementById("order-summary")).scope().$parent.buildordersummary.guestcheckout;
 		if($scope.showOrdersummary == true){
-			if($stateParams.SearchType == 'Products' || $stateParams.SearchType == 'BuildOrder' || $stateParams.SearchType == 'PDP' || $stateParams.SearchType == 'plp'){
+			//vm.guestcheckout=true;
+			console.log(angular.element(document.getElementById("order-summary")).scope().$parent.buildordersummary.guestcheckout);
+			if(($stateParams.SearchType == 'Products' || $stateParams.SearchType == 'BuildOrder' || $stateParams.SearchType == 'PDP' || $stateParams.SearchType == 'plp' || $stateParams.SearchType =='elp') && !vm.checkoutpopup){
 				vm.guestUserModal =! vm.guestUserModal;
 			}else{
 				$state.go('checkout', {ID:$stateParams.ID}, {reload:true});	
@@ -383,7 +377,7 @@ function buildOrderController($scope, $rootScope, $state, buyerid, $controller, 
 		vm.DirectShip = false;
 		vm.Faster = false;
 		vm.GiftCard = false;
-		if($stateParams.SearchType != 'Products' && $stateParams.SearchType != 'BuildOrder' && $stateParams.SearchType != 'PDP' && $stateParams.SearchType != 'plp' && $stateParams.SearchType!='Workshop'){
+		if($stateParams.SearchType != 'Products' && $stateParams.SearchType != 'BuildOrder' && $stateParams.SearchType != 'PDP' && $stateParams.SearchType != 'plp' && $stateParams.SearchType!='Workshop' && $stateParams.SearchType !='elp'){
 			OrderCloud.Categories.ListProductAssignments(null, prodID).then(function(res){
 				OrderCloud.Categories.Get(res.Items[0].CategoryID).then(function(res2){
 					if(res2.xp.DeliveryChargesCatWise.DeliveryMethods.DirectShip){
@@ -402,7 +396,7 @@ function buildOrderController($scope, $rootScope, $state, buyerid, $controller, 
 			});
 		}
 	};
-	if($stateParams.SearchType == 'plp' || $stateParams.SearchType == 'PDP' || $stateParams.SearchType == 'BuildOrder'){
+	if($stateParams.SearchType == 'plp' || $stateParams.SearchType == 'PDP' || $stateParams.SearchType == 'BuildOrder' || $stateParams.SearchType!='Workshop' || $stateParams.SearchType !='elp'){
 		vm.disable=true;
 	}
 	/*----Upsell Data----*/
@@ -547,9 +541,6 @@ function buildOrderController($scope, $rootScope, $state, buyerid, $controller, 
 		if($stateParams.SearchType == 'PDP' && vm.seqProducts !='' && vm.searchval == undefined){
 			vm.searchSeqList=vm.seqProducts;
 		}
-		if($stateParams.SearchType == 'Workshop' && vm.hidePdpblock==true){
-			vm.hidePdpblock=false;
-		}
 	}
 	$scope.AddtoCart = function(prodID, varientsOption){
 		var DeliveryMethod;
@@ -583,16 +574,18 @@ function buildOrderController($scope, $rootScope, $state, buyerid, $controller, 
 		if(form.$valid){
 			$scope.showModal = !$scope.showModal;		
 			var newUser={"Username":newUser.Username,"Password":newUser.Password,"FirstName":newUser.FirstName, "LastName":newUser.LastName, "Email":newUser.Email, "Phone":newUser.Phone, "Active":true, "Phone":"("+newUser.Phone1+") "+newUser.Phone2+"-"+newUser.Phone3, "xp":{"Notes":[]}};		
-			OrderCloud.Users.Create(newUser).then(function(user){		
+			OrderCloud.Users.Create(newUser).then(function(user){
 				OrderCloud.SecurityProfiles.SaveAssignment({"SecurityProfileID": "65c976de-c40a-4ff3-9472-b7b0550c47c3","BuyerID": buyerid,"UserID": user.ID}).then(function(security){
 					console.log(security);
 				})
 				var params = {"CompanyName":createaddr.CompanyName,"FirstName":newUser.FirstName,"LastName":newUser.LastName,"Street1":createaddr.Street1,"Street2":createaddr.Street2,"City":createaddr.City,"State":createaddr.State,"Zip":createaddr.Zip,"Country":createaddr.Country,"Phone":newUser.Phone, "xp":{"IsDefault" :createaddr.IsDefault}};		
 				OrderCloud.Addresses.Create(params).then(function(data){		
-					data.Zip = parseInt(data.Zip);		
+					data.Zip = parseInt(data.Zip);
+					OrderCloud.Users.Patch(user.ID,{"xp":{"Notes":[],"ContactAddr":data.ID}});
 					console.log("address created",data);		
 					var assign = {"AddressID": data.ID,"UserID": user.ID,"IsBilling": createaddr.IsBilling,"IsShipping": createaddr.IsShipping};		
-					OrderCloud.Addresses.SaveAssignment(assign).then(function(res){		
+					OrderCloud.Addresses.SaveAssignment(assign).then(function(res){
+						angular.element(document.getElementById("buildorder")).scope().$parent.buildOrder.guestUserModal=false;
 						$state.go($state.current, {ID:user.ID,SearchType:'User',prodID:SearchData.productID}, {reload:true});		
 						console.log("Address saved for the user....!" +res);		
 					});		
@@ -709,31 +702,47 @@ function buildOrderController($scope, $rootScope, $state, buyerid, $controller, 
 		vm.AssemblyItems("onload");
 		var alfticket = localStorage.getItem("alfrescoTicket");
 		vm.selectedKey=[];
-		if(vm.hidePdpblock==true){
-			vm.fullEventsData=_.groupBy(productList, function(value){
-				return value.xp.EventDate;
-			});
-			vm.PLPLoader = _.filter(productList, function(obj){
-				if(obj.xp.IsBaseEvent== true && obj.xp.IsBaseEvent){
-					vm.ticketInformation=obj.xp.TicketInformation;
-					vm.cancellationOrPolicies=obj.xp.CancellationOrPolicies;
-					var alternativeImg=[];
-					angular.forEach(obj.xp.Images, function(value, key) {
-						alternativeImg.push(alfrescoAccessURL+"/"+value.ContentURL+"?alf_ticket="+alfticket);
-						vm.selectedalternativeImg = _.union(vm.selectedalternativeImg, alternativeImg);
-						if(value.IsDefault){
-							vm.selectedProductImg=alfrescoAccessURL+"/"+value.ContentURL+"?alf_ticket="+alfticket;
-							console.log("vm.selectedProductImg", vm.selectedProductImg);
-						}
+		if(e.xp.IsWorkShopEvent==true){
+			vm.IsWorkShopEvent=true;
+			// vm.fullEventsData=_.groupBy(productList, function(value){
+				// return value.xp.EventDate;
+			// });
+			// vm.PLPLoader = _.filter(productList, function(obj){
+				// if(obj.xp.IsBaseEvent== true && obj.xp.IsBaseEvent){
+					// vm.ticketInformation=obj.xp.TicketInformation;
+					// vm.cancellationOrPolicies=obj.xp.CancellationOrPolicies;
+					// var alternativeImg=[];
+					// angular.forEach(obj.xp.Images, function(value, key) {
+						// alternativeImg.push(alfrescoAccessURL+"/"+value.ContentURL+"?alf_ticket="+alfticket);
+						// vm.selectedalternativeImg = _.union(vm.selectedalternativeImg, alternativeImg);
+						// if(value.IsDefault){
+							// vm.selectedProductImg=alfrescoAccessURL+"/"+value.ContentURL+"?alf_ticket="+alfticket;
+							// console.log("vm.selectedProductImg", vm.selectedProductImg);
+						// }
 						
-					});
-				}
+					// });
+				// }
+			// });
+			
+			//vm.eventsLimit = Object.keys(vm.fullEventsData);
+			vm.ticketInformation=e.xp.TicketInformation;
+			vm.cancellationOrPolicies=e.xp.CancellationOrPolicies;
+			vm.noOfSeats=e.xp.NoOfSeats;
+			vm.location=e.xp.Location;
+			vm.room=e.xp.Room;
+			vm.prodDesription = e.Description;
+			var dataArr = [];
+			dataArr[0]=e;;
+			BuildOrderService.GetProductList(dataArr, ProductImages).then(function(baseEvnt){
+				vm.selectedProductImg=baseEvnt[0].baseImage;
+				vm.changeImg=angular.copy(baseEvnt[0].baseImage);
+				vm.selectedalternativeImg=baseEvnt[0].alternativeImg;
+				vm.DisplayEvent(e);
 			});
-			vm.eventsLimit = Object.keys(vm.fullEventsData);
-			console.log("groupName", vm.fullEventsData);
 		}
 		else{
 			vm.fullProductsData=vm.seqProducts;
+			vm.IsWorkShopEvent=false;
 			vm.PLPLoader = _.filter(vm.fullProductsData, function(obj) {
                 if(_.indexOf([obj.xp.IsBaseProduct]== true) && obj.xp.IsBaseProduct){
 					vm.articles=obj.xp.Articles;
@@ -749,7 +758,7 @@ function buildOrderController($scope, $rootScope, $state, buyerid, $controller, 
 				}
 			});
 		}
-		if(vm.hidePdpblock==false){
+		if(e.xp.IsWorkShopEvent==undefined || e.xp.IsWorkShopEvent==false){
 			vm.DeliveryType = false;
 			vm.Assembly = false;
 			vm.Courier = false;
@@ -885,7 +894,7 @@ function buildOrderController($scope, $rootScope, $state, buyerid, $controller, 
     }
 	vm.DisplayEvent=function(selectedSku) {
         vm.productTitle = selectedSku.Name;
-        vm.prodDesription = selectedSku.Description;
+        //vm.prodDesription = selectedSku.Description;
         vm.selectedProductId = selectedSku.ID;
 		vm.selectedPrice=selectedSku.StandardPriceSchedule.PriceBreaks;
     }
@@ -946,9 +955,27 @@ function buildOrderController($scope, $rootScope, $state, buyerid, $controller, 
         return res;
     }
 	if($stateParams.SearchType == 'Workshop'){
-		vm.showPDP = true;
-		var selectedProd=_.where(productList, {"ID":$stateParams.ID});
-        vm.showProduct(selectedProd[0]);
+		OrderCloud.As().Me.GetProduct($stateParams.ID).then(function(prod){
+			vm.GetSkuevents(prod.xp.ProductCode,$stateParams.ID);
+		});
+	}
+	if($stateParams.SearchType =='elp'){
+		OrderCloud.As().Me.ListProducts(null, 1, 100, null, null,{"xp.IsDefaultProduct":true}, $stateParams.ID).then(function(res){
+				vm.elpLists=[res.Items, res.Meta.TotalCount];
+				$scope.showplp = true;
+				vm.catName=$stateParams.catName;
+		});
+	}
+	vm.GetSkuevents = function(prodCode, defaultEvnt){
+		OrderCloud.As().Me.ListProducts(null, null, null, null, null, {"xp.ProductCode":prodCode}).then(function(res){
+			vm.fullEventsData=_.groupBy(res.Items, function(value){
+				return value.xp.EventDate;
+			});
+			console.log("vm.fullEventsData", vm.fullEventsData);
+			var selectedProd=_.where(res.Items, {"ID":defaultEvnt});
+			vm.showProduct(selectedProd[0]);
+			vm.showPDP = true;
+		});
 	}
 	vm.cleardata=function(){
 		if(vm.searchSeqList)
@@ -959,6 +986,8 @@ function buildOrderController($scope, $rootScope, $state, buyerid, $controller, 
 		vm.catList='';
 		else if(vm.seqProducts)
 		vm.seqProducts='';
+		else if(vm.elpLists)
+		vm.elpLists='';
 	}
 	vm.GetMinDays = function(zip, ProductID){
 		vm.DeliveryNotAvailable = undefined;
@@ -1134,6 +1163,7 @@ function buildOrderController($scope, $rootScope, $state, buyerid, $controller, 
 function buildOrderTopController($scope, $stateParams,$rootScope, AlfrescoFact) {
 	var vm = this;
 	vm.logo=AlfrescoFact.logo;
+	setTimeout(function(){ $('.form-control').focus(); }, 0);
 	$scope.showmenu = false;
 	$scope.toggleMenu = function(event) {
 		$scope.showmenu = !($scope.showmenu);
@@ -1157,7 +1187,7 @@ function buildOrderDownController($scope, $stateParams, $state, $q, OrderCloud, 
 		vm.orderdetails= $stateParams.orderDetails;
 		vm.orderhistorydetails=!$stateParams.orderDetails;
 	}
-	else if($stateParams.SearchType=="Products" || $stateParams.SearchType == 'BuildOrder' || $stateParams.SearchType == 'PDP' || $stateParams.SearchType == 'plp'){
+	else if($stateParams.SearchType=="Products" || $stateParams.SearchType == 'BuildOrder' || $stateParams.SearchType == 'PDP' || $stateParams.SearchType == 'plp' || $stateParams.SearchType =='elp'){
 		vm.buildorderfooter=true;
 	}
 	else
@@ -1249,7 +1279,7 @@ function buildOrderLeftController($scope, $stateParams, SearchData, OrderCloud, 
 	var vm = this, Arr = [], spendingAcc = {};
 	$scope.showpayment = false;
 	vm.list = SearchData;
-	if($stateParams.SearchType != 'Products' && $stateParams.SearchType != 'BuildOrder' && $stateParams.SearchType != 'PDP' && $stateParams.SearchType != 'plp' && $stateParams.SearchType != 'Workshop'){
+	if($stateParams.SearchType != 'Products' && $stateParams.SearchType != 'BuildOrder' && $stateParams.SearchType != 'PDP' && $stateParams.SearchType != 'plp' && $stateParams.SearchType != 'Workshop' && $stateParams.SearchType !='elp'){
 		vm.guest=false;
 		OrderCloud.SpendingAccounts.ListAssignments(null, $stateParams.ID).then(function(assign){
 			angular.forEach(assign.Items, function(value, key){
@@ -1264,6 +1294,7 @@ function buildOrderLeftController($scope, $stateParams, SearchData, OrderCloud, 
 	}
 	else{
 		vm.guest=true;
+
 	}
 	$scope.notedata = vm.list.Notes;
 	OrderCloud.As().Me.Get().then(function (user) {
@@ -1383,13 +1414,13 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 					$scope.createListItem(prodID, DeliveryMethod);
 				}else{
 					var orderParams = {"Type":"Standard","xp":{"OrderSource":"OMS","CSRID":$cookieStore.get('OMS.CSRID')}};
-					if($stateParams.SearchType == 'Products'  || $stateParams.SearchType == 'BuildOrder' || $stateParams.SearchType == 'PDP' || $stateParams.SearchType == 'plp'){
+					if($stateParams.SearchType == 'Products'  || $stateParams.SearchType == 'BuildOrder' || $stateParams.SearchType == 'PDP' || $stateParams.SearchType == 'plp' || $stateParams.SearchType =='elp'){
 						vm.ActiveOrderCartLoader = BuildOrderService.AdminLogin().then(function(res){
     						angular.element(document.getElementById("order-summary")).scope().$parent.buildordersummary.token = res.access_token;
     						vm.ActiveOrderCartLoader = OrderCloud.As().Orders.Create(orderParams).then(function(res1){
     							CurrentOrder.Set(res1.ID);
 								vm.order = res1;
-								if($stateParams.SearchType == 'Products' || $stateParams.SearchType == 'PDP' || $stateParams.SearchType == 'BuildOrder' || $stateParams.SearchType == 'plp'){
+								if($stateParams.SearchType == 'Products' || $stateParams.SearchType == 'PDP' || $stateParams.SearchType == 'BuildOrder' || $stateParams.SearchType == 'plp' || $stateParams.SearchType =='elp'){
 									angular.element(document.getElementById("order-summary")).scope().$parent.buildordersummary.order = res1;	
 								}
 								$scope.createListItem(prodID, DeliveryMethod);
@@ -1635,7 +1666,7 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 	vm.getLineItems = function(){
 		 if(vm.order){
 			if(vm.order.Status == "Unsubmitted"){
-				if($stateParams.SearchType=="Products" || $stateParams.SearchType == 'BuildOrder' || $stateParams.SearchType == 'PDP' || $stateParams.SearchType == 'plp'){
+				if($stateParams.SearchType=="Products" || $stateParams.SearchType == 'BuildOrder' || $stateParams.SearchType == 'PDP' || $stateParams.SearchType == 'plp' || $stateParams.SearchType =='elp'){
 					vm.addressbook = false;
 					vm.ActiveOrderCartLoader = OrderCloud.LineItems.List(vm.order.ID).then(function(res){
 						if(res.Items.length==0)
@@ -1946,7 +1977,7 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 			}, 0);
 		}
 	};
-	if($stateParams.SearchType!="Products" && $stateParams.SearchType != 'plp' && $stateParams.SearchType != 'BuildOrder' && $stateParams.SearchType != 'PDP' && $stateParams.SearchType != 'Workshop')
+	if($stateParams.SearchType!="Products" && $stateParams.SearchType != 'plp' && $stateParams.SearchType != 'BuildOrder' && $stateParams.SearchType != 'PDP' && $stateParams.SearchType != 'Workshop' && $stateParams.SearchType !='elp')
 		vm.getLineItems();
 	$scope.cancelOrder = function(){
 		OrderCloud.As().Orders.Cancel(vm.order.ID).then(function(data){
@@ -2389,18 +2420,31 @@ function buildOrderPDPController($scope, $sce, alfrescoAccessURL) {
   
 function buildOrderSummaryController($scope, $state, ocscope, buyerid, $cookieStore, $stateParams, $exceptionHandler, Order, CurrentOrder, AddressValidationService, LineItemHelpers, OrderCloud, $http, BuildOrderService, $q, SearchData, $sce, CstDateTime, TaxService, alfrescoAccessURL) {
     var vm = this;
+    vm.guestcheckout=false;
 	vm.alfticket = localStorage.getItem("alfrescoTicket");
 	vm.alfrescoAccessURL=alfrescoAccessURL;
+	$scope.showUser=false;
+	$scope.userEdit=false;
+	vm.removeProd = function(){
+		vm.ShowRemoveTool = true;
+	};
+	vm.ToolTip = {
+		templateUrl: 'removeProd.html'
+	};
+	vm.closePopover = function () {
+		vm.ShowRemoveTool = false;
+	};
 	console.log("buildOrderSummaryController alfticket:",vm.alfticket);
 	console.log("buildOrderSummaryController alfrescoAccessURL:",vm.alfrescoAccessURL);
-    if($stateParams.SearchType != 'Products' && $stateParams.SearchType != 'PDP' && $stateParams.SearchType != 'BuildOrder' && $stateParams.SearchType != 'plp' && $stateParams.SearchType!='Workshop'){
+    if($stateParams.SearchType != 'Products' && $stateParams.SearchType != 'PDP' && $stateParams.SearchType != 'BuildOrder' && $stateParams.SearchType != 'plp' && $stateParams.SearchType!='Workshop' && $stateParams.SearchType !='elp'){
 		vm.order = Order;
 	}
-	else if($stateParams.SearchType == 'Products' || $stateParams.SearchType == 'PDP' || $stateParams.SearchType == 'BuildOrder' || $stateParams.SearchType == 'plp'){
+	else if($stateParams.SearchType == 'Products' || $stateParams.SearchType == 'PDP' || $stateParams.SearchType == 'BuildOrder' || $stateParams.SearchType == 'plp' || $stateParams.SearchType =='elp'){
 		vm.order=angular.element(document.getElementById("BuildOrderRightNav")).scope().buildOrderRight.order;
 	}
 	vm.selectUser = function(user){	
-		vm.showDetails=user;		
+		vm.showDetails=user;
+		$scope.userEdit=false;
 		$scope.showUser=true;
 	}
 	vm.openUser=function(data){
@@ -2413,31 +2457,52 @@ function buildOrderSummaryController($scope, $state, ocscope, buyerid, $cookieSt
 		var anonymoustoken=$cookieStore.get("OMS.impersonation.token");
         OrderCloud.Users.GetAccessToken(data.ID, tokenrequest).then(function(buyertoken){
         	console.log("buyertoken",buyertoken);
-        	$http({
-	            method: 'PUT',
-	            dataType: "json",
-	            url: "https://api.ordercloud.io/v1/buyers/"+buyerid+"/orders?tempUserToken="+anonymoustoken,
-	            headers: {
-	            	'Authorization':'Bearer '+ buyertoken.access_token,
-	                'Content-Type': 'application/json'
-	            }
-	        }).success(function (data3, status, headers, config) {
-	        	angular.element(document.getElementById("buildorder")).scope().$parent.buildOrder.guestUserModal=false;
-				var anonymoustoken=$cookieStore.get("OMS.impersonation.token");
-				OrderCloud.Orders.Get(vm.order.ID).then(function(resp){
-					console.log(resp);
-					$state.go('checkout', {ID:$stateParams.ID, FromUserID:resp.FromUserID}, {reload:true});
-				});
-	        }).error(function (data, status, headers, config) {
-				console.log("alfresco error",data3);
-	        });
+        	/*OrderCloud.Users.Get(data.ID).then(function(data1){
+        		console.log(data1);
+        	})*/
+        	$stateParams.ID=data.ID;
+        	$stateParams.SearchType = 'User';
+        	vm.guestlogin=true;
+        	angular.element(document.getElementById("buildorder")).scope().$parent.buildOrder.guestUserModal=false;
+        	$state.transitionTo($state.current, $stateParams, {
+			    reload: true,
+			    inherit: false,
+			    notify: true
+			});
+        	if($scope.showOrdersummary==true)
+        		vm.ordertransfer(anonymoustoken, buyertoken);
         });
 	};
+	vm.ordertransfer = function(anonymoustoken, buyertoken){
+		$http({
+            method: 'PUT',
+            dataType: "json",
+            url: "https://api.ordercloud.io/v1/buyers/"+buyerid+"/orders?tempUserToken="+anonymoustoken,
+            headers: {
+            	'Authorization':'Bearer '+ buyertoken.access_token,
+                'Content-Type': 'application/json'
+            }
+        }).success(function (data3, status, headers, config) {
+        	angular.element(document.getElementById("buildorder")).scope().$parent.buildOrder.guestUserModal=false;
+			var anonymoustoken=$cookieStore.get("OMS.impersonation.token");
+			OrderCloud.Orders.Get(vm.order.ID).then(function(resp){
+				console.log(resp);
+				$state.go('checkout', {ID:$stateParams.ID, FromUserID:resp.FromUserID}, {reload:true});
+			});
+        }).error(function (data, status, headers, config) {
+			console.log("alfresco error",data);
+        });
+	}
 	vm.statechange = function(){
 		angular.element(document.getElementById("buildorder")).scope().$parent.buildOrder.guestUserModal=false;
-		$stateParams.ID=vm.order.FromUserID;
-		if($stateParams.SearchType == 'Products' || $stateParams.SearchType == 'BuildOrder' || $stateParams.SearchType == 'PDP' || $stateParams.SearchType == 'plp'){
-			$state.go('checkout', {ID:$stateParams.ID}, {reload:true});
+		vm.guestcheckout=true;
+		if(vm.order){
+			//vm.guestcheckout=true;
+			vm.ordersummary1=angular.element(document.getElementById("buildorder")).scope().$parent.showOrdersummary;
+			$stateParams.ID=vm.order.FromUserID;
+			if(($stateParams.SearchType == 'Products' || $stateParams.SearchType == 'BuildOrder' || $stateParams.SearchType == 'PDP' || $stateParams.SearchType == 'plp' || $stateParams.SearchType =='elp') && vm.ordersummary1){
+				$state.go('checkout', {ID:$stateParams.ID}, {reload:true});
+			}
 		}
 	};
 	vm.grouping = function(data){
@@ -2798,7 +2863,7 @@ function BuildOrderService( $q, $window, $stateParams, ocscope, buyerid, OrderCl
 		var d = $q.defer(), OrderOnHold = _.pluck(data, 'xp');
 		OrderOnHold = _.pluck(OrderOnHold, 'Status');
 		if(OrderOnHold.indexOf("OnHold") == -1){
-			if($stateParams.SearchType == 'Products' || $stateParams.SearchType == 'PDP' || $stateParams.SearchType == 'BuildOrder' ||  $stateParams.SearchType == 'plp'){
+			if($stateParams.SearchType == 'Products' || $stateParams.SearchType == 'PDP' || $stateParams.SearchType == 'BuildOrder' ||  $stateParams.SearchType == 'plp' || $stateParams.SearchType =='elp'){
 				OrderCloud.Orders.Patch(ID, {"xp": {"Status": null,"CSRID":$cookieStore.get('OMS.CSRID')}}).then(function(res){
 					d.resolve(res);
 				}).catch(function(){
@@ -2832,7 +2897,7 @@ function BuildOrderService( $q, $window, $stateParams, ocscope, buyerid, OrderCl
 			CapTotalDiscount = delChrgs - 250;
 			delChrgs = 250;
 		}
-		if($stateParams.SearchType == 'Products' || $stateParams.SearchType == 'PDP' || $stateParams.SearchType == 'BuildOrder' || $stateParams.SearchType == 'plp'){
+		if($stateParams.SearchType == 'Products' || $stateParams.SearchType == 'PDP' || $stateParams.SearchType == 'BuildOrder' || $stateParams.SearchType == 'plp' || $stateParams.SearchType =='elp'){
 			OrderCloud.Orders.Patch(order.ID, {"ShippingCost": delChrgs, "xp":{"CapTotalDiscount": CapTotalDiscount}}).then(function(res){
 				d.resolve(res);
 			}).catch(function(){
@@ -2930,7 +2995,7 @@ function BuildOrderService( $q, $window, $stateParams, ocscope, buyerid, OrderCl
 				d.resolve(arr);
 			});
 		};
-		if($stateParams.SearchType != 'Products' && $stateParams.SearchType != 'PDP' && $stateParams.SearchType != 'BuildOrder' && $stateParams.SearchType!=undefined && $stateParams.SearchType!='Workshop'){
+		if($stateParams.SearchType != 'Products' && $stateParams.SearchType != 'PDP' && $stateParams.SearchType != 'BuildOrder' && $stateParams.SearchType!=undefined && $stateParams.SearchType!='Workshop' && $stateParams.SearchType !='elp'){
 				vs.listAllProducts();
 		}else{
 			OrderCloud.Users.GetAccessToken('gby8nYybikCZhjMcwVPAiQ', impersonation)

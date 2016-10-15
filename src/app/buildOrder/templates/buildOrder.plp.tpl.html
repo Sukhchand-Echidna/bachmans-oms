@@ -113,4 +113,50 @@
 			</li>
 		</ul>
 	</div>
+	<!-- ELP starts -->
+	<div class="home-search-list workshop-elp-main" ng-if="buildOrder.searchType=='elp' && buildOrder.elpLists.length>0">
+		<h1 ng-if="buildOrder.elpLists.length > 0">Events under the category <span>"{{buildOrder.catName}}"</span> <span class="count">({{buildOrder.elpLists[1]}} events)</span></h1>
+		<ul class="row">
+			<li ng-repeat="event in buildOrder.elpLists[0] track by $index" class="col-xs-12 event-item">
+				<div class="event-img col-xs-4">
+					<img src="/assets/images/purple.png" class="img-responsive">
+				</div>
+				<div class="event-details col-xs-8">
+					<h1>{{event.Name}}</h1>
+					<p>{{event.Description}}</p>
+					<a class="more-details-link" ng-click="buildOrder.GetSkuevents(event.xp.ProductCode, event.ID)">More details</a>
+					<a ng-if="!event.xp.IsWorkshop" class="public-link">OPEN TO THE PUBLIC & FREE TO ATTEND</a>
+					<!-- <h2 ng-if="event.xp.IsWorkshop" class="price">{{event.StandardPriceSchedule.PriceBreaks[0].Price}}</h2> -->
+						<h2 ng-if="event.xp.IsWorkshop" ng-repeat="eventPrice in event.StandardPriceSchedule.PriceBreaks" class="price">
+							<span class="prod-price">{{eventPrice.Price | currency}}</span>
+						</h2>
+					<div class="abs-bottom">
+						<!-- <h3>{{event.xp.EventDate | date:'MMM'}} {{event.xp.EventDate | date:'dd'}}</h3> -->
+						<h3 class="date">
+							{{event.xp.EventDate | date:'MMM'}} {{event.xp.EventDate | date:'dd'}}
+	<!-- 						<span class="time"><span class="day">Saturday</span>
+							<span class="timings">
+								<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+									 viewBox="0 0 59 63" style="enable-background:new 0 0 59 63;" xml:space="preserve">
+									<circle cx="29.3" cy="32.7" r="25"/>
+									<path d="M42.5,0.9c6.2,2.3,11.5,6.5,15.2,11.9"/>
+									<path d="M0.9,12.8c3.4-5,8.1-9,13.8-11.4"/>
+									<polyline points="31.6,15.3 31.6,35 14.5,35 "/>
+									<line x1="40.2" y1="55.2" x2="45.1" y2="62.2"/>
+									<line x1="17" y1="55.2" x2="12.2" y2="62.2"/>
+								</svg>
+								<span class="etime">2:00 PM - 4:00 PM</span>
+							</span>
+						</span> -->
+						</h3>
+						<div class="btn-grp">
+							<button class="lightgray-btn">ADD TO CALENDAR</button>
+							<button ng-if="event.xp.IsWorkshop" class="green-btn" ng-click="buildOrder.GetSkuevents(event.xp.ProductCode, event.ID)">Register Now</button>
+							<button ng-if="!event.xp.IsWorkshop" class="purple-btn" ng-click="buildOrder.GetSkuevents(event.xp.ProductCode, event.ID)">MORE DETAILS</button>
+						</div>
+					</div>
+				</div>
+			</li>
+		</ul>
+	</div>
 </div>

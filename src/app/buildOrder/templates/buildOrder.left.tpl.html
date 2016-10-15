@@ -91,12 +91,15 @@
 		</ul>
 		<script type="text/ng-template" id="deleteNote.html">
 				<div click-outside="closePopover($index)">
-					<h2>Delete this Note</h2>
+					<h2>Are you sure to delete?</h2>
 					<button type="button" ng-click="remove($index)">Yes</button>
 					<button type="button" ng-click="cancelPopUp($index)">No</button>
 				</div>
 		</script>
 		<a href="javascript: void(0)" ng-show="hasMoreItemsToShow()"  ng-click="showMoreItems()">View All Notes</a>
+	</div>
+	<div class="guestbtn" ng-if="buildOrderLeft.guest">
+		<button ng-click="buildOrder.guestUserModal=!buildOrder.guestUserModal">Login</button>
 	</div>
 </div>
 <modal title="Payment Method - Credit Card" visible="showpayment" id="paymentmethod" class="modal-pop-up payment-method">
