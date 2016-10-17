@@ -13,7 +13,7 @@
 			<h2>{{buildOrderLeft.spendingAccounts[0].Name}}</h2> <p>{{buildOrderLeft.spendingAccounts[0].Balance | currency}}</p>
 			<h3>Member since {{buildOrderLeft.spendingAccounts[0].StartDate | date:'yyyy'}}</h3>
 		</div>
-		<ul class="order-details" ng-class="buildOrder.disable ? 'disable' : 'nothing'">
+		<ul class="order-details" ng-class="buildOrderLeft.guest ? 'disable' : 'nothing'">
 			<li>
 				<a ui-sref="custInfo({ID:buildOrderLeft.list.ID})">
 				<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
@@ -99,7 +99,7 @@
 		<a href="javascript: void(0)" ng-show="hasMoreItemsToShow()"  ng-click="showMoreItems()">View All Notes</a>
 	</div>
 	<div class="guestbtn" ng-if="buildOrderLeft.guest">
-		<button ng-click="buildOrder.guestUserModal=!buildOrder.guestUserModal">Login</button>
+		<button ng-click="buildOrder.guestUserModal=!buildOrder.guestUserModal">Enter User Details</button>
 	</div>
 </div>
 <modal title="Payment Method - Credit Card" visible="showpayment" id="paymentmethod" class="modal-pop-up payment-method">

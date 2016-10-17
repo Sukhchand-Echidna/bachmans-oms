@@ -12,7 +12,7 @@ angular.module( 'orderCloud' )
 	.service('anchorSmoothScroll', anchorSmoothScroll)
 	.directive('modal', function () {
 		return {
-			template: '<div class="modal fade">' + 
+			template: '<div class="modal fade" >' + 
 			'<div class="modal-dialog">' + 
 			'<div class="modal-content">' + 
 			'<div class="modal-header">' + 
@@ -46,6 +46,11 @@ angular.module( 'orderCloud' )
 						if(scope.$parent.buildOrder){
 							scope.$parent.buildOrder.guestUserModal = false;
 							scope.$parent.buildOrder.AssemblyModal = false;
+							scope.$parent.buildordersummary.showUser=false;
+							scope.$parent.buildordersummary.userEdit=false;
+							scope.$parent.buildordersummary.qeueryLength=0;
+							scope.$parent.buildordersummary.searchval='';
+							scope.$parent.buildordersummary.clearData();
 							if(scope.$parent.buildOrderRight)
 								scope.$parent.buildOrderRight.OrderConfirmPopUp = false;
 							if(scope.$parent.buildOrderPDP)	
@@ -270,6 +275,7 @@ function buildOrderController($scope, $rootScope, $state, buyerid, $controller, 
 	var vm = this;
 	vm.upselloverlay=false;
 	vm.selected = undefined;
+	vm.disable=false;
 	$scope.$parent.base.list = ' ';
 	if($scope.$parent.base.search){
 		$scope.$parent.base.search.query = ' ';
@@ -399,6 +405,7 @@ function buildOrderController($scope, $rootScope, $state, buyerid, $controller, 
 	if($stateParams.SearchType == 'plp' || $stateParams.SearchType == 'PDP' || $stateParams.SearchType == 'BuildOrder' || $stateParams.SearchType!='Workshop' || $stateParams.SearchType !='elp'){
 		vm.disable=true;
 	}
+
 	/*----Upsell Data----*/
 	vm.upsell = true;
 	vm.similar = true;
@@ -956,6 +963,7 @@ function buildOrderController($scope, $rootScope, $state, buyerid, $controller, 
     }
 	if($stateParams.SearchType == 'Workshop'){
 		OrderCloud.As().Me.GetProduct($stateParams.ID).then(function(prod){
+			vm.eventDate=prod.xp.EventDate;
 			vm.GetSkuevents(prod.xp.ProductCode,$stateParams.ID);
 		});
 	}
@@ -2423,11 +2431,14 @@ function buildOrderSummaryController($scope, $state, ocscope, buyerid, $cookieSt
     vm.guestcheckout=false;
 	vm.alfticket = localStorage.getItem("alfrescoTicket");
 	vm.alfrescoAccessURL=alfrescoAccessURL;
-	$scope.showUser=false;
-	$scope.userEdit=false;
+	/*vm.showUser=false;
+	vm.userEdit=false;*/
 	vm.removeProd = function(){
 		vm.ShowRemoveTool = true;
 	};
+	vm.clearData= function(){
+		angular.element('.searchtpl').scope().$$childTail.clearData();
+	}
 	vm.ToolTip = {
 		templateUrl: 'removeProd.html'
 	};
@@ -2444,8 +2455,8 @@ function buildOrderSummaryController($scope, $state, ocscope, buyerid, $cookieSt
 	}
 	vm.selectUser = function(user){	
 		vm.showDetails=user;
-		$scope.userEdit=false;
-		$scope.showUser=true;
+		vm.userEdit=false;
+		vm.showUser=true;
 	}
 	vm.openUser=function(data){
         var tokenrequest={
