@@ -225,6 +225,13 @@ function ordercloudSearchCtrl($state, $timeout, $scope, TrackSearch, OrderCloud,
 		if($scope.servicename=='Addresses'){
 			$scope.controlleras.searchedAddr.Items="";
 		}
+		else if($scope.controlleras.buildorderSearch){
+			$scope.controlleras.buildorderSearch="";
+			$scope.controlleras.searchval="";
+		}
+		else if($scope.controlleras.searchList){
+			$scope.controlleras.searchList="";
+		}
 		else
 			$scope.controlleras.list="";
 	}
@@ -257,7 +264,7 @@ function ordercloudSearchCtrl($state, $timeout, $scope, TrackSearch, OrderCloud,
 				}
 			}
 			if($scope.search && $scope.search.query){
-			$scope.controlleras.searchval=$scope.search.query;
+				$scope.controlleras.searchval=$scope.search.query;
 			}
 			if (n == o) {
 				if (searching) $timeout.cancel(searching);
