@@ -275,7 +275,6 @@ function buildOrderController($scope, $rootScope, $state, buyerid, $controller, 
 	var vm = this;
 	vm.upselloverlay=false;
 	vm.selected = undefined;
-	vm.disable=false;
 	$scope.$parent.base.list = ' ';
 	if($scope.$parent.base.search){
 		$scope.$parent.base.search.query = ' ';
@@ -405,7 +404,6 @@ function buildOrderController($scope, $rootScope, $state, buyerid, $controller, 
 	if($stateParams.SearchType == 'plp' || $stateParams.SearchType == 'PDP' || $stateParams.SearchType == 'BuildOrder' || $stateParams.SearchType!='Workshop' || $stateParams.SearchType !='elp'){
 		vm.disable=true;
 	}
-
 	/*----Upsell Data----*/
 	vm.upsell = true;
 	vm.similar = true;

@@ -24,6 +24,9 @@
 .helvetica-medium{
 	font-family: 'ProximaNova-Regular';
 }
+body{
+	cursor: default;
+}
 @charset "utf-8";
 /* CSS Document */
 *{
@@ -258,7 +261,7 @@ input[type=number]::-webkit-outer-spin-button {
 	p {
 		float:left;
 		.helvetica-bold;
-		font-size:14px;
+		font-size:1em;
 		line-height: 75px;
 		padding:0 12px;
 		width:@width3;
@@ -317,7 +320,7 @@ input[type=number]::-webkit-outer-spin-button {
 	width:@width16;
 	a{
 		.helvetica-bold;
-		font-size:14px;
+		font-size:1em;
 		display:block;
 		text-transform:uppercase;
 	    height: 38px;
@@ -326,7 +329,7 @@ input[type=number]::-webkit-outer-spin-button {
 		i {
 			color:@base-bg-purple-light;
 			float: right;
-			font-size: 12px;
+			font-size: 0.875em;
 			padding-top:2px;
 			.transition-common(all 0.5s ease);
 			.rotate(0deg);
@@ -346,7 +349,7 @@ input[type=number]::-webkit-outer-spin-button {
 			li{
 				padding: 5px 0 5px 13px;
 				.helvetica-bold;
-				font-size: 13px;
+				font-size: 0.938em;
 				color:@color3;
 				&:hover{
 					background-color:@color14;
@@ -377,7 +380,7 @@ input[type=number]::-webkit-outer-spin-button {
 		display:none;
 	}
 	i {
-		font-size:20px;
+		font-size:1.375em;
 		left:8px;
 		position:absolute;
 		top:5px;
@@ -428,7 +431,7 @@ input[type=number]::-webkit-outer-spin-button {
 				color:@color0;
 				float:left;
 				.helvetica-bold;
-				font-size:14px;
+				font-size:1em;
 				line-height:23px;
 				padding-left:4%;
 				.letter-space;
@@ -436,7 +439,7 @@ input[type=number]::-webkit-outer-spin-button {
 			i {
 				color:@color0;
 				float:right;
-				font-size:12px;
+				font-size:0.875em;
 				margin-right:-10px;
 				padding: 9px 0;
 				.transition-common(all 0.5s ease);
@@ -477,7 +480,7 @@ input[type=number]::-webkit-outer-spin-button {
 				color:@color0;
 				float:right;
 				.helvetica-bold;
-				font-size:14px;
+				font-size:1em;
 				line-height:23px;
 				padding-left:5%;
 				padding-right:5%;
@@ -488,7 +491,7 @@ input[type=number]::-webkit-outer-spin-button {
 			i {
 				color:@color0;
 				float:right;
-				font-size:12px;
+				font-size:0.875em;
 				margin-right:0px;
 				padding: 7px 0;
 				width: 8%;
@@ -508,7 +511,7 @@ input[type=number]::-webkit-outer-spin-button {
 			a {
 				color: #8b8e96;
 				.helvetica-bold;
-				font-size: 14px;
+				font-size: 1em;
 				text-decoration: none;
 				text-transform: capitalize;
 				padding: 10px 25px;
@@ -535,7 +538,7 @@ input[type=number]::-webkit-outer-spin-button {
 	.view-cal{
 		a{
 			float:right;
-			font-size: 16px;
+			font-size: 1.125em;
 			color: #8c58b5;
 			.helvetica-regular;
 			&:hover{
@@ -547,7 +550,7 @@ input[type=number]::-webkit-outer-spin-button {
 	  margin-top:20px;
 		button{
 		   .helvetica-bold;
-		    font-size: 16px;
+		    font-size: 1.125em;
 		    color: #8c58b5;
 		    border: 1px solid #8c58b5;
 		    background-color: #ffffff;
@@ -657,13 +660,13 @@ input[type=number]::-webkit-outer-spin-button {
 			border:1px solid @base-bg-purple-light;
 			width:230px;
 			h2{
-				font-size: 15px;
+				font-size: 1.063em;
 				.helvetica-medium;
 				margin: 10px 0;
 			}
 			button{
 				.helvetica-bold;
-				font-size: 10px;
+				font-size: 0.75em;
 				color: #ffffff;
 				background-color: @base-bg-purple-light;
 				padding: 5px 10px 5px 10px;
@@ -681,7 +684,7 @@ input[type=number]::-webkit-outer-spin-button {
 }
 .heading {
 	.helvetica-bold;
-	font-size:21px;
+	font-size:1.438em;
 	margin:40px auto 16px;
 }
 .promotion_box {
@@ -696,7 +699,7 @@ input[type=number]::-webkit-outer-spin-button {
 	position:relative;
 	h1 {
 		.helvetica-bold;
-		font-size:16px;
+		font-size:1.125em;
 		padding:15px 0 0;
 	    height: 60px;
 		margin: 0px 0 5px;
@@ -716,7 +719,7 @@ input[type=number]::-webkit-outer-spin-button {
 	> p {
 		color:@color1;
 		.helvetica-regular;
-		font-size:12px;
+		font-size:0.875em;
 		height: 86px;
 		.text-ellipses;
 		-webkit-line-clamp: 5;
@@ -750,7 +753,7 @@ input[type=number]::-webkit-outer-spin-button {
 		.promo {
 			.in-block;
 			.helvetica-bold;
-			font-size:12px;
+			font-size:0.875em;
 			color:@color1;
 			margin-left:5px;
 		}
@@ -770,12 +773,12 @@ input[type=number]::-webkit-outer-spin-button {
 .data_cell {
 	color:@color1;
 	float:left;
-	font-size:15px;
+	font-size:1.063em;
 	.helvetica-regular;
 	line-height:@height6;
 	padding: 0px 0.5%;
 	.fa-upload {
-		font-size:12px;
+		font-size:0.875em;
 		padding:0 2px;
 		color:#4cb530;
 	}
@@ -852,7 +855,7 @@ input[type=number]::-webkit-outer-spin-button {
 				margin-top: 5px;
 			}
 			p, div{
-				font-size:12px;
+				font-size:0.875em;
 				.helvetica-regular;
 			}
 			.recipient-name{
@@ -909,7 +912,7 @@ input[type=number]::-webkit-outer-spin-button {
 		display: inline-block;
 		vertical-align: middle;
 		text-align: left;
-		font-size:15px;
+		font-size:1.063em;
 		.helvetica-bold;
 		width:62.9%;
 		color:@color8;
@@ -920,7 +923,7 @@ input[type=number]::-webkit-outer-spin-button {
 		display: inline-block;
 		vertical-align: middle;
 		text-align: left;
-		font-size:12px;
+		font-size:0.875em;
 		.helvetica-regular;
 		width:35%;
 		color:@color2;
@@ -954,7 +957,7 @@ input[type=number]::-webkit-outer-spin-button {
 			a {
 				color:#8b8e96;
 				.helvetica-bold;
-				font-size:14px;
+				font-size:1em;
 				text-decoration:none;
 				text-transform:uppercase;
 			}
@@ -1038,17 +1041,17 @@ input[type=number]::-webkit-outer-spin-button {
 	h1 {
 		color:@color1;
 		.helvetica-bold;
-		font-size:15px;
+		font-size:1.063em;
 		height:22px;
 	}
 	p {
 		color:@color1;
 		.helvetica-regular;
-		font-size:12px;
+		font-size:0.875em;
 	}
 	h2 {
 		.helvetica-bold;
-		font-size:13px;
+		font-size:0.938em;
 		padding-top:2px;
 	}
 }
@@ -1085,32 +1088,32 @@ input[type=number]::-webkit-outer-spin-button {
 	p {
 		color:@color0;
 		.helvetica-regular;
-		font-size:15px;
+		font-size:1.063em;
 	}
 	h1 {
 		color:@color0;
 		.helvetica-bold;
-		font-size:15px;
+		font-size:1.063em;
 		text-transform:uppercase;
 	}
 	div {
 		h3 {
 			color:@color0;
 			.helvetica-regular;
-			font-size:14px;
+			font-size:1em;
 			line-height: 10px;
 		}
 		span {
 			color:@color0;
 			.helvetica-regular;
-			font-size:10px;
+			font-size:0.75em;
 		}
 	}
 	h4 {
 		color:@color0;
 		float:right;
 		.helvetica-regular;
-		font-size:14px;
+		font-size:1em;
 	}
 }
 .order_menu {
@@ -1120,13 +1123,13 @@ input[type=number]::-webkit-outer-spin-button {
 		li {
 			padding:15px 10px;
 			i {
-				font-size:18px;
+				font-size:1.25em;
 				margin:0 10px;
 			}
 			span {
 				color:@color1;
 				.helvetica-bold;
-				font-size:14px;
+				font-size:1em;
 				text-transform:uppercase;
 			}
 		}
@@ -1148,7 +1151,7 @@ input[type=number]::-webkit-outer-spin-button {
 			color:@color1;
 			float:left;
 			.helvetica-bold;
-			font-size:15px;
+			font-size:1.063em;
 			line-height: 21px;
 		}
 		span {
@@ -1157,26 +1160,26 @@ input[type=number]::-webkit-outer-spin-button {
 			color:@color1;
 			float:right;
 			.helvetica-bold;
-			font-size:13px;
+			font-size:0.938em;
 			padding:1px 3px;
 		}
 		h2 {
 			color:@color3;
 			float:left;
 			.helvetica-regular;
-			font-size:13px;
+			font-size:0.938em;
 			line-height: 21px;
 		}
 		p {
 			color:@color1;
 			float:left;
 			.helvetica-regular;
-			font-size:13px;
+			font-size:0.938em;
 			line-height: 15px;
 		}
 		i {
 			color:red;
-			font-size:18px;
+			font-size:1.25em;
 			padding:5px;
 			position:absolute;
 			right:5px;
@@ -1189,7 +1192,7 @@ input[type=number]::-webkit-outer-spin-button {
 	a {
 		display:inline-block;
 		.helvetica-bold;
-		font-size:14px;
+		font-size:1em;
 		padding:10px 10px;
 		text-decoration:underline;
 	}
@@ -1206,7 +1209,7 @@ input[type=number]::-webkit-outer-spin-button {
 .active_order {
 	color:@color0;
 	.helvetica-bold;
-	font-size:14px;
+	font-size:1em;
 	line-height:50px;
 	padding:0 10px;
 	text-transform:uppercase;
@@ -1217,14 +1220,14 @@ input[type=number]::-webkit-outer-spin-button {
 	h1 {
 		float:left;
 		.helvetica-bold;
-		font-size:20px;
+		font-size:1.375em;
 		padding:0 10px 5px 0;
 	}
 	p {
 		clear:both;
 		color:@color1;
 		.helvetica-regular;
-		font-size:13px;
+		font-size:0.938em;
 	}
 	a {
 		border-radius: 5px;
@@ -1232,7 +1235,7 @@ input[type=number]::-webkit-outer-spin-button {
 		color: @color1;
 		display:inline-block;
 		.helvetica-bold;
-		font-size: 13px;
+		font-size: 0.938em;
 		margin:10px auto;
 		padding: 1px 5px;
 	}
@@ -1244,12 +1247,12 @@ input[type=number]::-webkit-outer-spin-button {
 				color:@color0;
 				float:left;
 				.helvetica-bold;
-				font-size:10px;
+				font-size:0.75em;
 				margin-top: 3px;
 				padding:2px 6px;
 				i {
 					color:@color0;
-					font-size:10px;
+					font-size:0.75em;
 					margin-right:3px;
 				}
 			}
@@ -1261,7 +1264,7 @@ input[type=number]::-webkit-outer-spin-button {
 		li {
 			border:1px solid @color6;
 			.helvetica-bold;
-			font-size:14px;
+			font-size:1em;
 			height:@height3;
 			line-height:@height3;
 			margin-top:-1px;
@@ -1269,7 +1272,7 @@ input[type=number]::-webkit-outer-spin-button {
 			width:33px;
 			i {
 				color:#c4c6ca;
-				font-size:13px;
+				font-size:0.938em;
 				margin-top:8px;
 			}
 		}
@@ -1300,12 +1303,12 @@ input[type=number]::-webkit-outer-spin-button {
 			color:@color2;
 			float:left;
 			.helvetica-regular;
-			font-size:14px;
+			font-size:1em;
 		}
 		span {
 			color:@color2;
 			float:right;
-			font-size:13px;
+			font-size:0.938em;
 		}
 	}
 	ul {
@@ -1313,7 +1316,7 @@ input[type=number]::-webkit-outer-spin-button {
 		a {
 			display:inline-block;
 			.helvetica-bold;
-			font-size:14px;
+			font-size:1em;
 			margin:5px 0;
 			text-decoration:underline;
 			width:@width3;
@@ -1329,7 +1332,7 @@ input[type=number]::-webkit-outer-spin-button {
 			label {
 				color:@color3;
 				.helvetica-bold;
-				font-size:13px;
+				font-size:0.938em;
 				padding-right:5px;
 			}
 		}
@@ -1350,7 +1353,7 @@ input[type=number]::-webkit-outer-spin-button {
 	p {
 		color:@color3;
 		.helvetica-regular;
-		font-size:14px;
+		font-size:1em;
 		width:@width3;
 	}
 	input {
@@ -1367,13 +1370,13 @@ input[type=number]::-webkit-outer-spin-button {
 		color:@color1;
 		float:left;
 		.helvetica-regular;
-		font-size:14px;
+		font-size:1em;
 	}
 	span {
 		color:@color1;
 		float:right;
 		.helvetica-regular;
-		font-size:14px;
+		font-size:1em;
 	}
 }
 .item_price_total {
@@ -1383,13 +1386,13 @@ input[type=number]::-webkit-outer-spin-button {
 		color:@color1;
 		float:left;
 		.helvetica-bold;
-		font-size:14px;
+		font-size:1em;
 	}
 	span {
 		color:@color1;
 		float:right;
 		.helvetica-bold;
-		font-size:14px;
+		font-size:1em;
 	}
 }
 .panel {
@@ -1431,7 +1434,7 @@ input[type=number]::-webkit-outer-spin-button {
 				color:@color7;
 				display:inline-block;
 				.helvetica-bold;
-				font-size:12px;
+				font-size:0.875em;
 				padding:0px 10px;
 				text-transform:uppercase;
 			}
@@ -1442,7 +1445,7 @@ input[type=number]::-webkit-outer-spin-button {
 	}
 	p{
 		.helvetica-regular;
-		font-size:11px;
+		font-size:0.813em;
 		color:@color7;
 		width:128px;
 		float:right;
@@ -1463,10 +1466,10 @@ input[type=number]::-webkit-outer-spin-button {
 		color:@color5;
 		float:left;
 		.helvetica-bold;
-		font-size:14px;
+		font-size:1em;
 		padding:0 10px 0 0px;
 		i {
-			font-size:20px;
+			font-size:1.375em;
 			margin:auto 7px;
 		}
 	}
@@ -1474,10 +1477,10 @@ input[type=number]::-webkit-outer-spin-button {
 		color:@color1;
 		float:left;
 		.helvetica-bold;
-		font-size:14px;
+		font-size:1em;
 		padding:0 0px 0 10px;
 		i {
-			font-size:20px;
+			font-size:1.375em;
 			margin:auto 7px;
 		}
 	}
@@ -1491,7 +1494,7 @@ input[type=number]::-webkit-outer-spin-button {
 	div {
 		color:@color1;
 		.helvetica-bold;
-		font-size:14px;
+		font-size:1em;
 		line-height:40px;
 		&:last-child {
 			text-align:right;
@@ -1505,7 +1508,7 @@ input[type=number]::-webkit-outer-spin-button {
 			color:@color2;
 			display:inline-block;
 			.helvetica-bold;
-			font-size:13px;
+			font-size:0.938em;
 			height:25px;
 			padding-top:3px;
 			text-align:center;
@@ -1529,14 +1532,14 @@ input[type=number]::-webkit-outer-spin-button {
 	h1 {
 		color:@color8;
 		.helvetica-bold;
-		font-size:13px;
+		font-size:0.938em;
 		padding-bottom:5px;
 	}
 	p {
 		clear:both;
 		color:@color1;
 		.helvetica-regular;
-		font-size:13px;
+		font-size:0.938em;
 	}
 	a {
 		background:#b0b3bd;
@@ -1545,7 +1548,7 @@ input[type=number]::-webkit-outer-spin-button {
 		display:inline-block;
 		float:left;
 		.helvetica-regular;
-		font-size:12px;
+		font-size:0.875em;
 		line-height:17px;
 		margin-right:3px;
 		padding:0 5px;
@@ -1560,18 +1563,18 @@ input[type=number]::-webkit-outer-spin-button {
 	h1 {
 		color:@color8;
 		.helvetica-bold;
-		font-size:13px;
+		font-size:0.938em;
 		width:@width3;
 		i {
 			color:#c1c2c5;
 			float:right;
-			font-size:14px;
+			font-size:1em;
 		}
 	}
 	p {
 		color:@color1;
 		.helvetica-regular;
-		font-size:13px;
+		font-size:0.938em;
 		width:@width3;
 	}
 }
@@ -1641,7 +1644,7 @@ input[type=number]::-webkit-outer-spin-button {
 			padding: 15px 15px 15px 30px;
 			color:@color3;
 			.helvetica-bold;
-			font-size:13px;
+			font-size:0.938em;
 			text-transform: uppercase;
 			.ellipses-one-line;
 			&:hover, &:focus{
@@ -1786,7 +1789,7 @@ input[type=number]::-webkit-outer-spin-button {
 
 .checkbox-custom-label{
     position: relative;
-    font-size: 12px;
+    font-size: 0.875em;
     .helvetica-medium;
     color: #6c707a;
  
@@ -1803,7 +1806,7 @@ input[type=number]::-webkit-outer-spin-button {
     padding: 0px;
     margin: -3px 8px 0 0;
     text-align: center;
-    font-size: 10px;
+    font-size: 0.75em;
 }
 
 .checkbox-custom:checked + .checkbox-custom-label:before {
@@ -1850,7 +1853,7 @@ input[type=number]::-webkit-outer-spin-button {
 
 .back-common{
     .helvetica-regular;
-    font-size: 14px;
+    font-size: 1em;
     color: #54565d;
     margin: 10px 0;
     a{
@@ -1887,7 +1890,7 @@ input[type=number]::-webkit-outer-spin-button {
 .error{
 	color:#f32929;
 	margin:2px 0px;
-	font-size:12px;
+	font-size:0.875em;
 	  .helvetica-regular;
 }
 .purple-btn {
@@ -1896,7 +1899,7 @@ input[type=number]::-webkit-outer-spin-button {
     color: #fff;
     padding: 5px 15px;
     .helvetica-regular;
-    font-size: 16px;
+    font-size: 1.125em;
     cursor: pointer;
     letter-spacing: 1px;
     text-transform: uppercase;
@@ -1923,7 +1926,7 @@ input[type=number]::-webkit-outer-spin-button {
     color: #fff;
     padding: 5px 15px;
     .helvetica-regular;
-    font-size: 16px;
+    font-size: 1.125em;
     cursor: pointer;
     letter-spacing: 1px;
     text-transform: uppercase;
@@ -1952,7 +1955,7 @@ input[type=number]::-webkit-outer-spin-button {
     padding: 5px 15px;
     .background-fade;
     .helvetica-regular;
-    font-size: 16px;
+    font-size: 1.125em;
     letter-spacing: 1px;
     text-transform: uppercase;
     line-height: normal;
@@ -1975,7 +1978,7 @@ input[type=number]::-webkit-outer-spin-button {
 	background-color: #f3f3f3;
     .background-fade;
     .helvetica-regular;
-    font-size: 16px;
+    font-size: 1.125em;
     color: #464646;
     border: 1px solid #f3f3f3;
     letter-spacing: 1px;
