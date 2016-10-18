@@ -1,4 +1,4 @@
-input[type="number"],input[type="text"],input[type="email"],textarea,input[type="search"],input[type="password"]{
+finput[type="number"],input[type="text"],input[type="email"],textarea,input[type="search"],input[type="password"]{
 	&:focus::-webkit-input-placeholder { color:transparent; }
             &:focus:-moz-placeholder { color:transparent; }
             &:focus::-moz-placeholder { color:transparent; } 
@@ -594,6 +594,16 @@ input.error, .errorMMyy {
 							margin-right: 10px;
 						}
 					}
+					.paymentdisable{
+						&[disabled] {
+							background: #969292;
+							cursor: not-allowed;
+							&:hover {
+								background: #969292;
+							}
+						}
+					}
+					
 					.delivery-details{
 						.modify{
 							text-align: right;

@@ -1988,6 +1988,9 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 	$scope.cancelOrder = function(){
 		OrderCloud.As().Orders.Cancel(vm.order.ID).then(function(data){
 			vm.order = data;
+			delete vm.order;
+			CurrentOrder.Remove();
+			angular.element(document.getElementById("build-order-footer")).scope().buildOrderDown.closePopover();
 			vm.getLineItems();
 		}).catch(function(){
 			vm.getLineItems();
