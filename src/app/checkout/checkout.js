@@ -408,29 +408,34 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 				vm.order = res;
 			});
 		});
+		vm.recipients = [];
 		for(var n in groups){
+			groups[n][0].TempCharges = {};
+			groups[n][0].TempChargesTypeCount = {};
+			vm.recipients.push(n);
 			_.each(groups[n], function(val){
 				if(val.xp.deliveryFeesDtls){
-					groups[n] = _.reject(groups[n], val);
-					groups[n].unshift(val);
+					//groups[n] = _.reject(groups[n], val);
+					//groups[n].unshift(val);
+					angular.forEach(val.xp.deliveryFeesDtls, function(val1, key1){
+						groups[n][0].TempDeliveryCharges += parseFloat(val1);
+						if(!groups[n][0].TempCharges[key1]){
+							groups[n][0].TempCharges[key1] = 0;
+							groups[n][0].TempChargesTypeCount[key1+'Count'] = 0;
+						}
+						groups[n][0].TempCharges[key1] += Math.floor(parseFloat(val1) * 100) / 100;;
+						groups[n][0].TempChargesTypeCount[key1+'Count'] += 1;
+					});	
 				}
 			});
 		}
 		vm.activeOrders = groups;
-		vm.recipients = [];
-		for(var n in groups){
-			var items = [], Status = null;
-			vm.recipients.push(n);
-			/*angular.forEach(groups[n], function(val, key){
-				if(val.xp.Status == "OnHold")
-					Status = {"Status":"OnHold"};
-				else
-					Status = {"Status": null};
-			}, true);*/
-		}
 	};
     vm.Grouping(ProductInfo);
-
+	vm.CheckDeliveryEmpty = function(data){
+		if(!_.isEmpty(data))
+			return true;
+	};
 	vm.ProceedToPayment = function(lineitems,index, form) {
 		form.$submitted = true;
 		if(form.$valid && !form.invalidAddress){
@@ -506,9 +511,12 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 			line.xp.deliveryFeesDtls['Priority Delivery'] = vm.buyerDtls.xp.DeliveryRuns[0].Run4.charge;
 		}*/
 		angular.forEach(line.xp.deliveryFeesDtls, function(val, key){
+			var amt = lineitems[0].TempCharges[key]/lineitems[0].TempChargesTypeCount[key+'Count'];
+			line.xp.deliveryFeesDtls[key] = amt;
+			val = amt;
 			deliverySum += Math.floor(parseFloat(val) * 100) / 100;
 		});
-		line.xp.TotalCost = deliverySum + line.LineTotal + line.TaxCost;
+		line.xp.TotalCost = Math.floor((deliverySum + line.LineTotal + line.xp.Tax) * 100) / 100;
 		if(line.xp.deliveryChargeAdjReason == "---select---")
 			delete line.xp.deliveryChargeAdjReason;
 		if(line.selectedAddrID){
@@ -529,11 +537,13 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 				OrderCloud.LineItems.SetShippingAddress(vm.order.ID, line.ID, line.ShippingAddress).then(function(data){
 					if(line.xp.Status){
 						OrderCloud.As().Orders.Patch(vm.order.ID, {"xp": {"Status": line.xp.Status}}).then(function(res){
+							vm.order = res;
 							if((lineitems.length)-1 > index){
 								vm.lineDtlsSubmit(lineitems, index+1);
 							}
 						}).catch(function(){
 							OrderCloud.Orders.Get(vm.order.ID).then(function(res){
+								vm.order = res;
 								if((lineitems.length)-1 > index){
 									vm.lineDtlsSubmit(lineitems, index+1);
 								}
@@ -542,6 +552,12 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 					}else{
 						if((lineitems.length)-1 > index){
 							vm.lineDtlsSubmit(lineitems, index+1);
+						}else{
+							OrderCloud.LineItems.List(vm.order.ID).then(function(res){
+								BuildOrderService.PatchOrder(vm.order, res).then(function(data){
+									vm.order = data;
+								});
+							});	
 						}
 					}
 				});
@@ -824,8 +840,14 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 		vm.status.paymentOpen = true;
 	};
 	vm.deliveryAdj = function(line){
-		if(!line.xp.deliveryChargeAdjReason)
-			line.xp.deliveryChargeAdjReason = vm.buyerDtls.xp.deliveryChargeAdjReasons[0];
+		if(!line.xp.deliveryChargeAdjReason){
+			if(!vm.buyerDtls){
+				BuildOrderService.GetBuyerDtls().then(function(res){
+					line.xp.deliveryChargeAdjReason = res.xp.deliveryChargeAdjReasons[0];
+				});
+			}else
+				line.xp.deliveryChargeAdjReason = vm.buyerDtls.xp.deliveryChargeAdjReasons[0];
+		}	
 	};
 	vm.addressTypeSelect = function(line){
 		if(line.xp && line.xp.addressType=="InStorePickUp"){
@@ -1009,6 +1031,12 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 			$q.all(Promotions).then(function(result2){
 				vm.SumSpendingAccChrgs(vm.orderDtls);
 				OrderCloud.As().Orders.Get(vm.order.ID).then(function(res){
+					vm.order = res;
+				});
+			}).catch(function(err){
+				console.log(err);
+				 vm.SumSpendingAccChrgs(vm.orderDtls);
+				OrderCloud.As().Orders.Get(vm.order.ID).then(function(res) {
 					vm.order = res;
 				});
 			});

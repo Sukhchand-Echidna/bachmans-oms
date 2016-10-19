@@ -91,11 +91,14 @@ function OrderHistoryController($scope, $stateParams, Order, OrderCloud, $filter
 			temp = [];
 			angular.forEach(result, function(val){
 				angular.forEach(val.Items, function(val1, key1){
-					if(val1.Items.length > 0 && key1 == 0){
-						temp.push(OrderCloud.LineItems.Get(val1.Items[0].OrderID,val1.Items[0].LineItemID));
+					angular.forEach(val1.Items, function(val2, key2){
+						//if(val2.Items.length > 0){
+						temp.push(OrderCloud.LineItems.Get(val2.OrderID,val2.LineItemID));
 						TempArr.ShipmentArr.push(val1);
-						TempArr.OrderArr2 = _.union(TempArr.OrderArr2, _.where(TempArr.OrderArr1, {ID: val1.Items[0].OrderID}));
-					}
+						//TempArr.OrderArr2 = _.union(TempArr.OrderArr2,);
+						TempArr.OrderArr2 = (TempArr.OrderArr2).concat(_.where(TempArr.OrderArr1, {ID: val2.OrderID}));
+						//}
+					})
 				}, true);
 			}, true);
 			$q.all(temp).then(function(result){
@@ -110,6 +113,11 @@ function OrderHistoryController($scope, $stateParams, Order, OrderCloud, $filter
 					orderHistorydetails.SearchType='User';
 					orderHistorydetails.ID = TempArr.OrderArr2[key].ID;
 					orderHistorydetails.shipmentID = TempArr.ShipmentArr[key].ID;
+					if(TempArr.ShipmentArr[key].xp.deliveryDate==''){
+						orderHistorydetails.DeliveryDate = "--";
+					}
+					else
+						orderHistorydetails.DeliveryDate = TempArr.ShipmentArr[key].xp.deliveryDate;
 					vm.completeshipmentold.push(orderHistorydetails);
 					vm.completeshipment = angular.copy(vm.completeshipmentold);
 				}, true);
@@ -124,21 +132,35 @@ function OrderHistoryController($scope, $stateParams, Order, OrderCloud, $filter
 			data: 'orderHistory.completeshipment',
 			enableSorting: true,
 			columnDefs: [
-				{ name: 'shipmentID', displayName:'Shipment Number', cellTemplate: '<div class="data_cell" ui-sref="buildOrder({ID:row.entity.userID,SearchType:row.entity.SearchType,orderID:row.entity.ID,orderDetails:true})">{{row.entity.shipmentID}}</div>', width:"14.28%"},
-				{ name: 'DateCreated', displayName:'Order Placed On', cellTemplate: '<div class="data_cell">{{row.entity.DateCreated | date:grid.appScope.dateFormat}}</div>', width:"14.28%"},
-				{ name: 'DestinationCode', displayName:'Destination Code', width:"14.28%"},
-				{ name: 'uname', displayName:'Recipient Name', cellTemplate: '<div class="data_cell">{{row.entity.uname}}</div>', width:"14.28%"},
-				{ name: 'Total', displayName:'Total', cellTemplate: '<div class="data_cell">{{row.entity.Total | currency:$}}</div>', width:"14.28%"},
-				{ name: 'Status', displayName:'Order Status', width:"14.28%"},
-				{ name: 'orderClaim', displayName:'', cellTemplate: '<div class="data_cell"><button ui-sref="orderClaim({userID:row.entity.userID, name:row.entity.uname, orderID:row.entity.ID})">Create Order Claim</button></div>', width:"14.28%"}
+				{ name: 'shipmentID', displayName:'Shipment Number', cellTemplate: '<div class="data_cell" ui-sref="buildOrder({ID:row.entity.userID,SearchType:row.entity.SearchType,orderID:row.entity.ID,orderDetails:true})">{{row.entity.shipmentID}}</div>', width:"12.5%"},
+				{ name: 'DateCreated', displayName:'Order Placed On', cellTemplate: '<div class="data_cell">{{row.entity.DateCreated | date:grid.appScope.dateFormat}}</div>', width:"12.5%"},
+				{ name: 'DestinationCode', displayName:'Destination Code', width:"12.5%"},
+				{ name: 'uname', displayName:'Recipient Name', cellTemplate: '<div class="data_cell">{{row.entity.uname}}</div>', width:"12.5%"},
+				{ name: 'DeliveryDate', displayName:'Delivery Date', cellTemplate: '<div class="data_cell">{{row.entity.DeliveryDate | date:grid.appScope.dateFormat}}</div>', width:"12.5%"},
+				{ name: 'Total', displayName:'Total', cellTemplate: '<div class="data_cell">{{row.entity.Total | currency:$}}</div>', width:"12.5%"},
+				{ name: 'Status', displayName:'Order Status', width:"12.5%"},
+				{ name: 'orderClaim', displayName:'', cellTemplate: '<div class="data_cell"><button ui-sref="orderClaim({userID:row.entity.userID, name:row.entity.uname, orderID:row.entity.ID})">Create Order Claim</button></div>', width:"12.5%"}
 			]
 		}
 	}
 	$scope.$watch(angular.bind(this, function () {
         return this.searchText;
     }), function (newVal, oldVal) {
-        if (newVal) {
-        	vm.completeshipment = $filter('filter')(vm.completeshipmentold, newVal, undefined);
-        }
+		if (newVal) {
+			var temp = [];
+			angular.forEach(vm.completeshipmentold, function(shipment){
+ 				var filterColumns = [shipment.uname];
+				filterColumns.push(shipment.Status);
+				var filteredData = $filter('filter')(filterColumns, newVal, undefined);
+				if(filteredData.length > 0) {
+ 					temp.push(shipment);
+ 				}			
+ 			})
+			vm.completeshipment = temp;
+		}
+ 		else{
+			vm.completeshipment = vm.completeshipmentold;
+ 		}
+        
     });
 }

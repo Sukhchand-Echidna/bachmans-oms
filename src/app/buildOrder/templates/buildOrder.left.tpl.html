@@ -9,11 +9,11 @@
 			<p>{{buildOrderLeft.list.address.Street2}}</p>
 			<p>{{buildOrderLeft.list.address.City}} {{buildOrderLeft.list.address.State}} {{buildOrderLeft.list.address.Country}} {{buildOrderLeft.list.address.Zip}}</p>
 		</div>
-		<div class="order-price" ng-if="!buildOrder.disable">
+		<div class="order-price" ng-if="!buildOrderLeft.guest">
 			<h2>{{buildOrderLeft.spendingAccounts[0].Name}}</h2> <p>{{buildOrderLeft.spendingAccounts[0].Balance | currency}}</p>
 			<h3>Member since {{buildOrderLeft.spendingAccounts[0].StartDate | date:'yyyy'}}</h3>
 		</div>
-		<ul class="order-details" ng-class="buildOrder.disable ? 'disable' : 'nothing'">
+		<ul class="order-details" ng-class="buildOrderLeft.guest ? 'disable' : 'nothing'">
 			<li>
 				<a ui-sref="custInfo({ID:buildOrderLeft.list.ID})">
 				<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
@@ -75,7 +75,7 @@
 		</ul>
 		<div class="create-note">
 			<h4>Notes (<span>{{buildOrderLeft.list.Notes.length}}</span>)</h4>
-			<button ng-click="noteinput(); note.descp=''" ng-disabled="buildOrder.disable">ADD NOTE</button>
+			<button ng-click="noteinput(); note.descp=''" ng-disabled="buildOrderLeft.guest">ADD NOTE</button>
 		</div>
 		<ul class="order-messages">
 			<form ng-submit="addNote(); note.descp=''" ng-show="show">

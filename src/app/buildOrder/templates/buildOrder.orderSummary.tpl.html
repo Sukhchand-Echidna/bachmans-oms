@@ -1001,7 +1001,7 @@
 								
 							</tbody>
 							<tfoot>
-								<tr ng-if="line[0].xp.deliveryFeesDtls && line[0].xp.deliveryFeesDtls!={}">
+								<tr ng-show="buildordersummary.CheckDeliveryEmpty(line[0].TempCharges)">
 								<td colspan="5">
 								<div class="edit">
 									<button ng-disabled="buildordersummary.invalidAddress" ng-click="buildordersummary.EditSaveCharges(line)">
@@ -1098,18 +1098,18 @@
 								<tr>
 								 <td class="delivery-content" colspan="5">
 									<div class="delivery">
-									 <div ng-if="!line[0].EditCharges" ng-repeat="(key, val) in line[0].xp.deliveryFeesDtls">
+									 <div ng-if="!line[0].EditCharges" ng-repeat="(key, val) in line[0].TempCharges">
 										<h5>{{key}}  </h5><span>{{val | currency}}</span>
+									 </div>
+									 <div ng-if="line[0].EditCharges" ng-repeat="(key, val) in line[0].TempCharges">
+										<h5>{{key}}  </h5>
+										<div class="edit-input"><input type="text" value="{{val}}" ng-model="line[0].TempCharges[key]" /></div>
 									 </div>
 									 <div>
 										<h5>Tax  </h5><span>{{line[0].TotalTax | currency}}</span>
 									 </div>
-									 <div ng-if="line[0].EditCharges" ng-repeat="(key, val) in line[0].xp.deliveryFeesDtls">
-										<h5>{{key}}  </h5>
-										<div class="edit-input"><input type="text" value="{{val}}" ng-model="line[0].xp.deliveryFeesDtls[key]" /></div>
-									 </div>
 									 <div>
-										<h5>Shipping Cost </h5><span>{{line[0].xp.deliveryCharges | currency}}</span>
+										<h5>Shipping Cost </h5><span>{{line[0].TempDeliveryCharges | currency}}</span>
 									 </div>
 									  <div>
 										<h5>Subtotal</h5><span>{{line[0].TotalCost | currency}}</span>

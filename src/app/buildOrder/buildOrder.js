@@ -43,25 +43,27 @@ angular.module( 'orderCloud' )
 				$(element).on('hidden.bs.modal', function(){
 					scope.$apply(function(){
 						scope.$parent[attrs.visible] = false;
-						if(scope.$parent.buildOrder){
-							scope.$parent.buildOrder.guestUserModal = false;
-							scope.$parent.buildOrder.AssemblyModal = false;
-							scope.$parent.buildordersummary.showUser=false;
-							scope.$parent.buildordersummary.userEdit=false;
-							scope.$parent.buildordersummary.qeueryLength=0;
-							scope.$parent.buildordersummary.searchval='';
-							scope.$parent.buildordersummary.clearData();
-							if(scope.$parent.buildOrderRight)
-								scope.$parent.buildOrderRight.OrderConfirmPopUp = false;
-							if(scope.$parent.buildOrderPDP)	
-								scope.$parent.buildOrderPDP.viewCareGuide = false;
-						}
-						if(scope.$parent.home){
-							scope.$parent.home.showcalendarModal = false;
-							scope.$parent.home.showpromotionsmodal = false;
-						}
-						if(scope.$parent.custInfo)
-							scope.$parent.custInfo.showPOModal = false; 
+					      if(scope.$parent.buildOrder){
+					       scope.$parent.buildOrder.guestUserModal = false;
+					       scope.$parent.buildOrder.AssemblyModal = false;
+					      }
+					      if(scope.$parent.buildOrderRight)
+					       scope.$parent.buildOrderRight.OrderConfirmPopUp = false;
+					      if(scope.$parent.buildOrderPDP) 
+					       scope.$parent.buildOrderPDP.viewCareGuide = false;
+					      if(scope.$parent.buildordersummary){
+					       scope.$parent.buildordersummary.showUser=false;
+					       scope.$parent.buildordersummary.userEdit=false;
+					       scope.$parent.buildordersummary.qeueryLength=0;
+					       scope.$parent.buildordersummary.searchval='';
+					       scope.$parent.buildordersummary.clearData();
+					      } 
+					      if(scope.$parent.home){
+					       scope.$parent.home.showcalendarModal = false;
+					       scope.$parent.home.showpromotionsmodal = false;
+					      }
+					      if(scope.$parent.custInfo)
+					       scope.$parent.custInfo.showPOModal = false;
 					});
 				});
 			}
@@ -1477,7 +1479,7 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 						lineItemParams.xp.TotalCost = lineItemParams.xp.TotalCost + (res.UnitPrice * res.Quantity);
 						if(buildorderVM.IsPlacement=="Placed"){
 							lineItemParams.xp.deliveryFeesDtls = {"Placement Charges": vm.buyerXp.AdditionalCharges.PlacementCharges};
-							lineItemParams.xp.TotalCost = lineItemParams.xp.TotalCost + parseInt(vm.buyerXp.AdditionalCharges.PlacementCharges);
+							lineItemParams.xp.TotalCost = lineItemParams.xp.TotalCost + parseFloat(vm.buyerXp.AdditionalCharges.PlacementCharges);
 							lineItemParams.xp.deliveryCharges = vm.buyerXp.AdditionalCharges.PlacementCharges;
 							lineItemParams.xp.PlacementInstruction = buildorderVM.PlacementInstruction;
 						}
@@ -1501,7 +1503,7 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 						lineItemParams.xp.TotalCost = lineItemParams.xp.TotalCost + (res.UnitPrice * res.Quantity);
 						if(buildorderVM.IsPlacement=="Placed"){
 							lineItemParams.xp.deliveryFeesDtls = {"Placement Charges": vm.buyerXp.AdditionalCharges.PlacementCharges};
-							lineItemParams.xp.TotalCost = lineItemParams.xp.TotalCost + parseInt(vm.buyerXp.AdditionalCharges.PlacementCharges);
+							lineItemParams.xp.TotalCost = lineItemParams.xp.TotalCost + parseFloat(vm.buyerXp.AdditionalCharges.PlacementCharges);
 							lineItemParams.xp.deliveryCharges = vm.buyerXp.AdditionalCharges.PlacementCharges;
 							lineItemParams.xp.PlacementInstruction = buildorderVM.PlacementInstruction;
 						}
@@ -1603,23 +1605,25 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 				// Data clear ends
 				//Assembly/addextra multiple lineitems in base item remove
 				if(listItem.xp.BaseLineItemID){
+					var obj;
 					vm.ActiveOrderCartLoader = OrderCloud.LineItems.Get(vm.order.ID, listItem.xp.BaseLineItemID).then(function(res){
-						var obj;
 						if(res.xp.AssemblyLineItemsList){
-							var dat = _.without(res.xp.AssemblyLineItemsList, listItem.ID);
-							listItem.xp.AssemblyLineItemsList = dat;
+							var dat = _.without(res.xp.AssemblyLineItemsList, res.ID);
+							res.xp.AssemblyLineItemsList = dat;
 							obj = {"xp":{"AssemblyLineItemsList": dat}};
 						}
 						if(res.xp.AddExtraLineItemsList){
-							var dat = _.without(res.xp.AddExtraLineItemsList, listItem.ID);
-							listItem.xp.AddExtraLineItemsList = dat;
+							var dat = _.without(res.xp.AddExtraLineItemsList, res.ID);
+							res.xp.AddExtraLineItemsList = dat;
 							obj = {"xp":{"AddExtraLineItemsList": dat}};
 						}
 						vm.ActiveOrderCartLoader = OrderCloud.LineItems.Patch(vm.order.ID, res.ID, obj).then(function(res){
 							vm.getLineItems();
 							//vm.lineItemForm[listItem.ID].$setPristine();
 						});
-					});
+					}).catch(function(err){
+						vm.getLineItems();
+					});	
 				}else{
 					vm.getLineItems();
 					//vm.lineItemForm[listItem.ID].$setPristine();
@@ -1654,19 +1658,23 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 				vm.getLineItems();
 			});
 		}
-	};
-	vm.OrderConfirmFunction = function(data){
-		vm.OrderConfirmGrouping = _.groupBy(data, function(value){
+		//Clear date of other lineitems, if this lineitem has delivery rules for same recipient 
+		var arr = [], groupData;
+		angular.forEach(vm.activeOrders, function(val, key){
+			arr = _.union(val, arr);
+		});
+		groupData = _.groupBy(arr, function(value){
 			if(value.ShippingAddress!=null)
 				return value.ShippingAddress.FirstName + ' ' + value.ShippingAddress.LastName + ' ' + value.ShippingAddress.Zip + ' ' + (value.ShippingAddress.Street1).split(/(\d+)/g)[1] + ' ' + value.xp.DeliveryMethod + ' ' + value.xp.deliveryDate;
 		});
-		angular.forEach(vm.OrderConfirmGrouping, function(val, key){
-			if(val[0].ShippingAddress!=null){
-				val[0].LineTotal = _.reduce(_.pluck(val, 'LineTotal'), function(memo, num){ return memo + num; }, 0);
-				val[0].xp.deliveryCharges = _.reduce(_.map(val, function(item){return item.xp.deliveryCharges;}), function(memo, num){ return memo + num; }, 0);
-				val[0].xp.Tax = _.reduce(_.map(val, function(item){return item.xp.Tax;}), function(memo, num){ return memo + num; }, 0);
-				val[0].xp.TotalCost = _.reduce(_.map(val, function(item){return item.xp.TotalCost;}), function(memo, num){ return memo + num; }, 0);
-			}	
+		angular.forEach(groupData, function(val, key){
+			angular.forEach(val, function(val1, key1){
+				if(val1.ID == listItem.ID && listItem.xp.deliveryFeesDtls['Standard Delivery']){
+					for(var i=0; i<=val.length-1; i++){
+						val[i].xp.deliveryDate = null;
+					}
+				}
+			}, true);
 		}, true);
 	};
 	vm.getLineItems = function(){
@@ -1688,7 +1696,7 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 							});
 						}
 						vm.ActiveOrderCartLoader = LineItemHelpers.GetProductInfo(res.Items).then(function(data) {
-							vm.OrderConfirmGrouping = _.groupBy(data, function(value){
+							vm.OrderConfirmGrouping = _.groupBy(angular.copy(data), function(value){
 								if(value.ShippingAddress!=null)
 									return value.ShippingAddress.FirstName + ' ' + value.ShippingAddress.LastName + ' ' + value.ShippingAddress.Zip + ' ' + (value.ShippingAddress.Street1).split(/(\d+)/g)[1] + ' ' + value.xp.DeliveryMethod + ' ' + value.xp.deliveryDate;
 							});
@@ -1751,6 +1759,7 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 										val.ShippingAddress.deliveryDate = val.xp.deliveryDate;
 										val.ShippingAddress.lineID = val.ID;
 										val.ShippingAddress.DeliveryMethod = val.xp.DeliveryMethod;
+										val.ShippingAddress.deliveryFeesDtls = val.xp.deliveryFeesDtls;
 										vm.AvoidMultipleDelryChrgs.push(val.ShippingAddress);
 									}
 									var dt;
@@ -1839,7 +1848,7 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 							});
 						}
 						vm.ActiveOrderCartLoader = LineItemHelpers.GetProductInfo(res.Items).then(function(data){
-							vm.OrderConfirmGrouping = _.groupBy(data, function(value){
+							vm.OrderConfirmGrouping = _.groupBy(angular.copy(data), function(value){
 								if(value.ShippingAddress!=null)
 									return value.ShippingAddress.FirstName + ' ' + value.ShippingAddress.LastName + ' ' + value.ShippingAddress.Zip + ' ' + (value.ShippingAddress.Street1).split(/(\d+)/g)[1] + ' ' + value.xp.DeliveryMethod + ' ' + value.xp.deliveryDate;
 							});
@@ -1878,6 +1887,7 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 									}, true);
 									//vm.DuplicateActiveOrders[key] = _.without(val, _.findWhere(val, {ID: listItem.ID}));
 								}, true);
+								//vm.TemplineItemForm = angular.copy(vm.lineItemForm);
 								angular.forEach(vm.lineItemForm, function(val, key){
 									if(!vm.lineItemForm[key])
 										delete vm.lineItemForm[key];
@@ -1902,6 +1912,7 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 										val.ShippingAddress.deliveryDate = val.xp.deliveryDate;
 										val.ShippingAddress.lineID = val.ID;
 										val.ShippingAddress.DeliveryMethod = val.xp.DeliveryMethod;
+										val.ShippingAddress.deliveryFeesDtls = val.xp.deliveryFeesDtls;
 										vm.AvoidMultipleDelryChrgs.push(val.ShippingAddress);
 									}
 									var dt;
@@ -2072,11 +2083,14 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 					tempArr = [];
 					angular.forEach(res3.ResponseBody.TaxLines, function(val, key){
 						var row = _.findWhere(res1, {ID: val.LineNo});
-						tempArr.push(OrderCloud.LineItems.Patch(vm.order.ID, val.LineNo, {"xp":{"Tax":val.Tax, "TotalCost":row.xp.deliveryCharges+row.LineTotal+val.Tax}}));
+						tempArr.push(OrderCloud.LineItems.Patch(vm.order.ID, val.LineNo, {"xp":{"Tax":val.Tax, "TotalCost": Math.floor((row.xp.deliveryCharges+row.LineTotal+val.Tax) * 100) / 100 }}));
 					}, true);
 					vm.ActiveOrderCartLoader = $q.all(tempArr).then(function(res4){
+						delete vm.DuplicateActiveOrders;
 						vm.getLineItems();
-						vm.OrderConfirmPopUp = !vm.OrderConfirmPopUp;
+						setTimeout(function(){
+							vm.OrderConfirmPopUp = !vm.OrderConfirmPopUp;
+						},1000);	
 					});
 				});
 			});
@@ -2284,8 +2298,14 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 		});
 		vm.HighLightErrors = {};
 		vm.lineItemForm = _.omit(vm.lineItemForm, function(value, key) {
-			return _.isUndefined(value);
+			/*if(value){
+				if(!value.$$success && vm.TemplineItemForm){
+					vm.lineItemForm[key] = angular.copy(vm.TemplineItemForm)[key];
+				}
+			}else*/
+				return _.isUndefined(value);
 		});
+		//delete vm.TemplineItemForm;
 		angular.forEach(vm.lineItemForm, function(val, key){
 			if(val!=undefined){
 				val.$submitted = true;
@@ -2313,7 +2333,7 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 			vm.lineDtlsSubmit(LineItemLists, 0);
 		}
 		if(!_.contains(arr2, false) && !_.contains(arr, false) && !_.contains(arr3, true) && !DeliveryNotAvailable && vm.lineItemProducts.length != 0){
-			vm.OrderConfirmPopUp = !vm.OrderConfirmPopUp;
+			vm.OrderConfirmPopUp = !vm.OrderConfirmPopUp;	
 		}
 	};
 	vm.DeleteToolTip = {
@@ -2362,28 +2382,46 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 			_.each(arr, function(obj){
 				_.each(lineitem.xp.AssemblyLineItemsList, function(val){
 					if(val==obj.ID){
-						obj.ShippingAddress = lineitem.ShippingAddress;
-						obj.xp.deliveryDate = lineitem.xp.deliveryDate;
-						obj.xp.CardMessage = lineitem.xp.CardMessage;
-						obj.xp.addressType = lineitem.xp.addressType;
-						obj.xp.productNote = lineitem.xp.productNote;
-						obj.xp.deliveryNote = lineitem.xp.deliveryNote;
-						obj.xp.DeliveryMethod = lineitem.xp.DeliveryMethod;
-						obj.xp.PatientFName = lineitem.xp.PatientFName;
-						obj.xp.PatientLName = lineitem.xp.PatientLName;
+						var temp = angular.copy(lineitem);
+						obj.ShippingAddress = temp.ShippingAddress;
+						obj.xp.deliveryCharges = 0;
+						obj.xp.TotalCost = obj.LineTotal;
+						obj.xp.deliveryDate = temp.xp.deliveryDate;
+						obj.xp.CardMessage = temp.xp.CardMessage;
+						obj.xp.addressType = temp.xp.addressType;
+						obj.xp.productNote = temp.xp.productNote;
+						obj.xp.deliveryNote = temp.xp.deliveryNote;
+						obj.xp.DeliveryMethod = temp.xp.DeliveryMethod;
+						obj.xp.PatientFName = temp.xp.PatientFName;
+						obj.xp.PatientLName = temp.xp.PatientLName;
+						if(vm.lineItemForm[obj.ID].$valid){
+							var id = $('#lineItemForm_' + obj.ID).parent().parent().attr('id');
+							$('#'+id.replace('panel','tab')).css({'border': 'none'});
+							if(vm.HighLightErrors)
+								delete vm.HighLightErrors[obj.ID];
+						}
 					}
 				});
 				_.each(lineitem.xp.AddExtraLineItemsList, function(val){
 					if(val==obj.ID){
-						obj.ShippingAddress = lineitem.ShippingAddress;
-						obj.xp.deliveryDate = lineitem.xp.deliveryDate;
-						obj.xp.CardMessage = lineitem.xp.CardMessage;
-						obj.xp.addressType = lineitem.xp.addressType;
-						obj.xp.productNote = lineitem.xp.productNote;
-						obj.xp.deliveryNote = lineitem.xp.deliveryNote;
-						obj.xp.DeliveryMethod = lineitem.xp.DeliveryMethod;
-						obj.xp.PatientFName = lineitem.xp.PatientFName;
-						obj.xp.PatientLName = lineitem.xp.PatientLName;
+						var temp = angular.copy(lineitem);
+						obj.ShippingAddress = temp.ShippingAddress;
+						obj.xp.deliveryCharges = 0;
+						obj.xp.TotalCost = obj.LineTotal;
+						obj.xp.deliveryDate = temp.xp.deliveryDate;
+						obj.xp.CardMessage = temp.xp.CardMessage;
+						obj.xp.addressType = temp.xp.addressType;
+						obj.xp.productNote = temp.xp.productNote;
+						obj.xp.deliveryNote = temp.xp.deliveryNote;
+						obj.xp.DeliveryMethod = temp.xp.DeliveryMethod;
+						obj.xp.PatientFName = temp.xp.PatientFName;
+						obj.xp.PatientLName = temp.xp.PatientLName;
+						if(vm.lineItemForm[obj.ID].$valid){
+							var id = $('#lineItemForm_' + obj.ID).parent().parent().attr('id');
+							$('#'+id.replace('panel','tab')).css({'border': 'none'});
+							if(vm.HighLightErrors)
+								delete vm.HighLightErrors[obj.ID];
+						}
 					}
 				});
 			});
@@ -2528,11 +2566,12 @@ function buildOrderSummaryController($scope, $state, ocscope, buyerid, $cookieSt
 				totalCost += value.xp.TotalCost;
 				value.xp.deliveryCharges = 0;
 				angular.forEach(value.xp.deliveryFeesDtls, function(val, key){
-					value.xp.deliveryCharges += Math.floor(parseFloat(val) * 100) / 100;;
+					value.xp.deliveryCharges += Math.floor(parseFloat(val) * 100) / 100;
 				});
 				value.ShippingAddress.deliveryDate = value.xp.deliveryDate;
 				value.ShippingAddress.lineID = value.ID;
 				value.ShippingAddress.DeliveryMethod = value.xp.DeliveryMethod;
+				value.ShippingAddress.deliveryFeesDtls = value.xp.deliveryFeesDtls;
 				value.xp.ProductImageUrl = value.xp.ProductImageUrl;
 				if(value.xp.deliveryFeesDtls)
 					value.ShippingAddress.deliveryPresent = true;
@@ -2551,12 +2590,36 @@ function buildOrderSummaryController($scope, $state, ocscope, buyerid, $cookieSt
 			vm.TotalCost[n] = 0;
 			vm.TotalTax[n] = 0;
 			var totalcost = 0;
+			data[n][0].TempDeliveryCharges = 0;
+			data[n][0].TempCharges = {};
+			data[n][0].TempChargesTypeCount = {};
 			_.each(data[n], function(val,index){
 				vm.TotalCost[n] += val.xp.deliveryCharges+val.xp.Tax+val.LineTotal;
 				vm.TotalTax[n] += Math.floor(parseFloat(val.xp.Tax) * 100) / 100;
 				if(val.xp.deliveryFeesDtls){
-					data[n] = _.reject(data[n], val);
-					data[n].unshift(val);
+					//data[n] = _.reject(data[n], val);
+					//data[n].unshift(val);
+					//data[n][0].xp.deliveryFeesDtls = 
+					angular.forEach(val.xp.deliveryFeesDtls, function(val1, key1){
+						data[n][0].TempDeliveryCharges += parseFloat(val1);
+						if(!data[n][0].TempCharges[key1]){
+							data[n][0].TempCharges[key1] = 0;
+							data[n][0].TempChargesTypeCount[key1+'Count'] = 0;
+						}
+						data[n][0].TempCharges[key1] += Math.floor(parseFloat(val1) * 100) / 100;;
+						data[n][0].TempChargesTypeCount[key1+'Count'] += 1;
+						//if(index != 0){
+							//data[n][index].xp.deliveryFeesDtls[key1] = Math.floor(parseFloat(data[n][index].xp.deliveryFeesDtls[key1])* 100) / 100;
+							//if(data[n][index].xp.deliveryFeesDtls[key1])
+								//data[n][index].xp.deliveryFeesDtls[key1] = Math.floor(parseFloat(data[n][index].xp.deliveryFeesDtls[key1])* 100) / 100;
+							//data[n][0].xp.deliveryFeesDtls[key1] = Math.floor(parseFloat(data[n][index].xp.deliveryFeesDtls[key1])* 100) / 100;
+							//if(!data[n][0].xp.deliveryFeesDtls[key1])
+								//data[n][0].xp.deliveryFeesDtls[key1] = 0;
+								//data[n][0].xp.deliveryFeesDtls[key1] = Math.floor(data[n][0].xp.deliveryFeesDtls[key1] * 100) / 100;
+							//if(data[n][0].ID != val.ID)
+								//data[n][0].xp.deliveryFeesDtls[key1] += Math.floor(parseFloat(val1) * 100) / 100;
+						//}	
+					}, true);
 				}
 			});
 			data[n][0].TotalCost = vm.TotalCost[n];
@@ -2602,11 +2665,15 @@ function buildOrderSummaryController($scope, $state, ocscope, buyerid, $cookieSt
 	vm.lineDtlsSubmit = function(recipient, index){
 		var deliverySum = 0, TempArr = [];
 		angular.forEach(recipient, function(val, key){
-			angular.forEach(val.xp.deliveryFeesDtls, function(val1, key1){
-				deliverySum += Math.floor(parseFloat(val1) * 100) / 100;;
+			angular.forEach(val.xp.deliveryFeesDtls, function(val1, key1){//Divide delivery charges if edited...
+				var amt = recipient[0].TempCharges[key1]/recipient[0].TempChargesTypeCount[key1+'Count'];
+				val.xp.deliveryFeesDtls[key1] = amt;
+				val1 = amt;
+				deliverySum += Math.floor(parseFloat(val1) * 100) / 100;
 			});
 			delete val.xp.Discount;
 			val.ShipFromAddressID = "testShipFrom";
+			val.ShippingAddress = recipient[0].ShippingAddress;
 			TempArr.push(OrderCloud.LineItems.Update(vm.order.ID, val.ID, val));
 		}, true);
 		vm.OrderSummaryLoader = $q.all(TempArr).then(function(result){
@@ -2619,11 +2686,13 @@ function buildOrderSummaryController($scope, $state, ocscope, buyerid, $cookieSt
 					TempArr = [];
 					angular.forEach(res3.ResponseBody.TaxLines, function(val, key){
 						var row = _.findWhere(result2, {ID: val.LineNo});
-						row.xp.deliveryCharges = 0;
-						_.filter(row.xp.deliveryFeesDtls, function(val){
-							row.xp.deliveryCharges += Math.floor(parseFloat(val) * 100) / 100;;
-						});
-						TempArr.push(OrderCloud.LineItems.Patch(vm.order.ID, val.LineNo, {"xp":{"Tax":val.Tax, "TotalCost":row.xp.deliveryCharges+row.LineTotal+val.Tax}}));
+						if(row){
+							row.xp.deliveryCharges = 0;
+							_.filter(row.xp.deliveryFeesDtls, function(val){
+								row.xp.deliveryCharges += Math.floor(parseFloat(val) * 100) / 100;
+							});
+							TempArr.push(OrderCloud.LineItems.Patch(vm.order.ID, val.LineNo, {"xp":{"Tax":val.Tax, "TotalCost":Math.floor((row.xp.deliveryCharges+row.LineTotal+val.Tax) * 100) / 100}}));
+						}	
 					}, true);
 					vm.OrderSummaryLoader = $q.all(TempArr).then(function(res4){
 						var temp = {"Items":res4};
@@ -2655,6 +2724,10 @@ function buildOrderSummaryController($scope, $state, ocscope, buyerid, $cookieSt
 	vm.SelectedCity = function(city, line){
 		line[0].ShippingAddress.City = city;
 		vm.GetDeliveryFees(line, 0);
+	};
+	vm.CheckDeliveryEmpty = function(data){
+		if(!_.isEmpty(data))
+			return true;
 	};
 }
 
@@ -2854,7 +2927,7 @@ function BuildOrderService( $q, $window, $stateParams, ocscope, buyerid, OrderCl
 	}
 	function _GetHosChurchFuneral(type){
 		var d = $q.defer();
-		OrderCloud.Addresses.List(null,null,null,null,null,{"ID":type+"-*"}).then(function(res){
+		OrderCloud.Addresses.List(null,1, 100,null,null,{"ID":type+"-*"}).then(function(res){
 			var dtls = _.pluck(res.Items, 'CompanyName');
 			d.resolve({"data": {"Names": dtls, "List": res.Items}});
 		});
@@ -3104,18 +3177,6 @@ function BuildOrderService( $q, $window, $stateParams, ocscope, buyerid, OrderCl
 	function _deliveryFeesService(line, form, vm, CstDateTime){
 		var validatedAddress, zip, obj = {}, dlvryMethods, d = $q.defer(), dt, IsLocal;
 		vm.NoDeliveryFees = false;
-		angular.forEach(vm.AvoidMultipleDelryChrgs, function(val, key){
-			val.deliveryDate = new Date(val.deliveryDate);
-			var dt2, dt1;
-			dt1 = (("0" + (val.deliveryDate.getMonth()+1)).slice(-2))+"-"+(("0" + val.deliveryDate.getDate()).slice(-2))+"-"+val.deliveryDate.getFullYear();
-			if(line.xp.deliveryDate){
-				line.xp.deliveryDate = new Date(line.xp.deliveryDate);
-				dt2 = (("0" + (line.xp.deliveryDate.getMonth()+1)).slice(-2))+"-"+(("0" + line.xp.deliveryDate.getDate()).slice(-2))+"-"+line.xp.deliveryDate.getFullYear();
-			}
-			if(dt1 == dt2 && val.FirstName == line.ShippingAddress.FirstName && val.LastName == line.ShippingAddress.LastName && val.Zip == line.ShippingAddress.Zip && (val.Street1).split(/(\d+)/g)[1] == (line.ShippingAddress.Street1).split(/(\d+)/g)[1] && val.lineID != line.ID && val.DeliveryMethod == line.xp.DeliveryMethod){
-				vm.NoDeliveryFees = true;
-			}
-		}, true);
 		if(line.ShippingAddress.Zip){
 			if((line.ShippingAddress.Zip.toString()).length == 5){
 				$http.get(GoogleAPI+line.ShippingAddress.Zip).then(function(res){
@@ -3151,7 +3212,7 @@ function BuildOrderService( $q, $window, $stateParams, ocscope, buyerid, OrderCl
 					line.ShippingAddress.State = validatedAddress.Region;
 					line.ShippingAddress.Country = validatedAddress.Country;
 					IsLocal =  _.contains(["Minneapolis", "Saint Paul", "Medina", "Anoka", "Centerville", "Stillwater", "Grant"], line.ShippingAddress.City);
-					if(line.xp.DeliveryMethod!="Courier" && line.xp.DeliveryMethod!="Faster"){
+					if(line.xp.DeliveryMethod!="Courier"){
 						delete line.xp.DeliveryMethod;
 						if(!line.xp.DeliveryMethod){
 							if(IsLocal){
@@ -3168,7 +3229,7 @@ function BuildOrderService( $q, $window, $stateParams, ocscope, buyerid, OrderCl
 								delete line.xp.Destination;
 								line.xp.Status = null;
 								line.DeliveryNotAvailable = false;
-								if(line.xp.DeliveryMethod=="LocalDelivery" || line.xp.DeliveryMethod=="Faster"){
+								if(line.xp.DeliveryMethod=="LocalDelivery"){
 									obj['Standard Delivery'] = vm.buyerXp.Shippers.LocalDelivery.StandardDeliveryFees;
 									if(line.Quantity >= 50){
 										if(line.Product.xp.Handling)
@@ -3182,7 +3243,8 @@ function BuildOrderService( $q, $window, $stateParams, ocscope, buyerid, OrderCl
 										var lineDt = new Date(angular.copy(line.xp.deliveryDate));
 										lineDt = lineDt.getMonth()+1 +'/'+ lineDt.getDate() +'/'+ lineDt.getFullYear();
 										
-										if(dlvryMethods.Faster && ((new Date(CstDateTime).getHours() < 10 && CstToday == lineDt) || lineDt == CstTom)){
+										if(dlvryMethods.Faster && ((new Date(CstDateTime).getHours() < 10 && CstToday == lineDt) || new Date(lineDt) >= new Date(CstTom))){
+											//line.xp.DeliveryMethod = "Faster";
 											if(IsLocal)
 												obj['Service Fees'] = vm.buyerXp.AdditionalCharges.ServiceFees;
 											else
@@ -3208,7 +3270,7 @@ function BuildOrderService( $q, $window, $stateParams, ocscope, buyerid, OrderCl
 										obj['Placement Charges'] = line.xp.deliveryFeesDtls['Placement Charges'];
 								}
 								dt = angular.copy(new Date(CstDateTime)).setHours(0, 0, 0, 0);
-								if(angular.copy(new Date(CstDateTime)).getHours() < 10 && dt == new Date(line.deliveryDate) && (line.xp.DeliveryMethod=="LocalDelivery" || line.xp.DeliveryMethod=="Faster")){
+								if(angular.copy(new Date(CstDateTime)).getHours() < 10 && dt == new Date(line.deliveryDate) && (line.xp.DeliveryMethod=="LocalDelivery")){
 									obj['Same Day Delivery'] = vm.buyerXp.Shippers.LocalDelivery.StandardDeliveryFees;
 									if(line.xp.addressType == "Funeral" || line.xp.addressType == "Church"){
 										if(vm.buyerXp.Shippers.LocalDelivery.StandardDeliveryFees > 0){
@@ -3222,37 +3284,51 @@ function BuildOrderService( $q, $window, $stateParams, ocscope, buyerid, OrderCl
 								line.xp.deliveryFeesDtls = obj;
 								line.xp.TotalCost = 0;
 								line.xp.deliveryCharges = 0;
-								angular.forEach(line.xp.deliveryFeesDtls, function(val, key){
-									line.xp.deliveryCharges += Math.floor(parseFloat(val) * 100) / 100;;
+								angular.forEach(vm.AvoidMultipleDelryChrgs, function(val, key){
+									val.deliveryDate = new Date(val.deliveryDate);
+									var dt2, dt1;
+									dt1 = (("0" + (val.deliveryDate.getMonth()+1)).slice(-2))+"-"+(("0" + val.deliveryDate.getDate()).slice(-2))+"-"+val.deliveryDate.getFullYear();
+									if(line.xp.deliveryDate){
+										line.xp.deliveryDate = new Date(line.xp.deliveryDate);
+										dt2 = (("0" + (line.xp.deliveryDate.getMonth()+1)).slice(-2))+"-"+(("0" + line.xp.deliveryDate.getDate()).slice(-2))+"-"+line.xp.deliveryDate.getFullYear();
+									}
+									if(dt1 == dt2 && val.FirstName == line.ShippingAddress.FirstName && val.LastName == line.ShippingAddress.LastName && val.Zip == line.ShippingAddress.Zip && (val.Street1).split(/(\d+)/g)[1] == (line.ShippingAddress.Street1).split(/(\d+)/g)[1] && val.lineID != line.ID && val.DeliveryMethod == line.xp.DeliveryMethod && val.deliveryFeesDtls['Standard Delivery']){
+										vm.NoDeliveryFees = true;
+									}
 								}, true);
 								if(vm.NoDeliveryFees == true || line.xp.addressType=="InStorePickUp"){
-									if(line.xp.deliveryFeesDtls['Placement Charges']){
-										line.xp.deliveryFeesDtls = {"Placement Charges": line.xp.deliveryFeesDtls['Placement Charges']};
-										line.xp.deliveryCharges = line.xp.deliveryFeesDtls['Placement Charges'];
-										line.xp.TotalCost = parseInt(line.xp.deliveryFeesDtls['Placement Charges']);
-									}else{
+									delete line.xp.deliveryFeesDtls['Standard Delivery'];
+									delete line.xp.deliveryFeesDtls['Courier Charges'];
+									if(_.keys(line.xp.deliveryFeesDtls).length == 0){
 										delete line.xp.deliveryFeesDtls;
 										line.xp.deliveryCharges = 0;
 									}
+									angular.forEach(line.xp.deliveryFeesDtls, function(val, key){
+										line.xp.deliveryCharges += Math.floor(parseFloat(val) * 100) / 100;
+									}, true);
 									if(line.xp.Tax)
-										line.xp.TotalCost = line.xp.TotalCost + line.xp.Tax + (line.Quantity * line.UnitPrice);
+										line.xp.TotalCost = line.xp.deliveryCharges + line.xp.TotalCost + line.xp.Tax + (line.Quantity * line.UnitPrice);
 									else
-										line.xp.TotalCost = line.xp.TotalCost + line.Quantity * line.UnitPrice;
+										line.xp.TotalCost = line.xp.deliveryCharges + line.xp.TotalCost + (line.Quantity * line.UnitPrice);
 								}else{
+									angular.forEach(line.xp.deliveryFeesDtls, function(val, key){
+										line.xp.deliveryCharges += Math.floor(parseFloat(val) * 100) / 100;
+									}, true);
 									line.xp.TotalCost = line.xp.deliveryCharges + (line.Quantity * line.UnitPrice);
 									if(line.xp.Tax)
 										line.xp.TotalCost = line.xp.TotalCost + line.xp.Tax;
 								}
-								//vm.AvoidMultipleDelryChrgs = [];
-								vm.AvoidMultipleDelryChrgs = _.without(vm.AvoidMultipleDelryChrgs, _.findWhere(vm.AvoidMultipleDelryChrgs, {lineID: line.ShippingAddress.lineID}));
-								vm.lineItemProducts = [];
+								vm.AvoidMultipleDelryChrgs = [];
+								//vm.AvoidMultipleDelryChrgs = _.without(vm.AvoidMultipleDelryChrgs, _.findWhere(vm.AvoidMultipleDelryChrgs, {lineID: line.ShippingAddress.lineID}));
+								//vm.lineItemProducts = [];
 								angular.forEach(vm.activeOrders,function(val1, key1){
-									vm.lineItemProducts.push(key1);
+									//vm.lineItemProducts.push(key1);
 									angular.forEach(vm.activeOrders[key1],function(val, key){
 										if(val.ShippingAddress && val.xp.deliveryFeesDtls){
 											val.ShippingAddress.deliveryDate = val.xp.deliveryDate;
 											val.ShippingAddress.lineID = val.ID;
 											val.ShippingAddress.DeliveryMethod = val.xp.DeliveryMethod;
+											val.ShippingAddress.deliveryFeesDtls = val.xp.deliveryFeesDtls;
 											vm.AvoidMultipleDelryChrgs.push(val.ShippingAddress);
 										}
 									}, true);
@@ -3296,6 +3372,10 @@ function BuildOrderService( $q, $window, $stateParams, ocscope, buyerid, OrderCl
 									line.xp.Status = null;
 									line.DeliveryNotAvailable = true;
 								}
+								if(line.xp.Tax)
+									line.xp.TotalCost = line.xp.deliveryCharges + line.xp.Tax + (line.Quantity * line.UnitPrice);
+								else
+									line.xp.TotalCost = line.xp.deliveryCharges + (line.Quantity * line.UnitPrice);
 								d.resolve();
 							}
 						});

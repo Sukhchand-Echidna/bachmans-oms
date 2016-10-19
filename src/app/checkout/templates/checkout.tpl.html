@@ -132,28 +132,28 @@
 										</label>
 										<div ng-if="line.xp.addressType!='InStorePickUp'">
 											<p class="check-top">Delivery Date <span class="star">*</span></p>
-											<p class="modify" ng-init="checkout.deliveryAdj(line)" ng-if="line.xp.deliveryFeesDtls">
+											<p class="modify" ng-init="checkout.deliveryAdj(line)" ng-show="checkout.CheckDeliveryEmpty(line.TempCharges)">
 												<span>
 													<a tabindex="0" popover-trigger="none" popover-is-open="showDeliveryToolTip" ng-click="showDeliveryToolTip = !showDeliveryToolTip" uib-popover-template="checkout.modifyDeliveryPopover.templateUrl">Modify Delivery</a>
 												</span>
 											</p>
-												<script type="text/ng-template" id="modifyDeliveryTemplate.html">
-													<div class="modify-tooltip check-top" click-outside="checkout.closePopover()">
-														<div>
-															<p>Delivery Fees</p>
-															<div ng-repeat="(key, val) in line.xp.deliveryFeesDtls" class="delivery-handling">
-																<h5>{{key}} <b ng-if="key=='ServiceFee' && line.xp.DeliveryMethod=='Mixed'"> (50+ Items)</b></h5>
-																<input type="text" value="{{val}}" ng-model="line.xp.deliveryFeesDtls[key]" />
-															</div>
-															
+											<script type="text/ng-template" id="modifyDeliveryTemplate.html">
+												<div class="modify-tooltip check-top" click-outside="checkout.closePopover()">
+													<div>
+														<p>Delivery Fees</p>
+														<div ng-repeat="(key, val) in line.TempCharges" class="delivery-handling">
+															<h5>{{key}} <b ng-if="key=='Service Fees'"> (50+ Items)</b></h5>
+															<input type="text" value="{{val}}" ng-model="line.TempCharges[key]" />
 														</div>
-														<div>
-															<p>Reason For Adjustment</p>
-															<select ng-options="reason for reason in checkout.buyerDtls.xp.deliveryChargeAdjReasons" ng-model="line.xp.deliveryChargeAdjReason">
-															</select>
-														</div>
+														
 													</div>
-												</script>
+													<div>
+														<p>Reason For Adjustment</p>
+														<select ng-options="reason for reason in checkout.buyerDtls.xp.deliveryChargeAdjReasons" ng-model="line.xp.deliveryChargeAdjReason">
+														</select>
+													</div>
+												</div>
+											</script>
 											<ul class="delivery-days-info">
 											   <li ng-click="checkout.dateSelect('dt',line,$index)" ng-class="{active:checkout.data{{$index}} == 'dt{{$index}}'}" class="delivery-days1">
 													<p class="delivery-header">Deliver Today</p>

@@ -3,7 +3,7 @@
 			<div ng-if="buildOrderRight.lineItemProducts.length == 0 || buildOrderRight.lineItemProducts.length == null " class="no-items">
 				<p>There are currently no items in your order.</p>
 		   </div>
-			<div ng-repeat="line in buildOrderRight.lineItemProducts track by $index">
+			<div ng-repeat="line in buildOrderRight.lineItemProducts track by line">
 				<div class="pdt_name">
 				 <h2>{{buildOrderRight.activeOrders[line][0].Product.Name}}</h2>
 					<div class="prod-variants-del">
@@ -210,7 +210,7 @@
 				</div>
 				<div class="receipient-details">
 					<uib-accordion close-others="oneAtATime">
-					<uib-accordion-group ng-repeat="lineitem in buildOrderRight.activeOrders[line] track by $index" is-open="buildOrderRight.isOpen[lineitem.ID]">
+					<uib-accordion-group ng-repeat="lineitem in buildOrderRight.activeOrders[line] track by lineitem.ID" is-open="buildOrderRight.isOpen[lineitem.ID]">
 						<form role="form" class="lineItemForm" id="lineItemForm_{{lineitem.ID}}" name="buildOrderRight.lineItemForm[lineitem.ID]" disable-dynamic-validation>
 							<uib-accordion-heading>
 								<svg class="close" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
