@@ -13,11 +13,14 @@ function HomeConfig( $stateProvider ) {
 			data: {
 				loadingMessage: 'Loading...'
 			},
+			params: { 
+               event: null
+            },
 			controller: 'HomeCtrl',
 			controllerAs: 'home',
 			resolve: {
 				PromotionsList:function(OrderCloud, $q, Underscore){
-					return OrderCloud.Promotions.List(null,1, 100).then(function(promo){
+					return OrderCloud.Promotions.List(null,1, 100, null, null, {"xp.Active":true}).then(function(promo){
 					var totalCount = promo.Meta.TotalCount;
 						var result=_.sortBy(promo.Items, function(data){ return data.xp.DateCreated; });
 						return [result.reverse(), totalCount];
@@ -27,7 +30,7 @@ function HomeConfig( $stateProvider ) {
 		});
 }
 
-function HomeController($sce, $rootScope, $state, $compile, $uibModal,$log, Underscore, $scope, OrderCloud,$q, PromotionsList,$filter) {
+function HomeController($sce, $rootScope, $state, $compile, $uibModal,$log, $stateParams, Underscore, $scope, OrderCloud,$q, $http, PromotionsList,$filter) {
 	var vm = this;
 	vm.showcalendarModal = false;
 	vm.showpromotionsmodal = false;
@@ -39,7 +42,9 @@ function HomeController($sce, $rootScope, $state, $compile, $uibModal,$log, Unde
 	OrderCloud.Auth.RemoveImpersonationToken();
 	//$scope.events=[];
     //$scope.events = EventList.events;
-	vm.promotionsList=PromotionsList[0];
+	vm.promoList=[];
+	vm.promotionsList=PromotionsList;
+	angular.copy(vm.promotionsList, vm.promoList);
 	//console.log("dataaaaaaaaaa", $scope.events);
 	var log = [];
 	$scope.dateFormat="MM/dd/yyyy";
@@ -74,16 +79,24 @@ function HomeController($sce, $rootScope, $state, $compile, $uibModal,$log, Unde
 						if(!res3.xp)
 							res3.xp = {};
 						if(!res2.xp)
-							res2.xp = {};	
-						onholdorders.push({"ID":res.ID,"DeliveryDate":res3.xp.deliveryDate,"RecipientName":res3.ShippingAddress.FirstName+" "+res3.ShippingAddress.LastName,"OrderID":res1.OrderID,"LineItemID":res1.LineItemID,"DateCreated":res2.DateCreated,"FromUserFirstName":res2.FromUserFirstName,"Destination":res3.xp.addressType,"WireStatusCode":res3.xp.WireService,"CSRID":res2.xp.CSRID});
+							res2.xp = {};
+						if(res3.ShippingAddress==null){
+							res3.ShippingAddress={};
+							res3.ShippingAddress.FirstName='';
+							res3.ShippingAddress.LastName='';
+						}
+						if(res3.xp.Destination==null)
+							res3.xp.Destination='';
+						onholdorders.push({"ID":res.ID,"DeliveryDate":res3.xp.deliveryDate,"FromUserID":res2.FromUserID,"RecipientName":res3.ShippingAddress.FirstName+" "+res3.ShippingAddress.LastName,"OrderID":res1.OrderID,"LineItemID":res1.LineItemID,"DatePlaced":res2.DateSubmitted,"FromUserFirstName":res2.FromUserFirstName,"Destination":res3.xp.addressType,"WireStatusCode":res3.xp.Destination,"CSRID":res2.xp.CSRID});
 					})
 				})
 				//onholdorders.push(OrderCloud.Orders.Get(res1.OrderID));
 			},true);
 		},true);
 		vm.onHold = onholdorders;
+		console.log(vm.onHold);
 	});
-	console.log(vm.onHold);
+	
 	$scope.gridOptions = {
 	  data: 'home.onHold',
 	  enableSorting: true,
@@ -96,7 +109,7 @@ function HomeController($sce, $rootScope, $state, $compile, $uibModal,$log, Unde
 	   { name: 'Destination', displayName:'Destination',width:"11.11%"},
 	   { name: 'WireStatusCode', displayName:'Wire Status Code',width:"11.11%"},
 	   { name: 'CSRID', displayName:'CSR ID',width:"11.11%"},
-	   { name: 'ShippingCost', displayName:'', cellTemplate: '<div class="data_cell" ui-sref="hold({ID:row.entity.ID,LineItemID:row.entity.LineItemID,OrderID:row.entity.OrderID})"><a> <i class="fa fa-upload"></i> Open Order</a></div>', width:"11.11%"}
+	   { name: 'ShippingCost', displayName:'', cellTemplate: '<div class="data_cell" ng-click="grid.appScope.home.onholdfunc(row.entity)"><a> <i class="fa fa-upload"></i> Open Order</a></div>', width:"11.11%"}
 	  ]
 	 };
 	//vm.saved = OrderList.saved;
@@ -116,6 +129,16 @@ function HomeController($sce, $rootScope, $state, $compile, $uibModal,$log, Unde
 	  ]
 	};
 
+	vm.onholdfunc=function(data){
+		console.log(data);
+		if(data.WireStatusCode==''){
+			$state.go('buildOrder',{ID:data.FromUserID,SearchType:'User',orderID:data.OrderID});
+		}
+		else{
+			$state.go('hold',{ID:data.ID,LineItemID:data.LineItemID,OrderID:data.OrderID});
+		}
+		//ui-sref="hold({ID:row.entity.ID,LineItemID:row.entity.LineItemID,OrderID:row.entity.OrderID})";
+	}
 	$scope.$watch(angular.bind(this, function () {
         return this.searchText;
     }), function (newVal, oldVal) {
@@ -234,7 +257,7 @@ function HomeController($sce, $rootScope, $state, $compile, $uibModal,$log, Unde
 					// vm.showcalendarModal = !vm.showcalendarModal;
 			// });
 	// });
-		OrderCloud.Products.List(null,null,null,null,null,{"xp.IsDefaultProduct":true}).then(function(defaultprod){
+		OrderCloud.Products.List(null,1,100,null,null,{"xp.IsDefaultProduct":true, "xp.IsWorkShopEvent":true}).then(function(defaultprod){
 			console.log("defaultprod", defaultprod);
 				angular.forEach(defaultprod.Items, function(data, key){
 					if(!_.isEmpty(data.xp)){
@@ -254,6 +277,8 @@ function HomeController($sce, $rootScope, $state, $compile, $uibModal,$log, Unde
 			if(count==defaultprod.Items.length){
 				dfr.resolve(events);
 			}
+		}).catch(function(err){
+			console.log("Products API error......");
 		});
 		return dfr.promise;
 	}
@@ -261,16 +286,25 @@ function HomeController($sce, $rootScope, $state, $compile, $uibModal,$log, Unde
 		vm.page = 1;
 		vm.showpromotionsmodal = !vm.showpromotionsmodal;
 	}
-	  	$scope.totalItems = PromotionsList[1];
+		$scope.totalItems = vm.promoList[1];
 		$scope.currentPage = 1;
-		$scope.itemsPerPage = 10;
+		$scope.itemsPerPage = 100;
+		 $scope.maxSize = 5;
     vm.setPagingData=function(page) {
-		vm.page=page;
-       }
+		OrderCloud.Promotions.List(null,page, 100, null, null, {"xp.Active":true}).then(function(promo){
+			vm.promoList[0]=[];
+			vm.promoList[0]=_.union(vm.promoList[0], promo.Items);
+			vm.page=page;
+		});
+    }
+	if($stateParams.event!=null){
+        $scope.saveCalendar();
+	}
+
 	}
 
 
-function eventCalenderModalController($scope , $http, events, $state, $uibModalInstance,$compile,uiCalendarConfig){
+function eventCalenderModalController($scope , $http, events, $state, $uibModalInstance,$compile, $stateParams, uiCalendarConfig){
      $scope.events=[] 
      $scope.events = events;
  
@@ -303,13 +337,23 @@ function eventCalenderModalController($scope , $http, events, $state, $uibModalI
                      'tooltip-append-to-body': true});
         $compile(element)($scope);
     };
-	
-	 $scope.eventsF = function (start, end, timezone, callback) {
-      var s = new Date(start).getTime() / 1000;
-      var e = new Date(end).getTime() / 1000;
-      var m = new Date(start).getMonth();
-      var events = [{title: 'Feed Me ' + m,start: s + (50000),end: s + (100000),allDay: false, className: ['customFeed']}];
-      callback(events);
+	if($stateParams.event!=''){
+        var date=$stateParams.event;
+	}
+    else{
+		var today = new Date();
+		var dd = today.getDate();
+		var mm = today.getMonth()+1; //January is 0!
+		var yyyy = today.getFullYear();
+		today = yyyy+'-'+mm+'-'+dd; 
+		var date=today;
+    }
+		$scope.eventsF = function (start, end, timezone, callback) {
+		var s = new Date(start).getTime() / 1000;
+		var e = new Date(end).getTime() / 1000;
+		var m = new Date(start).getMonth();
+		var events = [{title: 'Feed Me ' + m,start: s + (50000),end: s + (100000),allDay: false, className: ['customFeed']}];
+		callback(events);
     };
     /* config object */
     $scope.uiConfig = {
@@ -322,6 +366,7 @@ function eventCalenderModalController($scope , $http, events, $state, $uibModalI
 			  right: 'next',
 			  buttonIcons: false
 			},
+			defaultDate:date,
 			//dayClick: $scope.dayClick,
 			eventClick: $scope.eventClick,
 			eventRender: $scope.eventRender,
@@ -336,6 +381,7 @@ function eventCalenderModalController($scope , $http, events, $state, $uibModalI
 
     /* event sources array*/
 	$scope.eventSources = [$scope.events];
+	$stateParams.event='';
 }
 /*
 function HomeService( $q, $http, alfrescoURL) {

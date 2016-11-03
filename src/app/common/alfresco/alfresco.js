@@ -2,7 +2,7 @@ angular.module('orderCloud')
     .factory('Alfresco', Alfresco)
 ;
 
-function Alfresco($q, $http, urls) {
+function Alfresco($q, $http, urls, alfrescoServiceUrl) {
     var service = {
         GetListOfImages: _getListOfImages,
         Search: _search,
@@ -32,6 +32,7 @@ function Alfresco($q, $http, urls) {
             data: params
         }).then(function successCallback(response) {
             deffer.resolve(response);
+			console.log("response", response);
         }, function errorCallback(response) {
             deffer.reject(response);
         });
@@ -46,7 +47,7 @@ function Alfresco($q, $http, urls) {
     };
 
     function _searchAlfresco(params) {
-        var url = urls.alfrescoServiceUrl + uri[params.GetItems] + "?t=" + params.searchTerm +
+        var url = alfrescoServiceUrl + uri[params.GetItems] + "?t=" + params.searchTerm +
             "&maxResults=" + params.pageSize + "&startIndex=" + params.page + "&alf_ticket=" + alfrescoToken;
         ;
         return makeAPICall('GET', url, params);
@@ -56,13 +57,15 @@ function Alfresco($q, $http, urls) {
         params = {
             GetItems:params.GetItems,
             facetFields: "cm:creator,cm:content.mimetype",
-            filters: "cm:creator|admin,cm:content.mimetype|image/jpeg",
+            //filters: "cm:creator|admin,cm:content.mimetype|image/jpeg",
+			filters: "cm:content.mimetype|image/jpeg",
             term: params.searchTerm,
             tag: "",
             startIndex: 0,
             sort: "",
             site: "",
-            rootNode: "workspace://SpacesStore/8da76ddf-f808-4390-aa3e-1f2c39fc8d90",
+            //rootNode: "workspace://SpacesStore/8da76ddf-f808-4390-aa3e-1f2c39fc8d90",
+            rootNode: params.rootNode,
             repo: "",
             query: "",
             pageSize: 100,
@@ -70,7 +73,8 @@ function Alfresco($q, $http, urls) {
             spellcheck: true,
             repo:true
         }
-        var url = urls.alfrescoServiceUrl + uri[params.GetItems] + "?facetFields=" + params.facetFields +
+		var alfrescoToken = localStorage.getItem("alfrescoTicket");
+        var url = alfrescoServiceUrl + uri[params.GetItems] + "?facetFields=" + params.facetFields +
             "&filters=" + params.filters + "&term=" + params.term + "&tag=" + params.tag +
             "&startIndex=" + params.startIndex + "&sort=" + params.sort +
             "&site=" + params.site + "&rootNode=" + params.rootNode + "&repo=" + params.repo +

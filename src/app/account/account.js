@@ -21,7 +21,17 @@ function AccountConfig( $stateProvider ) {
 			url: '/account/changepassword',
 			templateUrl: 'account/templates/changePassword.tpl.html',
 			controller: 'ChangePasswordCtrl',
-			controllerAs: 'changePassword'
+			controllerAs: 'changePassword',
+			resolve: {
+				CurrentUser: function($q, $state, $stateParams, OrderCloud){
+					var d = $q.defer();
+					OrderCloud.Me.Get().then(function(res){
+						console.log(res);
+						d.resolve(res);
+					})
+					return d.promise;
+				}
+			}
 		})
 }
 
@@ -78,8 +88,10 @@ function AccountService( $q, $uibModal, OrderCloud ) {
 
 		function changePassword() {
 			currentUser.Password = currentUser.NewPassword;
-			OrderCloud.Me.Update(currentUser)
-				.then(function() {
+			var pass={"Password":currentUser.Password};
+			OrderCloud.AdminUsers.Patch(currentUser.ID,pass)
+				.then(function(res) {
+					console.log(res);
 					deferred.resolve();
 				});
 		}
@@ -144,7 +156,7 @@ function ChangePasswordController( $state, $exceptionHandler, AccountService, Cu
 				vm.currentUser.CurrentPassword = null;
 				vm.currentUser.NewPassword = null;
 				vm.currentUser.ConfirmPassword = null;
-				$state.go('account');
+				$state.go('account.changePassword');
 			})
 			.catch(function(ex) {
 				$exceptionHandler(ex)

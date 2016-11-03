@@ -235,8 +235,15 @@ function ordercloudSearchCtrl($state, $timeout, $scope, TrackSearch, OrderCloud,
 		else
 			$scope.controlleras.list="";
 	}
+	if($scope.servicename=='products' && $scope.attribute=='buildorder-search'){
+		var noOfHits=50;
+	}
+	else{
+		var noOfHits=1000;
+	}
 	if($scope.servicename!='address'){
-		var client = algolia.Client('31LAEMRXWG', '600b3cc15477fd21c5931d1bfbb36b3d');
+		//var client = algolia.Client('31LAEMRXWG', '600b3cc15477fd21c5931d1bfbb36b3d');
+		var client = algolia.Client('B1FOQ7SZ6T', 'f946a36f8e496d36a7366f0140355575');
 		$scope.index = client.initIndex($scope.servicename);
 		$scope.search = {
 			'query' : '',
@@ -273,7 +280,7 @@ function ordercloudSearchCtrl($state, $timeout, $scope, TrackSearch, OrderCloud,
 				searching = $timeout(function() {
 					n == '' ? n = null : angular.noop();
 					TrackSearch.SetTerm(n);
-			$scope.index.search($scope.search.query, {hitsPerPage: 1000})
+			$scope.index.search($scope.search.query, {hitsPerPage: noOfHits})
 			.then(function searchSuccess(content) {
 				console.log(content);
 				// $scope.SearchResults= function(seqId){
@@ -316,7 +323,9 @@ function ordercloudSearchCtrl($state, $timeout, $scope, TrackSearch, OrderCloud,
 					//})
 					if($scope.search && $scope.search.query){
 						if($scope.search.query.length>2){
-							$scope.controlleras.buildorderSearch=content.hits;
+							var hitsPerPage=50;
+							var totalHits=content.nbPages*hitsPerPage;
+							$scope.controlleras.buildorderSearch=[content.hits, totalHits];
 						}
 					}
 				}

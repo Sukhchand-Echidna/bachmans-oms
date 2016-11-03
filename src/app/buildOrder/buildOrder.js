@@ -84,6 +84,8 @@ angular.module( 'orderCloud' )
 				});
 			}
 		}
+	}).run(function($cookieStore){
+		//$cookieStore.put('OnLoadOMS', true);
 	});
 var impersonation = {
 	"ClientID": "8836BE8D-710A-4D2D-98BF-EDBE7227E3BB",
@@ -93,7 +95,7 @@ function buildOrderConfig( $stateProvider ) {
 	$stateProvider
 	.state( 'buildOrder', {
 		parent: 'base',
-		url: '/buildOrder/:SearchType/:ID/:prodID/:orderID/:orderDetails/:catName',
+		url: '/buildOrder/:SearchType/:ID/:prodID/:orderID/:orderDetails/:catName/:nonOrderClaim/:editsubmitorder',
 		templateUrl:'buildOrder/templates/buildOrder.tpl.html',
 		data: {
             loadingMessage: 'Loading...'
@@ -155,14 +157,19 @@ function buildOrderConfig( $stateProvider ) {
 		resolve: {
 			Order: function($rootScope, $q, $state, toastr, $stateParams, CurrentOrder, OrderCloud) {
 				var d = $q.defer();
-				if($stateParams.SearchType != 'Products' && $stateParams.SearchType != 'BuildOrder' && $stateParams.SearchType != 'PDP' && $stateParams.SearchType != 'plp' && $stateParams.SearchType!='Workshop' && !$stateParams.orderDetails && $stateParams.SearchType != 'elp'){
+				if($stateParams.SearchType != 'Products' && $stateParams.SearchType != 'BuildOrder' && $stateParams.SearchType != 'PDP' && $stateParams.SearchType != 'plp' && $stateParams.SearchType!='Workshop' && !$stateParams.orderDetails && $stateParams.SearchType != 'elp' && $stateParams.SearchType!='GiftCard' && $stateParams.nonOrderClaim!='true' && $stateParams.editsubmitorder!='true'){
+					OrderCloud.Auth.RemoveImpersonationToken();
 					OrderCloud.Users.GetAccessToken($stateParams.ID, impersonation).then(function(data){
 						OrderCloud.Auth.SetImpersonationToken(data['access_token']);
 						OrderCloud.As().Me.ListOutgoingOrders(null, 1, 100, null, null, {"Status":"Unsubmitted"}).then(function(res){
 							var temp = [], temp2 = [], filt = _.filter(res.Items, function(row){
-								if(row.xp.SavedOrder){
-									if(!row.xp.SavedOrder.Flag)
+								if(row.xp != null){
+									if(row.xp.SavedOrder){
+										if(!row.xp.SavedOrder.Flag)
+											temp.push(row);
+									}else{
 										temp.push(row);
+									}
 								}else{
 									temp.push(row);
 								}
@@ -193,19 +200,39 @@ function buildOrderConfig( $stateProvider ) {
 					OrderCloud.Orders.Get($stateParams.orderID).then(function(res){
 						d.resolve(res);
 					});
+				}else if($stateParams.editsubmitorder=='true'){
+					OrderCloud.Orders.Get($stateParams.orderID).then(function(res){
+						var oldval=res.xp;
+						var patchval={"oldPrice":res.Total}
+						var newval= _.extend(oldval,patchval);
+						console.log("newval",newval);
+						OrderCloud.Orders.Patch(res.ID,{"xp":newval}).then(function(patch){
+							console.log(res);
+							d.resolve(res);
+						})
+					});
 				}else{
 					d.resolve();
 				}
 				return d.promise;
 			},
+			LocalDeliveryCities:function(BuildOrderService){
+				BuildOrderService.GetLocalCities().then(function(data){
+					return data;
+				});
+			},
 			SearchData: function($q, $stateParams, $state, OrderCloud, Order) {
 				var arr = {}, d = $q.defer();
 				if($stateParams.SearchType == "User"){
 					OrderCloud.Users.Get($stateParams.ID).then(function(data){
-						console.log(data);
 						arr["user"] = data.FirstName+" "+data.LastName;
-						arr["ID"] =data.ID;
-						arr["Notes"] = data.xp.Notes;
+						arr["ID"] = data.ID;
+						arr["xp"] = data.xp;
+						if(data.xp != null){
+							arr["Notes"] = data.xp.Notes;
+						}else{
+							arr["Notes"] =[];
+						}
 						if(data.xp != null){
 							if(data.xp.ContactAddr && data.xp.ContactAddr!=''){
 								OrderCloud.Addresses.Get(data.xp.ContactAddr).then(function(val){
@@ -232,27 +259,29 @@ function buildOrderConfig( $stateProvider ) {
 				}
 				return d.promise;
 			},
-			ProductImages: function (BuildOrderService, $q){
-				var ticket = localStorage.getItem("alfrescoTicket"), dfr = $q.defer();
-				BuildOrderService.GetProductImages(ticket).then(function(imgList){
-					dfr.resolve(imgList.items);
-				});
-				return dfr.promise;
-			},
-			productList: function (OrderCloud, $stateParams, BuildOrderService, $q, ProductImages) {
-				if($stateParams.SearchType == 'plp' || $stateParams.SearchType == 'Products'|| $stateParams.SearchType == 'BuildOrder' || $stateParams.SearchType =='Workshop' || $stateParams.SearchType =='PDP' || $stateParams.SearchType == 'elp'){
+			// ProductImages: function (BuildOrderService, $q){
+				// var ticket = localStorage.getItem("alfrescoTicket"), dfr = $q.defer();
+				// BuildOrderService.GetProductImages(ticket).then(function(imgList){
+					// dfr.resolve(imgList.items);
+				// });
+				// return dfr.promise;
+			// },
+			productList: function (OrderCloud, $stateParams, BuildOrderService, $q) {
+				if($stateParams.SearchType == 'plp' || $stateParams.SearchType == 'Products'|| $stateParams.SearchType == 'BuildOrder' || $stateParams.SearchType =='Workshop' || $stateParams.SearchType =='PDP' || $stateParams.SearchType == 'elp' || $stateParams.SearchType=='GiftCard'){
 					var dfr = $q.defer();
 					OrderCloud.Users.GetAccessToken('gby8nYybikCZhjMcwVPAiQ', impersonation).then(function(data) {
 						OrderCloud.Auth.SetImpersonationToken(data['access_token']);
 						if($stateParams.SearchType == 'plp' || $stateParams.SearchType == 'Products'){
-							BuildOrderService.GetAlgoliaResults($stateParams.ID).then(function(res){
-						        if(res.hits.length>0){
-									BuildOrderService.GetProductList(res.hits, ProductImages).then(function(catProducts){
-										dfr.resolve(catProducts);
-									});
-						        }
-						        else 
-									dfr.resolve();
+							var hitsPerPage=50;
+							BuildOrderService.GetAlgoliaResults($stateParams.ID, 0, hitsPerPage).then(function(res){
+						        // if(res.hits.length>0){
+									// BuildOrderService.GetProductList(res.hits, ProductImages).then(function(catProducts){
+										// dfr.resolve(catProducts);
+									// });
+						        // }
+						        // else 
+								var totalHits=res.nbPages*hitsPerPage;
+									dfr.resolve([res.hits, totalHits]);
 						    });
 						}
 						else{
@@ -273,7 +302,7 @@ function buildOrderConfig( $stateProvider ) {
 	});
 }
 
-function buildOrderController($scope, $rootScope, $state, buyerid, $controller, $stateParams, ProductList, LineItemHelpers, $q, BuildOrderService, $timeout, OrderCloud, SearchData, algolia, CurrentOrder, alfrescoAccessURL, Underscore, ProductImages, productList, AlfrescoFact, AddressValidationService, GoogleAPI, $http, CstDateTime) {
+function buildOrderController($scope, $rootScope, $state, buyerid, $controller, $stateParams, LineItemHelpers, $q, BuildOrderService, $timeout, OrderCloud, SearchData, algolia, CurrentOrder, alfrescoAccessURL, Underscore, productList, AlfrescoFact,LocalDeliveryCities, AddressValidationService, GoogleAPI, $http, CstDateTime) {
 	var vm = this;
 	vm.upselloverlay=false;
 	vm.selected = undefined;
@@ -281,6 +310,7 @@ function buildOrderController($scope, $rootScope, $state, buyerid, $controller, 
 	if($scope.$parent.base.search){
 		$scope.$parent.base.search.query = ' ';
 	}
+	vm.nonOrderClaim=$stateParams.nonOrderClaim;
 	$scope.$parent.base.selectChange('customer');
 	// $scope.search = {
         // 'query' : '',
@@ -298,10 +328,11 @@ function buildOrderController($scope, $rootScope, $state, buyerid, $controller, 
 		if($scope.showOrdersummary == true){
 			//vm.guestcheckout=true;
 			console.log(angular.element(document.getElementById("order-summary")).scope().$parent.buildordersummary.guestcheckout);
-			if(($stateParams.SearchType == 'Products' || $stateParams.SearchType == 'BuildOrder' || $stateParams.SearchType == 'PDP' || $stateParams.SearchType == 'plp' || $stateParams.SearchType =='elp') && !vm.checkoutpopup){
+			if(($stateParams.SearchType == 'Products' || $stateParams.SearchType == 'BuildOrder' || $stateParams.SearchType == 'PDP' || $stateParams.SearchType == 'plp' || $stateParams.SearchType =='elp' || $stateParams.SearchType=='GiftCard') && !vm.checkoutpopup){
 				vm.guestUserModal =! vm.guestUserModal;
 			}else{
-				$state.go('checkout', {ID:$stateParams.ID}, {reload:true});	
+				//$state.go('checkout', {ID:$stateParams.ID}, {reload:true});	
+				$state.go('checkout', {ID:$stateParams.ID});	
 			}
 		}
 	};
@@ -384,7 +415,7 @@ function buildOrderController($scope, $rootScope, $state, buyerid, $controller, 
 		vm.DirectShip = false;
 		vm.Faster = false;
 		vm.GiftCard = false;
-		if($stateParams.SearchType != 'Products' && $stateParams.SearchType != 'BuildOrder' && $stateParams.SearchType != 'PDP' && $stateParams.SearchType != 'plp' && $stateParams.SearchType!='Workshop' && $stateParams.SearchType !='elp'){
+		if($stateParams.SearchType != 'Products' && $stateParams.SearchType != 'BuildOrder' && $stateParams.SearchType != 'PDP' && $stateParams.SearchType != 'plp' && $stateParams.SearchType!='Workshop' && $stateParams.SearchType !='elp' && $stateParams.SearchType!='GiftCard'){
 			OrderCloud.Categories.ListProductAssignments(null, prodID).then(function(res){
 				OrderCloud.Categories.Get(res.Items[0].CategoryID).then(function(res2){
 					if(res2.xp.DeliveryChargesCatWise.DeliveryMethods.DirectShip){
@@ -393,7 +424,7 @@ function buildOrderController($scope, $rootScope, $state, buyerid, $controller, 
 					if(res2.xp.DeliveryChargesCatWise.DeliveryMethods.Mixed){
 						vm.Faster = true;
 					}
-					if(res2.Name == "Gift Cards"){
+					if(res2.Name == "GiftCards"){
 						vm.GiftCard = true;
 					}
 					if(res2.xp.DeliveryChargesCatWise.DeliveryMethods.Courier == true){
@@ -403,53 +434,56 @@ function buildOrderController($scope, $rootScope, $state, buyerid, $controller, 
 			});
 		}
 	};
-	if($stateParams.SearchType == 'plp' || $stateParams.SearchType == 'PDP' || $stateParams.SearchType == 'BuildOrder' || $stateParams.SearchType!='Workshop' || $stateParams.SearchType !='elp'){
+	if($stateParams.SearchType == 'plp' || $stateParams.SearchType == 'PDP' || $stateParams.SearchType == 'BuildOrder' || $stateParams.SearchType=='Workshop' || $stateParams.SearchType =='elp' || $stateParams.SearchType=='GiftCard'){
 		vm.disable=true;
 	}
 	/*----Upsell Data----*/
 	vm.upsell = true;
 	vm.similar = true;
-	vm.upsellToggle = function(upsell) {
+	vm.upsellToggle = function(upsell, product) {
 		var tempArr = [];
 		vm.upselloverlay=true;
 		vm.upsell = vm.upsell === false ? true: false;
 		vm.similar = true;
-		if(!vm.Categories){
-			OrderCloud.Products.Get("cat2_cat12_prod2").then(function(data) {
+		if(vm.ProdUpsellID != product.ID){
+			vm.CategoryItemsUpsell = {};
+			OrderCloud.Products.Get(product.ID).then(function(data) {
 				var cats = [];
 				vm.Categories = [];
+				vm.ProdUpsellID = product.ID;
 				vm.UpsellDtls = data;
-				_.filter(vm.UpsellDtls.xp.Upsell, function (row) {
-					_.each(row, function( val, key ) {
+				_.filter(vm.UpsellDtls.xp.Upsell, function (row, key) {
+					if(key!="Generic" && row.length > 0)
 						cats.push(key);
-					});
 				});
 				angular.forEach(cats, function(line, index){
-					tempArr.push(OrderCloud.Categories.Get("c1_c9_c1"));
+					tempArr.push(OrderCloud.Categories.Get(line));
 				},true);
 				$q.all(tempArr).then(function(res){
 					angular.forEach(res, function(r){
 						vm.Categories.push({"ID":r.ID, "Name":r.Name});
 					},true);
-					vm.getCategoriesItems(vm.Categories[0].ID, 0);
+					if(vm.Categories[0])
+						vm.getCategoriesItems(vm.Categories[0].ID, 0);
 				});
 			});
-		}
+		}	
 	};
 	
 	vm.CategoryItemsUpsell = {};
 	vm.getCategoriesItems = function(catID, index) {
-		catID = "c1_c1";// dummy
+		//catID = "c1_c1";// dummy
 		vm.CategoryItemsUpsell[index] = [];
 		var upsel, tempArr = [];
-		var catData = _.find(vm.UpsellDtls.xp.Upsell, function (row){
-			if(row[catID]){
-				upsel = row[catID];
+		var catData = _.find(vm.UpsellDtls.xp.Upsell, function (row, key){
+			if(key!="Generic"&& row.length > 0){
+				upsel = row;
 				return true;
 			}
 		});
 		angular.forEach(upsel, function(row){
-			tempArr.push(OrderCloud.Products.Get(row));
+			if(row)
+				tempArr.push(OrderCloud.Products.Get(row));
 		}, true);	
 		$q.all(tempArr).then(function(res1){
 			angular.forEach(res1, function(r){
@@ -467,16 +501,18 @@ function buildOrderController($scope, $rootScope, $state, buyerid, $controller, 
 		});
 	};
 	
-	vm.similarToggle = function(similar) {
+	vm.similarToggle = function(similar, product) {
 		if(similar)
 			vm.similar = vm.similar === false ? true: false;
 		vm.upsell = true;
 		var tempArr = [];
-		if(!vm.CategoryItemsSimilar){
+		if(vm.ProdCrossID != product.ID){
 			vm.CategoryItemsSimilar = [];
-			OrderCloud.Products.Get("cat2_cat12_prod2").then(function(data) {
+			OrderCloud.Products.Get(product.ID).then(function(data) {
+				vm.ProdCrossID = product.ID;
 				angular.forEach(data.xp.Cross, function(row, index){
-					tempArr.push(OrderCloud.Products.Get(row));
+					if(row)
+						tempArr.push(OrderCloud.Products.Get(row));
 				},true);
 				$q.all(tempArr).then(function(res){
 					angular.forEach(res, function(r){
@@ -549,7 +585,7 @@ function buildOrderController($scope, $rootScope, $state, buyerid, $controller, 
 			vm.searchSeqList=vm.seqProducts;
 		}
 	}
-	$scope.AddtoCart = function(prodID, varientsOption){
+	$scope.AddtoCart = function(prodID, isEvent, ProductXp){
 		var DeliveryMethod;
 		if(vm.DeliveryType=="Faster Delivery")
 			DeliveryMethod = "Faster";
@@ -560,7 +596,7 @@ function buildOrderController($scope, $rootScope, $state, buyerid, $controller, 
 			if(val.ID)
 				vm.AddExtraList.push(val.ID);
 		}, true);
-		angular.element(document.getElementById("oms-plp-right")).scope().beforeAddToCart(prodID, DeliveryMethod);
+		angular.element(document.getElementById("oms-plp-right")).scope().beforeAddToCart(prodID, DeliveryMethod, isEvent, ProductXp);
 	};
 	$scope.show = false;
 	$scope.showmenu = false;
@@ -576,16 +612,23 @@ function buildOrderController($scope, $rootScope, $state, buyerid, $controller, 
 	}
 	$scope.oneAtATime = true;
 	$scope.oneAtATimeSub = true;
-	vm.createUser = function(newUser, createaddr, form){
+	vm.createUser = function(newUser, form){
 		form.$submitted = true;
+		vm.guesterror='';
 		if(form.$valid){
-			$scope.showModal = !$scope.showModal;		
-			var newUser={"Username":newUser.Username,"Password":newUser.Password,"FirstName":newUser.FirstName, "LastName":newUser.LastName, "Email":newUser.Email, "Phone":newUser.Phone, "Active":true, "Phone":"("+newUser.Phone1+") "+newUser.Phone2+"-"+newUser.Phone3, "xp":{"Notes":[]}};		
-			OrderCloud.Users.Create(newUser).then(function(user){
+			$scope.showModal = !$scope.showModal;
+		    /*OrderCloud.Users.List(null, null, 1, 100, null, '!ID', { "ID": '30000*' }).then(function (res) {
+		     console.log("shyam == ", res);
+		            var id = Number(res.Items[0].ID) + 1;*/
+			var newUser1={"Username":newUser.Username,"Password":"Welcome@1","FirstName":newUser.FirstName, "LastName":newUser.LastName, "Email":newUser.Email, "Phone":newUser.Phone, "Active":true, "Phone":"("+newUser.Phone1+") "+newUser.Phone2+"-"+newUser.Phone3, "xp":{"Eid":null,"AlternatePhone":null,"ResaleCode":null,"CategoryPlan":null,"LoyaltyID":null,"AcctCode1":null,"AcctCode2":null,"AcctCode3":null,"AcctCode4":null,"OMSAcctNumber":null,"Charge":null,"AvailCredit":null,"Contact":newUser.FirstName+" "+newUser.LastName,"CustType":null,"SecurityQuestion":{"Question":null,"Answer":null},"ContactAddr":"","CorporateDiscount":null,"Notes":[],"ConstantContact":{"ID":null},"PurplePerks":{"SpendingAccountID":null},"CSRStoreID":null,"PO":{"PONumber":null,"PORequired":false},"TaxExemption":{"Enabled":false,"TaxExemptionID":null},"WishList":[]}};		
+			OrderCloud.Users.Create(newUser1).then(function(user){
 				OrderCloud.SecurityProfiles.SaveAssignment({"SecurityProfileID": "65c976de-c40a-4ff3-9472-b7b0550c47c3","BuyerID": buyerid,"UserID": user.ID}).then(function(security){
 					console.log(security);
+					angular.element(document.getElementById("buildorder")).scope().$parent.buildOrder.guestUserModal=false;
+					$state.go($state.current, {ID:user.ID,SearchType:'User',prodID:SearchData.productID}, {reload:true});
 				})
-				var params = {"CompanyName":createaddr.CompanyName,"FirstName":newUser.FirstName,"LastName":newUser.LastName,"Street1":createaddr.Street1,"Street2":createaddr.Street2,"City":createaddr.City,"State":createaddr.State,"Zip":createaddr.Zip,"Country":createaddr.Country,"Phone":newUser.Phone, "xp":{"IsDefault" :createaddr.IsDefault}};		
+
+				/*var params = {"CompanyName":createaddr.CompanyName,"FirstName":newUser.FirstName,"LastName":newUser.LastName,"Street1":createaddr.Street1,"Street2":createaddr.Street2,"City":createaddr.City,"State":createaddr.State,"Zip":createaddr.Zip,"Country":createaddr.Country,"Phone":newUser.Phone, "xp":{"IsDefault" :createaddr.IsDefault}};		
 				OrderCloud.Addresses.Create(params).then(function(data){		
 					data.Zip = parseInt(data.Zip);
 					OrderCloud.Users.Patch(user.ID,{"xp":{"Notes":[],"ContactAddr":data.ID}});
@@ -596,8 +639,14 @@ function buildOrderController($scope, $rootScope, $state, buyerid, $controller, 
 						$state.go($state.current, {ID:user.ID,SearchType:'User',prodID:SearchData.productID}, {reload:true});		
 						console.log("Address saved for the user....!" +res);		
 					});		
-				})		
+				})*/		
+			}).catch(function(err){
+				console.log(err);
+				if(err.data.Errors[0].ErrorCode=="User.UsernameMustBeUnique")
+					vm.guesterror="Username is already exist";
+				//$state.go('buildOrder', {ID: $stateParams.ID, SearchType:"User",showOrdersummary: false}, {reload:true});
 			});
+		//});
 		}
 	}
 	vm.searchType=$stateParams.SearchType;
@@ -621,7 +670,7 @@ function buildOrderController($scope, $rootScope, $state, buyerid, $controller, 
         var distinct = [];
         var distinctObj = [];
         for (var i in prodcuts) {
-            if (typeof (prodcuts[i].xp) !== 'undefined') {
+            if (typeof (prodcuts[i].xp) !== 'undefined' && prodcuts[i].xp.SpecsOptions) {
                 if (typeof (unique[prodcuts[i].xp.SpecsOptions.Color]) == "undefined") {
                     distinct.push(prodcuts[i].xp.SpecsOptions.Color);
                     distinctObj.push(prodcuts[i]);
@@ -643,7 +692,7 @@ function buildOrderController($scope, $rootScope, $state, buyerid, $controller, 
         var distinct = [];
         var distinctObj = [];
         for (var i in prodcuts) {
-            if (typeof (prodcuts[i].xp) !== 'undefined') {
+            if (typeof (prodcuts[i].xp) !== 'undefined' && prodcuts[i].xp.SpecsOptions) {
                 if (typeof (unique[prodcuts[i].xp.SpecsOptions.Size]) == "undefined") {
                     distinct.push(prodcuts[i].xp.SpecsOptions.Size);
                     distinctObj.push(prodcuts[i]);
@@ -672,10 +721,11 @@ function buildOrderController($scope, $rootScope, $state, buyerid, $controller, 
 		});
 	}
 	vm.prouctsList = function(e){
+		var rootnode="workspace://SpacesStore/8da76ddf-f808-4390-aa3e-1f2c39fc8d90";
 		if($stateParams.SearchType == 'BuildOrder'){
 			vm.PLPLoader = OrderCloud.Products.List(null, 1, 100, null, null, {"xp.ProductCode":e.ProductCode}).then(function(res){
 				console.log(res);
-				vm.PLPLoader = BuildOrderService.GetProductList(res.Items, ProductImages).then(function(prodList){
+				vm.PLPLoader = BuildOrderService.GetProductList(res.Items, rootnode).then(function(prodList){
 					vm.seqProducts=prodList;
 					var selectedProd=_.where(vm.seqProducts, {"ID":e.ID});
 					vm.showProduct(selectedProd[0]);
@@ -683,22 +733,45 @@ function buildOrderController($scope, $rootScope, $state, buyerid, $controller, 
 			});
 		}else{
 			vm.PLPLoader = OrderCloud.As().Me.ListProducts(null, 1, 100, null, null, {"xp.ProductCode":e.ProductCode}).then(function(res){
-				vm.PLPLoader = BuildOrderService.GetProductList(res.Items, ProductImages).then(function(prodList){
+				vm.PLPLoader = BuildOrderService.GetProductList(res.Items, rootnode).then(function(prodList){
 					vm.seqProducts=prodList;
 					var podID=e.ID;
 					podID=podID.toString();
-					var selectedProd=_.where(vm.seqProducts, {"ID":podID});
+					if(e.IsWorkShopEvent){
+						var selectedProd = _.filter(vm.seqProducts, function(row){
+							return _.indexOf([true],row.xp.IsDefaultProduct) > -1;
+						});
+						vm.fullEventsData=_.groupBy(vm.seqProducts, function(value){
+							return value.xp.EventDate;
+						});
+					}
+					else{
+						var selectedProd=_.where(vm.seqProducts, {"ID":podID});
+					}
 					vm.showProduct(selectedProd[0]);
 				 });
 			});
 		}
 	}
 	vm.productsseqList=function(){
+		var rootnode="workspace://SpacesStore/8da76ddf-f808-4390-aa3e-1f2c39fc8d90";
 		OrderCloud.As().Me.GetProduct($stateParams.ID).then(function(e){
 			vm.prodName=e.Name;
 			OrderCloud.As().Me.ListProducts(null, 1, 100, null, null, {"xp.ProductCode":e.xp.ProductCode}).then(function(res){
-				BuildOrderService.GetProductList(res.Items, ProductImages).then(function(prodList){
+				BuildOrderService.GetProductList(res.Items, rootnode).then(function(prodList){
 					vm.seqProducts=prodList;
+					var size = [],color = [];
+					angular.forEach(prodList, function(val, key){
+						if(val.xp){
+							if(val.xp.Specs_Options){
+								val.xp.Specs_Options = val.xp.Specs_Options;
+								val.xp.Specs_Options.Size = val.xp.Specs_Options.Cont_Size;
+								size.push(val.xp.Specs_Options.Cont_Size);
+								color.push(val.xp.Specs_Options.Color);
+							}	
+						}	
+					},true);
+					//e.options = {"Color":_.uniq(color), "Size":_.uniq(size)};
 					vm.showProduct(e);
 				 });
 			 });
@@ -706,10 +779,13 @@ function buildOrderController($scope, $rootScope, $state, buyerid, $controller, 
 	}
     // Function to get selected product
     vm.showProduct=function(e){
-		vm.AssemblyItems("onload");
-		var alfticket = localStorage.getItem("alfrescoTicket");
+		// if(e.xp.Specs_Options && !e.xp.SpecsOptions)
+		// 	e.xp.SpecsOptions = e.xp.Specs_Options;
+		vm.AssemblyItems("onload", e.ID);
+		var alfticket = localStorage.getItem("alfrescoTicket"), rootnode="workspace://SpacesStore/8da76ddf-f808-4390-aa3e-1f2c39fc8d90";
 		vm.selectedKey=[];
 		if(e.xp.IsWorkShopEvent==true){
+			rootnode="workspace://SpacesStore/599a6c21-dd7f-405a-95ec-054e6c3777fc";
 			vm.IsWorkShopEvent=true;
 			// vm.fullEventsData=_.groupBy(productList, function(value){
 				// return value.xp.EventDate;
@@ -739,8 +815,8 @@ function buildOrderController($scope, $rootScope, $state, buyerid, $controller, 
 			vm.room=e.xp.Room;
 			vm.prodDesription = e.Description;
 			var dataArr = [];
-			dataArr[0]=e;;
-			BuildOrderService.GetProductList(dataArr, ProductImages).then(function(baseEvnt){
+			dataArr[0]=e;
+			vm.PLPLoader = BuildOrderService.GetProductList(dataArr, rootnode).then(function(baseEvnt){
 				vm.selectedProductImg=baseEvnt[0].baseImage;
 				vm.changeImg=angular.copy(baseEvnt[0].baseImage);
 				vm.selectedalternativeImg=baseEvnt[0].alternativeImg;
@@ -767,10 +843,10 @@ function buildOrderController($scope, $rootScope, $state, buyerid, $controller, 
 		}
 		if(e.xp.IsWorkShopEvent==undefined || e.xp.IsWorkShopEvent==false){
 			vm.DeliveryType = false;
-			vm.Assembly = false;
+			//vm.Assembly = false;
 			vm.Courier = false;
 			vm.DirectShip = false;
-			vm.Placement = false;
+			//vm.Placement = false;
 			vm.Faster = false;
 			vm.GiftCard = false;
 			vm.PLPLoader = OrderCloud.Categories.ListProductAssignments(null, e.ID).then(function(res){
@@ -782,21 +858,21 @@ function buildOrderController($scope, $rootScope, $state, buyerid, $controller, 
 						if(res2.xp.CategoryDeliveryCharges.DeliveryMethods.Faster){
 							vm.Faster = true;
 						}
-						if(res2.Name == "Gift Cards"){
+						if(res2.Name == "GiftCards"){
 							vm.GiftCard = true;
 						}
 						if(res2.xp.DeliveryChargesCatWise.DeliveryMethods.Courier == true){
 							vm.Courier = true;
 						}*/
-						if(res2.xp.CategoryDeliveryCharges.DeliveryMethods.Courier){
+						if(res2.xp.CategoryDeliveryCharges && res2.xp.CategoryDeliveryCharges.DeliveryMethods.Courier){
 							vm.Courier = true;
 						}
-						if(res2.xp.Placement){
+						/*if(res2.xp.Placement){
 							vm.Placement = true;
 						}
 						if(res2.xp.Assembly){
 							vm.Assembly = true;
-						}
+						}*/
 					});
 				}
 			});
@@ -805,34 +881,61 @@ function buildOrderController($scope, $rootScope, $state, buyerid, $controller, 
 			//Get Upsell & CrossSell 
 			vm.CategoryItemsSimilar;
 			vm.Categories;
-			vm.upsellToggle();
-			vm.similarToggle();
-			$scope.radio.selectedColor = e.xp.SpecsOptions.Color;
+			var Dummy;
+			vm.upsellToggle(Dummy, e);
+			vm.similarToggle(Dummy, e);
+			if(e.xp.SpecsOptions && e.xp.SpecsOptions.Color)
+				$scope.radio.selectedColor = e.xp.SpecsOptions.Color;
 			availableColors = DisplayColors(vm.fullProductsData, true);
 			vm.allColors = availableColors;
 			var selectedColorHold = angular.copy(availableColors);
-			DisplaySelectedSize(e.xp.SpecsOptions.Color, _.findIndex(selectedColorHold, function (item) { 
-				if(e.xp.SpecsOptions.Color === null || e.xp.SpecsOptions.Color === null){
-					return item.xp.SpecsOptions.Color == e.xp.SpecsOptions.Color 
-				}else{
-					return item.xp.SpecsOptions.Color.toLowerCase() == e.xp.SpecsOptions.Color.toLowerCase() 
-				}
-			})
-			);
-			$scope.radio.selectedSize = e.xp.SpecsOptions.Size;
+			if(e.xp.SpecsOptions){
+				DisplaySelectedSize(e.xp.SpecsOptions.Color, _.findIndex(selectedColorHold, function (item) {
+						var testSize, testColor, ItemTestColor;
+						if(e.xp.SpecsOptions.Size!=null)
+							testSize = e.xp.SpecsOptions.Size.toLowerCase();
+						else
+							testSize = e.xp.SpecsOptions.Size;
+						if(e.xp.SpecsOptions.Color!=null)
+							testColor = e.xp.SpecsOptions.Color.toLowerCase();
+						else
+							testColor = e.xp.SpecsOptions.Color;
+						if(e.xp.SpecsOptions.Color!=null)
+							ItemTestColor = item.xp.SpecsOptions.Color.toLowerCase();
+						else
+							ItemTestColor = item.xp.SpecsOptions.Color;	
+						if(e.xp.SpecsOptions.Color === null || e.xp.SpecsOptions.Color === null){
+							return item.xp.SpecsOptions.Color == e.xp.SpecsOptions.Color;
+						}else{
+							return ItemTestColor == testColor; 
+						}
+				}));
+			}
+			if(e.xp.SpecsOptions && e.xp.SpecsOptions.Size)
+				$scope.radio.selectedSize = e.xp.SpecsOptions.Size;
 			vm.productTitle = e.Name;
 			vm.prodDesription = e.Description;
 			availableSizes = DisplaySizes(vm.fullProductsData, true);
 			vm.allSizes = availableSizes;
 			var selectedSizeHold = angular.copy(availableSizes);
-			DisplaySelectedColor(e.xp.SpecsOptions.Size, _.findIndex(selectedSizeHold, function (item) { 
-				if(e.xp.SpecsOptions.Size === null || e.xp.SpecsOptions.Size === null){
-				  return item.xp.SpecsOptions.Size == e.xp.SpecsOptions.Size 
-				}else{
-				 return item.xp.SpecsOptions.Size.toLowerCase() == e.xp.SpecsOptions.Size.toLowerCase() 
-				}
-			   })
-			   );
+			if(e.xp.SpecsOptions){
+				DisplaySelectedColor(e.xp.SpecsOptions.Size, _.findIndex(selectedSizeHold, function (item) { 
+					if(e.xp.SpecsOptions.Size === null || e.xp.SpecsOptions.Size === null){
+					return item.xp.SpecsOptions.Size == e.xp.SpecsOptions.Size 
+					}else{
+						var testSize, ItemTestSize;
+						if(e.xp.SpecsOptions.Size!=null)
+							testSize = e.xp.SpecsOptions.Size.toLowerCase();
+						else
+							testSize = e.xp.SpecsOptions.Size;
+						if(e.xp.SpecsOptions.Size!=null)
+							ItemTestSize = item.xp.SpecsOptions.Size.toLowerCase();
+						else
+							ItemTestSize = item.xp.SpecsOptions.Size;
+						return ItemTestSize == testSize;
+					}
+			   }));
+			}
 			vm.showPDP = true;
 		}
 		else{
@@ -852,11 +955,19 @@ function buildOrderController($scope, $rootScope, $state, buyerid, $controller, 
     function DisplaySelectedColor(selectedSize, $index) {
         vm.selectedSizeIndex = $index;
         var prodFiltered = _.filter(vm.fullProductsData, function (_obj) {
-            if(_obj.xp.SpecsOptions.Size === null || selectedSize === null){
-                return (_obj.xp.SpecsOptions.Size == selectedSize)
-            }else{
-                return (_obj.xp.SpecsOptions.Size == selectedSize || _obj.xp.SpecsOptions.Size.toLowerCase() == selectedSize)
-            }
+			if(_obj.xp.SpecsOptions && _obj.xp.SpecsOptions.Size){
+				if(_obj.xp.SpecsOptions.Size === null || selectedSize === null){
+                	return (_obj.xp.SpecsOptions.Size == selectedSize)
+				}else{
+					var testSize;
+					if(_obj.xp.SpecsOptions.Size!=null)
+						testSize = _obj.xp.SpecsOptions.Size.toLowerCase();
+					else
+						testSize = _obj.xp.SpecsOptions.Size;
+					return (_obj.xp.SpecsOptions.Size == selectedSize || testSize == selectedSize)
+				}
+			}
+            
         });
         var imAvailableColors = angular.copy(availableColors);
         prodFiltered = DisplayColors(prodFiltered, false);
@@ -873,7 +984,16 @@ function buildOrderController($scope, $rootScope, $state, buyerid, $controller, 
         vm.allColors = prodFiltered;
         if ($scope.radio.selectedSize != -1 && $scope.radio.selectedColor != -1) {
             var selectedSku = _.filter(vm.fullProductsData, function (_obj) {
-                return ((_obj.xp.SpecsOptions.Size == $scope.radio.selectedSize || _obj.xp.SpecsOptions.Size.toLowerCase() == $scope.radio.selectedSize) && (_obj.xp.SpecsOptions.Color == $scope.radio.selectedColor || _obj.xp.SpecsOptions.Color.toLowerCase() == $scope.radio.selectedColor))
+				var testSize, testColor;
+				if(_obj.xp.SpecsOptions.Size!=null)
+					testSize = _obj.xp.SpecsOptions.Size.toLowerCase();
+				else
+					testSize = _obj.xp.SpecsOptions.Size;
+				if(_obj.xp.SpecsOptions.Color!=null)
+					testColor = _obj.xp.SpecsOptions.Color.toLowerCase();
+				else
+					testColor = _obj.xp.SpecsOptions.Color;
+                return ((_obj.xp.SpecsOptions.Size == $scope.radio.selectedSize || testSize == $scope.radio.selectedSize) && (_obj.xp.SpecsOptions.Color == $scope.radio.selectedColor || testColor == $scope.radio.selectedColor))
             });
             if (selectedSku.length == 1) {
                 activeProduct = selectedSku[0];
@@ -893,16 +1013,24 @@ function buildOrderController($scope, $rootScope, $state, buyerid, $controller, 
         vm.selectedProductImg=selectedSku.baseImage;
         vm.changeImg=angular.copy(selectedSku.baseImage);
         vm.selectedalternativeImg=selectedSku.alternativeImg;
+		vm.selectedSkuXp = selectedSku.xp;
 		delete vm.ProductPromotionID;
 		delete vm.ProductPromotionCatID;
 		if(!selectedSku.xp.couponID){
 			vm.GetPromotions(selectedSku.xp);
 		}
+		BuildOrderService.GetInventory(vm.selectedProductId).then(function(res){
+			if(res==0)
+				vm.OutOfStock = true;
+			else
+				vm.OutOfStock = false;
+		});
     }
 	vm.DisplayEvent=function(selectedSku) {
         vm.productTitle = selectedSku.Name;
         //vm.prodDesription = selectedSku.Description;
         vm.selectedProductId = selectedSku.ID;
+		vm.selectedSkuXp = selectedSku.xp;
 		vm.selectedPrice=selectedSku.StandardPriceSchedule.PriceBreaks;
     }
     vm.changeImage=function(img){
@@ -913,7 +1041,16 @@ function buildOrderController($scope, $rootScope, $state, buyerid, $controller, 
             if(_obj.xp.SpecsOptions.Color === null || color === null){
                 return (_obj.xp.SpecsOptions.Color == color)
             }else{
-                return (_obj.xp.SpecsOptions.Color.toLowerCase() == color.toLowerCase())
+				var testColor2, testColor;
+				if(_obj.xp.SpecsOptions.Color!=null)
+					testColor2 = _obj.xp.SpecsOptions.Color.toLowerCase();
+				else
+					testColor2 = _obj.xp.SpecsOptions.Color;
+				if(color!=null)
+					testColor = color.toLowerCase();
+				else
+					testColor = color;
+                return (testColor2 == testColor)
             }
         });
         colorFiltered = DisplaySizes(colorFiltered, false); // sizes availavle for seelcted color 
@@ -932,7 +1069,16 @@ function buildOrderController($scope, $rootScope, $state, buyerid, $controller, 
         vm.selectedProductIndex = $index; // Active state for selected color
         if ($scope.radio.selectedSize != -1 && $scope.radio.selectedColor != -1) { // change prodcut if size and color is selected
             var selectedSku = _.filter(vm.fullProductsData, function (_obj) {
-                return ((_obj.xp.SpecsOptions.Size == $scope.radio.selectedSize || _obj.xp.SpecsOptions.Size.toLowerCase() == $scope.radio.selectedSize) && (_obj.xp.SpecsOptions.Color == $scope.radio.selectedColor || _obj.xp.SpecsOptions.Color.toLowerCase() == $scope.radio.selectedColor))
+				var testSize, testColor;
+				if(_obj.xp.SpecsOptions.Size!=null)
+					testSize = _obj.xp.SpecsOptions.Size.toLowerCase();
+				else
+					testSize = _obj.xp.SpecsOptions.Size;
+				if(_obj.xp.SpecsOptions.Color!=null)
+					testColor = _obj.xp.SpecsOptions.Color.toLowerCase();
+				else
+					testColor = _obj.xp.SpecsOptions.Color;
+                return ((_obj.xp.SpecsOptions.Size == $scope.radio.selectedSize || testSize == $scope.radio.selectedSize) && (_obj.xp.SpecsOptions.Color == $scope.radio.selectedColor || testColor == $scope.radio.selectedColor))
             });
             console.log("selectedSku", selectedSku);
             if (selectedSku.length == 1) {
@@ -974,8 +1120,15 @@ function buildOrderController($scope, $rootScope, $state, buyerid, $controller, 
 				vm.catName=$stateParams.catName;
 		});
 	}
+	if($stateParams.SearchType=='GiftCard'){
+		vm.showPDP = true;
+
+	}
+	if($stateParams.nonOrderClaim=="true" && $stateParams.SearchType=='User'){
+		vm.showPDP = true;
+	}
 	vm.GetSkuevents = function(prodCode, defaultEvnt){
-		OrderCloud.As().Me.ListProducts(null, null, null, null, null, {"xp.ProductCode":prodCode}).then(function(res){
+		vm.PLPLoader = OrderCloud.As().Me.ListProducts(null, null, null, null, null, {"xp.ProductCode":prodCode}).then(function(res){
 			vm.fullEventsData=_.groupBy(res.Items, function(value){
 				return value.xp.EventDate;
 			});
@@ -989,9 +1142,9 @@ function buildOrderController($scope, $rootScope, $state, buyerid, $controller, 
 		if(vm.searchSeqList)
 		vm.searchSeqList='';
 		else if(vm.searchList)
-		vm.searchList='';
+		vm.searchList[0]='';
 		else if(vm.catList)
-		vm.catList='';
+		vm.catList[0]='';
 		else if(vm.seqProducts)
 		vm.seqProducts='';
 		else if(vm.elpLists)
@@ -1040,8 +1193,8 @@ function buildOrderController($scope, $rootScope, $state, buyerid, $controller, 
 	vm.CheckDeliveryAvailable = function(city, ProductID){
 		vm.DeliveryNotAvailable = undefined;
 		vm.Mcity = city;
-		var DeliveryMethod;
-		if(city=="Minneapolis" || city=="Saint Paul"){
+		var DeliveryMethod, IsLocal =  _.contains(LocalDeliveryCities, city);
+		if(IsLocal){
 			DeliveryMethod = "LocalDelivery";
 		} else {
 			DeliveryMethod = "UPS";
@@ -1072,11 +1225,12 @@ function buildOrderController($scope, $rootScope, $state, buyerid, $controller, 
 		return (data.mode === 'day' && (data.date.getDay() === 0));
 	};
 	// Assembly & promotions critical part don't touch (Start here).....
-	vm.AssemblyItems = function(param){
+	vm.AssemblyItems = function(param, productID){
 		var tempArr = [];
-		vm.PLPLoader = OrderCloud.Products.Get("cat2_cat12_prod2").then(function(data) {
-			angular.forEach(data.xp.Cross, function(row, index){
-				tempArr.push(OrderCloud.Products.Get(row));
+		vm.PLPLoader = OrderCloud.Products.Get(productID).then(function(data) {
+			angular.forEach(data.xp.AssemblyProduct, function(row, index){
+				if(row)
+					tempArr.push(OrderCloud.Products.Get(row));
 			},true);
 			vm.PLPLoader = $q.all(tempArr).then(function(res){
 				vm.AssemblyProducts = [];
@@ -1125,27 +1279,29 @@ function buildOrderController($scope, $rootScope, $state, buyerid, $controller, 
 		vm.ProductCouponsFunc2(index, list);
 	};
 	vm.ProductCouponsFunc2 = function(index, list){
-		$q.all(vm.ProductCoupons.ListAssign[list[index].ID]).then(function(result1){
-			var temparr = [];
-			angular.forEach(result1, function(obj1){
-				angular.forEach(obj1.Items, function(val1){
-					temparr.push(OrderCloud.Categories.Get(val1.CategoryID));
+		if(list.length > 0 && !_.isEmpty(vm.ProductCoupons.ListAssign)){
+			$q.all(vm.ProductCoupons.ListAssign[list[index].ID]).then(function(result1){
+				var temparr = [];
+				angular.forEach(result1, function(obj1){
+					angular.forEach(obj1.Items, function(val1){
+						temparr.push(OrderCloud.Categories.Get(val1.CategoryID));
+					}, true);
 				}, true);
-			}, true);
-			$q.all(temparr).then(function(result2){
-				angular.forEach(result2, function(obj2){
-					if(obj2.xp.couponID){
-						if(obj2.xp.couponID[0].coupon){
-							vm.ProductsCouponIDs.push({"ProductID": list[index].ID, "ProductPromotionID":obj2.xp.couponID[0].coupon, "ProductPromotionCatID": obj2.ID});
-						}
+				$q.all(temparr).then(function(result2){
+					angular.forEach(result2, function(obj2){
+						if(obj2.xp.couponID){
+							if(obj2.xp.couponID[0].coupon){
+								vm.ProductsCouponIDs.push({"ProductID": list[index].ID, "ProductPromotionID":obj2.xp.couponID[0].coupon, "ProductPromotionCatID": obj2.ID});
+							}
+						}	
+					}, true);
+					if((list.length-1) > index){
+						index = index + 1;
+						vm.ProductCouponsFunc2(index, list);
 					}	
-				}, true);
-				if((list.length-1) > index){
-					index = index + 1;
-					vm.ProductCouponsFunc2(index, list);
-				}	
+				});
 			});
-		});
+		}	
 	};
 	vm.HideUpsellNCross = function(){
 		vm.upsell = true;
@@ -1166,6 +1322,40 @@ function buildOrderController($scope, $rootScope, $state, buyerid, $controller, 
 		});
 	};
 	// Assembly & promotions critical part don't touch (Ends here).....
+	if($stateParams.SearchType == 'Products' || $stateParams.SearchType == 'plp'){
+		$scope.totalItems = productList[1];
+	}
+		$scope.currentPage = 1;
+		//vm.noOfHits=50;
+		//$scope.itemsPerPage = vm.noOfHits;
+		$scope.itemsPerPage = 50;
+		console.log("$scope.itemsPerPage ", $scope.itemsPerPage );
+		$scope.maxSize = 5;
+    vm.setPagingData=function(page) {
+		//$scope.itemsPerPage = vm.noOfHits;
+		$(".oms_main_container").animate({ scrollTop: 0 }, "fast");
+		if($scope.buildOrder.searchval){
+			vm.searchTxt=$scope.buildOrder.searchval;
+		}
+		else{
+			vm.searchTxt=$stateParams.ID;
+		}
+		BuildOrderService.GetAlgoliaResults(vm.searchTxt, page, $scope.itemsPerPage).then(function(res){
+			if($stateParams.SearchType == 'Products' && vm.searchList[0].length>0){
+				vm.searchList[0]=[];
+				vm.searchList[0]=_.union(vm.searchList[0], res.hits);
+			}
+			else if($stateParams.SearchType == 'plp' && vm.catList[0].length>0){
+				vm.catList[0]=[];
+				vm.catList[0]=_.union(vm.catList[0], res.hits);
+			}
+			else{
+				$scope.buildOrder.buildorderSearch[0]=[];
+				$scope.buildOrder.buildorderSearch[0]=_.union($scope.buildOrder.buildorderSearch[0], res.hits);
+			}
+			vm.page=page;
+		});
+    }
 }
 
 function buildOrderTopController($scope, $stateParams,$rootScope, AlfrescoFact) {
@@ -1188,14 +1378,15 @@ function buildOrderTopController($scope, $stateParams,$rootScope, AlfrescoFact) 
 	}
 }
 
-function buildOrderDownController($scope, $stateParams, $state, $q, OrderCloud, BuildOrderService) {
+function buildOrderDownController($scope, $stateParams, $state, $q, OrderCloud, BuildOrderService, $cookieStore) {
 	var vm = this;
 	vm.buildorderfooter=false;
+	vm.editsubmitorder=$stateParams.editsubmitorder;
 	if($stateParams.orderDetails){
 		vm.orderdetails= $stateParams.orderDetails;
 		vm.orderhistorydetails=!$stateParams.orderDetails;
 	}
-	else if($stateParams.SearchType=="Products" || $stateParams.SearchType == 'BuildOrder' || $stateParams.SearchType == 'PDP' || $stateParams.SearchType == 'plp' || $stateParams.SearchType =='elp'){
+	else if($stateParams.SearchType=="Products" || $stateParams.SearchType == 'BuildOrder' || $stateParams.SearchType == 'PDP' || $stateParams.SearchType == 'plp' || $stateParams.SearchType =='elp' || $stateParams.SearchType=='GiftCard'){
 		vm.buildorderfooter=true;
 	}
 	else
@@ -1229,28 +1420,9 @@ function buildOrderDownController($scope, $stateParams, $state, $q, OrderCloud, 
 		OrderCloud.LineItems.List($stateParams.orderID).then(function(res1){
 			BuildOrderService.GetUnsubmittedOrder().then(function(res2){
 				if(res2 != 0){
-					angular.forEach(res1.Items, function(val){
-						delChrgs += val.xp.deliveryCharges;
-						tempArr.push(OrderCloud.LineItems.Update(res2.ID, val.ID, val));
-					}, true);
-					$q.all(tempArr).then(function(result){
-						angular.forEach(res1.Items, function(val){
-							tempArr2.push(OrderCloud.LineItems.SetShippingAddress(res2.ID, val.ID, val.ShippingAddress));
-						}, true);
-						$q.all(tempArr2).then(function(result2){
-							console.log("Success");
-							delChrgs = delChrgs+res2.ShippingCost
-							if(delChrgs > 250){
-								CapTotalDiscount = delChrgs - 250;
-								delChrgs = 250;
-							}	
-							OrderCloud.As().Orders.Patch(res2.ID, {"ShippingCost": delChrgs, "xp":{"CapTotalDiscount": CapTotalDiscount}}).then(function(res){
-								$state.go('buildOrder', {ID: $stateParams.ID, SearchType:"User",showOrdersummary: false}, {reload:true});
-							}).catch(function(){
-								$state.go('buildOrder', {ID: $stateParams.ID, SearchType:"User",showOrdersummary: false}, {reload:true});
-							});
-						});	
-					});
+					angular.element(document.getElementById("order-summary")).scope().$parent.buildordersummary.cartmerge=true;
+					angular.element(document.getElementById("buildorder")).scope().$parent.buildOrder.guestUserModal=false;
+					angular.element(document.getElementById("order-summary")).scope().$parent.buildordersummary.guestcartdata.push(res1);					
 				}else{
 					var orderParams = {"Type":"Standard","xp":{"OrderSource":"OMS","CSRID":$cookieStore.get('OMS.CSRID')}};
 					OrderCloud.As().Orders.Create(orderParams).then(function(res3){
@@ -1260,7 +1432,8 @@ function buildOrderDownController($scope, $stateParams, $state, $q, OrderCloud, 
 						}, true);
 						$q.all(tempArr).then(function(result){
 							angular.forEach(res1.Items, function(val){
-								tempArr2.push(OrderCloud.LineItems.SetShippingAddress(res3.ID, val.ID, val.ShippingAddress));
+								if(val.ShippingAddress!=null)
+									tempArr2.push(OrderCloud.LineItems.SetShippingAddress(res3.ID, val.ID, val.ShippingAddress));
 							}, true);
 							$q.all(tempArr2).then(function(result2){
 								console.log("Success");
@@ -1269,6 +1442,7 @@ function buildOrderDownController($scope, $stateParams, $state, $q, OrderCloud, 
 									CapTotalDiscount = delChrgs - 250;
 									delChrgs = 250;
 								}
+								angular.element(document.getElementById("buildorder")).scope().$parent.buildOrder.guestUserModal=false;
 								OrderCloud.As().Orders.Patch(res3.ID, {"ShippingCost": delChrgs, "xp":{"CapTotalDiscount": CapTotalDiscount}}).then(function(res){
 									$state.go('buildOrder', {ID: $stateParams.ID, SearchType:"User",showOrdersummary: false}, {reload:true});
 								}).catch(function(){
@@ -1281,13 +1455,51 @@ function buildOrderDownController($scope, $stateParams, $state, $q, OrderCloud, 
 			});
 		});
 	};
+	vm.mergeanonorder = function(res1){
+		var obj = {"ID": $stateParams.ID, "SearchType":"User","showOrdersummary": false}, tempArr = [], tempArr2 = [], delChrgs = 0, CapTotalDiscount = 0;
+		BuildOrderService.GetUnsubmittedOrder().then(function(res2){
+				if(res2 != 0){
+					angular.forEach(res1[0].Items, function(val){
+						delChrgs += val.xp.deliveryCharges;
+						tempArr.push(OrderCloud.LineItems.Update(res2.ID, val.ID, val));
+					}, true);
+					$q.all(tempArr).then(function(result){
+						angular.forEach(res1.Items, function(val){
+							if(val.ShippingAddress!=null)
+								tempArr2.push(OrderCloud.LineItems.SetShippingAddress(res2.ID, val.ID, val.ShippingAddress));
+
+						}, true);
+						$q.all(tempArr2).then(function(result2){
+							console.log("Success");
+							if(res2.ShippingCost==null)
+								res2.ShippingCost=0;
+							delChrgs = delChrgs+res2.ShippingCost;
+							if(delChrgs > 250){
+								CapTotalDiscount = delChrgs - 250;
+								delChrgs = 250;
+							}
+							angular.element(document.getElementById("order-summary")).scope().$parent.buildordersummary.cartmerge=false;
+							//angular.element(document.getElementById("buildorder")).scope().$parent.buildOrder.guestUserModal=false;	
+							OrderCloud.As().Orders.Patch(res2.ID, {"ShippingCost": delChrgs, "xp":{"CapTotalDiscount": CapTotalDiscount}}).then(function(res){
+								$state.go('buildOrder', {ID: $stateParams.ID, SearchType:"User",orderDetails:null,showOrdersummary: false,orderID:null}, {reload:true});
+							}).catch(function(){
+								$state.go('buildOrder', {ID: $stateParams.ID, SearchType:"User",orderDetails:null,showOrdersummary: false, orderID:null}, {reload:true});
+							});
+						});	
+					}).catch(function(err){
+						console.log(JSON.stringify(err));
+					});
+				}
+			});
+		
+	}
 }
 
-function buildOrderLeftController($scope, $stateParams, SearchData, OrderCloud, $q, $state) {
+function buildOrderLeftController($scope, $stateParams, SearchData, OrderCloud, $q, $state,LocalDeliveryCities) {
 	var vm = this, Arr = [], spendingAcc = {};
 	$scope.showpayment = false;
 	vm.list = SearchData;
-	if($stateParams.SearchType != 'Products' && $stateParams.SearchType != 'BuildOrder' && $stateParams.SearchType != 'PDP' && $stateParams.SearchType != 'plp' && $stateParams.SearchType != 'Workshop' && $stateParams.SearchType !='elp'){
+	if($stateParams.SearchType != 'Products' && $stateParams.SearchType != 'BuildOrder' && $stateParams.SearchType != 'PDP' && $stateParams.SearchType != 'plp' && $stateParams.SearchType != 'Workshop' && $stateParams.SearchType !='elp' && $stateParams.SearchType!='GiftCard'){
 		vm.guest=false;
 		OrderCloud.SpendingAccounts.ListAssignments(null, $stateParams.ID).then(function(assign){
 			angular.forEach(assign.Items, function(value, key){
@@ -1365,7 +1577,7 @@ function buildOrderLeftController($scope, $stateParams, SearchData, OrderCloud, 
 	};
 }
 
-function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, LineItemHelpers, TaxService, AddressValidationService, CurrentOrder, BuildOrderService, $cookieStore, CstDateTime, $http,$location,$anchorScroll, anchorSmoothScroll) {
+function buildOrderRightController($scope, $q, $state, $stateParams, OrderCloud, Order, LineItemHelpers, TaxService, AddressValidationService, CurrentOrder, BuildOrderService, $cookieStore, CstDateTime, $http,$location,$anchorScroll, anchorSmoothScroll, SearchData,LocalDeliveryCities) {
 	var vm = this;
 	vm.isOpen = {};
 	vm.addressbook=true;
@@ -1413,51 +1625,83 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 			});
 		});	
 	};
-	$scope.beforeAddToCart = function(prodID, DeliveryMethod){
+	$scope.beforeAddToCart = function(prodID, DeliveryMethod, isEvent, ProductXp){
 		if(!vm.order){
-			vm.ActiveOrderCartLoader = BuildOrderService.GetUnsubmittedOrder().then(function(res){
+			var orderParams = {"Type":"Standard","xp":{"OrderSource":"OMS","CSRID":$cookieStore.get('OMS.CSRID')}};
+			if($stateParams.SearchType == 'Products'  || $stateParams.SearchType == 'BuildOrder' || $stateParams.SearchType == 'PDP' || $stateParams.SearchType == 'plp' || $stateParams.SearchType =='elp' || $stateParams.SearchType=='GiftCard' || $stateParams.nonOrderClaim=='true'){
+				vm.ActiveOrderCartLoader = BuildOrderService.AdminLogin().then(function(res){
+					angular.element(document.getElementById("order-summary")).scope().$parent.buildordersummary.token = res.access_token;
+					vm.ActiveOrderCartLoader = OrderCloud.As().Orders.Create(orderParams).then(function(res1){
+						CurrentOrder.Set(res1.ID);
+						vm.order = res1;
+						if($stateParams.SearchType == 'Products' || $stateParams.SearchType == 'PDP' || $stateParams.SearchType == 'BuildOrder' || $stateParams.SearchType == 'plp' || $stateParams.SearchType =='elp' || $stateParams.SearchType=='GiftCard'){
+							angular.element(document.getElementById("order-summary")).scope().$parent.buildordersummary.order = res1;	
+						}
+						$scope.createListItem(prodID, DeliveryMethod, isEvent, ProductXp);
+					});
+				});
+			}
+			else{
+				vm.ActiveOrderCartLoader = BuildOrderService.GetUnsubmittedOrder().then(function(res){
+					if(res != 0){
+						CurrentOrder.Set(res.ID);
+						vm.order = res;
+						$scope.createListItem(prodID, DeliveryMethod, isEvent, ProductXp);
+					}
+					else{
+						vm.ActiveOrderCartLoader = OrderCloud.As().Orders.Create(orderParams).then(function(res){
+							CurrentOrder.Set(res.ID);
+							vm.order = res;
+							$scope.createListItem(prodID, DeliveryMethod, isEvent, ProductXp);
+						});
+					}
+				});
+			}
+			/*vm.ActiveOrderCartLoader = BuildOrderService.GetUnsubmittedOrder().then(function(res){
 				if(res != 0){
 					CurrentOrder.Set(res.ID);
 					vm.order = res;
-					$scope.createListItem(prodID, DeliveryMethod);
+					$scope.createListItem(prodID, DeliveryMethod, isEvent, ProductXp);
 				}else{
 					var orderParams = {"Type":"Standard","xp":{"OrderSource":"OMS","CSRID":$cookieStore.get('OMS.CSRID')}};
-					if($stateParams.SearchType == 'Products'  || $stateParams.SearchType == 'BuildOrder' || $stateParams.SearchType == 'PDP' || $stateParams.SearchType == 'plp' || $stateParams.SearchType =='elp'){
+					if($stateParams.SearchType == 'Products'  || $stateParams.SearchType == 'BuildOrder' || $stateParams.SearchType == 'PDP' || $stateParams.SearchType == 'plp' || $stateParams.SearchType =='elp' || $stateParams.SearchType=='GiftCard'){
 						vm.ActiveOrderCartLoader = BuildOrderService.AdminLogin().then(function(res){
     						angular.element(document.getElementById("order-summary")).scope().$parent.buildordersummary.token = res.access_token;
     						vm.ActiveOrderCartLoader = OrderCloud.As().Orders.Create(orderParams).then(function(res1){
     							CurrentOrder.Set(res1.ID);
 								vm.order = res1;
-								if($stateParams.SearchType == 'Products' || $stateParams.SearchType == 'PDP' || $stateParams.SearchType == 'BuildOrder' || $stateParams.SearchType == 'plp' || $stateParams.SearchType =='elp'){
+								if($stateParams.SearchType == 'Products' || $stateParams.SearchType == 'PDP' || $stateParams.SearchType == 'BuildOrder' || $stateParams.SearchType == 'plp' || $stateParams.SearchType =='elp' || $stateParams.SearchType=='GiftCard'){
 									angular.element(document.getElementById("order-summary")).scope().$parent.buildordersummary.order = res1;	
 								}
-								$scope.createListItem(prodID, DeliveryMethod);
+								$scope.createListItem(prodID, DeliveryMethod, isEvent, ProductXp);
 							});
 						});
 					}else{
 						vm.ActiveOrderCartLoader = OrderCloud.As().Orders.Create(orderParams).then(function(res){
 							CurrentOrder.Set(res.ID);
 							vm.order = res;
-							$scope.createListItem(prodID, DeliveryMethod);
+							$scope.createListItem(prodID, DeliveryMethod, isEvent, ProductXp);
 						});
 					}
 				}
-			});
+			});*/
 		}else{
-			$scope.createListItem(prodID, DeliveryMethod);
+			$scope.createListItem(prodID, DeliveryMethod, isEvent, ProductXp);
 		}
 	};
-	$scope.createListItem = function(prodID, DeliveryMethod){
-		// Data clear Starts
-		vm.DuplicateActiveOrders = angular.copy(vm.activeOrders);
-		// Data clear ends
-		var lineItemParams = {"ProductID": prodID,"Quantity": 1,"xp":{"TotalCost":0}}, buildorderVM = angular.element(document.getElementById("buildOrder-pdp-container")).scope().$parent.$parent.$parent.buildOrder, TempArr = [];
-		if(buildorderVM.ProductPromotionCatID){
-			lineItemParams.xp.PromoId = buildorderVM.ProductPromotionCatID;
-			lineItemParams.xp.PromoCode = buildorderVM.ProductPromotionID;
-		}
-		if(DeliveryMethod)
-			lineItemParams.xp.DeliveryMethod = DeliveryMethod;
+	$scope.createListItem = function(prodID, DeliveryMethod, isEvent, ProductXp){
+	// Data clear Starts
+	vm.DuplicateActiveOrders = angular.copy(vm.activeOrders);
+	// Data clear ends
+	var giftcardchange;
+	var lineItemParams = {"ProductID": prodID,"Quantity": 1,"xp":{"TotalCost":0}}, buildorderVM = angular.element(document.getElementById("buildOrder-pdp-container")).scope().$parent.$parent.$parent.buildOrder, TempArr = [];
+	if(buildorderVM.ProductPromotionCatID){
+		lineItemParams.xp.PromoId = buildorderVM.ProductPromotionCatID;
+		lineItemParams.xp.PromoCode = buildorderVM.ProductPromotionID;
+	}
+	if(DeliveryMethod)
+		lineItemParams.xp.DeliveryMethod = DeliveryMethod;
+	if(!isEvent){
 		vm.ActiveOrderCartLoader = OrderCloud.Categories.ListProductAssignments(null, prodID).then(function(res1){
 			vm.ActiveOrderCartLoader = OrderCloud.Categories.Get(res1.Items[0].CategoryID).then(function(res2){
 				var MinDate = {}, ApplicableDeliveryMethods = {};
@@ -1473,7 +1717,7 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 				lineItemParams.xp.MinDate = MinDate;
 				lineItemParams.xp.ApplicableDeliveryMethods = ApplicableDeliveryMethods;
 				lineItemParams.ShippingAddressID = null;
-				if($stateParams.SearchType=='Products' || $stateParams.SearchType == 'PDP' || $stateParams.SearchType == 'BuildOrder' || $stateParams.SearchType == 'plp'){
+				if($stateParams.SearchType=='Products' || $stateParams.SearchType == 'PDP' || $stateParams.SearchType == 'BuildOrder' || $stateParams.SearchType == 'plp' || $stateParams.SearchType=='GiftCard'){
 					vm.ActiveOrderCartLoader = OrderCloud.LineItems.Create(vm.order.ID, lineItemParams).then(function(res){
 						angular.element(document.getElementById("build-order-footer")).scope().buildOrderDown.buildorderfooter = false;
 						lineItemParams.xp.TotalCost = lineItemParams.xp.TotalCost + (res.UnitPrice * res.Quantity);
@@ -1483,48 +1727,109 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 							lineItemParams.xp.deliveryCharges = vm.buyerXp.AdditionalCharges.PlacementCharges;
 							lineItemParams.xp.PlacementInstruction = buildorderVM.PlacementInstruction;
 						}
-						vm.ActiveOrderCartLoader = OrderCloud.LineItems.Patch(vm.order.ID, res.ID, lineItemParams).then(function(res2){
-							if(buildorderVM.AssemblyList.length == 0 || buildorderVM.IsAssembly == 'Not Assembled'){
-								vm.getLineItems();
-							}else{
-								vm.CreateAssemblyItems(buildorderVM, res2.ID);
-							}
-							if(buildorderVM.AddExtraList){
-								buildorderVM.AddExtraList = _.compact(buildorderVM.AddExtraList);
-								if(buildorderVM.AddExtraList.length > 0)
-									vm.AddExtraProducts(buildorderVM);
-							}	
-							vm.isOpen[res.ID] = true;
-						});
+						if(prodID=="Gift_Card_Product"){
+							OrderCloud.SpendingAccounts.List('Gift Card', null, null, 'Name', '!ID', {'xp.Claimed':false,'xp.IsAssigned':false}).then(function(resultdata){
+								var giftcardamount=angular.element(document.getElementById("buildOrder-pdp-container")).scope().$parent.buildOrderPDP.giftcardamount;
+								giftcardchange={"Balance":giftcardamount,"xp":{"IsAssigned":true}};
+								lineItemParams.xp.SpendingAccountsID=resultdata.Items[0].ID;
+								lineItemParams.UnitPrice=giftcardamount;
+								vm.ActiveOrderCartLoader = OrderCloud.LineItems.Patch(vm.order.ID, res.ID, lineItemParams).then(function(res2){
+									OrderCloud.SpendingAccounts.Patch(lineItemParams.xp.SpendingAccountsID,giftcardchange).then(function(patchdata){
+										console.log(patchdata);
+									});
+									if(buildorderVM.AssemblyList.length == 0 || buildorderVM.IsAssembly == 'Not Assembled'){
+										vm.getLineItems();
+									}else{
+										vm.CreateAssemblyItems(buildorderVM, res2.ID);
+									}
+									if(buildorderVM.AddExtraList){
+										buildorderVM.AddExtraList = _.compact(buildorderVM.AddExtraList);
+										if(buildorderVM.AddExtraList.length > 0)
+											vm.AddExtraProducts(buildorderVM, res2.ID, res2.xp);
+									} 
+									vm.isOpen[res.ID] = true;
+								});
+							});
+						}else{
+							vm.ActiveOrderCartLoader = OrderCloud.LineItems.Patch(vm.order.ID, res.ID, lineItemParams).then(function(res2){
+								if(buildorderVM.AssemblyList.length == 0 || buildorderVM.IsAssembly == 'Not Assembled'){
+									vm.getLineItems();
+								}else{
+									vm.CreateAssemblyItems(buildorderVM, res2.ID);
+								}
+								if(buildorderVM.AddExtraList){
+									buildorderVM.AddExtraList = _.compact(buildorderVM.AddExtraList);
+									if(buildorderVM.AddExtraList.length > 0)
+										vm.AddExtraProducts(buildorderVM, res2.ID, res2.xp);
+								} 
+								vm.isOpen[res.ID] = true;
+							});
+						}
 					});
 				}else{
 					vm.ActiveOrderCartLoader = OrderCloud.LineItems.Create(vm.order.ID, lineItemParams).then(function(res){
 						angular.element(document.getElementById("build-order-footer")).scope().buildOrderDown.buildorderfooter = false;
 						lineItemParams.xp.TotalCost = lineItemParams.xp.TotalCost + (res.UnitPrice * res.Quantity);
-						if(buildorderVM.IsPlacement=="Placed"){
-							lineItemParams.xp.deliveryFeesDtls = {"Placement Charges": vm.buyerXp.AdditionalCharges.PlacementCharges};
-							lineItemParams.xp.TotalCost = lineItemParams.xp.TotalCost + parseFloat(vm.buyerXp.AdditionalCharges.PlacementCharges);
-							lineItemParams.xp.deliveryCharges = vm.buyerXp.AdditionalCharges.PlacementCharges;
-							lineItemParams.xp.PlacementInstruction = buildorderVM.PlacementInstruction;
-						}
-						vm.ActiveOrderCartLoader = OrderCloud.LineItems.Patch(vm.order.ID, res.ID, lineItemParams).then(function(res2){
-							if(buildorderVM.AssemblyList.length == 0 || buildorderVM.IsAssembly == 'Not Assembled'){
-								vm.getLineItems();
-							}else{
-								vm.CreateAssemblyItems(buildorderVM, res2.ID);
+						if(prodID=="Gift_Card_Product"){
+							OrderCloud.SpendingAccounts.List('Gift Card', null, null, 'Name', '!ID', {'xp.Claimed':false,'xp.IsAssigned':false}).then(function(resultdata){
+								var giftcardamount=angular.element(document.getElementById("buildOrder-pdp-container")).scope().$parent.buildOrderPDP.giftcardamount;
+								giftcardchange={"Balance":giftcardamount,"xp":{"IsAssigned":true}};
+								lineItemParams.xp.SpendingAccountsID=resultdata.Items[0].ID;
+								lineItemParams.UnitPrice=giftcardamount;
+								vm.ActiveOrderCartLoader = OrderCloud.LineItems.Patch(vm.order.ID, res.ID, lineItemParams).then(function(res2){
+									if(buildorderVM.AssemblyList.length == 0 || buildorderVM.IsAssembly == 'Not Assembled'){
+										vm.getLineItems();
+									}else{
+										vm.CreateAssemblyItems(buildorderVM, res2.ID);
+									}
+									if(buildorderVM.AddExtraList){
+										buildorderVM.AddExtraList = _.compact(buildorderVM.AddExtraList);
+										if(buildorderVM.AddExtraList.length > 0)
+											vm.AddExtraProducts(buildorderVM, res2.ID, res2.xp);
+									} 
+									vm.isOpen[res.ID] = true;
+								});
+							});
+						}else{
+							if(buildorderVM.IsPlacement=="Placed"){
+								lineItemParams.xp.deliveryFeesDtls = {"Placement Charges": vm.buyerXp.AdditionalCharges.PlacementCharges};
+								lineItemParams.xp.TotalCost = lineItemParams.xp.TotalCost + parseFloat(vm.buyerXp.AdditionalCharges.PlacementCharges);
+								lineItemParams.xp.deliveryCharges = vm.buyerXp.AdditionalCharges.PlacementCharges;
+								lineItemParams.xp.PlacementInstruction = buildorderVM.PlacementInstruction;
 							}
-							if(buildorderVM.AddExtraList){
-								buildorderVM.AddExtraList = _.compact(buildorderVM.AddExtraList);
-								if(buildorderVM.AddExtraList.length > 0)
-									vm.AddExtraProducts(buildorderVM, res2.ID);
-							}	
-							vm.isOpen[res.ID] = true;
-						});
+							vm.ActiveOrderCartLoader = OrderCloud.LineItems.Patch(vm.order.ID, res.ID, lineItemParams).then(function(res2){
+								if(buildorderVM.AssemblyList.length == 0 || buildorderVM.IsAssembly == 'Not Assembled'){
+									vm.getLineItems();
+								}else{
+									vm.CreateAssemblyItems(buildorderVM, res2.ID);
+								}
+								if(buildorderVM.AddExtraList){
+									buildorderVM.AddExtraList = _.compact(buildorderVM.AddExtraList);
+									if(buildorderVM.AddExtraList.length > 0)
+										vm.AddExtraProducts(buildorderVM, res2.ID, res2.xp);
+								}
+								vm.isOpen[res.ID] = true;
+							});
+						}
 					});
 				}
 			});
 		});
-	};
+	}else{
+		var lineItemParams = {"ProductID": prodID,"Quantity": 1,"xp":{"TotalCost":0}};
+		vm.ActiveOrderCartLoader = OrderCloud.LineItems.Create(vm.order.ID, lineItemParams).then(function(res){
+			angular.element(document.getElementById("build-order-footer")).scope().buildOrderDown.buildorderfooter = false;
+			lineItemParams.xp.TotalCost = lineItemParams.xp.TotalCost + (res.UnitPrice * res.Quantity);
+			lineItemParams.xp.deliveryDate = new Date(ProductXp.EventDate);
+			lineItemParams.xp.IsWorkShopEvent = true;
+			vm.ActiveOrderCartLoader = OrderCloud.LineItems.SetShippingAddress(vm.order.ID, res.ID, ProductXp.Location);
+			vm.ActiveOrderCartLoader = OrderCloud.LineItems.Patch(vm.order.ID, res.ID, lineItemParams).then(function(res2){
+				vm.getLineItems();
+				vm.isOpen[res.ID] = true;
+			});
+		});
+	}	
+};
 	vm.CreateAssemblyItems = function(buildorderVM, BaseLineItemID){
 		var TempArr = [], AssemblyLineItems = [], lineItemParams;
 		angular.forEach(buildorderVM.AssemblyList, function(val, key){
@@ -1557,10 +1862,10 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 			});
 		});
 	};
-	vm.AddExtraProducts = function(buildorderVM, BaseLineItemID){
+	vm.AddExtraProducts = function(buildorderVM, BaseLineItemID, BaseProductxp){
 		var TempArr = [], lineItemParams, AddExtraLineItems = [];
 		angular.forEach(buildorderVM.AddExtraList, function(val){
-			lineItemParams = {"ProductID": "","Quantity": 1,"xp":{"TotalCost":0}};
+			lineItemParams = {"ProductID": "","Quantity": 1,"xp":{"TotalCost":0, "ApplicableDeliveryMethods": BaseProductxp.ApplicableDeliveryMethods}};
 			lineItemParams.ProductID = val;
 			lineItemParams.xp.BaseLineItemID = BaseLineItemID;
 			if(buildorderVM.ProductsCouponIDs){
@@ -1669,18 +1974,38 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 		});
 		angular.forEach(groupData, function(val, key){
 			angular.forEach(val, function(val1, key1){
-				if(val1.ID == listItem.ID && listItem.xp.deliveryFeesDtls['Standard Delivery']){
-					for(var i=0; i<=val.length-1; i++){
-						val[i].xp.deliveryDate = null;
+				if(listItem.xp.deliveryFeesDtls){
+					if(val1.ID == listItem.ID && listItem.xp.deliveryFeesDtls['Standard Delivery']){
+						for(var i=0; i<=val.length-1; i++){
+							val[i].xp.deliveryDate = null;
+						}
 					}
-				}
+				}	
 			}, true);
 		}, true);
 	};
+	vm.removePromotions = function(list){
+		//Remove promotions for the product
+		var temp = [];
+		OrderCloud.As().Orders.ListPromotions(vm.order.ID).then(function(res1){
+			angular.forEach(res1.Items, function(val){
+				temp.push(OrderCloud.As().Orders.RemovePromotion(vm.order.ID, val.Code));
+			});
+			if(temp.length > 0){
+				$q.all(temp).then(function(result1){
+					OrderCloud.As().Orders.Get(temp[0].ID).then(function(res3){
+						//d.resolve(res3);
+					});
+				});
+			}else{
+				//d.resolve(0);
+			}
+		});
+	};
 	vm.getLineItems = function(){
-		 if(vm.order){
-			if(vm.order.Status == "Unsubmitted"){
-				if($stateParams.SearchType=="Products" || $stateParams.SearchType == 'BuildOrder' || $stateParams.SearchType == 'PDP' || $stateParams.SearchType == 'plp' || $stateParams.SearchType =='elp'){
+		if(vm.order){
+			if(vm.order.Status == "Unsubmitted" || (vm.order.Status == "Open" && $stateParams.editsubmitorder=="true")){
+				if($stateParams.SearchType=="Products" || $stateParams.SearchType == 'BuildOrder' || $stateParams.SearchType == 'PDP' || $stateParams.SearchType == 'plp' || $stateParams.SearchType =='elp' || $stateParams.SearchType=='GiftCard'){
 					vm.addressbook = false;
 					vm.ActiveOrderCartLoader = OrderCloud.LineItems.List(vm.order.ID).then(function(res){
 						if(res.Items.length==0)
@@ -1695,6 +2020,7 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 								});
 							});
 						}
+						vm.LinItemsCount = res.Items;
 						vm.ActiveOrderCartLoader = LineItemHelpers.GetProductInfo(res.Items).then(function(data) {
 							vm.OrderConfirmGrouping = _.groupBy(angular.copy(data), function(value){
 								if(value.ShippingAddress!=null)
@@ -1767,8 +2093,12 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 									if(val.xp.deliveryDate){
 										var dat = angular.copy(CstDateTime);
 										dat.setHours(0, 0, 0, 0);
-										if(new Date(val.xp.deliveryDate) < dat)
-											delete val.xp.deliveryDate;
+										if($stateParams.editsubmitorder!="true"){
+											if(new Date(val.xp.deliveryDate) < dat)
+												delete val.xp.deliveryDate;
+											else
+												val.xp.deliveryDate = new Date(val.xp.deliveryDate);
+										}
 										else
 											val.xp.deliveryDate = new Date(val.xp.deliveryDate);
 									}
@@ -1778,29 +2108,32 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 											dt = dt.setDate(dt.getDate() + val1);
 											val.xp.MinDays[key1] = new Date(dt);
 										}, true);
-										val.xp.MinDays['MinToday'] = new Date(angular.copy(CstDateTime));
+										if(vm.buyerXp.Shippers.LocalDelivery){
+											if(!vm.buyerXp.Shippers.LocalDelivery.SameDayDelivery)
+											val.xp.MinDays['MinToday'] = new Date(angular.copy(CstDateTime).setDate(angular.copy(CstDateTime).getDate() + 1));
+										}else
+											val.xp.MinDays['MinToday'] = new Date(angular.copy(CstDateTime));
 										if(val.xp.MinDate.LocalDelivery){
 											dt = angular.copy(CstDateTime);
-											//dt.setHours(0, 0, 0, 0);
-											if(dt.getHours() >= 12)
+											if(dt.getHours() >= (vm.buyerXp.Shippers.LocalDelivery.SameDayDeliveryCountDownTimer).substring(0,2))
 												dt = dt.setDate(dt.getDate() + val.xp.MinDate.LocalDelivery + 1);
 											else
 												dt = dt.setDate(dt.getDate() + val.xp.MinDate.LocalDelivery);
 											val.xp.MinDays['MinToday'] = new Date(dt);
-										}	
+										}
 									}else{
 										dt = angular.copy(CstDateTime);
 										val.xp.MinDate = {};
-										if(dt.getHours() >= 12)
-												val.xp.MinDays['MinToday'] = dt.setDate(dt.getDate() + 1);
+										if(dt.getHours() >= (vm.buyerXp.Shippers.LocalDelivery.SameDayDeliveryCountDownTimer).substring(0,2))
+											val.xp.MinDays['MinToday'] = dt.setDate(dt.getDate() + 1);
 										else
 											val.xp.MinDays['MinToday'] = dt;
 									}
-									val.varientsOptions = {};
+									/*val.varientsOptions = {};
 									if(val.Product.xp != null && val.Product.xp.Specs_Options){
 										val.varientsOptions.Size = val.Product.xp.Specs_Options.Cont_Size;
 										val.varientsOptions.Color = val.Product.xp.Specs_Options.Color;
-									}
+									}*/
 									if(val.ShippingAddress!=null){
 										BuildOrderService.GetPhoneNumber(val.ShippingAddress.Phone).then(function(res){
 											if(res){
@@ -1811,11 +2144,27 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 										});
 										val.ShippingAddress.Zip = parseInt(val.ShippingAddress.Zip);
 									}
-									if(!val.xp.BaseLineItemID){
+									if(val.xp.ShippingAddress){
+										BuildOrderService.GetPhoneNumber(val.xp.ShippingAddress.Phone).then(function(res){
+											if(res){
+												val.xp.ShippingAddress.Phone1 = res[0];
+												val.xp.ShippingAddress.Phone2 = res[1];
+												val.xp.ShippingAddress.Phone3 = res[2];
+											}	
+										});
+									}	
+									if(!val.xp.BaseLineItemID && val.xp.ApplicableDeliveryMethods){
 										if(!val.xp.addressType && !val.xp.ApplicableDeliveryMethods.OtherType && val.xp.ApplicableDeliveryMethods.InStorePickUp)
 											val.xp.addressType = "InStorePickUp";
-										else
-											val.xp.addressType = "Residence";
+										else{
+											if(!val.xp.addressType){
+												val.xp.addressType = "Residence";
+												val.LocalOrUPSMinDate = val.xp.MinDays['MinToday'];
+											}
+										}
+									}else{
+										val.xp.addressType = "Residence";
+										val.LocalOrUPSMinDate = val.xp.MinDays['MinToday'];
 									}
 									if(val.xp.addressType=="InStorePickUp"){
 										val.xp.pickupDate = new Date(val.xp.pickupDate);
@@ -1824,8 +2173,10 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 								});
 							});
 							vm.GetAboveAddresses(null, true);
+							if(res.Items.length == 0)
+								vm.removePromotions();
 						});
-						vm.ActiveOrderCartLoader = BuildOrderService.PatchOrder(vm.order, res).then(function(data){
+						vm.ActiveOrderCartLoader = BuildOrderService.PatchOrder(vm.order, res, SearchData.xp).then(function(data){
 							angular.element(document.getElementById("order-checkout")).scope().orderTotal = data.Total;
 							vm.orderTotal = data.Total;
 							vm.order = data;
@@ -1847,6 +2198,7 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 								});
 							});
 						}
+						vm.LinItemsCount = res.Items;
 						vm.ActiveOrderCartLoader = LineItemHelpers.GetProductInfo(res.Items).then(function(data){
 							vm.OrderConfirmGrouping = _.groupBy(angular.copy(data), function(value){
 								if(value.ShippingAddress!=null)
@@ -1920,10 +2272,14 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 									if(val.xp.deliveryDate){
 										var dat = angular.copy(CstDateTime);
 										dat.setHours(0, 0, 0, 0);
-										if(new Date(val.xp.deliveryDate) < dat)
-											delete val.xp.deliveryDate;
+										if($stateParams.editsubmitorder!="true"){
+											if(new Date(val.xp.deliveryDate) < dat)
+												delete val.xp.deliveryDate;
+											else
+												val.xp.deliveryDate = new Date(val.xp.deliveryDate);
+										}
 										else
-											val.xp.deliveryDate = new Date(val.xp.deliveryDate);
+											val.xp.deliveryDate = new Date(val.xp.deliveryDate);	
 									}
 									if(val.xp.MinDate){
 										angular.forEach(val.xp.MinDate, function(val1, key1){
@@ -1931,11 +2287,14 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 											dt = dt.setDate(dt.getDate() + val1);
 											val.xp.MinDays[key1] = new Date(dt);
 										}, true);
-										val.xp.MinDays['MinToday'] = new Date(angular.copy(CstDateTime));
+										if(vm.buyerXp.Shippers.LocalDelivery){
+											if(!vm.buyerXp.Shippers.LocalDelivery.SameDayDelivery)
+											val.xp.MinDays['MinToday'] = new Date(angular.copy(CstDateTime).setDate(angular.copy(CstDateTime).getDate() + 1));
+										}else
+											val.xp.MinDays['MinToday'] = new Date(angular.copy(CstDateTime));
 										if(val.xp.MinDate.LocalDelivery){
 											dt = angular.copy(CstDateTime);
-											//dt.setHours(0, 0, 0, 0);
-											if(dt.getHours() >= 12)
+											if(dt.getHours() >= (vm.buyerXp.Shippers.LocalDelivery.SameDayDeliveryCountDownTimer).substring(0,2))
 												dt = dt.setDate(dt.getDate() + val.xp.MinDate.LocalDelivery + 1);
 											else
 												dt = dt.setDate(dt.getDate() + val.xp.MinDate.LocalDelivery);
@@ -1944,16 +2303,16 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 									}else{
 										dt = angular.copy(CstDateTime);
 										val.xp.MinDate = {};
-										if(dt.getHours() >= 12)
+										if(dt.getHours() >= (vm.buyerXp.Shippers.LocalDelivery.SameDayDeliveryCountDownTimer).substring(0,2))
 											val.xp.MinDays['MinToday'] = dt.setDate(dt.getDate() + 1);
 										else
 											val.xp.MinDays['MinToday'] = dt;
 									}
-									val.varientsOptions = {};
+									/*val.varientsOptions = {};
 									if(val.Product.xp != null && val.Product.xp.Specs_Options){
 										val.varientsOptions.Size = val.Product.xp.Specs_Options.Cont_Size;
 										val.varientsOptions.Color = val.Product.xp.Specs_Options.Color;
-									}
+									}*/
 									if(val.ShippingAddress!=null){
 										BuildOrderService.GetPhoneNumber(val.ShippingAddress.Phone).then(function(res){
 											if(res){
@@ -1964,12 +2323,28 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 										});
 										val.ShippingAddress.Zip = parseInt(val.ShippingAddress.Zip);
 									}
-									if(!val.xp.BaseLineItemID){
+									if(val.xp.ShippingAddress){
+										BuildOrderService.GetPhoneNumber(val.xp.ShippingAddress.Phone).then(function(res){
+											if(res){
+												val.xp.ShippingAddress.Phone1 = res[0];
+												val.xp.ShippingAddress.Phone2 = res[1];
+												val.xp.ShippingAddress.Phone3 = res[2];
+											}	
+										});
+									}
+									if(!val.xp.BaseLineItemID && val.xp.ApplicableDeliveryMethods){
 										if(!val.xp.addressType && !val.xp.ApplicableDeliveryMethods.OtherType && val.xp.ApplicableDeliveryMethods.InStorePickUp)
 											val.xp.addressType = "InStorePickUp";
-										else
-											val.xp.addressType = "Residence";
-									}		
+										else{
+											if(!val.xp.addressType){
+												val.xp.addressType = "Residence";
+												val.LocalOrUPSMinDate = val.xp.MinDays['MinToday'];
+											}	
+										}
+									}else{
+										val.xp.addressType = "Residence";
+										val.LocalOrUPSMinDate = val.xp.MinDays['MinToday'];
+									}
 									if(val.xp.addressType=="InStorePickUp"){
 										val.xp.pickupDate = new Date(val.xp.pickupDate);
 										val.willSearch = val.ShippingAddress.CompanyName;
@@ -1977,8 +2352,10 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 								});
 							});
 							vm.GetAboveAddresses(null, true);
+							if(res.Items.length == 0)
+								vm.removePromotions();
 						});
-						vm.ActiveOrderCartLoader = BuildOrderService.PatchOrder(vm.order, res).then(function(data){
+						vm.ActiveOrderCartLoader = BuildOrderService.PatchOrder(vm.order, res, SearchData.xp).then(function(data){
 							angular.element(document.getElementById("order-checkout")).scope().orderTotal = data.Total;
 							vm.orderTotal = data.Total;
 							vm.order = data;
@@ -1994,13 +2371,14 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 			}, 0);
 		}
 	};
-	if($stateParams.SearchType!="Products" && $stateParams.SearchType != 'plp' && $stateParams.SearchType != 'BuildOrder' && $stateParams.SearchType != 'PDP' && $stateParams.SearchType != 'Workshop' && $stateParams.SearchType !='elp')
+	if($stateParams.SearchType!="Products" && $stateParams.SearchType != 'plp' && $stateParams.SearchType != 'BuildOrder' && $stateParams.SearchType != 'PDP' && $stateParams.SearchType != 'Workshop' && $stateParams.SearchType !='elp' && $stateParams.SearchType!='GiftCard')
 		vm.getLineItems();
 	$scope.cancelOrder = function(){
 		OrderCloud.As().Orders.Cancel(vm.order.ID).then(function(data){
 			vm.order = data;
 			delete vm.order;
 			CurrentOrder.Remove();
+			$state.reload($state.current);
 			angular.element(document.getElementById("build-order-footer")).scope().buildOrderDown.closePopover();
 			vm.getLineItems();
 		}).catch(function(){
@@ -2045,8 +2423,15 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 			if(row.visible == true)
 				delete row.xp.CardMessage;
 			row.ShippingAddress.Phone = "("+row.ShippingAddress.Phone1+") "+row.ShippingAddress.Phone2+"-"+row.ShippingAddress.Phone3;
+			if(row.xp.ShippingAddress){
+				row.xp.ShippingAddress.Phone = "("+row.xp.ShippingAddress.Phone1+") "+row.xp.ShippingAddress.Phone2+"-"+row.xp.ShippingAddress.Phone3;
+				delete row.xp.ShippingAddress.Phone1;
+				delete row.xp.ShippingAddress.Phone2;
+				delete row.xp.ShippingAddress.Phone3;
+				row.xp.deliveryDate = row.Product.xp.EventDate;
+			}	
 			delete row.xp.MinDays;
-			if(row.xp.addressType != "Hospital" && row.xp.addressType != "Funeral"){
+			if(row.xp.addressType != "Hospital" && row.xp.addressType != "Funeral" && row.xp.addressType != "Church"){
 				delete row.xp.PatientFName;
 				delete row.xp.PatientLName;
 			}
@@ -2059,9 +2444,9 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 			}else{
 				delete row.xp.pickupDate;
 			}
-			if(row.xp.notifyMe)
+			if(row.xp.notifyMe || row.xp.notifyMe=="true")
 				row.xp.notifyMe = "true";
-			if(!row.xp.notifyMe)
+			if(!row.xp.notifyMe || row.xp.notifyMe=="false")
 				row.xp.notifyMe = "false";
 			row.ShipFromAddressID = "testShipFrom";
 			tempArr.push(OrderCloud.LineItems.Update(vm.order.ID, row.ID, row));
@@ -2082,8 +2467,14 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 				vm.ActiveOrderCartLoader = TaxService.GetTax(vm.order.ID).then(function(res3){
 					tempArr = [];
 					angular.forEach(res3.ResponseBody.TaxLines, function(val, key){
-						var row = _.findWhere(res1, {ID: val.LineNo});
-						tempArr.push(OrderCloud.LineItems.Patch(vm.order.ID, val.LineNo, {"xp":{"Tax":val.Tax, "TotalCost": Math.floor((row.xp.deliveryCharges+row.LineTotal+val.Tax) * 100) / 100 }}));
+						var row = _.findWhere(res1, {ID: val.LineNo}), tax = 0;
+						if(SearchData.xp && SearchData.xp.TaxExemption){// Tax exemption for user
+							if(!SearchData.xp.TaxExemption.Enabled)
+								tax = val.Tax;
+						}else{
+							tax = val.Tax;
+						}
+						tempArr.push(OrderCloud.LineItems.Patch(vm.order.ID, val.LineNo, {"xp":{"Tax":tax, "TotalCost": Math.floor((row.xp.deliveryCharges+row.LineTotal+val.Tax) * 100) / 100 }}));
 					}, true);
 					vm.ActiveOrderCartLoader = $q.all(tempArr).then(function(res4){
 						delete vm.DuplicateActiveOrders;
@@ -2207,10 +2598,11 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 			list = vm.CemeterysList;
 		}
 		var filt = _.filter(list, function(row){
-			return _.indexOf([item],row.CompanyName) > -1;
+			return _.indexOf([item],row.CompanyNameAddress) > -1;
 		});
-		if(line.ShippingAddress==null)
-			line.ShippingAddress={};
+		if(line.ShippingAddress == null)
+			line.ShippingAddress = {};
+		line.ShippingAddress.CompanyName = filt[0].CompanyName;	
 		line.ShippingAddress.Street1 = filt[0].Street1;
 		line.ShippingAddress.Street2 = filt[0].Street2;
 		line.ShippingAddress.City = filt[0].City;
@@ -2229,11 +2621,22 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 		deliveryCharges = res.xp.ZipCodes;
 		vm.buyerXp = res.xp;
 	});
-	vm.changeAddrType = function(addressType, line, form, onload){
-		if(vm.TempAddrType != addressType && vm.TempAddrType){
-			line.ShippingAddress = null;
+	vm.changeAddrType = function(addressType, line, form, onload, index){
+		if(vm.TempAddrType != addressType && vm.TempAddrType && onload != "onload"){
+			var txt = angular.copy(line.ShippingAddress);
+			line.ShippingAddress = {};
+			if(txt){
+				line.ShippingAddress.FirstName = txt.FirstName;
+				line.ShippingAddress.LastName = txt.LastName;
+			}
+			line.PatientFName = null;
+			line.PatientLName = null;
+			line.xp.deliveryDate = null;
+			line.xp.pickupDate = null;
 			vm.TempAddrType = addressType;
-		}	
+			vm.MultipleCities = [];
+		}
+		vm.TempAddrType = angular.copy(addressType);
 		vm.lineItemForm[line.ID].$setPristine();
 		if(addressType == "Hospital" && !vm.HospitalNames){
 			vm.GetAllList("Hospitals");
@@ -2244,6 +2647,10 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 		if(addressType == "Church" && !vm.ChurchNames){
 			vm.GetAllList("Church");
 		}
+		if(addressType == "Hospital" && onload != "onload")
+			vm.ShowHospitalToolTip(index);
+		if(addressType == "Church" && onload != "onload")
+			vm.ShowChurchToolTip(index);	
 		if(addressType == "School" && !vm.SchoolNames){
 			vm.GetAllList("School");
 		}
@@ -2253,7 +2660,7 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 		if((addressType != "InStorePickUp" || line.willSearch) && onload != "onload"){
 			vm.GetDeliveryFees(line, form);
 		}
-	}
+	};
 	vm.GetAllList = function(AddrType){
 		BuildOrderService.GetHosChurchFuneral(AddrType).then(function(res){
 			console.log(res);
@@ -2427,7 +2834,38 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
 			});
 		});
 	};
-
+	vm.HospitalTemplate = {
+		templateUrl: 'HospitalOptions.html',
+	};
+	vm.CloseHospitalToolTip = function (index) {
+		vm['HospitalToolTip'+index] = false;
+	};
+	vm.ShowHospitalToolTip = function (index) {
+		vm['HospitalToolTip'+index] = true;
+	};
+	vm.HospitalSelect = function (option, index, lineitem) {
+		vm['HospitalToolTip'+index] = false;
+		if(option=="Patient")
+			lineitem.Patient = true;
+		else
+			lineitem.Patient = false;
+	};
+	vm.ChurchTemplate = {
+		templateUrl: 'ChurchOptions.html',
+	};
+	vm.CloseChurchToolTip = function (index) {
+		vm['ChurchToolTip'+index] = false;
+	};
+	vm.ShowChurchToolTip = function (index) {
+		vm['ChurchToolTip'+index] = true;
+	};
+	vm.ChurchSelect = function (option, index, lineitem) {
+		vm['ChurchToolTip'+index] = false;
+		if(option=="InMemoryOf")
+			lineitem.InMemoryOf = true;
+		else
+			lineitem.InMemoryOf = false;
+	};
 	vm.scrollUp = function(id) {
 		 // $location.hash('bottom');
 
@@ -2442,13 +2880,13 @@ function buildOrderRightController($scope, $q, $stateParams, OrderCloud, Order, 
     };
 }
 
-function buildOrderPLPController(productList, $stateParams, alfrescoAccessURL) {
+function buildOrderPLPController(productList, alfrescoAccessURL) {
 	var vm = this;
 	vm.alfrecoTct=localStorage.getItem("alfrescoTicket");
 	vm.alfrescoAccessURL=alfrescoAccessURL;
 }
 
-function buildOrderPDPController($scope, $sce, alfrescoAccessURL) {
+function buildOrderPDPController($scope, $sce, $stateParams, alfrescoAccessURL, buyerid, OrderCloud,LocalDeliveryCities) {
 	var vm = this; vm.alfticket = localStorage.getItem("alfrescoTicket");
 	vm.upselloverlay=false;
 	vm.alfrescoAccessURL=alfrescoAccessURL;
@@ -2463,17 +2901,32 @@ function buildOrderPDPController($scope, $sce, alfrescoAccessURL) {
 		var articleID=str.substring(0, str.lastIndexOf(".") + 0);
 		vm.articleImgURL=vm.alfrescoAccessURL+"/imagefinder/"+articleID+"?alf_ticket="+vm.alfticket;
 	}
+	if($stateParams.SearchType=='GiftCard' || ($stateParams.SearchType=='User' && $stateParams.nonOrderClaim=="true")){
+		OrderCloud.Buyers.List(buyerid, 1, 1, 'ID').then(function(res){
+			vm.giftCard=res.Items[0].xp.GiftCardSettings;
+			console.log("vm.giftCard", vm.giftCard);
+			vm.giftcardamount=vm.giftCard.PurchaseSetting.MinPurchaseAmt;
+			OrderCloud.Products.Get('Gift_Card_Product').then(function(result){
+				vm.giftCard.data=result;
+			});
+		});
+	}
+
 }
   
 function buildOrderSummaryController($scope, $state, ocscope, buyerid, $cookieStore, $stateParams, $exceptionHandler, Order, CurrentOrder, AddressValidationService, LineItemHelpers, OrderCloud, $http, BuildOrderService, $q, SearchData, $sce, CstDateTime, TaxService, alfrescoAccessURL) {
     var vm = this;
+    vm.cartmerge=false;
     vm.guestcheckout=false;
+    vm.guestcartdata=[];
 	vm.alfticket = localStorage.getItem("alfrescoTicket");
 	vm.alfrescoAccessURL=alfrescoAccessURL;
 	/*vm.showUser=false;
 	vm.userEdit=false;*/
-	vm.removeProd = function(){
-		vm.ShowRemoveTool = true;
+	vm.ShowRemoveTool = {};
+	vm.removeProd = function(id){
+		//vm.ShowRemoveTool = true;
+		vm.ShowRemoveTool[id] = true;
 	};
 	vm.clearData= function(){
 		angular.element('.searchtpl').scope().$$childTail.clearData();
@@ -2481,15 +2934,18 @@ function buildOrderSummaryController($scope, $state, ocscope, buyerid, $cookieSt
 	vm.ToolTip = {
 		templateUrl: 'removeProd.html'
 	};
-	vm.closePopover = function () {
-		vm.ShowRemoveTool = false;
+	vm.closePopover = function (id) {
+		vm.ShowRemoveTool[id] = false;
 	};
+	vm.mergeanonorder = function(){
+		angular.element(document.getElementById("build-order-footer")).scope().buildOrderDown.mergeanonorder(vm.guestcartdata);
+	}
 	console.log("buildOrderSummaryController alfticket:",vm.alfticket);
 	console.log("buildOrderSummaryController alfrescoAccessURL:",vm.alfrescoAccessURL);
-    if($stateParams.SearchType != 'Products' && $stateParams.SearchType != 'PDP' && $stateParams.SearchType != 'BuildOrder' && $stateParams.SearchType != 'plp' && $stateParams.SearchType!='Workshop' && $stateParams.SearchType !='elp'){
+    if($stateParams.SearchType != 'Products' && $stateParams.SearchType != 'PDP' && $stateParams.SearchType != 'BuildOrder' && $stateParams.SearchType != 'plp' && $stateParams.SearchType!='Workshop' && $stateParams.SearchType !='elp' && $stateParams.SearchType!='GiftCard'){
 		vm.order = Order;
 	}
-	else if($stateParams.SearchType == 'Products' || $stateParams.SearchType == 'PDP' || $stateParams.SearchType == 'BuildOrder' || $stateParams.SearchType == 'plp' || $stateParams.SearchType =='elp'){
+	else if($stateParams.SearchType == 'Products' || $stateParams.SearchType == 'PDP' || $stateParams.SearchType == 'BuildOrder' || $stateParams.SearchType == 'plp' || $stateParams.SearchType =='elp' || $stateParams.SearchType=='GiftCard'){
 		vm.order=angular.element(document.getElementById("BuildOrderRightNav")).scope().buildOrderRight.order;
 	}
 	vm.selectUser = function(user){	
@@ -2505,22 +2961,17 @@ function buildOrderSummaryController($scope, $state, ocscope, buyerid, $cookieSt
 			]
 		}
 		var anonymoustoken=$cookieStore.get("OMS.impersonation.token");
+		OrderCloud.Auth.RemoveImpersonationToken();
         OrderCloud.Users.GetAccessToken(data.ID, tokenrequest).then(function(buyertoken){
         	console.log("buyertoken",buyertoken);
-        	/*OrderCloud.Users.Get(data.ID).then(function(data1){
-        		console.log(data1);
-        	})*/
-        	$stateParams.ID=data.ID;
-        	$stateParams.SearchType = 'User';
-        	vm.guestlogin=true;
-        	angular.element(document.getElementById("buildorder")).scope().$parent.buildOrder.guestUserModal=false;
-        	$state.transitionTo($state.current, $stateParams, {
-			    reload: true,
-			    inherit: false,
-			    notify: true
-			});
-        	if($scope.showOrdersummary==true)
-        		vm.ordertransfer(anonymoustoken, buyertoken);
+        	OrderCloud.Auth.SetImpersonationToken(buyertoken['access_token']);
+        	$stateParams.orderID=vm.order.ID;
+        	OrderCloud.As().Me.Get().then(function(loginuser){
+        		$stateParams.ID=loginuser.ID;
+        		angular.element(document.getElementById("build-order-footer")).scope().buildOrderDown.ReOrder();
+        	})
+        	//angular.element(document.getElementById("build-order-footer")).scope().buildOrderDown.ReOrder();
+        	
         });
 	};
 	vm.ordertransfer = function(anonymoustoken, buyertoken){
@@ -2550,7 +3001,7 @@ function buildOrderSummaryController($scope, $state, ocscope, buyerid, $cookieSt
 			//vm.guestcheckout=true;
 			vm.ordersummary1=angular.element(document.getElementById("buildorder")).scope().$parent.showOrdersummary;
 			$stateParams.ID=vm.order.FromUserID;
-			if(($stateParams.SearchType == 'Products' || $stateParams.SearchType == 'BuildOrder' || $stateParams.SearchType == 'PDP' || $stateParams.SearchType == 'plp' || $stateParams.SearchType =='elp') && vm.ordersummary1){
+			if(($stateParams.SearchType == 'Products' || $stateParams.SearchType == 'BuildOrder' || $stateParams.SearchType == 'PDP' || $stateParams.SearchType == 'plp' || $stateParams.SearchType =='elp' || $stateParams.SearchType=='GiftCard') && vm.ordersummary1){
 				$state.go('checkout', {ID:$stateParams.ID}, {reload:true});
 			}
 		}
@@ -2594,7 +3045,10 @@ function buildOrderSummaryController($scope, $state, ocscope, buyerid, $cookieSt
 			data[n][0].TempCharges = {};
 			data[n][0].TempChargesTypeCount = {};
 			_.each(data[n], function(val,index){
-				vm.TotalCost[n] += val.xp.deliveryCharges+val.xp.Tax+val.LineTotal;
+				if(val.xp.Tax)
+					vm.TotalCost[n] += val.xp.deliveryCharges+val.xp.Tax+val.LineTotal;
+				else
+					vm.TotalCost[n] += val.xp.deliveryCharges+val.LineTotal;
 				vm.TotalTax[n] += Math.floor(parseFloat(val.xp.Tax) * 100) / 100;
 				if(val.xp.deliveryFeesDtls){
 					//data[n] = _.reject(data[n], val);
@@ -2634,24 +3088,27 @@ function buildOrderSummaryController($scope, $state, ocscope, buyerid, $cookieSt
 				vm.OrderSummaryLoader = LineItemHelpers.GetProductInfo(res.Items).then(function(data){
 					vm.grouping(data);
 				});
-				BuildOrderService.PatchOrder(vm.order, res).then(function(data){
+				BuildOrderService.PatchOrder(vm.order, res, SearchData.xp).then(function(data){
 					angular.element(document.getElementById("order-checkout")).scope().orderTotal = data.Total;
 				});
 			});
 		}else{
-			vm.OrderSummaryLoader = BuildOrderService.GetUnsubmittedOrder().then(function(res2){
-				if(res2 != 0){
-					vm.order = res2;
-					CurrentOrder.Set(res2.ID);
-					vm.orderSummaryShow();
-				}
-			});
+			if($stateParams.SearchType != 'Products' && $stateParams.SearchType != 'BuildOrder' && $stateParams.SearchType != 'PDP' && $stateParams.SearchType != 'plp' && $stateParams.SearchType!='Workshop' && !$stateParams.orderDetails && $stateParams.SearchType != 'elp' && $stateParams.SearchType!='GiftCard'){
+				vm.OrderSummaryLoader = BuildOrderService.GetUnsubmittedOrder().then(function(res2){
+					if(res2 != 0){
+						vm.order = res2;
+						CurrentOrder.Set(res2.ID);
+						vm.orderSummaryShow();
+					}
+				});
+			}	
 		}
 	};
 	vm.orderSummaryShow();
     vm.deleteProduct = function(lineitem) {
 		vm.OrderSummaryLoader = OrderCloud.LineItems.Delete(vm.order.ID, lineitem.ID).then(function() {
 			vm.orderSummaryShow();
+			vm.ShowRemoveTool[lineitem.ID] = false;
 		}).catch(function(ex) {
 			$exceptionHandler(ex);
 		});
@@ -2660,6 +3117,7 @@ function buildOrderSummaryController($scope, $state, ocscope, buyerid, $cookieSt
 	BuildOrderService.GetBuyerDtls().then(function(res){
 		deliveryCharges = res.xp.ZipCodes;
 		vm.buyerXp = res.xp;
+		vm.buyerXp.deliveryChargeAdjReasons.unshift("---select---");
 	});
 	
 	vm.lineDtlsSubmit = function(recipient, index){
@@ -2673,6 +3131,8 @@ function buildOrderSummaryController($scope, $state, ocscope, buyerid, $cookieSt
 			});
 			delete val.xp.Discount;
 			val.ShipFromAddressID = "testShipFrom";
+			if(val.xp.deliveryChargeAdjReason == "---select---")
+				delete val.xp.deliveryChargeAdjReason;
 			val.ShippingAddress = recipient[0].ShippingAddress;
 			TempArr.push(OrderCloud.LineItems.Update(vm.order.ID, val.ID, val));
 		}, true);
@@ -2685,18 +3145,24 @@ function buildOrderSummaryController($scope, $state, ocscope, buyerid, $cookieSt
 				vm.OrderSummaryLoader = TaxService.GetTax(vm.order.ID).then(function(res3){
 					TempArr = [];
 					angular.forEach(res3.ResponseBody.TaxLines, function(val, key){
-						var row = _.findWhere(result2, {ID: val.LineNo});
+						var row = _.findWhere(result2, {ID: val.LineNo}), tax = 0;
+						if(SearchData.xp.TaxExemption){// Tax exemption for user
+							if(!SearchData.xp.TaxExemption.Enabled)
+								tax = val.Tax;
+						}else{
+							tax = val.Tax;
+						}
 						if(row){
 							row.xp.deliveryCharges = 0;
 							_.filter(row.xp.deliveryFeesDtls, function(val){
 								row.xp.deliveryCharges += Math.floor(parseFloat(val) * 100) / 100;
 							});
-							TempArr.push(OrderCloud.LineItems.Patch(vm.order.ID, val.LineNo, {"xp":{"Tax":val.Tax, "TotalCost":Math.floor((row.xp.deliveryCharges+row.LineTotal+val.Tax) * 100) / 100}}));
+							TempArr.push(OrderCloud.LineItems.Patch(vm.order.ID, val.LineNo, {"xp":{"Tax":tax, "TotalCost":Math.floor((row.xp.deliveryCharges+row.LineTotal+val.Tax) * 100) / 100}}));
 						}	
 					}, true);
 					vm.OrderSummaryLoader = $q.all(TempArr).then(function(res4){
 						var temp = {"Items":res4};
-						BuildOrderService.PatchOrder(vm.order, temp).then(function(){
+						BuildOrderService.PatchOrder(vm.order, temp, SearchData.xp).then(function(){
 							vm.orderSummaryShow();
 						});
 					});
@@ -2731,7 +3197,7 @@ function buildOrderSummaryController($scope, $state, ocscope, buyerid, $cookieSt
 	};
 }
 
-function BuildOrderService( $q, $window, $stateParams, ocscope, buyerid, OrderCloud, $http, alfrescoDocsUrl, alfrescoAccessURL, Underscore, $cookieStore, GetCstTime, algolia, AddressValidationService, GoogleAPI) {
+function BuildOrderService( $q, $window, $stateParams, ocscope, buyerid, OrderCloud, $http, alfrescoDocsUrl, alfrescoAccessURL, Underscore, $cookieStore, GetCstTime, algolia, AddressValidationService, GoogleAPI, Alfresco) {
     var upselldata = [];
     var crossdata = [];
     var productdetail = [];
@@ -2749,6 +3215,7 @@ function BuildOrderService( $q, $window, $stateParams, ocscope, buyerid, OrderCl
 		GetPreceedingZeroDate: _GetPreceedingZeroDate,
 		GetHosChurchFuneral: _GetHosChurchFuneral,
 		GetStores: _GetStores,
+		GetLocalCities: _GetLocalCities,
 		OrderOnHoldRemove: _OrderOnHoldRemove,
 		PatchOrder: _PatchOrder,
 		GetProductImages: _getProductImages,
@@ -2759,7 +3226,8 @@ function BuildOrderService( $q, $window, $stateParams, ocscope, buyerid, OrderCl
 		GetAttributeImages:_getAttributeImages,
 		DeliveryFeesService:_deliveryFeesService,
 		GetAlgoliaResults:_getAlgoliaResults,
-		GetUnsubmittedOrder: _getUnsubmittedOrder
+		GetUnsubmittedOrder: _getUnsubmittedOrder,
+		GetInventory: _getInventory
     }
     function _adminLogin(){
     	var data = $.param({
@@ -2883,11 +3351,18 @@ function BuildOrderService( $q, $window, $stateParams, ocscope, buyerid, OrderCl
 			var init = phn.indexOf('(');
 			var fin = phn.indexOf(')');
 			arr.push(parseInt(phn.substr(init+1,fin-init-1)));
-			init = phn.indexOf(')');
-			fin = phn.indexOf('-');
-			arr.push(parseInt(phn.substr(init+1,fin-init-1)));
-			init = phn.indexOf('-');
-			arr.push(parseInt(phn.substr(init+1,phn.length)));
+			if(isNaN(arr) && phn.length==10){
+				arr = [];
+				arr.push(parseInt(phn.substring(0, 3)));
+				arr.push(parseInt(phn.substring(3, 6)));
+				arr.push(parseInt(phn.substring(6, 10)));
+			}else{
+				init = phn.indexOf(')');
+				fin = phn.indexOf('-');
+				arr.push(parseInt(phn.substr(init+1,fin-init-1)));
+				init = phn.indexOf('-');
+				arr.push(parseInt(phn.substr(init+1,phn.length)));
+			}
 			d.resolve(arr);
 		}else{
 			d.resolve();
@@ -2896,7 +3371,7 @@ function BuildOrderService( $q, $window, $stateParams, ocscope, buyerid, OrderCl
 	}
 	function _GetBuyerDtls(){
 		var d = $q.defer();
-		OrderCloud.Buyers.Get().then(function(res){
+		OrderCloud.Buyers.Get('Bachmans').then(function(res){
 			d.resolve(res);
 		});
 		return d.promise;
@@ -2928,8 +3403,30 @@ function BuildOrderService( $q, $window, $stateParams, ocscope, buyerid, OrderCl
 	function _GetHosChurchFuneral(type){
 		var d = $q.defer();
 		OrderCloud.Addresses.List(null,1, 100,null,null,{"ID":type+"-*"}).then(function(res){
-			var dtls = _.pluck(res.Items, 'CompanyName');
-			d.resolve({"data": {"Names": dtls, "List": res.Items}});
+			var TotalPages=res.Meta.TotalPages;
+			var destinationdata=[];
+			for (var i = 0; i <= TotalPages-1; i++) {
+				destinationdata.push(OrderCloud.Addresses.List(null,i+1, 100,null,null,{"ID":type+"-*"}));
+			}
+			if(TotalPages > 1){
+				$q.all(destinationdata).then(function(result){
+					destinationdata=[];
+					angular.forEach(result, function(val){
+						destinationdata = _.union(destinationdata, val.Items);
+					});
+					destinationdata = _.filter(destinationdata, function(row){
+						return row.CompanyNameAddress = row.CompanyName+' ('+row.Street1+', '+row.City+')';
+					});
+					var dtls = _.pluck(destinationdata, 'CompanyNameAddress');
+					d.resolve({"data": {"Names": dtls, "List": destinationdata}});
+				});
+			}else{
+				res.Items = _.filter(res.Items, function(row){
+					return row.CompanyNameAddress = row.CompanyName+' ('+row.Street1+', '+row.City+')';
+				});
+				var dtls = _.pluck(res.Items, 'CompanyNameAddress');
+				d.resolve({"data": {"Names": dtls, "List": res.Items}});
+			}	
 		});
 		return d.promise;
 	}
@@ -2944,11 +3441,20 @@ function BuildOrderService( $q, $window, $stateParams, ocscope, buyerid, OrderCl
 		});
 		return d.promise;
 	}
+	function _GetLocalCities(){
+		var d = $q.defer();
+		OrderCloud.Addresses.List(null, 1, 100, null, null, {"ID":"LDCity-*"}).then(function(res){
+			var filt = _.pluck(res.Items, 'City');
+			service.LocalCities = filt;
+			d.resolve(filt);
+		});
+		return d.promise;
+	}
 	function _OrderOnHoldRemove(data, ID){
 		var d = $q.defer(), OrderOnHold = _.pluck(data, 'xp');
 		OrderOnHold = _.pluck(OrderOnHold, 'Status');
 		if(OrderOnHold.indexOf("OnHold") == -1){
-			if($stateParams.SearchType == 'Products' || $stateParams.SearchType == 'PDP' || $stateParams.SearchType == 'BuildOrder' ||  $stateParams.SearchType == 'plp' || $stateParams.SearchType =='elp'){
+			if($stateParams.SearchType == 'Products' || $stateParams.SearchType == 'PDP' || $stateParams.SearchType == 'BuildOrder' ||  $stateParams.SearchType == 'plp' || $stateParams.SearchType =='elp' || $stateParams.SearchType=='GiftCard'){
 				OrderCloud.Orders.Patch(ID, {"xp": {"Status": null,"CSRID":$cookieStore.get('OMS.CSRID')}}).then(function(res){
 					d.resolve(res);
 				}).catch(function(){
@@ -2971,7 +3477,7 @@ function BuildOrderService( $q, $window, $stateParams, ocscope, buyerid, OrderCl
 		}
 		return d.promise;
 	}
-	function _PatchOrder(order, data){
+	function _PatchOrder(order, data, xp){
 		var d = $q.defer(), delChrgs = 0, CapTotalDiscount = 0;
 		angular.forEach(data.Items, function(val, key){
 			angular.forEach(val.xp.deliveryFeesDtls, function(val1, key1){
@@ -2982,8 +3488,16 @@ function BuildOrderService( $q, $window, $stateParams, ocscope, buyerid, OrderCl
 			CapTotalDiscount = delChrgs - 250;
 			delChrgs = 250;
 		}
-		if($stateParams.SearchType == 'Products' || $stateParams.SearchType == 'PDP' || $stateParams.SearchType == 'BuildOrder' || $stateParams.SearchType == 'plp' || $stateParams.SearchType =='elp'){
-			OrderCloud.Orders.Patch(order.ID, {"ShippingCost": delChrgs, "xp":{"CapTotalDiscount": CapTotalDiscount}}).then(function(res){
+		var obj = {"ShippingCost": delChrgs, "xp":{"CapTotalDiscount": CapTotalDiscount}};
+		if(xp){
+			if(xp.TaxExemption){
+				if(xp.TaxExemption.Enabled){
+					obj.TaxCost = 0;
+				}
+			}
+		}	
+		if($stateParams.SearchType == 'Products' || $stateParams.SearchType == 'PDP' || $stateParams.SearchType == 'BuildOrder' || $stateParams.SearchType == 'plp' || $stateParams.SearchType =='elp' || $stateParams.SearchType=='GiftCard'){
+			OrderCloud.Orders.Patch(order.ID, obj).then(function(res){
 				d.resolve(res);
 			}).catch(function(){
 				OrderCloud.Orders.Get(order.ID).then(function(res){
@@ -2991,7 +3505,7 @@ function BuildOrderService( $q, $window, $stateParams, ocscope, buyerid, OrderCl
 				});
 			});
 		}else{
-			OrderCloud.As().Orders.Patch(order.ID, {"ShippingCost": delChrgs, "xp":{"CapTotalDiscount": CapTotalDiscount}}).then(function(res){
+			OrderCloud.As().Orders.Patch(order.ID, obj).then(function(res){
 				d.resolve(res);
 			}).catch(function(){
 				OrderCloud.Orders.Get(order.ID).then(function(res){
@@ -3035,35 +3549,82 @@ function BuildOrderService( $q, $window, $stateParams, ocscope, buyerid, OrderCl
         });
         return d.promise;
     }
-	function _getProductList(res, productImages){
-		var d = $q.defer(), ticket = localStorage.getItem("alfrescoTicket"), data, imgUrl;   
-		data = Underscore.filter(res, function(row){
-			var podID=row.ID;
-			podID=podID.toString();
-			imgUrl = Underscore.filter(productImages, function(row1){
-				var str=row1.displayName;
-				str=str.replace(/.jpg/g, "");
-				return str.indexOf(podID) != -1;
-			});
-			if(imgUrl.length > 0){
-				var baseImage;
-				Underscore.filter(imgUrl, function(row1){
-					var str=row1.displayName;
-					str=str.replace(/.jpg/g, "");
-					if(str==podID)
-					{
-						row.baseImage = alfrescoAccessURL+"/"+ row1.contentUrl + "?alf_ticket=" + ticket;
+	function _getProductList(res, rootnode){
+		// var d = $q.defer(), ticket = localStorage.getItem("alfrescoTicket"), data, imgUrl;   
+		// data = Underscore.filter(res, function(row){
+			// var podID=row.ID;
+			// podID=podID.toString();
+			// imgUrl = Underscore.filter(productImages, function(row1){
+				// var str=row1.displayName;
+				// str=str.replace(/.jpg/g, "");
+				// return str.indexOf(podID) != -1;
+			// });
+			// if(imgUrl.length > 0){
+				// var baseImage;
+				// Underscore.filter(imgUrl, function(row1){
+					// var str=row1.displayName;
+					// str=str.replace(/.jpg/g, "");
+					// if(str==podID)
+					// {
+						// row.baseImage = alfrescoAccessURL+"/"+ row1.contentUrl + "?alf_ticket=" + ticket;
+					// }
+				// });
+				// row.alternativeImg = [];
+				// angular.forEach(imgUrl, function(value, key) {
+					// row.alternativeImg.push(alfrescoAccessURL+"/" + value.contentUrl + "?alf_ticket=" + ticket);;
+				// });
+				// return row.alternativeImg;
+			// }else
+				// return row;
+		// });
+		// d.resolve(data);
+		// return d.promise;
+		 var d = $q.defer(), ticket = localStorage.getItem("alfrescoTicket"), data, count=1;   
+			angular.forEach(res, function (row) {
+			var params={
+				GetItems:'Search',
+				searchTerm:row.ID,
+				rootNode:rootnode
+			}
+			Alfresco.Search(params).then(function(response){
+				var podID=row.ID;
+				podID=podID.toString();
+				if(response.data.items.length > 0){
+					var baseImage;
+					Underscore.filter(response.data.items, function(row1){
+						var str=row1.displayName;
+						str=str.replace(/.jpg/g, "");
+						if(str==podID)
+						{
+							//row1.displayName = row1.name;
+							var nodeID = row1.nodeRef.split("/")[3];
+							row1.contentUrl = "api/node/content/workspace/SpacesStore/" + nodeID + "/" + row1.name;
+							row.baseImage = alfrescoAccessURL+"/"+ row1.contentUrl + "?alf_ticket=" + ticket;
+						}
+					});
+					row.alternativeImg = [];
+					angular.forEach(response.data.items, function(value, key) {
+						//row1.displayName = value.name;
+						var nodeID = value.nodeRef.split("/")[3];
+						var contentUrl = "api/node/content/workspace/SpacesStore/" + nodeID + "/" + value.name;
+						row.alternativeImg.push(alfrescoAccessURL+"/" + contentUrl + "?alf_ticket=" + ticket);;
+					});
+					//return row.alternativeImg;
+					if(count==res.length){
+						d.resolve(res);
 					}
-				});
-				row.alternativeImg = [];
-				angular.forEach(imgUrl, function(value, key) {
-					row.alternativeImg.push(alfrescoAccessURL+"/" + value.contentUrl + "?alf_ticket=" + ticket);;
-				});
-				return row.alternativeImg;
-			}else
-				return row;
-		});
-		d.resolve(data);
+					count++;
+				}
+				else{
+					if(count==res.length){
+						d.resolve(res);
+					}
+				 count++;
+				 }
+				
+			});
+		})
+		
 		return d.promise;
 	}
 	function _getSeqProd(sequence) {
@@ -3080,7 +3641,7 @@ function BuildOrderService( $q, $window, $stateParams, ocscope, buyerid, OrderCl
 				d.resolve(arr);
 			});
 		};
-		if($stateParams.SearchType != 'Products' && $stateParams.SearchType != 'PDP' && $stateParams.SearchType != 'BuildOrder' && $stateParams.SearchType!=undefined && $stateParams.SearchType!='Workshop' && $stateParams.SearchType !='elp'){
+		if($stateParams.SearchType != 'Products' && $stateParams.SearchType != 'PDP' && $stateParams.SearchType != 'BuildOrder' && $stateParams.SearchType!=undefined && $stateParams.SearchType!='Workshop' && $stateParams.SearchType !='elp' && $stateParams.SearchType!='GiftCard'){
 				vs.listAllProducts();
 		}else{
 			OrderCloud.Users.GetAccessToken('gby8nYybikCZhjMcwVPAiQ', impersonation)
@@ -3190,14 +3751,26 @@ function BuildOrderService( $q, $window, $stateParams, ocscope, buyerid, OrderCl
 								line.MultipleCities.push("West Lakeland");
 							}
 						}	
-					}
-					else
+					}else{
 						delete line.MultipleCities;
+						angular.forEach(res.data.results[0].address_components, function(component,index){
+							var types = component.types;
+							angular.forEach(types, function(type,index){
+								if(type == 'locality') {
+									line.ShippingAddress.City = component.long_name;
+								}
+								if(type == 'administrative_area_level_1') {
+									line.ShippingAddress.State = component.short_name;
+								}
+							});
+						});
+					}	
 				});
 			}
 		}
 		if((line.xp.deliveryDate || line.xp.pickupDate) && line.ShippingAddress.Zip && line.ShippingAddress.Street1 && line.ShippingAddress.FirstName && line.ShippingAddress.LastName){
 			AddressValidationService.Validate(line.ShippingAddress).then(function(res){
+				delete vm.AddressError;
 				if(res.ResponseBody.ResultCode == 'Success'){
 					if(form)
 						form.invalidAddress = false;
@@ -3206,21 +3779,51 @@ function BuildOrderService( $q, $window, $stateParams, ocscope, buyerid, OrderCl
 					if(!line.MultipleCities)
 						line.ShippingAddress.Zip = parseInt(zip);
 					line.ShippingAddress.Street1 = validatedAddress.Line1;
-					line.ShippingAddress.Street2 = null;
+					line.ShippingAddress.Street2 = validatedAddress.Line2;
 					if(!line.MultipleCities)
 						line.ShippingAddress.City = validatedAddress.City;
 					line.ShippingAddress.State = validatedAddress.Region;
 					line.ShippingAddress.Country = validatedAddress.Country;
-					IsLocal =  _.contains(["Minneapolis", "Saint Paul", "Medina", "Anoka", "Centerville", "Stillwater", "Grant"], line.ShippingAddress.City);
+					IsLocal =  _.contains(service.LocalCities, line.ShippingAddress.City);
 					if(line.xp.DeliveryMethod!="Courier"){
 						delete line.xp.DeliveryMethod;
 						if(!line.xp.DeliveryMethod){
 							if(IsLocal){
 								line.xp.DeliveryMethod = "LocalDelivery";
+								if(line.xp.MinDays){
+									if(line.xp.MinDays.MinToday){
+										if(line.LocalOrUPSMinDate!=line.xp.MinDays.MinToday && line.LocalOrUPSMinDate){
+											line.xp.deliveryDate = null;
+											if(line.dateVal){
+												line.dateVal.Date = null;
+												line.dateVal.Month = null;
+												line.dateVal.Year = null;
+											}
+										}
+										line.LocalOrUPSMinDate = line.xp.MinDays.MinToday;
+									}	
+								}
 							}else{
 								line.xp.DeliveryMethod = "UPS";
+								if(line.xp.MinDays){
+									if(line.LocalOrUPSMinDate!=line.xp.MinDays.UPS && line.LocalOrUPSMinDate){
+										line.xp.deliveryDate = null;
+										if(line.dateVal){
+											line.dateVal.Date = null;
+											line.dateVal.Month = null;
+											line.dateVal.Year = null;
+										}
+									}	
+									if(line.xp.MinDays.UPS)
+										line.LocalOrUPSMinDate = line.xp.MinDays.UPS;
+									else
+										line.LocalOrUPSMinDate = line.xp.MinDays.MinToday;
+								}
 							}
 						}
+					}
+					if(line.xp.addressType=="InStorePickUp"){
+						line.xp.DeliveryMethod = "InStorePickUp";
 					}
 					OrderCloud.Categories.ListProductAssignments(null, line.ProductID).then(function(res1){
 						OrderCloud.Categories.Get(res1.Items[0].CategoryID).then(function(res2){
@@ -3231,7 +3834,7 @@ function BuildOrderService( $q, $window, $stateParams, ocscope, buyerid, OrderCl
 								line.DeliveryNotAvailable = false;
 								if(line.xp.DeliveryMethod=="LocalDelivery"){
 									obj['Standard Delivery'] = vm.buyerXp.Shippers.LocalDelivery.StandardDeliveryFees;
-									if(line.Quantity >= 50){
+									if(line.Quantity >= vm.buyerXp.Shippers.Global.Quantity){
 										if(line.Product.xp.Handling)
 											obj['Handling Charges'] = line.Product.xp.Handling;
 										//Faster delivery checking same day or next day 
@@ -3242,7 +3845,6 @@ function BuildOrderService( $q, $window, $stateParams, ocscope, buyerid, OrderCl
 										CstTom = CstTom.getMonth()+1 +'/'+ CstTom.getDate() +'/'+ CstTom.getFullYear();
 										var lineDt = new Date(angular.copy(line.xp.deliveryDate));
 										lineDt = lineDt.getMonth()+1 +'/'+ lineDt.getDate() +'/'+ lineDt.getFullYear();
-										
 										if(dlvryMethods.Faster && ((new Date(CstDateTime).getHours() < 10 && CstToday == lineDt) || new Date(lineDt) >= new Date(CstTom))){
 											//line.xp.DeliveryMethod = "Faster";
 											if(IsLocal)
@@ -3259,7 +3861,7 @@ function BuildOrderService( $q, $window, $stateParams, ocscope, buyerid, OrderCl
 									obj = {};
 									obj['Courier Charges'] = vm.buyerXp.Shippers.Courier.OMS;
 								}
-								if(res2.Name=="Gift Cards"){
+								if(res2.Name=="GiftCards"){
 									obj = {};
 									obj['USPS Charges'] = vm.buyerXp.Shippers.USPS.USPSCharges;
 								}
@@ -3269,18 +3871,22 @@ function BuildOrderService( $q, $window, $stateParams, ocscope, buyerid, OrderCl
 									if(line.xp.deliveryFeesDtls['Placement Charges'])
 										obj['Placement Charges'] = line.xp.deliveryFeesDtls['Placement Charges'];
 								}
-								dt = angular.copy(new Date(CstDateTime)).setHours(0, 0, 0, 0);
-								if(angular.copy(new Date(CstDateTime)).getHours() < 10 && dt == new Date(line.deliveryDate) && (line.xp.DeliveryMethod=="LocalDelivery")){
-									obj['Same Day Delivery'] = vm.buyerXp.Shippers.LocalDelivery.StandardDeliveryFees;
-									if(line.xp.addressType == "Funeral" || line.xp.addressType == "Church"){
-										if(vm.buyerXp.Shippers.LocalDelivery.StandardDeliveryFees > 0){
-											obj = {};
-											obj['Same Day Delivery'] = vm.buyerXp.Shippers.LocalDelivery.StandardDeliveryFees;
-										}else{
-											obj[line.xp.addressType+" Charges"] = vm.buyerXp.Shippers.LocalDelivery.Funeral_ChurchFees;
+								dt = angular.copy(new Date(CstDateTime));
+								dt = dt.getMonth()+1+'/'+dt.getDate()+'/'+dt.getFullYear();
+								var dttest = new Date(line.xp.deliveryDate);
+								if(dttest){
+									dttest = dttest.getMonth()+1+'/'+dttest.getDate()+'/'+dttest.getFullYear();
+									if(angular.copy(new Date(CstDateTime)).getHours() < 10 && dt == dttest && line.xp.DeliveryMethod=="LocalDelivery"){
+										if(line.xp.addressType == "Funeral" || line.xp.addressType == "Church"){
+											if(vm.buyerXp.Shippers.LocalDelivery.SameDayDeliveryFees > 0){
+												obj = {};
+												obj['Same Day Delivery'] = vm.buyerXp.Shippers.LocalDelivery.SameDayDeliveryFees;
+											}else{
+												obj[line.xp.addressType+" Charges"] = vm.buyerXp.Shippers.LocalDelivery.Funeral_ChurchFees;
+											}
 										}
 									}
-								}
+								}	
 								line.xp.deliveryFeesDtls = obj;
 								line.xp.TotalCost = 0;
 								line.xp.deliveryCharges = 0;
@@ -3292,9 +3898,11 @@ function BuildOrderService( $q, $window, $stateParams, ocscope, buyerid, OrderCl
 										line.xp.deliveryDate = new Date(line.xp.deliveryDate);
 										dt2 = (("0" + (line.xp.deliveryDate.getMonth()+1)).slice(-2))+"-"+(("0" + line.xp.deliveryDate.getDate()).slice(-2))+"-"+line.xp.deliveryDate.getFullYear();
 									}
-									if(dt1 == dt2 && val.FirstName == line.ShippingAddress.FirstName && val.LastName == line.ShippingAddress.LastName && val.Zip == line.ShippingAddress.Zip && (val.Street1).split(/(\d+)/g)[1] == (line.ShippingAddress.Street1).split(/(\d+)/g)[1] && val.lineID != line.ID && val.DeliveryMethod == line.xp.DeliveryMethod && val.deliveryFeesDtls['Standard Delivery']){
-										vm.NoDeliveryFees = true;
-									}
+									if(val.deliveryFeesDtls){
+										if(dt1 == dt2 && val.FirstName == line.ShippingAddress.FirstName && val.LastName == line.ShippingAddress.LastName && val.Zip == line.ShippingAddress.Zip && (val.Street1).split(/(\d+)/g)[1] == (line.ShippingAddress.Street1).split(/(\d+)/g)[1] && val.lineID != line.ID && val.DeliveryMethod == line.xp.DeliveryMethod && val.deliveryFeesDtls['Standard Delivery']){
+											vm.NoDeliveryFees = true;
+										}
+									}	
 								}, true);
 								if(vm.NoDeliveryFees == true || line.xp.addressType=="InStorePickUp"){
 									delete line.xp.deliveryFeesDtls['Standard Delivery'];
@@ -3328,21 +3936,21 @@ function BuildOrderService( $q, $window, $stateParams, ocscope, buyerid, OrderCl
 											val.ShippingAddress.deliveryDate = val.xp.deliveryDate;
 											val.ShippingAddress.lineID = val.ID;
 											val.ShippingAddress.DeliveryMethod = val.xp.DeliveryMethod;
-											val.ShippingAddress.deliveryFeesDtls = val.xp.deliveryFeesDtls;
+											val.ShippingAddress.deliveryFeesDtls = angular.copy(val.xp.deliveryFeesDtls);//angular.copy for checkout issue added
 											vm.AvoidMultipleDelryChrgs.push(val.ShippingAddress);
 										}
 									}, true);
 								}, true);
-								if((line.Product.xp['Code B4'] == "F" || line.Product.xp['Code B4'] == "T" || line.Product.xp['Code B4'] == "E") && line.xp.DeliveryMethod!="LocalDelivery"){
+								if((line.Product.xp['CodeB4'] == "F" || line.Product.xp['CodeB4'] == "T" || line.Product.xp['CodeB4'] == "E") && line.xp.DeliveryMethod!="LocalDelivery"){
 									if(!line.xp.deliveryCharges)
 										line.xp.deliveryCharges = 0;
-									if(line.Product.xp['Code B4']== "F")
+									if(line.Product.xp['CodeB4']== "F")
 										line.xp.Destination = "FTD";
-									if(line.Product.xp['Code B4']== "T")
+									if(line.Product.xp['CodeB4']== "T")
 										line.xp.Destination = "TFE";
 									line.xp.Status = "OnHold";
 									line.DeliveryNotAvailable = false;
-								}else if(!line.Product.xp['Code B4'] && line.xp.DeliveryMethod!="LocalDelivery"){
+								}else if(!line.Product.xp['CodeB4'] && line.xp.DeliveryMethod!="LocalDelivery"){
 									if(line.xp.AssemblyLineItemsList){
 										if(line.xp.AssemblyLineItemsList.length > 0)
 											line.DeliveryNotAvailable = true;
@@ -3354,16 +3962,16 @@ function BuildOrderService( $q, $window, $stateParams, ocscope, buyerid, OrderCl
 								}
 								d.resolve();
 							}else{
-								if((line.Product.xp['Code B4'] == "F" || line.Product.xp['Code B4'] == "T" || line.Product.xp['Code B4'] == "E") && line.xp.DeliveryMethod!="LocalDelivery"){
+								if((line.Product.xp['CodeB4'] == "F" || line.Product.xp['CodeB4'] == "T" || line.Product.xp['CodeB4'] == "E") && line.xp.DeliveryMethod!="LocalDelivery"){
 									if(!line.xp.deliveryCharges)
 										line.xp.deliveryCharges = 0;
-									if(line.Product.xp['Code B4']== "F")
+									if(line.Product.xp['CodeB4']== "F")
 										line.xp.Destination = "FTD";
-									if(line.Product.xp['Code B4']== "T")
+									if(line.Product.xp['CodeB4']== "T")
 										line.xp.Destination = "TFE";
 									line.xp.Status = "OnHold";
 									line.DeliveryNotAvailable = false;
-								}else if(!line.Product.xp['Code B4'] && line.xp.DeliveryMethod!="LocalDelivery"){
+								}else if(!line.Product.xp['CodeB4'] && line.xp.DeliveryMethod!="LocalDelivery"){
 									//if(line.xp.AssemblyLineItemsList)
 										//if(line.xp.AssemblyLineItemsList.length > 0)
 											line.DeliveryNotAvailable = true;
@@ -3385,31 +3993,36 @@ function BuildOrderService( $q, $window, $stateParams, ocscope, buyerid, OrderCl
 						form.invalidAddress = true;
 					d.resolve();
 				}
+			}).catch(function(err){
+				vm.AddressError = err.Errors[0].Message;
 			});
 		}else{
 			d.resolve();
 		}
 		return d.promise;
 	}
-	function _getAlgoliaResults(data){
-		var client = algolia.Client('31LAEMRXWG', '600b3cc15477fd21c5931d1bfbb36b3d');
+	function _getAlgoliaResults(data, page, noOfHits){
+		//var client = algolia.Client('31LAEMRXWG', '600b3cc15477fd21c5931d1bfbb36b3d');
+		var client = algolia.Client('B1FOQ7SZ6T', 'f946a36f8e496d36a7366f0140355575');
 		var index = client.initIndex('products');
 		var search = {
 			'query' : '',
 			'hits' : []
 		};
 		search.query=data;
-		return index.search(search.query, {hitsPerPage: 1000});
+		return index.search(search.query, {hitsPerPage: noOfHits, page:page});
 	}
 	function _getUnsubmittedOrder(){
 		var temp = [], filt, d = $q.defer();
-		if($stateParams.SearchType != 'Products' && $stateParams.SearchType != 'BuildOrder' && $stateParams.SearchType != 'PDP' && $stateParams.SearchType != 'plp'){
+		if($stateParams.ID != 'gby8nYybikCZhjMcwVPAiQ'){
 			OrderCloud.As().Me.ListOutgoingOrders(null, 1, 100, null, null, {"Status":"Unsubmitted"}).then(function(res){
 				filt = _.filter(res.Items, function(row){
 					if(row.xp != null){
 						if(row.xp.SavedOrder){
 							if(!row.xp.SavedOrder.Flag)
 								temp.push(row);
+						}else{
+							temp.push(row);
 						}
 					}else{
 						temp.push(row);
@@ -3421,9 +4034,23 @@ function BuildOrderService( $q, $window, $stateParams, ocscope, buyerid, OrderCl
 					d.resolve(0);
 				}
 			});
+		}
+		else if($stateParams.ID == 'gby8nYybikCZhjMcwVPAiQ'){
+			d.resolve(0);
 		}else{
 			d.resolve(0);
 		}
+		return d.promise;
+	}
+	
+	function _getInventory(ProductID){
+		var d = $q.defer();
+		OrderCloud.Products.GetInventory(ProductID).then(function(res){
+			if(res.Available!=null && res.Available > 0)
+				d.resolve(res.Available);
+			else
+				d.resolve(0);
+		});
 		return d.promise;
 	}
     return service;
@@ -3481,8 +4108,6 @@ function anchorSmoothScroll() {
                 y += node.offsetTop;
             } return y;
         }
-
     };
-
     return service;
 }

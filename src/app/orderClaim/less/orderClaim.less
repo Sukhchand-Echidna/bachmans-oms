@@ -8,11 +8,8 @@ main:not(.build-order).orderclaim{
 	.back-common{
 		margin:14px 0 14px 30px;
 		a{
-			color:@color0;
+			
 			text-decoration:none;
-			&:hover{
-				color:@color0;
-			}
 		}
 	}
 	.order-claim-container{
@@ -29,20 +26,20 @@ main:not(.build-order).orderclaim{
     	float: left;
     	width: 32%;
     	padding: 10px;
-    	font-size: 14px;
+    	font-size: 0.875em;
 		span{
-			font-size:12px;
+			font-size:1em;
 			.helvetica-bold;
 		}
 		pull-right{
 			.helvetica-regular;
-			font-size:12px;
+			font-size:0.750em;
 		}
     	color:#333;
 		 div{
 		 	padding:0px;
 		 	.edit{
-		 	font-size: 10px;
+		 	font-size: 0.625em;
 		 	}
 		 }
 	}
@@ -51,6 +48,7 @@ main:not(.build-order).orderclaim{
 		.thead-default{
 			background:#f5f5f5;
 			.helvetica-bold;
+			font-weight:normal;
 		}
 		.select-module{
 			    vertical-align: middle;
@@ -98,27 +96,29 @@ main:not(.build-order).orderclaim{
 				    width: 22%;
 				 	.product-img{
 						padding:0;
-						width: 100px;
-							img{
+						img{
 								max-width:100%;
 							}
+					}
+					.pro-details{
+						padding: 0 0 0 10px;
 					}
 			}
 			.pro-details{
 				   p{
 				   	   margin:0px;
 					   .helvetica-regular;
-					   font-size:13px;
+					   font-size:0.813em;
 				   }
 				h1{
-					font-size:15px;
+					font-size:0.938em;
 					.helvetica-bold;
 					 margin: 0px;
 				}
 				.delivery-date{
 					margin: 5px 0px !important;
     				.helvetica-bold;
-					font-size:12px;
+					font-size:0.750em;
 				}
 				.view{
 					text-decoration: underline;
@@ -143,7 +143,7 @@ main:not(.build-order).orderclaim{
 			textarea{
 				height: auto;
 			    border-radius: 0px;
-			    
+			    padding:5px;
 			}
 			.price{
 			    position: relative;
@@ -159,32 +159,29 @@ main:not(.build-order).orderclaim{
 					fill:@primary-dark-color;
 				}
 				input{
-					width:94%;
+					width:96%;
 					border: 1px solid #ccc;
 				    padding: 2px 4px;
 				    background: #f7f7f7;
 				}
 				.save{
-				    background: #a77bca;
-				    color: #fff;
-				    padding: 1px 14px;
-				    text-transform: capitalize;
-				    margin-top: 10px;
-					.background-fade;
-					&:hover{
-						background-color:@primary-dark-color;
-					}
+				   .purple-btn;
+				   margin-top: 10px;
+				   line-height:25px;
+				   height:25px;
+				   font-size:0.75em;
 				}
 			}
 			.delivery{
 				.helvetica-bold;
-				 font-size: 20px
+				 font-size: 1.250em;
 			}
 			th{
 				border-bottom:none;
 			}
 			td,th{
 				padding: 8px 14px;
+				font-weight:normal;
 			}
 			.item{
 				position:relative;
@@ -200,7 +197,7 @@ main:not(.build-order).orderclaim{
     		width: 30%;
     		margin: 40px 40px 0 0;
     		.claim-header{
-    			font-size:15px;
+    			font-size:0.938em;
     			.helvetica-bold;
     			padding-bottom:5px;
     			.claim-content{
@@ -215,7 +212,7 @@ main:not(.build-order).orderclaim{
 .custom-details{
 		background: #f1f1f1;
 		padding: 20px 30px;
-		font-size: 20px;
+		font-size: 1.250em;
 		margin:0 0 30px 0px;
 		.custom{
 			.helvetica-bold;
@@ -223,7 +220,7 @@ main:not(.build-order).orderclaim{
 		}
 		.custom-name{
 		   .helvetica-regular;
-			   font-size: 17px;
+			   font-size: 1.063em;
 			 margin-left: 5px;
 		}
 }
@@ -234,56 +231,46 @@ main:not(.build-order).orderclaim{
 		color: #fff;
 		.cancel-claim {
 			float: left;
-			padding: 5px 40px;
-			border-right: 1px solid #fff;
-			background: #969292;
-			cursor: pointer;
-			.background-fade;
-			&:hover{
-				background-color:@primary-dark-color;
-			}
-			a {
+			.purple-big;
+			border-radius:0px;
+			padding:0 30px;
+			a{
 				color: #fff;
-				text-decoration: none;
+    			text-decoration: none;
 			}
 		}
 	.continue-claim{
-		background: #969292;
-		float: right;
-		padding: 5px 80px;
-		.background-fade;
-		&:hover{
-			background-color:@primary-dark-color;
-		}
-		&.disabled {
-			background: #969292;
-			cursor: not-allowed;
-			&:hover {
-				background: #969292;
-			}
-		}
+		.green-btn;
+		float:right;
+		padding:0 30px;
+	}
+	.disabled{
+		border:1px solid red;
 	}
 }
 .orderclaimtotal{
 	float:right;
-	font-size:14px;
+	font-size:0.875em;
 	margin-bottom: 20px;
 	margin-right: 16px;
 	width:180px;
 	h3{
 		margin:0px 0 10px 0;
-		font-size:20px;
+		font-size:1.250em;
 		.helvetica-bold;
 	}
 	div{
 		 span:last-child{
-			text-align: right;
-    		float: right;
-			.helvetica-bold;
+			text-align: left;
+		    float: right;
+		    font-family: 'ProximaNova-Bold';
+		    width: 41%;
 		}
 		span:first-child{
-		  width:69%;
-		  float:left;
+		      width: 55%;
+		    float: left;
+		    text-align: right;
+		    margin-right: 4%;
 		}
 	}
 }
@@ -294,27 +281,16 @@ main:not(.build-order).orderclaim{
 	text-align: center;
 	h4 {
 		.helvetica-bold;
-		font-size: 20px;
+		font-size: 1.250em;
 		margin: 20px 0 30px;
 	}
 	p {
 		margin: 15px 0;
 		.helvetica-regular;
-		font-size: 16px;
+		font-size: 1em;
 	}
 	button {
-		.helvetica-bold;
-		margin: 15px 0;
-		padding: 5px 20px;
-		background-color:@primary-color;
-		color: #fff;
-		&:hover {
-			background-color:@primary-dark-color;
-		}
-		&:disabled:hover {
-			background-color:@primary-color;
-			cursor: not-allowed;
-			opacity: 0.6;
-		}
+		.purple-big;
+		margin-bottom:20px;
 	}
 }

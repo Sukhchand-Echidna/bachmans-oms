@@ -14,7 +14,7 @@
     <div class="order-history" ng-if="orderHistory.order.length>0">
         <h5>
             <span class="order-header">Order History for:</span> {{uname}}
-            <button class="create-claim">Create Non-Order Claim</button>
+            <button class="create-claim" ui-sref="buildOrder({ID:orderHistory.userID,SearchType:'User',showOrdersummary: false,nonOrderClaim: true})">Create Non-Order Claim</button>
         </h5>
         <input type="text" ng-model="orderHistory.searchText" placeholder="Search" class="save-input">
         <div ui-grid="gridHistory" class="order-grid col-md-12 col-sm-12"></div>

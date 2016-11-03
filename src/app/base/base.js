@@ -9,7 +9,28 @@ angular.module( 'orderCloud' )
     .controller('BaseDownCtrl', BaseDownController)
     .controller('BuildOrderTopCtrl', BuildOrderTopController)
     .factory('AlfrescoFact', AlfrescoFact)
+	.filter('CategoriesAsPerSeason', CategoriesAsPerSeasonFilter)
 ;
+
+function CategoriesAsPerSeasonFilter($filter) {
+    return function (item, csttime) {
+        var newArray = [];
+        for (var i = 0; i < item.length; i++) {
+            if (item[i].xp) {
+                var startDate = item[i].xp.StartDate;
+                var endDate = item[i].xp.EndDate;
+                var startDate = $filter('date')(new Date(startDate), 'MM/dd');
+                var endDate = $filter('date')(new Date(endDate), 'MM/dd');
+                var cstTime = $filter('date')(new Date(csttime), 'MM/dd');
+                //var cstTime = date+month;
+                if ((startDate < cstTime) && (endDate > cstTime)) {
+                    newArray.push(item[i]);
+                }
+            }
+        }
+        return newArray;
+    }
+}
 
 function BaseConfig( $stateProvider ) {
     $stateProvider
@@ -84,9 +105,9 @@ function BaseConfig( $stateProvider ) {
                 UserList: function (OrderCloud) {
                     return OrderCloud.Users.List();
                 },
-                ProductList: function (OrderCloud) {
+                /*ProductList: function (OrderCloud) {
                     return OrderCloud.Products.List();
-                },
+                },*/
                 Alfrescoticket: function (AlfrescoFact) {
                     return AlfrescoFact.Get().then(function (data) {
                         console.log(data);
@@ -104,6 +125,24 @@ function BaseConfig( $stateProvider ) {
 						console.log("logoooooooooooooo", AlfrescoFact.logo);
 					});
 					return df.promise;
+				},
+				GetCstTimeFunction: function($q, GetCstTime){
+					var d = $q.defer();
+					$.ajax({
+						method:"GET",
+						dataType:"json",
+						contentType: "application/json",
+						url:GetCstTime
+					}).success(function(data){
+						d.resolve(new Date(data.datetime));
+						//var dd = data.date;
+						//var d = dd.split('-');
+						//vm.cstdate = new Date(d[2],d[0]-1,d[1]);
+					}).error(function(data){
+						console.log("error ==",data);
+						d.resolve();
+					});
+					return d.promise;
 				}
             }
         });
@@ -160,8 +199,9 @@ function BaseService($q, $localForage, Underscore, OrderCloud) {
     return service;
 }
 
-function BaseController($sce, $state, CurrentUser, defaultErrorMessageResolver, ProductList, AlfrescoFact, $scope, AlfrescoCommon) {
+function BaseController($sce, $state, CurrentUser, defaultErrorMessageResolver, AlfrescoFact, $scope, AlfrescoCommon, GetCstTimeFunction) {
     var vm = this;
+	vm.cstdate = GetCstTimeFunction;
 	vm.logo=AlfrescoCommon;
     vm.currentUser = CurrentUser;
 	/*$scope.search = {
@@ -182,7 +222,7 @@ function BaseController($sce, $state, CurrentUser, defaultErrorMessageResolver, 
         errorMessages['confirmpassword'] = 'Your passwords do not match';
         errorMessages['noSpecialChars'] = 'Only Alphanumeric characters are allowed';
     });
-	vm.product = ProductList;
+	//vm.product = ProductList;
     // AlfrescoFact.Get().then(function (data) {
         // console.log(data);
         // var ticket = data.data.ticket;
@@ -227,8 +267,9 @@ function BaseLeftController(ComponentList) {
 	vm.isCollapsed = true;
 }
 
-function BaseTopController($scope, $state, Tree, UserList, OrderCloud) {
+function BaseTopController($scope, $state, Tree, UserList, OrderCloud, GetCstTimeFunction) {
     var vm = this;
+	vm.cstdate = GetCstTimeFunction;
 	vm.tree = Tree;
     vm.userlist = UserList;
 	vm.numRecords = 10;

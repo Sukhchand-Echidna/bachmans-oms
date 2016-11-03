@@ -40,10 +40,12 @@
 			</div>
 		</div> -->
 		<h1 class="heading">Promotions &amp; Information</h1>
-		<div ng-repeat="promoLst in home.promotionsList | limitTo : 5">
+		<div ng-repeat="promoLst in home.promotionsList[0] | limitTo : 5">
 			<div class="promotion_box ng-scope">
 				<h1>{{promoLst.Name}}</h1>
-				<p>{{promoLst.Description}}</p>
+				<div class="prom-desp">
+				<p>{{promoLst.Description}}</p>	
+				</div>
 				<p class="more-details"></p>
 					<div class="promo-date">
 						<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
@@ -66,7 +68,7 @@
 					</div>
 			</div>
 		</div>
-		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 view-cal" ng-if="home.promotionsList.length > 5">
+		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 view-cal" ng-if="home.promoList[1] > 5">
 			<a ng-click="viewpromotions()">View All</a>
 		</div>
 		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 view-cal">
@@ -100,10 +102,12 @@
 	</modal>-->
 	<modal title="Promotions &amp; Information" visible="home.showpromotionsmodal" id="promotions" class="modal-pop-up promotionsModal">
 		<div class="promo-main">
-			<div ng-repeat="promoLst in home.promotionsList" ng-if="($index < (home.page * 10)) && ($index >= ((home.page - 1) * 10))" >
+			<div ng-repeat="promoLst in home.promoList[0]">
 				<div class="promotion_box ng-scope">
 					<h1>{{promoLst.Name}}</h1>
-					<p>{{promoLst.Description}}</p>
+					<div class="prom-desp">
+						<p>{{promoLst.Description}}</p>
+					</div>
 					<p class="more-details"></p>
 						<div class="promo-date">
 							<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
@@ -128,7 +132,7 @@
 			</div>
 		</div>
 		<div class="promo-pagination">
-			<uib-pagination total-items="totalItems" data-ng-model="currentPage" previous-text="&lsaquo;" next-text="&rsaquo;" items-per-page="itemsPerPage" ng-change="home.setPagingData(currentPage)"></uib-pagination>
+			<uib-pagination total-items="totalItems" boundary-link-numbers="true" max-size="maxSize" class="pagination-sm" data-ng-model="currentPage" previous-text="Prev" next-text="Next" items-per-page="itemsPerPage" ng-change="home.setPagingData(currentPage)"></uib-pagination>
 		</div>
 	</modal>
 	</div>
@@ -161,7 +165,6 @@
 			<h1 class="heading">Saved Orders </h1>
 			<input type="text" ng-model="home.searchText">
 			<div class="col-sm-12 saved_order_table">
-
 				<div ui-grid="CSRAdminData" class="order-grid col-md-12 col-sm-12"></div>
 			</div>
 		</div>

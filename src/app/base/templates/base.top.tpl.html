@@ -12,34 +12,18 @@
 				<div uib-dropdown-menu class="browse dropdown-menu">
 					<ul role="menu" aria-labelledby="btn-append-to-body" class="col-sm-12 dropdown-menu main_cat">
 						<li ng-repeat="categories in baseTop.tree" class="sub-nav">
-							<a class="maincat_link" ng-class="{'category-arw': categories.ChildCount}" ng-mouseover="baseTop.page = 1">{{categories.Name}}</a>
+							<a class="maincat_link" ng-class="{'category-arw': categories.ChildCount}" ng-mouseover="baseTop.page = 1" ng-if="categories.ID != 'GiftCards' && categories.Active">{{categories.Name}}</a>
 							<ul class="menu_level_2" ng-if="categories.ChildCount">
-								<li ng-repeat="subcategories in categories.children track by $index" ng-if="((categories.ID =='c1') && ((subcategories.xp.StartDate| date:'MM/dd') < (application.cstTime| date:'MM/dd')) && ((subcategories.xp.EndDate| date:'MM/dd') > (application.cstTime| date:'MM/dd')) && ($index < (baseTop.page * baseTop.numRecords)) && ($index >= ((baseTop.page - 1) * baseTop.numRecords)))">
-									<a ng-mouseover="baseTop.page2 = 1" ng-class="{'category-arw': subcategories.ChildCount}" class="submaincat_link">{{subcategories.Name}}</a>
+								<li ng-repeat="subcategories in categories.children | orderBy:'subcategories.ID' | CategoriesAsPerSeason:baseTop.cstdate" ng-if="((categories.ID =='OccasionsHolidays') && ($index < (baseTop.page * baseTop.numRecords)) && ($index >= ((baseTop.page - 1) * baseTop.numRecords)))">
+									<a ng-mouseover="baseTop.page2 = 1" ng-class="{'category-arw': subcategories.ChildCount}" class="submaincat_link" ng-if="subcategories.Active">{{subcategories.Name}}</a>
 									<ul class="menu_level_3" ng-if="subcategories.ChildCount">
 										<li ng-repeat="subchildcategories in subcategories.children track by $index" ng-if="($index < (baseTop.page2 * baseTop.numRecords)) && ($index >= ((baseTop.page2 - 1) * baseTop.numRecords)) ">
-											<a ui-sref="buildOrder({ID:subchildcategories.ID,SearchType:'plp'})" ng-click="base.isopen=false">{{subchildcategories.Name}}</a>	 
+											<a ui-sref="buildOrder({ID:subchildcategories.ID,SearchType:'plp'})" ng-click="base.isopen=false" ng-if="subchildcategories.Active">{{subchildcategories.Name}}</a>	 
 										</li>
 									</ul> 
 								</li>
-								<button class="up-arrow" ng-click="baseTop.back()" ng-show="baseTop.numRecords < (baseTop.page * baseTop.numRecords)">
-									<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-										viewBox="0 0 14 21" style="enable-background:new 0 0 14 21;" xml:space="preserve">
-										<g>
-											<path d="M0.7,18.3l7.8-7.8L0.7,2.7L3,0.3l10.2,10.2L3,20.7L0.7,18.3z"/>
-										</g>
-									</svg>
-								</button>
-								<button class="down-arrow" ng-click="baseTop.next()" ng-show="categories.children.length > (baseTop.page * baseTop.numRecords)">
-									<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-										viewBox="0 0 14 21" style="enable-background:new 0 0 14 21;" xml:space="preserve">
-										<g>
-											<path d="M0.7,18.3l7.8-7.8L0.7,2.7L3,0.3l10.2,10.2L3,20.7L0.7,18.3z"/>
-										</g>
-									</svg>
-								</button>
-								<li ng-repeat="subcategories in categories.children track by $index" ng-if="(($index < (baseTop.page * baseTop.numRecords)) && ($index >= ((baseTop.page - 1) * baseTop.numRecords)) && categories.ID !='c1' && categories.ID !='WorkshopsEvents')">
-									<a ng-mouseover="baseTop.page2 = 1" ng-class="{'category-arw': subcategories.ChildCount}" class="submaincat_link">{{subcategories.Name}}</a>
+								<li ng-repeat="subcategories in categories.children track by $index" ng-if="(($index < (baseTop.page * baseTop.numRecords)) && ($index >= ((baseTop.page - 1) * baseTop.numRecords)) && categories.ID !='OccasionsHolidays' && categories.ID !='WorkshopsEvents')">
+									<a ng-mouseover="baseTop.page2 = 1" ng-class="{'category-arw': subcategories.ChildCount}" class="submaincat_link" ng-if="subcategories.Active">{{subcategories.Name}}</a>
 									<ul class="menu_level_3" ng-if="subcategories.ChildCount">
 										<button class="up-arrow" ng-click="baseTop.back2()" ng-show="baseTop.numRecords < (baseTop.page2 * baseTop.numRecords)">
 											<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
@@ -50,7 +34,7 @@
 											</svg>
 										</button>
 										<li ng-repeat="subchildcategories in subcategories.children" ng-if="($index < (baseTop.page2 * baseTop.numRecords)) && ($index >= ((baseTop.page2 - 1) * baseTop.numRecords))">
-											<a ui-sref="buildOrder({ID:subchildcategories.ID,SearchType:'plp', catName:subchildcategories.Name})" ng-click="base.isopen=false">{{subchildcategories.Name}}</a>	 
+											<a ui-sref="buildOrder({ID:subchildcategories.ID,SearchType:'plp', catName:subchildcategories.Name})" ng-click="base.isopen=false" ng-if="subchildcategories.Active">{{subchildcategories.Name}}</a>	 
 										</li>
 										<button class="down-arrow" ng-click="baseTop.next2()" ng-show="subcategories.children.length > (baseTop.page2 * baseTop.numRecords)">
 											<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
@@ -72,6 +56,7 @@
 									</ul> 
 								</li>
 							</ul>
+							<a class="maincat_link" ng-class="{'category-arw': categories.ChildCount}" ng-mouseover="baseTop.page = 1" ng-if="categories.ID == 'GiftCards' && categories.Active"" ui-sref="buildOrder({ID:categories.ID,SearchType:'GiftCard'})" ng-click="base.isopen=false">{{categories.Name}}</a>
 						</li>
 					</ul>
 					<div class="base-overlay" ng-click="base.isopen=false"></div>
@@ -95,11 +80,11 @@
 					<i class="fa fa-search"></i>
 					<!-- algolia search for customer -->
 					<div ng-switch-when="customer" uib-dropdown>
-						<ordercloud-search servicename="customer" controlleras="base" placeholder="Search user" search="base.search" change="base.selectChange" uib-dropdown-toggle></ordercloud-search>
+						<ordercloud-search servicename="users" controlleras="base" placeholder="Search user" search="base.search" change="base.selectChange" uib-dropdown-toggle></ordercloud-search>
 						<div class="search_dropdown" uib-dropdown-menu>
 							<div class="searchelement"  ng-repeat="user in base.list track by $index" ng-if="base.qeueryLength > 2 && base.list.length != 0">
 								<a ui-sref="buildOrder({ID:user.ID,SearchType:'User',showOrdersummary: false})" class="search_result">
-									<p>{{user.FirstName}} {{user.LastName}}</p>
+									<p>{{user.UserName}}</p>
 									<div class="user-name">{{user.Email}}</div>
 								</a>
 							</div>
@@ -119,7 +104,7 @@
 					</div>
 					<!-- algolia search for recipient -->
 					<div ng-switch-when="recipient" uib-dropdown>
-						<ordercloud-search servicename="orders_recepient" controlleras="base" placeholder="Search recipient" search="base.search" change="base.selectChange" uib-dropdown-toggle></ordercloud-search>
+						<ordercloud-search servicename="orders" controlleras="base" placeholder="Search recipient" search="base.search" change="base.selectChange" uib-dropdown-toggle></ordercloud-search>
 						<div class="search_dropdown recipient-dropdown" uib-dropdown-menu>
 							<div class="searchelement"  ng-repeat="recipient in base.list track by $index" ng-if="base.qeueryLength > 2 && base.list.length != 0">
 								<a ng-click="baseTop.searchGoTo(recipient.FromUserID, recipient.ID)" class="search_result">
@@ -157,8 +142,8 @@
 										</g>
 									</svg>
 									
-									{{recipient.FirstName}} {{recipient.LastName}} {{}}</p>
-									<div class="recipient-name">{{recipient.FromUserFirstName}} {{recipient.FromUserLastName}}</div>
+									{{recipient.RecepientName}}</p>
+									<div class="recipient-name">{{recipient.FromUserName}}</div>
 									<div class="recepient-order">
 										<p>{{recipient.ID}}</p>
 										<div ng-if="recipient.DateSubmitted == 'null'">{{recipient.DateCreated | date }}</div>
@@ -181,12 +166,12 @@
 					</div>
 					<!-- algolia search for phone -->
 					<div ng-switch-when="phone" uib-dropdown>
-						<ordercloud-search servicename="customer_phonenumber" controlleras="base" placeholder="Search phone number" search="base.search" change="base.selectChange" uib-dropdown-toggle></ordercloud-search>
+						<ordercloud-search servicename="users_phonenumber" controlleras="base" placeholder="Search phone number" search="base.search" change="base.selectChange" uib-dropdown-toggle></ordercloud-search>
 						<div class="search_dropdown" uib-dropdown-menu>
 							<div class="searchelement"  ng-repeat="phone in base.list track by $index" ng-if="base.qeueryLength > 2 && base.list.length != 0">
 								<a ui-sref="buildOrder({ID:phone.ID,SearchType:'User',showOrdersummary: false})" class="search_result">
-									<p>{{phone.PhoneNumber}}</p>
-									<div class="phone-num">{{phone.FirstName}} {{phone.LastName}}</div>
+									<p>{{phone.Phone}}</p>
+									<div class="phone-num">{{phone.UserName}}</div>
 								</a>
 							</div>
 						</div>

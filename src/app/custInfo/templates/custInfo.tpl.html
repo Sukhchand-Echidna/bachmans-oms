@@ -16,10 +16,10 @@
 		<div class="col-sm-6 col-xs-6 col-md-6 col-lg-6">
 			<div class="col-sm-12 col-xs-12 col-md-12 col-lg-12" ng-init="readStatus=true">
 				<div ng-show="custInfo.list.userGroup[0].ID=='StoreFront' || custInfo.list.userGroup[0].ID=='Employee'">
-					<h1>PERSONAL INFORMATION <button ng-click="custInfo.editAddress(custInfo.list.user.Phone);" ng-show="!isEditing">EDIT</button></h1>
+					<h1>PERSONAL INFORMATION <button ng-click="custInfo.editAddress(custInfo.list.user.Phone);" ng-show="!isEditing" class="edit">Edit</button></h1>
 				</div>
 				<div ng-show="custInfo.list.userGroup[0].ID!='StoreFront' && custInfo.list.userGroup[0].ID!='Employee'">
-					<h1>CORPORATE ACCOUNT INFORMATION <button ng-click="custInfo.editAddress(custInfo.list.user.Phone);" ng-show="!isEditing">EDIT</button></h1>
+					<h1>CORPORATE ACCOUNT INFORMATION <button ng-click="custInfo.editAddress(custInfo.list.user.Phone);" ng-show="!isEditing" class="edit">Edit</button></h1>
 				</div>
 				<form name="CustEditForm" ng-submit="custInfo.Submit(CustEditForm)" novalidate>
 					<div ng-show="!isEditing">
@@ -127,6 +127,7 @@
 							<input type="text" name="street1" ng-model="custInfo.list.defaultAddr[0].Street1" placeholder="Street1" ng-blur="custInfo.getLocation()" ng-required="isEditing" ng-class="{error: CustEditForm.$submitted && CustEditForm.street1.$invalid}">
 						</div>
 					</div>
+					<h6 class="error" ng-if="custInfo.invalidAddress && custInfo.list.defaultAddr[0].Street1 && custInfo.list.defaultAddr[0].Zip">Invalid Address/Zip</h6>
 					<div class="full-blk">
 						<div class="blk">
 							<p>Address 2</p>
@@ -135,7 +136,7 @@
 					</div>
 					<div class="full-blk">
 						<p>Zip <span class="star">*</span></p>
-						<input type="number" name="zip" ng-model="custInfo.list.defaultAddr[0].Zip" ng-blur="custInfo.getLocation()" placeholder="Zip" ng-minlength="5" ng-required="isEditing" ng-class="{error: CustEditForm.$submitted && CustEditForm.zip.$invalid}" max-length="5" />
+						<input type="number" name="zip" ng-model="custInfo.list.defaultAddr[0].Zip" ng-blur="custInfo.getLocation()" placeholder="Zip" ng-minlength="5" ng-required="isEditing" ng-class="{error: CustEditForm.$submitted && CustEditForm.zip.$invalid}" max-length="5" class="zip"/>
 					</div>
 					<div class="group-blk">
 						<div class="blk">
@@ -155,8 +156,8 @@
 							<input type="text" name="state" ng-model="custInfo.list.defaultAddr[0].State" placeholder="State" ng-required="isEditing" ng-class="{error: CustEditForm.$submitted && CustEditForm.state.$invalid}">
 						</div>
 					</div>
-					<div class="form-group">
-						<button type="submit" class="save">Save</button>			
+					<div class="form-group save-button">
+						<button type="submit">Save</button>			
 					</div>
 				</div>
 				</form>
@@ -174,7 +175,7 @@
 						</li>
 					</ul>
 				</div> -->
-				<table class="address-book">
+				<table class="address-book" ng-if="custInfo.list.addresses.length>0">
 					<thead>
 						<tr>
 							<th>Name</th>
@@ -194,6 +195,7 @@
 						</tr>
 					</tbody>
 				</table>
+				<p ng-if="custInfo.list.addresses.length==0">No Saved Address</p>
 			</div>
 			<div class="subscription col-xs-12 col-sm-12 col-md-12 col-lg-12">
 				<div class="sub-header">
@@ -233,19 +235,21 @@
 	<div class="col-sm-6 col-xs-6 col-md-6 col-lg-6">
 		<div class="card col-sm-12 col-xs-12 col-md-12 col-lg-12">
 			<h1>PURPLE PERKS</h1>
-			<div>
+			<div ng-if="custInfo.spendingAcc.purple">
 				<div class="card-img">
 					<img src="../assets/images/purple.png">
 				</div>
 				<div class="card-content">
 					<h2>MEMBER SINCE: <span>{{custInfo.spendingAcc.purple.StartDate | date:'yyyy'}}</span></h2>
 					<h3>EARNED TO DATE:<span>{{custInfo.spendingAcc.purple.xp.EarnedToDate | currency}}</span></h3>
+					<h4>POINTS EARNED:<span>{{custInfo.spendingAcc.purple.xp.LoyaltyPointsBalance}}</span></h4>
+					<h5>CURRENT BALANCE:<span>{{custInfo.spendingAcc.purple.Balance | currency}}</span></h5>
+					<p>(EXPIRES: <span>{{custInfo.spendingAcc.purple.EndDate | date:'MM/dd/yyyy'}}<span>)</p>
 				</div>
 			</div>
+			<p ng-if="!custInfo.spendingAcc.purple" class="nocards">No purple perk account</p>
 			<!-- <h4>POINTS EARNED:<span>{{custInfo.spendingAcc.purple.xp.PointsEarned}}</span></h4> -->
-			<h4>POINTS EARNED:<span>{{custInfo.spendingAcc.purple.xp.LoyaltyPointsBalance}}</span></h4>
-			<h5>CURRENT BALANCE:<span>{{custInfo.spendingAcc.purple.Balance | currency}}</span></h5>
-			<p>(EXPIRES: <span>{{custInfo.spendingAcc.purple.EndDate | date:'MM/dd/yyyy'}}<span>)</p>
+		
 		</div>
 		<div class="col-sm-12 col-xs-12 col-md-12 col-lg-12">
 			<h1>PAYMENT OPTIONS <!-- <button ng-click="add">ADD CARD</button> --></h1>
@@ -300,7 +304,7 @@
 				<button ng-click='paymentEdit = !paymentEdit' class="save">Save</button>
 				<button ng-click='paymentEdit = !paymentEdit' ng-show="!paymentEdit">cancel</button>
 			</div>  -->
-			<p ng-if="custInfo.creditCard.length==0">No saved credit cards.</p>
+			<p ng-if="custInfo.creditCard.length==0" class="nocards">No saved credit cards.</p>
 			<div class="payment" ng-if="custInfo.creditCard.length>0">
 				<div class="credit-card-details">
 					<div ng-repeat="creditCard in custInfo.creditCard">
@@ -357,7 +361,7 @@
 			<p>Free Shipping</p>
 			<p class="sub-addr">Lorem lpsum dolor sit amet</p>
 		</div> -->
-		<div class="col-sm-12 col-xs-12 col-md-12 col-lg-12" ng-if="custInfo.list.user.xp.PO.PORequired=='Yes'">
+		<div class="col-sm-12 col-xs-12 col-md-12 col-lg-12" ng-if="custInfo.list.user.xp.PO.PORequired=='Y'">
 			<h1>Change Number</h1>
 			<a ng-click="custInfo.showPOModal=true">Change PO Number</a>
 		</div>

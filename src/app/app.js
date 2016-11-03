@@ -33,6 +33,7 @@ angular.module( 'orderCloud', [
     ])
 
     .run( SetBuyerID )
+    .run( SetCatalogID )
     .config( Routing )
     .config( ErrorHandling )
     .config( Interceptor )
@@ -42,6 +43,11 @@ angular.module( 'orderCloud', [
         constantContactBaseUrl:"https://Four51TRIAL104401.jitterbit.net/Bachmans_Dev/"
     })
 ;
+
+function SetCatalogID(OrderCloud, catalogid) {
+    catalogid ? OrderCloud.CatalogID.Set(catalogid) : OrderCloud.CatalogID.Set(OrderCloud.BuyerID.Get())
+}
+
 
 function DatePickerConfig(uibDatepickerConfig, uibDatepickerPopupConfig){
     uibDatepickerConfig.showWeeks = false;
@@ -102,7 +108,7 @@ function AppCtrl($q, $rootScope, $state, $http, appname, LoginService, toastr, $
         if(toState.name == 'buildOrder'){
             vm.headerstat = true;
             vm.footerstat = true;
-            vm.orderclaimfooterstat = true;            
+            vm.orderclaimfooterstat = true;
         } else if(toState.name == 'checkout'){
             vm.headerstat = true;
             vm.footerstat = true;

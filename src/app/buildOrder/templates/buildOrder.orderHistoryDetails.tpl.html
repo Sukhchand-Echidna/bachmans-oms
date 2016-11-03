@@ -1,6 +1,13 @@
 <ui-view>
 	<div id="order-summary" class="oms_main_container buildOrder-order-summary buildOrder-order-historyDetails" ng-show="orderDetails" cg-busy="{promise:buildordersummary.OrderSummaryLoader,templateUrl:'common/loading-indicators/templates/view.loading.tpl.html'}">
 		<div class="buildOrder-order-summary-content">
+		<div class="buildordersummaryheader back-common" ng-show="orderDetails">	
+                <!-- <a ng-click="backTocreate()"> -->
+				<a href="javascript: window.history.go(-1)">
+				
+					<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 14 21" style="enable-background:new 0 0 14 21" xml:space="preserve"><style type="text/css">.st0{fill:#8B8E96;}</style><g><path d="M0.7,18.3l7.8-7.8L0.7,2.7L3,0.3l10.2,10.2L3,20.7L0.7,18.3z"></path></g></svg>
+				Back</a>
+            </div>
 			<div class="order-info">
 				<h1>Order History Details</h1>
 				<div ng-repeat="line in buildordersummary.activeOrders track by $index">
@@ -15,7 +22,7 @@
 						</span>
 						<p  ng-show="!isEditing">{{line[0].ShippingAddress.FirstName}} {{line[0].ShippingAddress.LastName}}</p>
 					</div>
-					<div class="col-xs-8 address">
+					<div class="col-xs-7 address">
 						<span>
 						<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 							 viewBox="-36 67.9 31.2 42" style="enable-background:new -36 67.9 31.2 42;" xml:space="preserve">
@@ -29,8 +36,10 @@
 							{{line[0].ShippingAddress.Street1}}, {{line[0].ShippingAddress.Street2}}, {{line[0].ShippingAddress.City}}, {{line[0].ShippingAddress.State}} {{line[0].ShippingAddress.Country}} {{line[0].ShippingAddress.Zip}}, {{line[0].ShippingAddress.Phone}}
 						</p>
 					</div>
-					<div class="col-xs-2 delivery-date">
-				    	<span>Delivery Date: {{line[0].xp.deliveryDate | date: MM/dd/yyyy}}</span>
+					<div class="col-xs-3 delivery-date">
+				    	<span ng-if="!line[0].xp.IsWorkShopEvent && line[0].xp.addressType!='InStorePickUp'">Delivery Date: {{line[0].xp.deliveryDate | date: MM/dd/yyyy}}</span>
+						<span ng-if="!line[0].xp.IsWorkShopEvent && line[0].xp.addressType=='InStorePickUp'">PickUp Date: {{line[0].xp.pickupDate | date: MM/dd/yyyy}}</span>
+						<span ng-if="line[0].xp.IsWorkShopEvent">Event Date: {{line[0].xp.deliveryDate | date: MM/dd/yyyy}}</span>
 				    </div>
 				</div>
 				<div class="row">
@@ -170,18 +179,21 @@
 									 <div ng-if="!line[0].EditCharges" ng-repeat="(key, val) in line[0].xp.deliveryFeesDtls">
 										<h5>{{key}}  </h5><span>{{val | currency}}</span>
 									 </div>
-									 <div>
+									  <div ng-if="line[0].TotalTax">
 										<h5>Total Tax  </h5><span>{{line[0].TotalTax | currency}}</span>
+									 </div>
+									 <div ng-if="!line[0].TotalTax">
+										<h5>Total Tax  </h5><span>$0.00</span>
 									 </div>
 									 <div ng-if="line[0].EditCharges" ng-repeat="(key, val) in line[0].xp.deliveryFeesDtls">
 										<h5>{{key}}  </h5>
 										<div class="edit-input"><input type="text" value="{{val}}" ng-model="line[0].xp.deliveryFeesDtls[key]" /></div>
 									 </div>
 									 <div>
-										<h5>Delivery </h5><span>{{line[0].xp.deliveryCharges | currency}}</span>
+										<h5>Total Delivery Charges </h5><span>{{line[0].xp.deliveryCharges | currency}}</span>
 									 </div>
 									  <div>
-										<h5>Subtotal</h5><span>{{line[0].TotalCost | currency}}</span>
+										<h5>SubTotal </h5><span>{{line[0].TotalCost | currency}}</span>
 									 </div>
 									 </div>
 									</td>

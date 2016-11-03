@@ -19,17 +19,20 @@ input.error, .errorCity {
 	padding:0 30px;
 	background-color:@color0;
 	.cust-info-container{
+	.nocards{
+	.helvetica-regular;
+	}
 		.back-common{
 			.helvetica-regular;
-		    font-size: 14px;
+		    font-size:0.938em;
 		    color: #54565d;
-		    margin: 10px 0;
+		    margin:0px;
 		    a{
 		    	color: #54565d;
 			    cursor: pointer;
 			    text-decoration: none;
-			     font-size: 14px;
 			     .helvetica-regular;
+			     font-size:1em;
 				svg{
 			    width: 15px;
 			    height: 10px;
@@ -54,18 +57,16 @@ input.error, .errorCity {
 		padding: 15px 0px 35px 15px;
 		h1{
 			.helvetica-bold;
-			font-size: 15px;
+			font-size: 0.938em;
 			padding:10px;
 			background-color:@color20;
 			height:35px;
-			button{
-				float:right;
-				color:@color0;
-				background-color:transparent;
-				padding:0;
-			&:hover{
-				background-color:transparent;
-			}
+			.edit{
+				  .purple-btn;
+			     line-height:23px;
+			     height:25px;
+			     float:right;
+			     margin-top: -4px;
 			}
 		}
 		.credit-card-details{
@@ -89,12 +90,12 @@ input.error, .errorCity {
 		}
 		p{
 			.helvetica-bold;
-			font-size: 14px;
+			font-size: 0.875em;
 			margin-bottom:10px;
 		}
 		a{
 			.helvetica-bold;
-			font-size:14px;
+			font-size:0.875em;
 			color:@primary-dark-color;
 			text-decoration: underline;
 			.font-spacing;
@@ -105,7 +106,7 @@ input.error, .errorCity {
 		}
 		input[type=text], input[type=email], input[type=number], input[type=date]{
 			.helvetica-regular;
-			font-size: 13px;
+			font-size: 0.813em;
 			line-height:30px;
 			border: 1px solid @color21;
 			outline: none;
@@ -115,20 +116,12 @@ input.error, .errorCity {
 			border-radius: initial;
 		}
 		button{
-			padding:5px 10px;
-			.helvetica-bold;
-			font-size: 11px;
-			color:@color0;
-			background-color: #aaaeb9;
-			.background-fade;			
-			&:hover{
-				background-color:@color1;
-			}
+			.purple-big;
 		}
-		button.save{
+		/*button.save{
 			padding:5px 10px;
 			.helvetica-bold;
-			font-size: 11px;
+			font-size: 0.688em;
 			color:@color0;
 			background-color:@primary-color;
 			margin-top:8px;
@@ -136,7 +129,7 @@ input.error, .errorCity {
 			&:hover{
 				background-color:@primary-dark-color;
 			}
-		}
+		}*/
 		.info-blk{
 			margin-bottom:0;
 			p{
@@ -148,7 +141,7 @@ input.error, .errorCity {
 			input{
 				border: 1px solid #e4e6ea;
 			   .helvetica-regular;
-			    font-size: 14px;
+			    font-size: 0.875em;
 			    line-height: 25px;
 			    text-indent: 5px;
 			    width: 100%;
@@ -161,7 +154,7 @@ input.error, .errorCity {
 			}
 			span{
 				.helvetica-regular;
-				font-size: 15px;
+				font-size: 0.938em;
 				height: 21px;
                line-height: 17px;
 			}
@@ -185,7 +178,7 @@ input.error, .errorCity {
 			 width:50%;
 			}
 			.phone-num{
-				width:26%;
+				width:28%;
 			}
 		}
 		.cust-street{
@@ -204,7 +197,7 @@ input.error, .errorCity {
 				input{
 				border:1px solid @color20;
 				.helvetica-regular;
-				font-size: 14px;
+				font-size: 0.875em;
 				line-height:25px;
 				text-indent: 5px;
 				width:@width0;
@@ -225,7 +218,7 @@ input.error, .errorCity {
 			}
 		span{
 				.helvetica-regular;
-				font-size: 15px;
+				font-size: 0.938em;
 			}
 			.cust-del{
 			 width:23%;
@@ -245,11 +238,11 @@ input.error, .errorCity {
 			.address-book{
 				width:100%;
 				th{
-					font-size:14px;
+					font-size:0.875em;
 					.helvetica-bold;
 					color:@color1;
 					padding:0 5px 5px;
-				}
+					font-weight:normal;				}
 					th,td{
 						
 						&:first-child{
@@ -268,10 +261,10 @@ input.error, .errorCity {
 			
 				td{
 					padding:5px;
-					font-size:14px;
+					font-size:0.875em;
 					.helvetica-regular;
 					p{
-					font-size:14px;
+					font-size:1em;
 					.helvetica-regular;
 					}
 				}
@@ -335,26 +328,21 @@ input.error, .errorCity {
 				background-color: #e4e6ea;
 			    float: left;
 			    width: 100%;
-			    padding: 10px;
+			   padding: 5px 10px;
+    			margin-top: 8px;
 				h1{
 					float:left;
 					.helvetica-bold;
-				    font-size: 15px;
+				    font-size: 0.938em;
 				    padding: 5px 0 0 0;
 				    margin: 0px;
 				    height:auto;
 				}
 				.save {
-			       padding: 5px 10px;
-				   .helvetica-bold;
-				    font-size: 11px;
-				    color: #ffffff;
-				    background-color: #a77bca;
-				    margin-top: 0px;
-				    float: right;
-			      &:hover{
-			    	    background-color: #8c58b5;
-			     }
+			     .purple-btn;
+			     line-height:23px;
+			     height:25px;
+			     float:right;
     		  }
 
 			}
@@ -368,11 +356,11 @@ input.error, .errorCity {
 					th, td{
 						width:20%;
 						.helvetica-regular;
-						font-size: 15px;
+						font-size: 0.938em;
 					}
 					th{
 						.helvetica-bold;
-						font-size: 13px;
+						font-size: 0.813em;
 					}
 					th:nth-child(3), td:nth-child(3){
 						width:75%;
@@ -386,7 +374,7 @@ input.error, .errorCity {
 		}
 		.sub-addr{	
 			.helvetica-regular;
-			font-size: 15px;
+			font-size: 0.938em;
 			margin-bottom:4px;
 		}
 		.payment{
@@ -410,46 +398,47 @@ input.error, .errorCity {
 		.card{
 			.card-img{
 				width:30%;
-				.in-block;
+				float: left;
 				img{
 					max-width: 100%;
 				}
 			}
 			.card-content{
-				width:69%;
-				.in-block;
-				vertical-align:top;
+				    width: 68%;
+				    float: right;
+				    vertical-align: top;
+				    margin-left: 10px;
 				h2, h3,span{
 					.helvetica-bold;
-					font-size: 15px;
+					font-size: 0.938em;
 					margin:0 0 8px;
 				}
 			}
 			h4,h5,span{
 				.helvetica-bold;
-				font-size: 16px;
+				font-size: 1em;
 				margin:5px 0 5px;
 			}
 			p{
 				.helvetica-regular;
-				font-size: 13px;
+				font-size: 0.813em;
 				span{
 					.helvetica-regular;
-					font-size: 13px;
+					font-size: 0.813em;
 				}
 			}
 		}
 		.account-credits{
 			h2, span{
 				.helvetica-bold;
-				font-size: 16px;
+				font-size: 1em;
 				margin: 18px 0 0;
 			}
 		}
 		.credit-card-edit{
 			h5{
 				.helvetica-bold;
-				font-size: 14px ;
+				font-size: 0.875em ;
 			}
 			p{
 				margin:5px 0;
@@ -474,11 +463,17 @@ input.error, .errorCity {
 			}
 		}
 		.edit-block{
-			width:70%;
+			width:85%;
+			.save-button{
+				button{
+					.purple-big;
+					margin-left:10px;
+				}
+			}
 			.group-blk{
 				.blk{
 					.in-block;
-					width:47.5%;
+					width:47%;
 					margin:0 0 10px 2%;
 					vertical-align:top;
 					&.phone-blk input{
@@ -495,6 +490,7 @@ input.error, .errorCity {
 				p{
 					margin-bottom:5px;
 					color:#464646;
+					.helvetica-regular;
 				}
 				input{
 						width:100%;
@@ -502,7 +498,7 @@ input.error, .errorCity {
 						box-shadow:none;
 						background-color: #f4f4f4;
 						.helvetica-regular;
-						font-size: 16px;
+						font-size:0.813em;
 						line-height: 35px;
 						color: #464646;
 						border: 1px solid #EAEAEA;
@@ -515,6 +511,9 @@ input.error, .errorCity {
 				input{
 					width:97%;
 				}
+				.zip{
+					width:25%;
+				}
 			}
 			.form-control{
 				padding:0px 5px;
@@ -525,7 +524,7 @@ input.error, .errorCity {
 				i {
 					color:@primary-dark-color;
 					float:right;
-					font-size:12px;
+					font-size:0.750em;
 					padding: 9px 0;
 					.transition-common(all 0.5s ease);
 					.rotate(0deg);
@@ -539,7 +538,7 @@ input.error, .errorCity {
 						border-bottom:1px solid @color21;
 						border-radius:0;
 						a{
-							font-size:13px;
+							font-size:0.813em;
 							padding: 5px 10px;
 							.helvetica-regular;
 							color:@color1;
@@ -589,10 +588,22 @@ input.error, .errorCity {
 			margin-bottom:10px;
 			padding:0;
 			input{
-				padding:0;
-			}
+					width:100%;
+					margin:0 !important;
+					box-shadow:none;
+					background-color: #f4f4f4;
+					.helvetica-regular;
+					font-size: 1em;
+					line-height: 35px;
+					color: #464646;
+					border: 1px solid #EAEAEA;
+					text-indent: 8px;
+					padding:0;
+				}
 			label{
-				margin:12px 0 2px 0;
+				margin:10px 0 5px 0;
+				font-weight:normal;
+				font-size:0.875em;
 			}
 			/*
 			.form-control.dropdown{
@@ -687,12 +698,12 @@ input.error, .errorCity {
 		 .modal-header{
 		 	h4{
 		 		.helvetica-bold;
-			    font-size: 21px;
+			    font-size: 1.313em;
 			    color: #8c58b5;
 			    margin: 10px 0 0 10px;
 		 	}
 		 	button.close{
-		 		font-size:20px;
+		 		font-size:1.250em;
 		 	}
 		 }
 		 .modal-body{

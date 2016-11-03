@@ -74,8 +74,9 @@
 			</li>
 		</ul>
 		<div class="create-note">
-			<h4>Notes (<span>{{buildOrderLeft.list.Notes.length}}</span>)</h4>
-			<button ng-click="noteinput(); note.descp=''" ng-disabled="buildOrderLeft.guest">ADD NOTE</button>
+			<h4 ng-if="buildOrderLeft.list.Notes.length > 0">Notes (<span>{{buildOrderLeft.list.Notes.length}}</span>)</h4>
+			<h4 ng-if="buildOrderLeft.list.Notes.length == 0">Notes (<span>0</span>)</h4>
+			<button ng-click="noteinput(); note.descp=''" ng-disabled="buildOrderLeft.guest">Add Note</button>
 		</div>
 		<ul class="order-messages">
 			<form ng-submit="addNote(); note.descp=''" ng-show="show">

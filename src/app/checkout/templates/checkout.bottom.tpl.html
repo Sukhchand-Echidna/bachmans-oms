@@ -1,5 +1,5 @@
 <div class="checkoutfooter" ng-show="application.headerstat">
-	<div class="cancel-order">
+	<div class="cancel-order" ng-click="checkout.CancelToolTip()" popover-is-open="checkout.ShowCancelOrderToolTip"  uib-popover-template="checkout.ToolTip.templateUrl">
 	<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 34 34" style="enable-background:new 0 0 34 34;" xml:space="preserve" class="footer-svg">
 			<g transform="translate(0,-952.36218)">
 				<path  d="M17,952.7c-4.3,0-8.5,1.6-11.8,4.9c-6.5,6.5-6.5,17.1,0,23.6c6.5,6.5,17.1,6.5,23.6,0c6.5-6.5,6.5-17.1,0-23.6
@@ -10,7 +10,14 @@
 					c-0.3-0.3-0.7-0.5-1.2-0.5c-0.4,0-0.8,0.2-1.1,0.5l-2.7,2.7l-2.7-2.7C14,964.1,13.6,963.9,13.1,963.9L13.1,963.9z"></path>
 			</g>
 		</svg>
-		<h5 ng-click="cancelOrder()">Cancel Order</h5>
+		<h5>Cancel Order</h5>
+		<script type="text/ng-template" id="CancelOrderToolTip1.html">
+			<div click-outside="checkout.closePopover()">
+				<h2>Are you sure to want cancel?</h2>
+				<button type="button" ng-click="cancelOrder()">Yes</button>
+				<button type="button" ng-click="checkout.closePopover()">No</button>
+			</div>
+		</script>
 	</div>
 	<div class="save-later" ng-click="checkout.saveLaterPopup()">
 		<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="-630.3 455.4 25.2 24" style="enable-background:new -630.3 455.4 25.2 24;" xml:space="preserve" class="footer-svg">
@@ -19,9 +26,9 @@
 		</svg>
 		<h5>Save For Later</h5>
 	</div>
-	<modalr title="Save Order For Later" visible="checkout.showModal" id="mymodal">
-		Save Order As<span class="star">*</span>:<br/>
-		<input type="text" ng-model="saveOrderTxt" /><br/>
-		<input type="button" ng-click="saveForLater(saveOrderTxt)" ng-disabled="!saveOrderTxt" value="SAVE" />
-	</modalr>
 </div>
+<modal title="Save Order For Later" visible="checkout.showModal" id="mymodal" class="modal-pop-up save-later">
+	Save Order As<span class="star">*</span>:<br/>
+	<input type="text" ng-model="saveOrderTxt" /><br/>
+	<input type="button" ng-click="saveForLater(saveOrderTxt)" ng-disabled="!saveOrderTxt" ng-class="{disabled: !saveOrderTxt}" value="SAVE" />
+</modal>

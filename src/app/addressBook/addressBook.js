@@ -116,8 +116,8 @@ function AddressBookController($scope, $http, $state, $stateParams, $location, $
 						var validatedAddress = res.ResponseBody.Address;
 						var zip = validatedAddress.PostalCode.substring(0, 5);
 						line.Zip = parseInt(zip);
-						line.Street1 = validatedAddress.Line1;
-						line.Street2 = null;
+						line.Street1 = validatedAddress.Line2;
+						line.Street2 = validatedAddress.Line1;
 						line.City = validatedAddress.City;
 						line.State = validatedAddress.Region;
 						line.Country = validatedAddress.Country;
@@ -133,7 +133,8 @@ function AddressBookController($scope, $http, $state, $stateParams, $location, $
 									$scope.addAddr=!$scope.addAddr;
 									addrList.IsShipping=saveassign[0].IsShipping;
 									addrList.IsBilling=saveassign[0].IsBilling;
-									vm.list.push(addrList);
+									//vm.list.push(addrList);
+									$state.go('addressBook', {}, {reload:true});
 							}).catch(function(ex){
 								console.log(ex);
 							});
@@ -192,38 +193,46 @@ function AddressBookController($scope, $http, $state, $stateParams, $location, $
 	vm.saveAddress = function(saveAddr, contact, form){
 		form.$submitted = true;
 		if(saveAddr.IsBilling || saveAddr.IsShipping) {
-		if(form.$valid && saveAddr.City != "Select City"){
-			saveAddr.Phone = "("+contact.Phone1+") "+contact.Phone2+"-"+contact.Phone3;
-			console.log("saveAddr.Phone", saveAddr.Phone);
-			AddressValidationService.Validate(saveAddr).then(function(res){
-				var validatedAddress = res.ResponseBody.Address;
-				var zip = validatedAddress.PostalCode.substring(0, 5);
-				saveAddr.Zip = parseInt(zip);
-				saveAddr.Street1 = validatedAddress.Line1;
-				saveAddr.Street2 = null;
-				saveAddr.City = validatedAddress.City;
-				saveAddr.State = validatedAddress.Region;
-				saveAddr.Country = validatedAddress.Country;
-				if(res.ResponseBody.ResultCode == "Success"){
-					OrderCloud.Addresses.Update(saveAddr.ID, saveAddr).then(function(addrList){
-						OrderCloud.Addresses.DeleteAssignment(addrList.ID, $stateParams.ID).then(function(res){
-							var saveassign=[{
-								"AddressID": addrList.ID,
-								"UserID": $stateParams.ID,
-								"IsShipping": saveAddr.IsShipping,
-								"IsBilling": saveAddr.IsBilling
-							}]; 
-							OrderCloud.Addresses.SaveAssignment(saveassign[0]).then(function(res){
-								$state.go('addressBook', {}, {reload:true});
-							})
-						});
-					});
-				}
-				else{
-					alert("address not found");
-				}
-			});
-		}
+			if(form.$valid && saveAddr.City != "Select City"){
+				saveAddr.Phone = "("+contact.Phone1+") "+contact.Phone2+"-"+contact.Phone3;
+				console.log("saveAddr.Phone", saveAddr.Phone);
+				AddressValidationService.Validate(saveAddr).then(function(res){
+					if(res.ResponseBody.ResultCode == 'Success') {
+						if(form)
+						form.invalidAddress = false;
+						var validatedAddress = res.ResponseBody.Address;
+						var zip = validatedAddress.PostalCode.substring(0, 5);
+						saveAddr.Zip = parseInt(zip);
+						saveAddr.Street1 = validatedAddress.Line2;
+						saveAddr.Street2 = validatedAddress.Line1;
+						saveAddr.City = validatedAddress.City;
+						saveAddr.State = validatedAddress.Region;
+						saveAddr.Country = validatedAddress.Country;
+						if(res.ResponseBody.ResultCode == "Success"){
+							OrderCloud.Addresses.Update(saveAddr.ID, saveAddr).then(function(addrList){
+								OrderCloud.Addresses.DeleteAssignment(addrList.ID, $stateParams.ID).then(function(res){
+									var saveassign=[{
+										"AddressID": addrList.ID,
+										"UserID": $stateParams.ID,
+										"IsShipping": saveAddr.IsShipping,
+										"IsBilling": saveAddr.IsBilling
+									}]; 
+									OrderCloud.Addresses.SaveAssignment(saveassign[0]).then(function(res){
+										$state.go('addressBook', {}, {reload:true});
+									})
+								});
+							});
+						}
+						else{
+							alert("address not found");
+						}
+					}
+					else{
+						if(form)
+						form.invalidAddress = true;
+					}
+				});
+			}
 		}
 	}
 	vm.deleteAddr =function(addrID){

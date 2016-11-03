@@ -26,7 +26,7 @@
 										<div class=" col-xs-6 col-sm-6 col-md-6 col-lg-6  delivery-address-header">
 											Delivery Address
 										</div>
-										<div ng-click="checkout.viewAddrBook($index, line)" class=" col-xs-6 col-sm-6 col-md-6 col-lg-6 view-address">
+										<div ng-click="checkout.viewAddrBook($index, line)" class=" col-xs-6 col-sm-6 col-md-6 col-lg-6 view-address" ng-if="!line.xp.IsWorkShopEvent">
 											 View Address Book
 											 <span>
 												 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 24 24" style="enable-background:new 0 0 24 24;" xml:space="preserve">
@@ -38,37 +38,73 @@
 											</span>
 										</div>
 									</div>
-									<div class="check-top inline-blk">
+									<div class="check-top inline-blk" ng-if="!line.xp.IsWorkShopEvent">
 										<p>First Name <span class="star">*</span></p>
-										<input type="text" name="firstname" ng-model="line.ShippingAddress.FirstName" required ng-class="{error: checkout.lineItemForm[line.ID].$submitted && checkout.lineItemForm[line.ID].firstname.$invalid}"></input>
+										<input type="text" name="firstname" ng-model="line.ShippingAddress.FirstName" ng-required="!line.xp.IsWorkShopEvent" ng-class="{error: checkout.lineItemForm[line.ID].$submitted && checkout.lineItemForm[line.ID].firstname.$invalid}"></input>
 									</div>
-									<div class="check-top inline-blk">
+									<div class="check-top inline-blk" ng-init="checkout.TempAddrType=line.xp.addressType" ng-if="!line.xp.IsWorkShopEvent">
 										<p>Last Name <span class="star">*</span></p>
-										<input type="text" name="lastname" ng-model="line.ShippingAddress.LastName" required ng-class="{error: checkout.lineItemForm[line.ID].$submitted && checkout.lineItemForm[line.ID].lastname.$invalid}"></input>
+										<input type="text" name="lastname" ng-model="line.ShippingAddress.LastName" ng-required="!line.xp.IsWorkShopEvent" ng-class="{error: checkout.lineItemForm[line.ID].$submitted && checkout.lineItemForm[line.ID].lastname.$invalid}"></input>
 									</div>
-									<div class="radio-grp check-top col-xs-12 col-sm-12 col-md-12 col-lg-12">
+									<div class="check-top inline-blk" ng-if="line.xp.IsWorkShopEvent">
+										<p>First Name <span class="star">*</span></p>
+										<input type="text" name="firstname" ng-model="line.xp.ShippingAddress.FirstName" ng-required="line.xp.IsWorkShopEvent" ng-class="{error: checkout.lineItemForm[line.ID].$submitted && checkout.lineItemForm[line.ID].firstname.$invalid}"></input>
+									</div>
+									<div class="check-top inline-blk" ng-if="line.xp.IsWorkShopEvent">
+										<p>Last Name <span class="star">*</span></p>
+										<input type="text" name="lastname" ng-model="line.xp.ShippingAddress.LastName" ng-required="line.xp.IsWorkShopEvent" ng-class="{error: checkout.lineItemForm[line.ID].$submitted && checkout.lineItemForm[line.ID].lastname.$invalid}"></input>
+									</div>
+									<div class="radio-grp check-top col-xs-12 col-sm-12 col-md-12 col-lg-12" ng-init="checkout.changeAddrType(line, lineitems, 'onload')" ng-if="!line.xp.IsWorkShopEvent">
 										<label class="radio-inline radio-common">
-											<input type="radio" id="residence{{$index}}" name="optradio{{$index}}" ng-model="line.xp.addressType" ng-click="checkout.changeAddrType(line)" ng-disabled="{{line.xp.NoDeliveryExInStore}}" value="Residence" />
+											<input type="radio" id="residence{{$index}}" name="optradio{{$index}}" ng-model="line.xp.addressType" ng-click="checkout.changeAddrType(line, lineitems)" ng-disabled="{{line.xp.NoDeliveryExInStore}}" value="Residence" />
 											<label for="residence{{$index}}">Residence</label>
 											<div class="radio"></div>
 										</label>
+										<script type="text/ng-template" id="HospitalOptions.html">
+											<div class="add-recipient" click-outside="checkout.CloseHospitalToolTip($index)">
+												<h2>Please Select Options</h2>
+												<div class="radio-btn-container">
+													<div class="size-box">
+														<input type="radio" id="Staff" name="optradio1" ng-model="checkout.HospitalOption" value="Staff" />
+														<label for="Staff">
+															<span class="radioOutline">
+															<span class="radioInside"></span>
+															</span>
+															<span class="">Staff</span>
+														</label>
+													</div>
+												</div>
+												<div class="radio-btn-container">
+													<div class="size-box">
+														<input type="radio" name="optradio1" ng-model="checkout.HospitalOption" value="Patient" ng-init="checkout.HospitalOption='Staff'" id="Patient" />
+														<label for="Patient">
+															<span class="radioOutline">
+															<span class="radioInside"></span>
+															</span>
+															<span class="">Patient</span>
+														</label>
+													</div>
+												</div>
+												<button type="button" ng-click="checkout.HospitalSelect(checkout.HospitalOption, $index, line)">OK</button>
+											</div>
+										</script>
 										<label class="radio-inline radio-common">
-											<input type="radio" id="hospital{{$index}}" name="optradio{{$index}}" ng-model="line.xp.addressType" ng-click="checkout.changeAddrType(line)" ng-disabled="{{line.xp.NoDeliveryExInStore}}" value="Hospital" />
+											<input type="radio" id="hospital{{$index}}" name="optradio{{$index}}" ng-model="line.xp.addressType" ng-click="checkout.changeAddrType(line, lineitems, 'undefined', $index)" ng-disabled="{{line.xp.NoDeliveryExInStore}}" value="Hospital" popover-trigger="none" popover-placement="bottom-left" popover-is-open="checkout.HospitalToolTip{{$index}}" uib-popover-template="checkout.HospitalTemplate.templateUrl" />
 											<label for="hospital{{$index}}">Hospital</label>
 											<div class="radio"></div>
 										</label>
 										<label class="radio-inline radio-common">
-											<input type="radio" id="funeral{{$index}}" name="optradio{{$index}}" ng-model="line.xp.addressType" ng-click="checkout.changeAddrType(line)" ng-disabled="{{line.xp.NoDeliveryExInStore}}" value="Funeral" />
+											<input type="radio" id="funeral{{$index}}" name="optradio{{$index}}" ng-model="line.xp.addressType" ng-click="checkout.changeAddrType(line, lineitems)" ng-disabled="{{line.xp.NoDeliveryExInStore}}" value="Funeral" />
 											<label for="funeral{{$index}}">Funeral</label>
 											<div class="radio"></div>
 										</label>
 										<label class="radio-inline radio-common">
-											<input type="radio" id="church{{$index}}" name="optradio{{$index}}" ng-model="line.xp.addressType" ng-click="checkout.changeAddrType(line)" ng-disabled="{{line.xp.NoDeliveryExInStore}}" value="Church" />
+											<input type="radio" id="church{{$index}}" name="optradio{{$index}}" ng-model="line.xp.addressType" ng-click="checkout.changeAddrType(line, lineitems)" ng-disabled="{{line.xp.NoDeliveryExInStore}}" value="Church" />
 											<label for="church{{$index}}">Church</label>
 											<div class="radio"></div>
 										</label>
 										<label class="radio-inline radio-common">
-											<input type="radio" id="cemetery{{$index}}" name="optradio{{$index}}" ng-model="line.xp.addressType" ng-click="checkout.changeAddrType(line)" ng-disabled="{{line.xp.NoDeliveryExInStore}}" value="Cemetery" />
+											<input type="radio" id="cemetery{{$index}}" name="optradio{{$index}}" ng-model="line.xp.addressType" ng-click="checkout.changeAddrType(line, lineitems)" ng-disabled="{{line.xp.NoDeliveryExInStore}}" value="Cemetery" />
 											<label for="cemetery{{$index}}">Cemetery</label>
 											<div class="radio"></div>
 										</label>
@@ -78,65 +114,101 @@
 											<div class="radio"></div>
 										</label>
 										<label class="radio-inline radio-common">
-											<input type="radio" id="school{{$index}}" name="optradio{{$index}}" ng-model="line.xp.addressType" ng-click="checkout.changeAddrType(line)" ng-disabled="{{line.xp.NoDeliveryExInStore}}" value="School" />
+											<input type="radio" id="school{{$index}}" name="optradio{{$index}}" ng-model="line.xp.addressType" ng-click="checkout.changeAddrType(line, lineitems)" ng-disabled="{{line.xp.NoDeliveryExInStore}}" value="School" />
 											<label for="school{{$index}}">School</label>
 											<div class="radio"></div>
 										</label>
 										<label class="radio-inline radio-common">
-											<input type="radio" id="store{{$index}}" name="optradio{{$index}}" ng-model="line.xp.addressType" ng-click="checkout.changeAddrType(line)" ng-disabled="{{line.xp.NoDeliveryExInStore}}" value="InStorePickUp" />
+											<input type="radio" id="store{{$index}}" name="optradio{{$index}}" ng-model="line.xp.addressType" ng-click="checkout.changeAddrType(line, lineitems)" ng-disabled="{{line.xp.NoDeliveryExInStore}}" value="InStorePickUp" />
 											<label for="store{{$index}}">In-Store Pick Up</label>
 											<div class="radio"></div>
 										</label>
 									</div>
-									<p class="check-top">Zip Code <span class="star">*</span></p>
-									<input type="text" name="zip" ng-model="line.ShippingAddress.Zip" ng-blur="checkout.GetDeliveryFees(line, checkout.lineItemForm[line.ID])" ng-readonly="line.xp.addressType=='InStorePickUp' ? true : false" max-length="5" ng-minlength="5" required ng-class="{error: checkout.lineItemForm[line.ID].$submitted && checkout.lineItemForm[line.ID].zip.$invalid}" class="zip-code"></input>
-									<p class="check-top">Address 1 <span class="star">*</span></p>
-									<input type="text" name="street1" ng-model="line.ShippingAddress.Street1" ng-blur="checkout.GetDeliveryFees(line, checkout.lineItemForm[line.ID])" ng-readonly="line.xp.addressType=='InStorePickUp' ? true : false" required ng-class="{error: checkout.lineItemForm[line.ID].$submitted && checkout.lineItemForm[line.ID].street1.$invalid}"></input>
-									<p class="check-top">Address 2</p>
-									<input type="text" ng-model="line.ShippingAddress.Street2" ng-readonly="line.xp.addressType=='InStorePickUp' ? true : false"></input>
-									<h6 style="color:red;" ng-if="checkout.lineItemForm[line.ID].invalidAddress && line.ShippingAddress.Street1 && line.ShippingAddress.Zip">Invalid Address/Zip</h6>
-									<div class="check-top city-block">
+									<div ng-if="(line.xp.addressType=='Hospital' || line.xp.addressType=='Funeral' || line.xp.addressType=='Church' || line.xp.addressType=='Cemetery') && (line.Patient || line.xp.PatientFName)" class="memoryof">
+										<h2 ng-if="line.xp.addressType=='Hospital' || line.xp.addressType=='Funeral' || line.xp.addressType=='Cemetery'">In Memory Of</h2>
+										<h2 ng-if="line.xp.addressType=='Church'">To be used when not in relation to a funeral service</h2>
+										<div class="check-top inline-blk">
+											<p>First Name</p>
+											<input type="text" ng-model="line.xp.PatientFName"></input>
+										</div>
+										<div class="check-top inline-blk">
+											<p>Last Name</p>
+											<input type="text" ng-model="line.xp.PatientLName"></input>
+										</div>
+									</div>
+									<div class=" zip-code check-top col-xs-6 col-sm-6 col-md-6 col-lg-6" ng-if="line.xp.addressType!='Residence' && line.xp.addressType!='InStorePickUp' && !line.xp.IsWorkShopEvent">
+										<p><span ng-if="line.xp.addressType!='School' && line.xp.addressType!='Business'">Find</span> {{line.xp.addressType}} <span class="star">*</span></p>
+										<input type="search" name="{{line.xp.addressType}}" autocomplete="off" uib-typeahead="hosp for hosp in checkout[line.xp.addressType+'Names'] | filter:$viewValue" typeahead-on-select="checkout.AllDtls($item, line, checkout.lineItemForm[line.ID], lineitems)" ng-model="line.ShippingAddress.CompanyName" ng-required="line.xp.addressType!='Residence' && line.xp.addressType!='InStorePickUp'" ng-class="{error: checkout.lineItemForm[line.ID].$submitted && checkout.lineItemForm[line.ID][line.xp.addressType].$invalid}" />
+									</div>
+									<div class="zip-code check-top col-xs-6 col-sm-6 col-md-6 col-lg-6" ng-show="line.xp.addressType=='InStorePickUp'" ng-if="line.xp.addressType=='InStorePickUp' ? DeliveryMethod = 'InStorePickUp' : DeliveryMethod = 'LocalDelivery'" ng-if="!line.xp.IsWorkShopEvent">
+										<p class="check-top">Find Store <span class="star">*</span></p>
+										<input type="search" name="store" autocomplete="off" ng-model="line.ShippingAddress.CompanyName" uib-typeahead="st for st in checkout.storeNames | filter:$viewValue" typeahead-on-select="checkout.storesDtls($item, line, lineitems)" ng-required="line.xp.addressType=='InStorePickUp'"  ng-class="{error: checkout.lineItemForm[line.ID].$submitted && checkout.lineItemForm[line.ID].store.$invalid}" />
+									</div>
+									<p class="check-top" ng-if="!line.xp.IsWorkShopEvent">Zip Code <span class="star">*</span></p>
+									<input type="text" name="zip" ng-model="line.ShippingAddress.Zip" ng-blur="checkout.GetDeliveryFees(line, checkout.lineItemForm[line.ID], lineitems)"  max-length="5" ng-minlength="5" required ng-class="{error: checkout.lineItemForm[line.ID].$submitted && checkout.lineItemForm[line.ID].zip.$invalid}" class="zip-code" ng-if="!line.xp.IsWorkShopEvent"></input>
+									<p class="check-top" ng-if="!line.xp.IsWorkShopEvent">Address 1 <span class="star">*</span></p>
+									<input type="text" name="street1" ng-model="line.ShippingAddress.Street1" ng-blur="checkout.GetDeliveryFees(line, checkout.lineItemForm[line.ID], lineitems)"  required ng-class="{error: checkout.lineItemForm[line.ID].$submitted && checkout.lineItemForm[line.ID].street1.$invalid}" ng-if="!line.xp.IsWorkShopEvent"></input>
+									<p class="check-top" ng-if="!line.xp.IsWorkShopEvent">Address 2</p>
+									<input type="text" ng-model="line.ShippingAddress.Street2" ng-if="!line.xp.IsWorkShopEvent"></input>
+									<h6 class="error" ng-if="checkout.lineItemForm[line.ID].invalidAddress && line.ShippingAddress.Street1 && line.ShippingAddress.Zip && !checkout.AddressError" ng-if="!line.xp.IsWorkShopEvent">Invalid Address/Zip</h6>
+									<h6 class="error" ng-if="checkout.AddressError">{{checkout.AddressError}}</h6>
+									<div class="check-top city-block" ng-if="!line.xp.IsWorkShopEvent">
 										<p>City <span class="star">*</span><span ng-if="line.ShippingAddress.City == 'Select City' ? checkout.lineItemForm[line.ID].$valid = false : ''"></span></p>
-										<input type="text" name="city" ng-if="line.MultipleCities.length <= 1 || !line.MultipleCities" ng-model="line.ShippingAddress.City" ng-readonly="line.xp.addressType=='InStorePickUp' ? true : false" required ng-class="{error: checkout.lineItemForm[line.ID].$submitted && checkout.lineItemForm[line.ID].city.$invalid}"></input>
+										<input type="text" name="city" ng-if="line.MultipleCities.length <= 1 || !line.MultipleCities" ng-model="line.ShippingAddress.City"  required ng-class="{error: checkout.lineItemForm[line.ID].$submitted && checkout.lineItemForm[line.ID].city.$invalid}"></input>
 										<div ng-if="line.MultipleCities.length > 1" class="multiple-cities">
 											<div uib-dropdown class="form-control " id="MultipleCities" ng-class="{errorMMyy: checkout.lineItemForm[line.ID].$submitted && line.ShippingAddress.City == 'Select City'}">
 												<div id="sort-dropdown" uib-dropdown-toggle>
 													<p class="sort-active-show" ng-init="line.ShippingAddress.City = 'Select City'">{{line.ShippingAddress.City}} <i class="fa fa-chevron-down"></i></p>
 												</div>
 												<ul class="dropdown-menu" uib-dropdown-menu aria-labelledby="sort-dropdown">
-													<li ng-repeat="city in line.MultipleCities" ng-click="checkout.SelectedCity(city, line, checkout.lineItemForm[line.ID])"><a href="">{{city}}</a></li>
+													<li ng-repeat="city in line.MultipleCities" ng-click="checkout.SelectedCity(city, line, checkout.lineItemForm[line.ID], lineitems)"><a href="">{{city}}</a></li>
 												</ul>
 											</div>
 										</div>
 									</div>
-									<div class="check-top state-block">
+									<div class="check-top state-block" ng-if="!line.xp.IsWorkShopEvent">
 										<p class="">State <span class="star">*</span></p>
-										<input type="text" name="state" ng-model="line.ShippingAddress.State" ng-readonly="line.xp.addressType=='InStorePickUp' ? true : false" required ng-class="{error: checkout.lineItemForm[line.ID].$submitted && checkout.lineItemForm[line.ID].state.$invalid}" />
+										<input type="text" name="state" ng-model="line.ShippingAddress.State"  required ng-class="{error: checkout.lineItemForm[line.ID].$submitted && checkout.lineItemForm[line.ID].state.$invalid}" />
 									</div>
-									<p class="check-top">Phone Number</p>
-									<div class="phone-block">
-										<input type="number" ng-model="line.ShippingAddress.Phone1" placeholder="Area Code" max-length="3" />
-										<input type="number" ng-model="line.ShippingAddress.Phone2" placeholder="Prefix" max-length="3" />
-										<input type="number" ng-model="line.ShippingAddress.Phone3" placeholder="Number" max-length="4" />
+									<p class="check-top" ng-if="!line.xp.IsWorkShopEvent">Phone Number <span class="star">*</span></p>
+									<div class="phone-block" ng-if="!line.xp.IsWorkShopEvent">
+										<input type="number" ng-model="line.ShippingAddress.Phone1" placeholder="Area Code" max-length="3" name="phone1" ng-required="!line.xp.IsWorkShopEvent" ng-class="{error: checkout.lineItemForm[line.ID].$submitted && checkout.lineItemForm[line.ID].phone1.$invalid}" ng-minlength="3" />
+										<input type="number" ng-model="line.ShippingAddress.Phone2" placeholder="Prefix" max-length="3" name="phone2" ng-required="!line.xp.IsWorkShopEvent" ng-class="{error: checkout.lineItemForm[line.ID].$submitted && checkout.lineItemForm[line.ID].phone2.$invalid}" ng-minlength="3" />
+										<input type="number" ng-model="line.ShippingAddress.Phone3" placeholder="Number" max-length="4" name="phone3" ng-required="!line.xp.IsWorkShopEvent" ng-class="{error: checkout.lineItemForm[line.ID].$submitted && checkout.lineItemForm[line.ID].phone3.$invalid}" ng-minlength="4" />
 									</div>
-									<div class="delivery-details">
-										<label class="radio-inline radio-common">
-											<input type="radio" id="delivery-dot" name="group{{$index}}" ng-model="line.xp.addressType" ng-value="line.xp.addressType!='InStorePickUp' ? line.xp.addressType : 'Residence'">
+									
+									<p class="check-top" ng-if="line.xp.IsWorkShopEvent">Phone Number <span class="star">*</span></p>
+									<div class="phone-block" ng-if="line.xp.IsWorkShopEvent">
+										<input type="number" ng-model="line.Events.Phone1" placeholder="Area Code" max-length="3" name="phone1" ng-required="line.xp.IsWorkShopEvent" ng-class="{error: checkout.lineItemForm[line.ID].$submitted && checkout.lineItemForm[line.ID].phone1.$invalid}" ng-minlength="3" />
+										<input type="number" ng-model="line.Events.Phone2" placeholder="Prefix" max-length="3" name="phone2" ng-required="line.xp.IsWorkShopEvent" ng-class="{error: checkout.lineItemForm[line.ID].$submitted && checkout.lineItemForm[line.ID].phone2.$invalid}" ng-minlength="3" />
+										<input type="number" ng-model="line.Events.Phone3" placeholder="Number" max-length="4" name="phone3" ng-required="line.xp.IsWorkShopEvent" ng-class="{error: checkout.lineItemForm[line.ID].$submitted && checkout.lineItemForm[line.ID].phone3.$invalid}" ng-minlength="4" />
+									</div>
+									<p class="check-top" ng-if="line.xp.IsWorkShopEvent">Email ID<span class="star">*</span></p>
+									<div class="phone-block" ng-if="line.xp.IsWorkShopEvent">
+										<input type="email" ng-model="line.xp.ShippingAddress.Email" placeholder="Email Address" name="email" ng-required="line.xp.IsWorkShopEvent" ng-class="{error: checkout.lineItemForm[line.ID].$submitted && checkout.lineItemForm[line.ID].email.$invalid}" class="email" ng-pattern="/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/"/>
+									</div>
+									
+									<div class="delivery-details" ng-init="line.SelectStore='Delivery'" ng-if="!line.xp.IsWorkShopEvent">
+										<label class="radio-inline radio-common" ng-if="line.xp.addressType!='InStorePickUp'">
+											<input type="radio" id="delivery-dot" name="group{{$index}}" ng-model="line.SelectStore" value="Delivery" />
 											<label for="delivery-dot">Delivery</label>
 											<div class="radio"></div>
 										</label>
-										<label class="radio-inline radio-common">
-											<input type="radio" id="store-pickUp" ng-click="checkout.getStores(line)" name="group{{$index}}" ng-model="line.xp.addressType" value="InStorePickUp">
+										<label class="radio-inline radio-common" ng-if="line.xp.addressType!='InStorePickUp'">
+											<input type="radio" id="store-pickUp" ng-click="checkout.getStores(line, lineitems)" name="group{{$index}}" ng-model="line.SelectStore" value="InStorePickUp">
 											<label for="store-pickUp">In-Store Pick Up</label>
 											<div class="radio"></div>
 										</label>
-										<div ng-if="line.xp.addressType!='InStorePickUp'">
-											<p class="check-top">Delivery Date <span class="star">*</span></p>
-											<p class="modify" ng-init="checkout.deliveryAdj(line)" ng-show="checkout.CheckDeliveryEmpty(line.TempCharges)">
+										<div ng-if="line.SelectStore!='InStorePickUp'">
+											<p class="check-top" ng-if="line.xp.addressType!='InStorePickUp'">Delivery Date <span class="star">*</span></p>
+											<p class="check-top" ng-if="line.xp.addressType=='InStorePickUp'">PickUp Date <span class="star">*</span></p>
+
+											<!-- <p class="modify" ng-init="checkout.deliveryAdj(line)" ng-show="checkout.CheckDeliveryEmpty(line.TempCharges)">
 												<span>
-													<a tabindex="0" popover-trigger="none" popover-is-open="showDeliveryToolTip" ng-click="showDeliveryToolTip = !showDeliveryToolTip" uib-popover-template="checkout.modifyDeliveryPopover.templateUrl">Modify Delivery</a>
+													<a tabindex="0" popover-trigger="none" popover-placement="right" popover-is-open="showDeliveryToolTip" ng-click="showDeliveryToolTip = !showDeliveryToolTip" uib-popover-template="checkout.modifyDeliveryPopover.templateUrl">Modify Delivery Fees</a>
 												</span>
-											</p>
+											</p> -->
+
 											<script type="text/ng-template" id="modifyDeliveryTemplate.html">
 												<div class="modify-tooltip check-top" click-outside="checkout.closePopover()">
 													<div>
@@ -145,7 +217,6 @@
 															<h5>{{key}} <b ng-if="key=='Service Fees'"> (50+ Items)</b></h5>
 															<input type="text" value="{{val}}" ng-model="line.TempCharges[key]" />
 														</div>
-														
 													</div>
 													<div>
 														<p>Reason For Adjustment</p>
@@ -155,7 +226,7 @@
 												</div>
 											</script>
 											<ul class="delivery-days-info">
-											   <li ng-click="checkout.dateSelect('dt',line,$index)" ng-class="{active:checkout.data{{$index}} == 'dt{{$index}}'}" class="delivery-days1">
+											   <!-- <li ng-click="checkout.dateSelect('dt',line,$index)" ng-class="{active:checkout.data{{$index}} == 'dt{{$index}}'}" class="delivery-days1">
 													<p class="delivery-header">Deliver Today</p>
 													<p class="delivery-day">{{dt | date:'longDate'}}</p>
 													<span class="delivery-day">Available</span>
@@ -164,14 +235,39 @@
 													<p class="delivery-header">Deliver Tomorrow</p>
 													<p class="delivery-day">{{tom | date:'longDate'}}</p>
 													<span class="delivery-day">Available</span>
-											   </li>
-											   <li ng-class="{active:checkout.data{{$index}} == 'selDate{{$index}}'}" class="select-date-info">
+											   </li> -->
+											   <li ng-if="line.xp.addressType!='InStorePickUp'" ng-class="{active:checkout.data{{$index}} == 'selDate{{$index}}'}" class="select-date-info">
 													<p class="select-date">Select Date</p>
 													<div class="date">
-													<input type="text" ng-model="line.dateVal.Month" placeholder="MM" max-length="2" />/
-													<input type="text" ng-model="line.dateVal.Date" placeholder="DD" max-length="2" ng-change="checkout.dateSelect()" />/
-													<input type="text" ng-model="line.dateVal.Year" placeholder="YYYY" max-length="4" />
-													<button type="button" ng-click="checkout.toggle(line,$index)" uib-datepicker-popup="dd.MM.yyyy" ng-model="datePicker.date" is-open="checkout.opened" show-weeks="false" show-button-bar="false" datepicker-options="{formatYear: 'yy', minDate: line.xp.MinDays.MinToday, startingDay: 0, dateDisabled:checkout.disabledDates}">
+													<input type="text" ng-model="line.dateVal.Month" placeholder="MM" max-length="2" name="month" ng-required="line.xp.addressType!='InStorePickUp'" ng-class="{error: checkout.lineItemForm[line.ID].$submitted && checkout.lineItemForm[line.ID].month.$invalid}" ng-readonly="true" />
+													<input type="text" ng-model="line.dateVal.Date" placeholder="DD" max-length="2" ng-change="checkout.dateSelect(line, $index, lineitems)" name="date" ng-required="line.xp.addressType!='InStorePickUp'" ng-class="{error: checkout.lineItemForm[line.ID].$submitted && checkout.lineItemForm[line.ID].date.$invalid}" ng-readonly="true" />
+													<input type="text" ng-model="line.dateVal.Year" placeholder="YYYY" max-length="4" name="year" ng-required="line.xp.addressType!='InStorePickUp'" ng-class="{error: checkout.lineItemForm[line.ID].$submitted && checkout.lineItemForm[line.ID].year.$invalid}" ng-readonly="true" />
+													<button type="button" ng-click="checkout.toggle(line,$index,lineitems)" uib-datepicker-popup="dd.MM.yyyy" ng-model="datePicker.date" is-open="checkout.opened" show-weeks="false" show-button-bar="false" datepicker-options="{formatYear: 'yy', minDate: line.LocalOrUPSMinDate, startingDay: 0, dateDisabled:checkout.disabledDates}">
+														<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+															 viewBox="0 0 33 36" style="enable-background:new 0 0 33 36;" xml:space="preserve">
+
+														<g>
+															<path d="M0,10.2v20c0,2.7,2.2,4.9,4.9,4.9H28c2.7,0,4.9-2.2,4.9-4.9v-20c0-2.7-2.2-4.9-4.9-4.9h-1v-3
+																c0-0.8-0.7-1.5-1.5-1.5c-0.8,0-1.5,0.7-1.5,1.5v6c0,0.7-0.6,1.3-1.3,1.3c-0.7,0-1.3-0.6-1.3-1.3V5.3h-2.6v-3c0-0.8-0.7-1.5-1.5-1.5
+																c-0.8,0-1.5,0.7-1.5,1.5v6c0,0.7-0.6,1.3-1.3,1.3c-0.7,0-1.3-0.6-1.3-1.3V5.3h-2.6v-3c0-0.8-0.7-1.5-1.5-1.5
+																c-0.8,0-1.5,0.7-1.5,1.5v6c0,0.7-0.6,1.3-1.3,1.3c-0.7,0-1.3-0.6-1.3-1.3V5.3C2.2,5.3,0,7.5,0,10.2z M29.4,29.6
+																c0,0.9-0.7,1.6-1.6,1.6H5.4c-0.9,0-1.6-0.7-1.6-1.6V16.7h25.6L29.4,29.6z"/>
+															<path d="M19.2,29h-7l2.8-3.7c0.3-0.4,0.6-0.8,0.8-1.1c0.2-0.3,0.4-0.6,0.5-0.9c0.2-0.5,0.4-1,0.4-1.5
+																c0-0.3-0.1-0.5-0.2-0.7c-0.1-0.2-0.3-0.2-0.5-0.2c-0.4,0-0.7,0.4-0.7,1.2c0,0,0,0.1,0,0.2c0,0.1,0,0.1,0,0.2h-2.7l0-0.4
+																c0-1,0.3-1.8,0.9-2.5c0.6-0.6,1.5-0.9,2.4-0.9c1,0,1.7,0.3,2.3,0.9c0.6,0.6,0.9,1.4,0.9,2.4c0,0.8-0.2,1.6-0.6,2.3
+																c-0.2,0.4-0.5,0.8-0.8,1.2c-0.3,0.4-0.7,0.8-1.2,1.3c0.4-0.1,0.8-0.2,1.2-0.2c0.4,0,0.8-0.1,1.3-0.1L19.2,29L19.2,29z"/>
+														</g>
+														</svg>
+													</button>
+													</div>
+												</li>
+												<li ng-if="line.xp.addressType=='InStorePickUp'" ng-class="{active:checkout.dataStore{{$index}} == 'selDate{{$index}}'}" class="select-date-info">
+													<p class="select-date">Select Date</p>
+													<div class="date">
+													<input type="text" ng-model="line.dateValStore.Month" placeholder="MM" max-length="2" name="month" ng-required="line.xp.addressType=='InStorePickUp'" ng-class="{error: checkout.lineItemForm[line.ID].$submitted && checkout.lineItemForm[line.ID].month.$invalid}" ng-readonly="true" />
+													<input type="text" ng-model="line.dateValStore.Date" placeholder="DD" max-length="2" ng-change="checkout.dateSelectStore(line, $index, lineitems)" name="date" ng-required="line.xp.addressType=='InStorePickUp'" ng-class="{error: checkout.lineItemForm[line.ID].$submitted && checkout.lineItemForm[line.ID].date.$invalid}" ng-readonly="true" />
+													<input type="text" ng-model="line.dateValStore.Year" placeholder="YYYY" max-length="4" name="year" ng-required="line.xp.addressType=='InStorePickUp'" ng-class="{error: checkout.lineItemForm[line.ID].$submitted && checkout.lineItemForm[line.ID].year.$invalid}" ng-readonly="true" />
+													<button type="button" ng-click="checkout.toggleStore(line,$index,lineitems)" uib-datepicker-popup="dd.MM.yyyy" ng-model="datePickerStore.date" is-open="checkout.openedStore" show-weeks="false" show-button-bar="false" datepicker-options="{formatYear: 'yy', minDate: line.xp.MinDays.InStorePickUp, startingDay: 0, dateDisabled:checkout.disabledDates}">
 														<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 															 viewBox="0 0 33 36" style="enable-background:new 0 0 33 36;" xml:space="preserve">
 
@@ -191,8 +287,13 @@
 													</div>
 												</li>
 											</ul>
-											<p class="delivery-date">Delivery Preference <span class="star">*</span></p>
-											<ul class="delivery-days-info">
+											<p class="modify" ng-init="checkout.deliveryAdj(line)" ng-show="checkout.CheckDeliveryEmpty(line.TempCharges)">
+												<span>
+													<a tabindex="0" popover-trigger="none" popover-is-open="showDeliveryToolTip" ng-click="showDeliveryToolTip = !showDeliveryToolTip" uib-popover-template="checkout.modifyDeliveryPopover.templateUrl">Modify Delivery Fees</a>
+												</span>
+											</p>
+											<p class="delivery-date" ng-if="line.xp.addressType!='InStorePickUp'">Delivery Preference <span class="star">*</span></p>
+											<ul class="delivery-days-info" ng-class="{errorDeliveryPref: checkout.lineItemForm[line.ID].$submitted && !line.xp.deliveryRun}" ng-if="line.xp.addressType!='InStorePickUp'">
 												<li ng-click="line.xp.deliveryRun='Run1'" ng-class="{active:line.xp.deliveryRun=='Run1'}" class="preference">
 													<p class="delivery-header">{{checkout.buyerDtls.xp.DeliveryRuns[0].Run1.Name}}</p>
 													<p class="delivery-day">{{checkout.buyerDtls.xp.DeliveryRuns[0].Run1.TimeSlot}}</p>
@@ -207,22 +308,22 @@
 												</li>
 											</ul>
 										</div>
-										<div ng-if="line.xp.addressType=='InStorePickUp'" class="select-store">
-											 <p>Select Store</p>
-												 <input type="search" ng-model="line.ShippingAddress.CompanyName" autocomplete="off" ng-value="line.xp.addressType=='InStorePickUp' ? line.ShippingAddress.CompanyName : ''" uib-typeahead="st for st in checkout.storeNames | filter:$viewValue" typeahead-on-select="checkout.addStoreAddress($item, line)" />
-											 <p>
-											<fieldset id="group2">
-												<label class="radio-inline radio-common">
-													<input type="radio" name="group2" ng-model="checkout.fromStoreOrOutside" value="1">
-													<span>Product is coming from my store</span>
-													<div class="radio"></div>
-												</label>
-												<label class="radio-inline radio-common">
-													<input type="radio" name="group2" ng-model="checkout.fromStoreOrOutside" value="2">
-													<span>Product is coming from somewhere else</span>
-													<div class="radio"></div>
-												</label>
-											</fieldset>
+										<div ng-if="line.SelectStore=='InStorePickUp'" class="select-store" ng-init="line.xp.ProductFromStore='MyStore'">
+											<p>Select Store</p>
+											<input type="search" ng-model="line.ShippingAddress.CompanyName" autocomplete="off" ng-value="line.xp.addressType=='InStorePickUp' ? line.ShippingAddress.CompanyName : ''" uib-typeahead="st for st in checkout.storeNames | filter:$viewValue" typeahead-on-select="checkout.addStoreAddress($item, line, lineitems)" />
+											<p>
+												<fieldset id="group2">
+													<label class="radio-inline radio-common">
+														<input type="radio" name="group2" ng-model="line.xp.ProductFromStore" value="MyStore" />
+														<span>Product is coming from my store</span>
+														<div class="radio"></div>
+													</label>
+													<label class="radio-inline radio-common">
+														<input type="radio" name="group2" ng-model="line.xp.ProductFromStore" value="OtherStore" />
+														<span>Product is coming from somewhere else</span>
+														<div class="radio"></div>
+													</label>
+												</fieldset>
 											</p>
 										</div>
 									</div>
@@ -241,7 +342,7 @@
 										<uib-accordion-group ng-repeat="addr in addressesList | limitTo: line.limit" is-open="addr.isAddrOpen" ng-click="checkout.selectedAddr(line,addr)">
 											<uib-accordion-heading>
 													<input type="checkbox" id="saved" class="checkbox-custom" ng-checked="addr.isAddrOpen">
-													<label  for="saved" class="checkbox-custom-label"></label>
+													<label for="saved" class="checkbox-custom-label"></label>
 													<span ng-if="!addr.CompanyName">{{addr.FirstName}} {{addr.LastName}} | {{addr.Zip}}</span>
 													<span ng-if="addr.CompanyName">{{addr.CompanyName}} | {{addr.Zip}}</span>
 													<span ng-if="defualtAddressID==addr.ID">(Default)</span>
@@ -276,7 +377,8 @@
 														<input type="text" name="street1" ng-model="addr.Street1" ng-required="checkout.isDeliAddrShow{{$index}} ? true : false" ng-class="{error: checkout.editaddress[$index].$submitted && checkout.editaddress[$index].street1.$invalid}" />
 														<p class="check-top">Address 2</p>
 														<input type="text" ng-model="addr.Street2" />
-														<h6 style="color:red;" ng-if="checkout.editaddress[$index].invalidAddress && addr.Street1 && addr.Zip">Invalid Address/Zip</h6>
+														<h6 class="error" ng-if="checkout.editaddress[$index].invalidAddress && addr.Street1 && addr.Zip && !checkout.AddressError">Invalid Address/Zip</h6>
+														<h6 class="error" ng-if="checkout.AddressError">{{checkout.AddressError}}</h6>
 														<div class="city check-top del-addr col-xs-12 col-sm-12 col-md-12 col-lg-12">
 															<div class="location col-xs-8 col-sm-8 col-md-8 col-lg-8">
 																<p>City <span class="star">*</span></p>
@@ -289,11 +391,11 @@
 														</div>
 														<div class="phone-block check-top col-xs-12 col-sm-12 col-md-12 col-lg-12">
 															<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-																<p>Phone Number</p>
+																<p>Phone Number <span class="star">*</span></p>
 																<div>
-																	<input type="number" ng-model="addr.Phone1" placeholder="Area Code" max-length="3" />
-																	<input type="number" ng-model="addr.Phone2" placeholder="Prefix" max-length="3" />
-																	<input type="number" ng-model="addr.Phone3" placeholder="Number" max-length="4" />
+																	<input type="number" ng-model="addr.Phone1" placeholder="Area Code" max-length="3" ng-minlength="3" name="phone1" ng-required="checkout.isDeliAddrShow{{$index}} ? true : false" ng-class="{error: checkout.editaddress[$index].$submitted && checkout.editaddress[$index].phone1.$invalid}" />
+																	<input type="number" ng-model="addr.Phone2" placeholder="Prefix" max-length="3" ng-minlength="3" name="phone2" ng-required="checkout.isDeliAddrShow{{$index}} ? true : false" ng-class="{error: checkout.editaddress[$index].$submitted && checkout.editaddress[$index].phone2.$invalid}" />
+																	<input type="number" ng-model="addr.Phone3" placeholder="Number" max-length="4" ng-minlength="4" name="phone3" ng-required="checkout.isDeliAddrShow{{$index}} ? true : false" ng-class="{error: checkout.editaddress[$index].$submitted && checkout.editaddress[$index].phone3.$invalid}" />
 																</div>
 															</div>
 															<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
@@ -349,7 +451,8 @@
 											<input type="text" name="street1" ng-model="addr.Street1" ng-required="showNewAddress{{$index}} ? true : false" ng-class="{error: checkout.newaddress[$index].$submitted && checkout.newaddress[$index].street1.$invalid}" />
 											<p class="check-top">Address 2</p>
 											<input type="text" ng-model="addr.Street2" />
-											<h6 style="color:red;" ng-if="checkout.newaddress[$index].invalidAddress && addr.Street1 && addr.Zip">Invalid Address/Zip</h6>
+											<h6 class="error" ng-if="checkout.newaddress[$index].invalidAddress && addr.Street1 && addr.Zip && !checkout.AddressError">Invalid Address/Zip</h6>
+											<h6 class="error" ng-if="checkout.AddressError">{{checkout.AddressError}}</h6>
 											<div class="city check-top del-addr col-xs-12 col-sm-12 col-md-12 col-lg-12">
 												<div class="location col-xs-8 col-sm-8 col-md-8 col-lg-8">
 													<p>City <span class="star">*</span></p>
@@ -362,11 +465,11 @@
 											</div>
 											<div class="phone-block check-top col-xs-12 col-sm-12 col-md-12 col-lg-12">
 												<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-													<p>Phone Number</p>
+													<p>Phone Number <span class="star">*</span></p>
 													<div>
-														<input type="number" ng-model="addr.Phone1" placeholder="Area Code" max-length="3"  />
-														<input type="number" ng-model="addr.Phone2" placeholder="Prefix" max-length="3" />
-														<input type="number" ng-model="addr.Phone3" placeholder="Number" max-length="4" />
+														<input type="number" ng-model="addr.Phone1" placeholder="Area Code" max-length="3"  name="phone1" ng-minlength="3" ng-required="showNewAddress{{$index}} ? true : false" ng-class="{error: checkout.newaddress[$index].$submitted && checkout.newaddress[$index].phone1.$invalid}" />
+														<input type="number" ng-model="addr.Phone2" placeholder="Prefix" max-length="3"  name="phone2" ng-minlength="3" ng-required="showNewAddress{{$index}} ? true : false" ng-class="{error: checkout.newaddress[$index].$submitted && checkout.newaddress[$index].phone2.$invalid}" />
+														<input type="number" ng-model="addr.Phone3" placeholder="Number" max-length="4" name="phone3" ng-minlength="4" ng-required="showNewAddress{{$index}} ? true : false" ng-class="{error: checkout.newaddress[$index].$submitted && checkout.newaddress[$index].phone3.$invalid}" />
 													</div>
 												</div>
 												<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
@@ -378,33 +481,42 @@
 								</div>
 								<div class="delivery-instructions col-lg-6 col-md-6">
 									<h3>Delivery Instructions</h3>
+									<!-- <select ng-model="checkout.selectproduct">
+										<option ng-repeat="option in lineitems" value="{{option.Product.Name}}">
+											{{option.Product.Name}}
+										</option>
+									</select> -->
+									<select name="mySelect" id="mySelect" ng-init="checkout.selectproduct=lineitems[0]" ng-options="option.Product.Name for option in lineitems track by option.ID" ng-model="checkout.selectproduct" ng-value="checkout.selectproduct.ID">
+										<option value="" selected="selected">Choose</option>
+									</select>
 									<p>Delivery Instructions:</p>
-									<textarea rows="3" ng-model="line.xp.deliveryNote"></textarea>
-									<div ng-init="line.xp.CardMessage ? line.cardMsg=false : line.cardMsg=true">
+									<textarea rows="3" ng-model="checkout.selectproduct.xp.deliveryNote"></textarea>
+									<div ng-init="checkout.selectproduct.xp.CardMessage ? checkout.selectproduct.cardMsg=false : checkout.selectproduct.cardMsg=true">
 										<div class="no-msg">
 											<span>Card Message</span>
 											<div class="no-msg-cont">
- 												<input type="checkbox" ng-model="line.cardMsg" id="noMessage{{$index}}" class="checkbox-custom" name="cardmessage">
+ 												<input type="checkbox" ng-model="checkout.selectproduct.cardMsg" id="noMessage{{$index}}" class="checkbox-custom" name="cardmessage">
  												<label  for="noMessage{{$index}}" class="checkbox-custom-label">No Message</label>
 											</div>
 										</div>
-										<div class="line-msgs" ng-class="{'hideItem': !line.cardMsg}">
+										<div class="line-msgs" ng-class="{'hideItem': !checkout.selectproduct.cardMsg}">
 											<p>Line 1</p>
-											<input type="text" ng-model="line.xp.CardMessage.line1"></input>
+											<input type="text" ng-model="checkout.selectproduct.xp.CardMessage.line1"></input>
 											<p>Line 2</p>
-											<input type="text" ng-model="line.xp.CardMessage.line2"></input>
+											<input type="text" ng-model="checkout.selectproduct.xp.CardMessage.line2"></input>
 											<p>Line 3</p>
-											<input type="text" ng-model="line.xp.CardMessage.line3"></input>
+											<input type="text" ng-model="checkout.selectproduct.xp.CardMessage.line3"></input>
 											<p>Line 4</p>
-											<input type="text" ng-model="line.xp.CardMessage.line4"></input>
+											<input type="text" ng-model="checkout.selectproduct.xp.CardMessage.line4"></input>
 										</div>
 									</div>
 									<div class="instruction">
-										<b>instruction :</b>
+										<b>Instruction :</b>
 									</div>
 								</div>
 								<div class="col-lg-12 col-md-12">
-									<input type="button" ng-disabled="!line.xp.deliveryRun && line.xp.addressType!='InStorePickUp'" ng-class="{paymentdisable: !line.xp.deliveryRun && line.xp.addressType!='InStorePickUp'}" ng-value="checkout.recipients.length == $index+1 ? 'Continue to Payment' : 'Next Recipient'" ng-click="checkout.ProceedToPayment(lineitems, $index, checkout.lineItemForm[line.ID])" id="nextrecipient" />
+								<!-- <input type="button" ng-disabled="!line.xp.deliveryRun && line.xp.addressType!='InStorePickUp' && !line.xp.IsWorkShopEvent" ng-class="{paymentdisable: !line.xp.deliveryRun && line.xp.addressType!='InStorePickUp' && !line.xp.IsWorkShopEvent}" ng-value="checkout.recipients.length == $index+1 ? 'Continue to Payment' : 'Next Recipient'" ng-click="checkout.ProceedToPayment(lineitems, $index, checkout.lineItemForm[line.ID])" id="nextrecipient" class="payement-button" /> -->
+								<input type="button" ng-value="checkout.recipients.length == $index+1 ? 'Continue to Payment' : 'Next Recipient'" ng-click="checkout.ProceedToPayment(lineitems, $index, checkout.lineItemForm[line.ID])" id="nextrecipient" class="payement-button" />
 								</div>
 							</form>
 						</uib-accordion-group>
@@ -431,7 +543,7 @@
 									<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14"><path d="M5.378 11.37L2 7.59l1.438-1.286L5.374 8.47l5.185-5.84L12 3.91l-6.622 7.46" fill="#fff"/></svg>
 								</span>
 							</div>
-							<div ng-click="checkout.paymentOption = 'BachmansCharge'" ng-class="{'active-tab': checkout.orderDtls.SpendingAccounts.BachmansCharges, 'highlight': checkout.paymentOption == 'BachmansCharge'}" ng-show="checkout.UserSpendingAcc['Bachman Charges'] && checkout.buyerDtls.xp.PaymentMethods.BachmansCharge.OMS">Bachman's Charges
+							<div ng-click="checkout.paymentOption = 'BachmansCharge'" ng-class="{'active-tab': checkout.orderDtls.SpendingAccounts.BachmansCharges, 'highlight': checkout.paymentOption == 'BachmansCharge'}" ng-show="checkout.UserSpendingAcc['Bachmans Charge'] && checkout.buyerDtls.xp.PaymentMethods.BachmansCharge.OMS">Bachman's Charges
 								<span class="selected">
 									<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14"><path d="M5.378 11.37L2 7.59l1.438-1.286L5.374 8.47l5.185-5.84L12 3.91l-6.622 7.46" fill="#fff"/></svg>
 								</span>
@@ -451,14 +563,14 @@
 									<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14"><path d="M5.378 11.37L2 7.59l1.438-1.286L5.374 8.47l5.185-5.84L12 3.91l-6.622 7.46" fill="#fff"/></svg>
 								</span>
 							</div>
-							<div ng-if="checkout.CurrentUser.xp.PO.PORequired=='Yes'" ng-click="checkout.ClearOtherPayments()" ng-class="{'active-tab': checkout.paymentOption == 'PO', 'highlight': checkout.paymentOption == 'PO'}">PO
+							<div ng-if="checkout.CurrentUser.xp.PO.PORequired=='Y'" ng-click="checkout.ClearOtherPayments()" ng-class="{'active-tab': checkout.paymentOption == 'PO', 'highlight': checkout.paymentOption == 'PO'}">PO
 								<span class="selected">
 									<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14"><path d="M5.378 11.37L2 7.59l1.438-1.286L5.374 8.47l5.185-5.84L12 3.91l-6.622 7.46" fill="#fff"/></svg>
 								</span>
 							</div>
 						</div>
 						<!-- credit card -->
-						<div class="payment-method-container col-xs-12 col-sm-12 col-md-12 col-lg-12" ng-repeat="card in checkout.creditCardsList" ng-if="checkout.paymentOption == 'CreditCard'">
+						<div class="payment-method-container col-xs-12 col-sm-12 col-md-12 col-lg-12" ng-repeat="card in checkout.creditCardsList" ng-if="checkout.paymentOption == 'CreditCard' && checkout.order.FromUserID!='gby8nYybikCZhjMcwVPAiQ'">
                             <div ng-init="checkout.getBillingAddress(card)">
                                 <div class="payment-container-header">
                                     <label class="radio-inline radio-common">
@@ -478,7 +590,7 @@
 										<div class="col-xs-8 cvv-value">
 										<form class="cvv-from" novalidate name="card.cvvform">
 											<div class="form-group">
-												<input type="text" class="form-control" name="cvv" id="cvvNumber" ng-model="card.CVV" ng-required="card == checkout.selectedCard" ng-class="{error: card.cvvform.$submitted && card.cvvform.cvv.$invalid}" />
+												<input type="number" ng-minlength="card.CardType!='AmericanExpress' ? checkout.CVVLength=3 : checkout.CVVLength=4" class="form-control" name="cvv" id="cvvNumber" ng-model="card.CVV" ng-required="card == checkout.selectedCard" max-length="checkout.CVVLength" ng-minlength="checkout.CVVLength" ng-maxlength="checkout.CVVLength" ng-class="{error: card.cvvform.$submitted && card.cvvform.cvv.$invalid}" placeholder="CVV" />
 												<span class="cvv-help-icon">
 													<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="-652.2 494.3 18.7 18.7" style="enable-background:new -652.2 494.3 18.7 18.7;" xml:space="preserve">
 													<g>
@@ -546,20 +658,21 @@
 											<div class="col-xs-12 form-group card-number p0">
 	                                            <label for="zip">Zip <span class="star">*</span></label>
 	                                            <input type="text" class="form-control" name="zip" max-length="5" id="zip" placeholder="Zip" ng-model="card.BillingAddress.Zip" ng-required="checkout.EditBillAddress{{$index}}" ng-class="{error: checkout.EditBillingForm.$submitted && checkout.EditBillingForm.zip.$invalid}" />
-												<h6 style="color:red;" ng-if="checkout.EditBillingForm.invalidAddress && checkout.BillingAddress.Street1 && checkout.BillingAddress.Zip">Invalid Address/Zip</h6>
+												<h6 class="error" ng-if="checkout.EditBillingForm.invalidAddress && checkout.BillingAddress.Street1 && checkout.BillingAddress.Zip && !checkout.AddressError">Invalid Address/Zip</h6>
+												<h6 class="error" ng-if="checkout.AddressError">{{checkout.AddressError}}</h6>
 	                                        </div>
 											<div class="col-xs-12 form-group card-number p0 phone-book">
-												<label for="phone" class="col-xs-12">Phone Number</label>
-												<input type="number" ng-model="card.BillingAddress.Phone1" placeholder="Area Code" max-length="3" />
-												<input type="number" ng-model="card.BillingAddress.Phone2" placeholder="Prefix" max-length="3" />
-												<input type="number" ng-model="card.BillingAddress.Phone3" placeholder="Number" max-length="4" />
+												<label for="phone" class="col-xs-12">Phone Number <span class="star">*</span></label>
+												<input type="number" ng-model="card.BillingAddress.Phone1" placeholder="Area Code" max-length="3" ng-minlength="3" name="phone1" ng-required="checkout.EditBillAddress{{$index}}" ng-class="{error: checkout.EditBillingForm.$submitted && checkout.EditBillingForm.phone1.$invalid}" />
+												<input type="number" ng-model="card.BillingAddress.Phone2" placeholder="Prefix" max-length="3" ng-minlength="3" name="phone2" ng-required="checkout.EditBillAddress{{$index}}" ng-class="{error: checkout.EditBillingForm.$submitted && checkout.EditBillingForm.phone2.$invalid}" />
+												<input type="number" ng-model="card.BillingAddress.Phone3" placeholder="Number" max-length="4" ng-minlength="4" name="phone3" ng-required="checkout.EditBillAddress{{$index}}" ng-class="{error: checkout.EditBillingForm.$submitted && checkout.EditBillingForm.phone3.$invalid}" />
 											</div>
 											<div class="col-xs-12 form-group card-number p0">
 	                                            <label for="email">Enter Your Email Address</label>
-	                                            <input type="text" class="form-control" id="email" placeholder="Email Address" ng-model="card.BillingAddress.xp.Email" />
+	                                            <input type="email" class="form-control" id="email" placeholder="Email Address" ng-model="card.BillingAddress.xp.Email" name="email" ng-required="checkout.EditBillAddress{{$index}}" ng-class="{error: checkout.EditBillingForm.$submitted && checkout.EditBillingForm.email.$invalid}" ng-pattern="/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/" />
 	                                        </div>
 											<div class="col-xs-12 form-group card-number p0 save-button">
-	                                            <input type="submit" class="form-control" id="submitButton" value="SAVE" />
+	                                            <input type="submit" class="form-control" id="submitButton" value="SAVE" ng-disabled="checkout.EditBillingForm.$invalid" />
 	                                        </div>
 										</form>										
                                     </div>
@@ -570,18 +683,23 @@
 						<div class="add-card-container col-xs-12 col-sm-12 col-md-12 col-lg-12" ng-if="checkout.paymentOption == 'CreditCard'">
                             <div>
                                 <div class="add-card-header">
-                                    <label class="radio-inline radio-common">
-									<input type="radio" ng-model="checkout.selectedCard" value="createcreditcard">
-									<div class="radio"></div>
-									<span><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 24 24" style="enable-background:new 0 0 24 24;" xml:space="preserve">
-												<g>
-													<rect x="10" width="4" height="24"></rect>
-													<rect y="10" width="24" height="4"></rect>
-												</g>
-											</svg> Add/Pay with a new card</span>	
-									</label>
+                                	<div ng-if="checkout.order.FromUserID!='gby8nYybikCZhjMcwVPAiQ'">
+                                		<label class="radio-inline radio-common">
+										<input type="radio" ng-model="checkout.selectedCard" value="createcreditcard">
+										<div class="radio"></div>
+										<span><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 24 24" style="enable-background:new 0 0 24 24;" xml:space="preserve">
+													<g>
+														<rect x="10" width="4" height="24"></rect>
+														<rect y="10" width="24" height="4"></rect>
+													</g>
+												</svg> Add/Pay with a new card</span>	
+										</label>
+                                	</div>
+                                	<div ng-if="checkout.order.FromUserID=='gby8nYybikCZhjMcwVPAiQ'" ng-init="checkout.order.FromUserID=='gby8nYybikCZhjMcwVPAiQ' && checkout.orderTotal > 0 ? checkout.selectedCard = 'createcreditcard' : ''">
+                                		<h4>INPUT CARD INFORMATION</h4>
+                                	</div>
                                 </div>
-                                <div class="add-card-method-container row" ng-if="checkout.selectedCard === 'createcreditcard'">
+                                <div class="add-card-method-container row" ng-if="checkout.selectedCard == 'createcreditcard'">
                                     <div class="col-xs-12 card-info-cont">
 	                                    <form class="input-card-form" name="checkout.CreditCardDetailForm" novalidate>
 	                                        <div class="col-xs-12 form-group holder-name p0">
@@ -615,7 +733,7 @@
 	                                          </div>
 	                                        <div class="col-xs-6 form-group cvv-number">
 	                                            <label for="cvvNumber">CVV <span class="star">*</span></label>
-	                                            <input type="text" class="form-control" name="cvv" id="cvvNumber" ng-model="checkout.card.CVV" ng-required="checkout.selectedCard=='createcreditcard'" ng-class="{error: checkout.CreditCardDetailForm.$submitted && checkout.CreditCardDetailForm.cvv.$invalid}" />
+	                                            <input type="text" class="form-control" name="cvv" id="cvvNumber" ng-model="checkout.card.CVV" ng-required="checkout.selectedCard=='createcreditcard'" ng-class="{error: checkout.CreditCardDetailForm.$submitted && checkout.CreditCardDetailForm.cvv.$invalid}" placeholder="CVV" ng-minlength="card.CardType!='AmericanExpress' ? checkout.CVVLength=3 : checkout.CVVLength=4" max-length="checkout.CVVLength" ng-minlength="checkout.CVVLength" ng-maxlength="checkout.CVVLength" />
 	                                            <span class="cvv-help">
 	                                                <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	                                                 viewBox="-652.2 494.3 18.7 18.7" style="enable-background:new -652.2 494.3 18.7 18.7;" xml:space="preserve">
@@ -644,33 +762,35 @@
 						</div>
 						<!-- Bachmans charges -->
 						<div class="payment-method-container charges col-xs-10 col-sm-10 col-md-10 col-lg-10" ng-show="checkout.paymentOption == 'BachmansCharge'">
-							<div>
-								<div class="payment-container-header">
-									<span>Bachman's Charge Limit Available</span>
-									<span class="total">{{checkout.UserSpendingAcc['Bachman Charges'].Balance | currency}}</span>
-								</div>
-								<div class="payment-container row">
-									<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9 bachmans-charges">
-										<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-										<label class="radio-inline radio-common">
-											<input type="radio" ng-model="BachmansCharges" name="BachmansCharge" value="Full" /><span>use {{checkout.UserSpendingAcc['Bachman Charges'].Balance | currency}} Bachman's Charge</span>
-											<div class="radio"></div>
-										</label>	
-										</div>
-										<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-										<div class="col-xs-7 col-sm-7 col-md-7 col-lg-7 charges-cont">
-											<label class="radio-inline radio-common">
-											<input type="radio" ng-model="BachmansCharges" name="BachmansCharge" value="Custom" /><span>Enter Custom Charge</span>
-											<div class="radio"></div>
-										   </label>
+							<form name="checkout.BachmanChargeForm" novalidate>
+								<div>
+									<div class="payment-container-header">
+										<span>Bachman's Charge Limit Available</span>
+										<span class="total">{{checkout.UserSpendingAcc['Bachmans Charge'].Balance | currency}}</span>
+									</div>
+									<div class="payment-container row">
+										<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9 bachmans-charges">
+											<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+												<label class="radio-inline radio-common">
+													<input type="radio" ng-model="BachmansCharges" name="BachmansCharge" value="Full" ng-disabled="checkout.UserSpendingAcc['Bachmans Charge'].Balance > checkout.orderTotal" /><span>use {{checkout.UserSpendingAcc['Bachmans Charge'].Balance | currency}} Bachman's Charge</span>
+													<div class="radio"></div>
+												</label>	
 											</div>
-											<input type="number" ng-model="txtBachmanCharges" class="col-xs-5 col-sm-5 col-md-5 col-lg-5" ng-disabled="BachmansCharges == 'Full'" /><span></span>
+											<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+											<div class="col-xs-7 col-sm-7 col-md-7 col-lg-7 charges-cont">
+												<label class="radio-inline radio-common">
+												<input type="radio" ng-model="BachmansCharges" name="BachmansCharge" value="Custom" /><span>Enter Custom Charge</span>
+												<div class="radio"></div>
+											   </label>
+												</div>
+												<input type="number" name="bachmanchargeAmt" ng-model="txtBachmanCharges" class="col-xs-5 col-sm-5 col-md-5 col-lg-5" ng-disabled="BachmansCharges == 'Full' || !BachmansCharges" ng-max="checkout.orderTotal" /><span></span>
+											</div>
+											<p class="error" ng-if="checkout.BachmanChargeForm.bachmanchargeAmt.$error.max">Cannot Exceed Balance Limit.</p>
+											<button ng-disabled="checkout.BachmanChargeForm.$invalid" ng-click="checkout.ApplySpendingAccCharges(checkout.UserSpendingAcc['Bachmans Charge'], BachmansCharges, txtBachmanCharges, checkout.orderDtls, 'Bachmans Charge')">Apply</button>
 										</div>
-										<span style="color:red;" ng-if="txtBachmanCharges > checkout.UserSpendingAcc['Bachman Charges'].Balance">You cannot exceed your balance limit...!</span>
-										<button ng-disabled="txtBachmanCharges > checkout.UserSpendingAcc['Bachman Charges'].Balance" ng-click="checkout.ApplySpendingAccCharges(checkout.UserSpendingAcc['Bachman Charges'], BachmansCharges, txtBachmanCharges, checkout.orderDtls, 'Bachman Charges')">Apply</button>
 									</div>
 								</div>
-							</div>
+							</form>
 						</div>
 						<!-- Gift Card -->
 						<div class="payment-method-container perk col-xs-10 col-sm-10 col-md-10 col-lg-10" ng-show="checkout.paymentOption == 'GiftCard'">
@@ -680,36 +800,38 @@
 								</div>
 								<div class="payment-container row">
 									<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-											<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9 payment-options">
-												<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-													<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 gift-card">
-														<span>Enter 14 or 16 Digit Gift Card Number</span>
-													</div>
-													<input ng-model="GiftCardNo" type="text" class="col-xs-6 col-sm-6 col-md-6 col-lg-6" />
+										<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9 payment-options">
+											<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+												<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 gift-card">
+													<span>Enter Gift Card No : </span>
 												</div>
-												<span style="color:red;" ng-if="checkout.InvalidGiftCard">Gift Card Not Available/Expired...!</span>
-												<button ng-click="checkout.GCApply(GiftCardNo, checkout.orderDtls)">Apply</button>
+												<input ng-model="GiftCardNo" type="text" class="col-xs-6 col-sm-6 col-md-6 col-lg-6" placeholder="Card Number" />
 											</div>
+											<span class="error" ng-if="checkout.InvalidGiftCard">Gift Card Not Available/Expired...!</span>
+											<button ng-click="checkout.GCApply(GiftCardNo, checkout.orderDtls)">Apply</button>
+										</div>
 									</div>
 								</div>
 							</div>
 						</div>
 						<!-- cash/cheque -->
 						<div class="payment-method-container cheque col-xs-10 col-sm-10 col-md-10 col-lg-10" ng-if="checkout.paymentOption == 'CashCheque'">
+							<form name="checkout.CashChequeForm" novalidate>
 							<div>
 								<div class="payment-container row">
 									<div class="col-xs-11 col-sm-11 col-md-11 col-lg-11 payment-options1">
 										<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 											<div>
-											<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-												<label class="radio-inline radio-common">
-													<input type="radio" name="CashCharge" value="PayCash" ng-model="checkout.PayCashCheque" />
-													<p>Pay through Cash</p><br>
-													<p>Amount paid through cash</p>
-													<div class="radio"></div>
-												</label>
-											</div>
-											<input type="number" ng-disabled="checkout.PayCashCheque == 'PayCheque'" ng-model="checkout.txtPayCash"  class="col-xs-6 col-sm-6 col-md-6 col-lg-6"/>
+												<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+													<label class="radio-inline radio-common">
+														<input type="radio" name="CashCharge" value="PayCash" ng-model="checkout.PayCashCheque" />
+														<p>Pay through Cash</p><br>
+														<p>Amount paid through cash</p>
+														<div class="radio"></div>
+													</label>
+												</div>
+												<input type="number" name="cash" ng-disabled="checkout.PayCashCheque == 'PayCheque' || !checkout.PayCashCheque" ng-model="checkout.txtPayCash" class="col-xs-6 col-sm-6 col-md-6 col-lg-6" placeholder="Amount" ng-max="checkout.orderTotal" />
+												<span class="error" ng-if="checkout.CashChequeForm.cash.$error.max && !checkout.orderDtls.SpendingAccounts.PaidCash">Cannot Exceed Order Total Limit.</span>
 											</div>
 											<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 												<div>
@@ -721,23 +843,25 @@
 														<div class="radio"></div>
 													</label>
 													</div>
-													<input type="number" class="col-xs-6 col-sm-6 col-md-6 col-lg-6" ng-disabled="checkout.PayCashCheque == 'PayCash'" ng-model="checkout.txtChequeNumber" />
-													<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-													<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 payment-amt">
-													<label class="radio-inline radio-common">
-														<p>Amount Paid through Cheque</p>
-														<!-- <div class="radio"></div> -->
-													</label>
+													<input type="number" class="col-xs-6 col-sm-6 col-md-6 col-lg-6" ng-disabled="checkout.PayCashCheque == 'PayCash' || !checkout.PayCashCheque" ng-model="checkout.txtChequeNumber" placeholder="Check Number" />
+													<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 payment-amt">
+													<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+														<label class="radio-inline radio-common">
+															<p>Amount Paid through Cheque</p>
+															<!-- <div class="radio"></div> -->
+														</label>
 													</div>
-													<input ng-disabled="checkout.PayCashCheque == 'PayCash'" type="number" ng-model="checkout.txtChequeAmt" class="col-xs-6 col-sm-6 col-md-6 col-lg-6"/>
+													<input name="chequeamount" ng-disabled="checkout.PayCashCheque == 'PayCash' || !checkout.PayCashCheque" type="number" ng-model="checkout.txtChequeAmt" class="col-xs-6 col-sm-6 col-md-6 col-lg-6" placeholder="Amount" ng-max="checkout.orderTotal" />
+													<span class="error" ng-if="checkout.CashChequeForm.chequeamount.$error.max && !checkout.orderDtls.SpendingAccounts.Cheque">Cannot Exceed Order Total Limit.</span>
 													</div>
 													</div>
 												</div>
 											</div>
-										<button ng-click="checkout.PayByChequeOrCash(checkout.orderDtls)">Apply</button>
+										<button ng-disabled="checkout.CashChequeForm.$invalid" ng-click="checkout.PayByChequeOrCash(checkout.orderDtls)">Apply</button>
 									</div>
 								</div>
 							</div>
+							</form>
 						</div>
 						<!-- purple perks -->
 						<div class="payment-method-container perk col-xs-10 col-sm-10 col-md-10 col-lg-10" ng-show="checkout.paymentOption == 'PurplePerk'">
@@ -769,7 +893,7 @@
 											     <input ng-model="txtPurpleCharges" type="number" class="col-xs-5 col-sm-5 col-md-5 col-lg-5" ng-disabled="PurpleCharges == 'Full'" />
 											</div>
 										</div>
-										<span style="color:red;" ng-if="txtPurpleCharges > checkout.UserSpendingAcc['Purple Perks'].Balance">You cannot exceed your balance limit...!</span>
+										<span class="error" ng-if="txtPurpleCharges > checkout.UserSpendingAcc['Purple Perks'].Balance">Cannot Exceed Balance Limit.</span>
 										<button ng-disabled="txtPurpleCharges > checkout.UserSpendingAcc['Purple Perks'].Balance" ng-click="checkout.ApplySpendingAccCharges(checkout.UserSpendingAcc['Purple Perks'], PurpleCharges, txtPurpleCharges, checkout.orderDtls, 'Purple Perks')">Apply</button>
 									</div>
 								</div>
@@ -795,7 +919,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 billing-address" ng-if="checkout.selectedCard=='createcreditcard'">
+					<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 billing-address" ng-if="checkout.selectedCard=='createcreditcard' && checkout.paymentOption == 'CreditCard'">
 											<h1>Billing Address</h1>
 											<div class="billing-options col-xs-12">
 											<div class="col-xs-6"  ng-if="checkout.creditCardsList.length > 0">
@@ -819,7 +943,7 @@
 													<label class="radio-inline radio-common col-xs-12">
 													<input type="radio" id="client-addr{{$index}}" ng-value="line.BillingAddress" ng-click="checkout.billingAddress = line.BillingAddress" ng-model="checkout.BillingAddressesSelected" name="addressesbook" />
 													<label for="client-addr{{$index}}" class="col-xs-12"> 
-													<span>{{line.BillingAddress.FirstName}} {{line.BillingAddress.LastName}}</span>|
+													<span class="client-name">{{line.BillingAddress.FirstName}} {{line.BillingAddress.LastName}}</span>
 												     <span>{{line.BillingAddress.Zip}}</span>
 												     <!-- <span> (Default)</span> -->
 												     <span class="client-addr">
@@ -839,7 +963,7 @@
 													<label class="radio-inline radio-common col-xs-12">
 													<input type="radio" id="client-recp{{$index}}" ng-value="line.ShippingAddress" ng-click="checkout.billingAddress = line.ShippingAddress" ng-model="checkout.BillingAddressesSelected" name="addressesbook" />
 													<label for="client-recp{{$index}}" col-xs-12>
-														<span>{{line.ShippingAddress.FirstName}} {{line.ShippingAddress.LastName}}</span>|
+														<span class="client-name">{{line.ShippingAddress.FirstName}} {{line.ShippingAddress.LastName}}</span>
 												     <span>{{line.ShippingAddress.Zip}}</span>
 												    <!--  <span> (Default)</span> -->
 												    <span class="client-addr">
@@ -884,7 +1008,8 @@
 													<label for="street2">Address 2</label>
 													<input type="text" class="form-control" id="street2" placeholder="Street 2" ng-model="checkout.billingAddress.Street2" />
 												</div>
-												<h6 style="color:red;" ng-if="checkout.BillingFormSubmitted.invalidAddress && checkout.billingAddress.Street1 && checkout.billingAddress.Zip">Invalid Address/Zip</h6>
+												<h6 class="error" ng-if="checkout.BillingFormSubmitted.invalidAddress && checkout.billingAddress.Street1 && checkout.billingAddress.Zip && !checkout.AddressError">Invalid Address/Zip</h6>
+												<h6 class="error" ng-if="checkout.AddressError">{{checkout.AddressError}}</h6>
 												<div class="col-xs-8 form-group holder-name p0">
 													<label for="city">City <span class="star">*</span></label>
 													<input type="text" class="form-control" name="city" id="city" placeholder="City" ng-model="checkout.billingAddress.City" ng-class="{error: checkout.BillingFormSubmitted.$submitted && checkout.BillingFormSubmitted.city.$invalid}" ng-required="checkout.selectedCard=='createcreditcard'" />
@@ -898,18 +1023,18 @@
 													<input type="text" class="form-control" max-length="5" name="zip" id="zip" placeholder="Zip" ng-model="checkout.billingAddress.Zip" ng-blur="checkout.ValidateAddress(checkout.billingAddress, checkout.BillingFormSubmitted)" ng-required="checkout.selectedCard=='createcreditcard'" ng-class="{error: checkout.BillingFormSubmitted.$submitted && checkout.BillingFormSubmitted.zip.$invalid}" />
 												</div>
 												<div class="col-xs-12 form-group card-number p0 phone-book">
-													<label for="phone" class="col-xs-12">Phone Number</label>
-													<input type="number" ng-model="checkout.billingAddress.Phone1" placeholder="" max-length="3" />
-													<input type="number" ng-model="checkout.billingAddress.Phone2" placeholder="" max-length="3" />
-													<input type="number" ng-model="checkout.billingAddress.Phone3" placeholder="" max-length="4" />
+													<label for="phone" class="col-xs-12">Phone Number <span class="star">*</span></label>
+													<input type="number" ng-model="checkout.billingAddress.Phone1" placeholder="Area Code" max-length="3" ng-required="checkout.selectedCard=='createcreditcard'" name="phone1" ng-minlength="3" ng-class="{error: checkout.BillingFormSubmitted.$submitted && checkout.BillingFormSubmitted.phone1.$invalid}" />
+													<input type="number" ng-model="checkout.billingAddress.Phone2" placeholder="Prefix" max-length="3" ng-required="checkout.selectedCard=='createcreditcard'" name="phone2" ng-minlength="3" ng-class="{error: checkout.BillingFormSubmitted.$submitted && checkout.BillingFormSubmitted.phone2.$invalid}" />
+													<input type="number" ng-model="checkout.billingAddress.Phone3" placeholder="Number" max-length="4" ng-required="checkout.selectedCard=='createcreditcard'" name="phone3" ng-minlength="4" ng-class="{error: checkout.BillingFormSubmitted.$submitted && checkout.BillingFormSubmitted.phone3.$invalid}" />
 												</div>
 												<div class="col-xs-12 form-group card-number p0">
-													<label for="email">Enter Your Email Address</label>
-													<input type="text" class="form-control" id="email" placeholder="Email Address" ng-model="checkout.billingAddress.xp.Email" />
+													<label for="email">Enter Your Email Address <span class="star">*</span></label>
+													<input type="email" class="form-control" id="email" placeholder="Email Address" ng-model="checkout.billingAddress.xp.Email" ng-required="checkout.selectedCard=='createcreditcard'" name="email" ng-class="{error: checkout.BillingFormSubmitted.$submitted && checkout.BillingFormSubmitted.email.$invalid}" ng-pattern="/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/" />
 												</div>
-												<div class="col-xs-12 p0 form-group card-remember">
+												<div class="col-xs-12 p0 form-group card-remember" ng-if="checkout.order.FromUserID!='gby8nYybikCZhjMcwVPAiQ'">
 												   <div>
-													 <input type="checkbox" id="save" ng-init="checkout.addCard=false" ng-model="checkout.addCard" ng-click="checkout.ValidateAddress(checkout.billingAddress)" ng-disabled="checkout.creditCardsList.length >= 3"  class="checkbox-custom" name="cardmessage">
+													 <input type="checkbox" id="save" ng-init="checkout.addCard=false" ng-model="checkout.addCard" ng-click="checkout.ValidateAddress(checkout.billingAddress, checkout.BillingFormSubmitted)" ng-disabled="checkout.creditCardsList.length >= 3"  class="checkbox-custom" name="cardmessage">
 													 <label  for="save" class="checkbox-custom-label" ng-if="checkout.creditCardsList.length < 3">Save this card for future payments</label>
 													  <label  for="save" class="checkbox-custom-label" ng-if="checkout.creditCardsList.length >= 3">Cannot add more than 3 cards</label>
 													</div>
@@ -919,10 +1044,10 @@
 								<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 review-button">
 								<div class="total-amt col-xs-12">
 					             	<p>Total Amount Payable </p>
-					             	<p class="price">{{checkout.order.Total | currency}}</p>
+					             	<p class="price">{{checkout.orderTotal | currency}}</p>
 						         </div>
 						         <div class="col-xs-12">
-								<input type="button" ng-disabled="(checkout.order.Total > 0 && !checkout.selectedCard && checkout.paymentOption != 'PO') ? true : false" value="Review Order" ng-click="checkout.ProceedToReview(checkout.BillingFormSubmitted, checkout.CreditCardDetailForm)"/>
+								<input type="button" ng-disabled="checkout.orderTotal > 0 && !checkout.selectedCard && checkout.paymentOption != 'PO'" value="Review Order" ng-click="checkout.ProceedToReview(checkout.BillingFormSubmitted, checkout.CreditCardDetailForm)" class="review-oder" />
 								</div>
 								</div>
 					</div>
@@ -948,8 +1073,9 @@
 							</svg>Shipping Information <button class="review-edit" ng-click="checkout.deliveryInfoEdit($event)">edit</button></h2>
 							</uib-accordion-heading>
 							<ul ng-repeat="(recipient, lineitems) in checkout.activeOrders" class="shipping-info">
-								<li class="shipping-FirstName"><p>{{lineitems[0].ShippingAddress.FirstName}} {{lineitems[0].ShippingAddress.LastName}}</p></li>
-								<li class="shipping-Addresses">
+								<li class="shipping-FirstName" ng-if="!lineitems[0].xp.IsWorkShopEvent"><p>{{lineitems[0].ShippingAddress.FirstName}} {{lineitems[0].ShippingAddress.LastName}}</p></li>
+								<li class="shipping-FirstName" ng-if="lineitems[0].xp.IsWorkShopEvent"><p>{{lineitems[0].xp.ShippingAddress.FirstName}} {{lineitems[0].xp.ShippingAddress.LastName}}</p></li>
+								<li class="shipping-Addresses" ng-if="!lineitems[0].xp.IsWorkShopEvent">
 									<p>{{lineitems[0].ShippingAddress.Street1}}</p>
 									<p>{{lineitems[0].ShippingAddress.Street2}}</p>
 									<p>{{lineitems[0].ShippingAddress.City}} {{lineitems[0].ShippingAddress.State}}</p>
@@ -957,15 +1083,20 @@
 									<p>{{lineitems[0].ShippingAddress.Zip}}</p>
 									<span class="shipping-Phone">{{lineitems[0].ShippingAddress.Phone}}</span> 
 								</li>
+								<li class="shipping-Addresses" ng-if="lineitems[0].xp.IsWorkShopEvent">
+									<p>{{lineitems[0].xp.ShippingAddress.Email}}</p>
+									<span class="shipping-Phone">{{lineitems[0].xp.ShippingAddress.Phone}}</span> 
+								</li>
 								<li class="shipping-Date" ng-if="lineitems[0].xp.addressType!='InStorePickUp'">
-									<p class="shipping-subTitle">Delivery Date</p>
+									<p class="shipping-subTitle" ng-if="!lineitems[0].xp.IsWorkShopEvent">Delivery Date</p>
+									<p class="shipping-subTitle" ng-if="lineitems[0].xp.IsWorkShopEvent">Event Date</p>
 									<p>{{lineitems[0].xp.deliveryDate | date}}</p>
 								</li>
 								<li class="shipping-Date" ng-if="lineitems[0].xp.addressType=='InStorePickUp'">
 									<p class="shipping-subTitle">Pick-Up Date</p>
 									<p>{{lineitems[0].xp.pickupDate | date}}</p>
 								</li>
-								<li class="shipping-DeliveryPref" ng-if="lineitems[0].xp.addressType!='InStorePickUp'">
+								<li class="shipping-DeliveryPref" ng-if="lineitems[0].xp.addressType!='InStorePickUp' && !lineitems[0].xp.IsWorkShopEvent">
 									<p class="shipping-subTitle">Delivery Preference</p>
 									<p>{{checkout.buyerDtls.xp.DeliveryRuns[0][lineitems[0].xp.deliveryRun].TimeSlot}}</p>
 								</li>
@@ -981,7 +1112,7 @@
 							</svg>Payment <button class="review-edit" ng-click="checkout.paymentInfoEdit($event)">edit</button></h2>
 							</uib-accordion-heading>
 							<ul class="shipping-info">
-								<li class="shipping-Date" ng-if="checkout.selectedCard!='createcreditcard'">
+								<li class="shipping-Date" ng-if="checkout.selectedCard!='createcreditcard' && checkout.selectedCard">
 									<p>{{checkout.selectedCard.CardholderName}}</p>
 									<p>{{checkout.selectedCard.BillingAddress.Street1}}</p>
 									<p>{{checkout.selectedCard.BillingAddress.Street2}}</p>
@@ -989,7 +1120,7 @@
 									<p>{{checkout.selectedCard.BillingAddress.State}}, {{checkout.selectedCard.BillingAddress.Country}}</p>
 									<p>{{checkout.selectedCard.BillingAddress.Zip}}</p>
 								</li>
-								<li class="shipping-Date" ng-if="checkout.selectedCard=='createcreditcard'">
+								<li class="shipping-Date" ng-if="checkout.selectedCard=='createcreditcard' && checkout.card && checkout.billingAddress">
 									<p>{{checkout.card.CardholderName}}</p>
 									<p>{{checkout.billingAddress.Street1}}</p>
 									<p>{{checkout.billingAddress.Street2}}</p>
@@ -998,14 +1129,14 @@
 									<p>{{checkout.billingAddress.Zip}}</p>
 								</li>
 								<li class="shipping-DeliveryPref">
-									<p ng-if="checkout.selectedCard!='createcreditcard'" class="shipping-subTitle">
+									<p ng-if="checkout.selectedCard!='createcreditcard' && checkout.selectedCard.PartialAccountNumber" class="shipping-subTitle">
 										Credit Card: xxxx xxxx xxxx {{checkout.selectedCard.PartialAccountNumber}}
 									</p>
-									<p ng-if="checkout.selectedCard!='createcreditcard'">Card Expires: {{checkout.selectedCard.ExpirationDate | date:'MM/yy'}}</p>
-									<p ng-if="checkout.selectedCard=='createcreditcard'">
+									<p ng-if="checkout.selectedCard!='createcreditcard' && checkout.selectedCard.ExpirationDate">Card Expires: {{checkout.selectedCard.ExpirationDate | date:'MM/yy'}}</p>
+									<p ng-if="checkout.selectedCard=='createcreditcard' && checkout.card.CardNumber">
 										Credit Card: xxxx xxxx xxxx {{checkout.card.CardNumber | limitTo: -4}}
 									</p>
-									<p ng-if="checkout.selectedCard=='createcreditcard'">Card Expires: {{checkout.card.ExpMonth | limitTo: 2}}/{{checkout.card.ExpYear | limitTo: -2}}</p>
+									<p ng-if="checkout.selectedCard=='createcreditcard' && checkout.card.ExpMonth">Card Expires: {{checkout.card.ExpMonth | limitTo: 2}}/{{checkout.card.ExpYear | limitTo: -2}}</p>
 									<p ng-if="checkout.orderDtls.SpendingAccounts.PurplePerks">Purple Perks Points Applied:{{checkout.orderDtls.SpendingAccounts.PurplePerks.Amount | currency}}</p>
 									<p ng-if="checkout.orderDtls.SpendingAccounts.BachmansCharges">Bachmans Charges Applied:{{checkout.orderDtls.SpendingAccounts.BachmansCharges.Amount | currency}}</p>
 									<p ng-if="checkout.orderDtls.SpendingAccounts.GiftCard">Gift Card Applied:{{checkout.orderDtls.SpendingAccounts.GiftCard.Amount | currency}}</p>
@@ -1016,10 +1147,10 @@
 							</ul>
 						</uib-accordion-group>
 						<div class="row review-content">
-							<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-								<span style="color:red;">{{checkout.TransactionError}}</span>
+							<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+								<span class="error">{{checkout.TransactionError}}</span>
 							</div>
-							<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+							<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
 								<button class="place-order" ng-click="checkout.submitOrder(checkout.card, checkout.billingAddress)">Place Order</button>
 							</div>
 						</div>
@@ -1137,13 +1268,17 @@
 								c-0.3-0.3-0.7-0.5-1.2-0.5c-0.4,0-0.8,0.2-1.1,0.5l-2.7,2.7l-2.7-2.7C14,964.1,13.6,963.9,13.1,963.9L13.1,963.9z"/>
 							</g>
 					  	</svg></button>Purple Perks Balance applied   <span>-{{checkout.orderDtls.SpendingAccounts.PurplePerks.Amount | currency}} </span></p>
-					<p class="total">Total <span>{{checkout.order.Total | currency}}  </span></p>
+					<p class="total">Total <span>{{checkout.orderTotal | currency}}  </span></p>
 				</div>
 				<div class="promo-code">
 					<p>Apply Promo Code</p>
 					<input type="text" ng-model="checkout.coupon" />
-					<input type="button" value="Apply" ng-disabled="!checkout.coupon" ng-click="checkout.ApplyCoupon(checkout.coupon, checkout.orderDtls)"/>
-					<p style="color:red;" ng-bind="checkout.promoerror"></p>
+					<input type="button" value="Apply" ng-disabled="!checkout.coupon" ng-click="checkout.ApplyCoupon(checkout.coupon, checkout.orderDtls)" class="promo-button"/>
+					<p class="error" ng-bind="checkout.promoerror"></p>
+				</div>
+				<div class="promo-code">
+					<input type="checkbox" id="OrderOnHold" class="checkbox-custom" ng-model="checkout.OrderOnHold">
+					<label for="OrderOnHold" class="checkbox-custom-label">Put Order On Hold</label>
 				</div>
 			</uib-accordion>
 		</div>

@@ -10,7 +10,7 @@
     .order-history {
         h5 {
             overflow: hidden;
-            font-size:20px;
+            font-size:1.250em;
             .helvetica-bold;
             .order-header {
                 line-height: 2;
@@ -19,16 +19,8 @@
             }
             .create-claim {
                 float: right;
-                padding: 8px;
-                color: #54565d;
-                font-size: 16px;
-                .helvetica-regular;
-                line-height:15px;
-                transition: background-color .5s ease-out;
-                &:hover{
-                    background-color: #8c58b5;
-                    color:#fff;
-                }
+               .purple-btn;
+               font-size: 0.700em;
             }
         }
         .save-input {
@@ -50,11 +42,14 @@
             .ui-grid-render-container-body .ui-grid-viewport{
                 height:initial !important;
                 .ui-grid-canvas .ui-grid-row .ui-grid-cell:last-child{
-                    background-color:@color20;
+                    background-color:#fff;
                     border-right:1px solid #ccc;
                     .background-fade;
+                    .data_cell{
+                        color:#8c58b5;
+                    }
                     &:hover{
-                        background-color:@primary-dark-color;
+                        background-color:#7a43a3;
                         button{
                             color:@color0;
                         }
@@ -78,13 +73,12 @@
                         border-left: 1px solid #ccc;
                         border-right: none;
                         height:40px;
-                        min-width:12.5% !important;
-                        width:12.5% !important;
-                        max-width:12.5% !important;
+                        min-width:11.11% !important;
+                        width:11.11% !important;
+                        max-width:11.11% !important;
                 }
                 .ui-grid-header-canvas .ui-grid-header-cell-wrapper .ui-grid-header-cell{
-                    
-                    width:12.5% !important;
+                    width:11.11% !important;
                 }
                 .ui-grid-canvas .ui-grid-row{
                     background-color:@color20;
@@ -94,7 +88,7 @@
         }
     }
     .no-items{
-        font-size:16px;
+        font-size:1em;
         .helvetica-medium;
         margin-top:15px;
     }

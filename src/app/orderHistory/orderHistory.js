@@ -1,7 +1,7 @@
 angular.module( 'orderCloud' )
 	.config( OrderHistoryConfig )
 	.controller( 'OrderHistoryCtrl', OrderHistoryController );
-	
+
 var impersonation = {
 	"ClientID": "8836BE8D-710A-4D2D-98BF-EDBE7227E3BB",
 	"Claims": ["FullAccess"]
@@ -31,14 +31,15 @@ function OrderHistoryConfig( $stateProvider ) {
 							}
 							else{
 								OrderCloud.As().Me.ListOutgoingOrders().then(function(assignOrders){
-								completedOdr=_.reject(assignOrders.Items,function(obj){
-									return _.indexOf([obj.Status],'Unsubmitted') > -1
-								});
+									completedOdr=_.filter(assignOrders.Items, function(item){
+									  console.log(item);
+									  return item.Status === 'Open' || item.field === 'Completed';
+									 });
 									console.log("completedOrders", completedOdr);
 									d.resolve(completedOdr);
 								})
 							}
-					})	
+					})
 					return d.promise;
 				}
 			}
@@ -105,22 +106,50 @@ function OrderHistoryController($scope, $stateParams, Order, OrderCloud, $filter
 				angular.forEach(result, function(val, key){
 					var orderHistorydetails={};
 					orderHistorydetails.DestinationCode=val.xp.addressType;
-					orderHistorydetails.uname=val.ShippingAddress.FirstName+" "+val.ShippingAddress.LastName;
-					orderHistorydetails.userID=TempArr.OrderArr2[key].FromUserID;
-					orderHistorydetails.Total=TempArr.OrderArr2[key].Total;
-					orderHistorydetails.DateCreated=TempArr.OrderArr2[key].DateCreated;
-					orderHistorydetails.Status=TempArr.ShipmentArr[key].xp.Status;
-					orderHistorydetails.SearchType='User';
-					orderHistorydetails.ID = TempArr.OrderArr2[key].ID;
-					orderHistorydetails.shipmentID = TempArr.ShipmentArr[key].ID;
-					if(TempArr.ShipmentArr[key].xp.deliveryDate==''){
-						orderHistorydetails.DeliveryDate = "--";
+					if(val.ShippingAddress==null){
+						/*val.ShippingAddress={};
+						val.ShippingAddress.FirstName="";
+						val.ShippingAddress.LastName="";*/
+						orderHistorydetails.uname="";
 					}
 					else
-						orderHistorydetails.DeliveryDate = TempArr.ShipmentArr[key].xp.deliveryDate;
+						orderHistorydetails.uname=val.ShippingAddress.FirstName+" "+val.ShippingAddress.LastName;
+					if(TempArr.OrderArr2.length==0){
+						orderHistorydetails.userID="";
+						orderHistorydetails.Total="";
+						orderHistorydetails.DateCreated="";
+						orderHistorydetails.ID = "";
+					}
+					else{
+						orderHistorydetails.Total=TempArr.OrderArr2[key].Total;
+						orderHistorydetails.userID=TempArr.OrderArr2[key].FromUserID;
+						orderHistorydetails.DateCreated=TempArr.OrderArr2[key].DateCreated;
+						orderHistorydetails.ID = TempArr.OrderArr2[key].ID;
+					}
+					if(TempArr.ShipmentArr[key].xp==null){
+						orderHistorydetails.Status="";
+						TempArr.ShipmentArr[key].xp={};
+						TempArr.ShipmentArr[key].xp.deliveryDate='--';							
+					}
+					else{
+						orderHistorydetails.Status=TempArr.ShipmentArr[key].xp.Status;
+						if(TempArr.ShipmentArr[key].xp.deliveryDate==''){
+							orderHistorydetails.DeliveryDate = "--";
+						}
+						else
+							orderHistorydetails.DeliveryDate = TempArr.ShipmentArr[key].xp.deliveryDate;
+					}	
+					if(TempArr.ShipmentArr[key].xp.Status=="Delivered" || TempArr.ShipmentArr[key].xp.Status=="Dispatched")
+						orderHistorydetails.editOrder = false;
+					else
+						orderHistorydetails.editOrder = true;
+					orderHistorydetails.SearchType='User';
+					orderHistorydetails.shipmentID = TempArr.ShipmentArr[key].ID;
+					
 					vm.completeshipmentold.push(orderHistorydetails);
 					vm.completeshipment = angular.copy(vm.completeshipmentold);
 				}, true);
+				$scope.gridHistory.data=vm.completeshipment;
 			});
 		});
 		$scope.uname=vm.order[0].FromUserFirstName + " " + vm.order[0].FromUserLastName;
@@ -129,38 +158,45 @@ function OrderHistoryController($scope, $stateParams, Order, OrderCloud, $filter
 		vm.searchType='User';
 		$scope.dateFormat="dd/MM/yyyy";
 		$scope.gridHistory = {
-			data: 'orderHistory.completeshipment',
 			enableSorting: true,
 			columnDefs: [
-				{ name: 'shipmentID', displayName:'Shipment Number', cellTemplate: '<div class="data_cell" ui-sref="buildOrder({ID:row.entity.userID,SearchType:row.entity.SearchType,orderID:row.entity.ID,orderDetails:true})">{{row.entity.shipmentID}}</div>', width:"12.5%"},
-				{ name: 'DateCreated', displayName:'Order Placed On', cellTemplate: '<div class="data_cell">{{row.entity.DateCreated | date:grid.appScope.dateFormat}}</div>', width:"12.5%"},
-				{ name: 'DestinationCode', displayName:'Destination Code', width:"12.5%"},
-				{ name: 'uname', displayName:'Recipient Name', cellTemplate: '<div class="data_cell">{{row.entity.uname}}</div>', width:"12.5%"},
-				{ name: 'DeliveryDate', displayName:'Delivery Date', cellTemplate: '<div class="data_cell">{{row.entity.DeliveryDate | date:grid.appScope.dateFormat}}</div>', width:"12.5%"},
-				{ name: 'Total', displayName:'Total', cellTemplate: '<div class="data_cell">{{row.entity.Total | currency:$}}</div>', width:"12.5%"},
-				{ name: 'Status', displayName:'Order Status', width:"12.5%"},
-				{ name: 'orderClaim', displayName:'', cellTemplate: '<div class="data_cell"><button ui-sref="orderClaim({userID:row.entity.userID, name:row.entity.uname, orderID:row.entity.ID})">Create Order Claim</button></div>', width:"12.5%"}
+				{ name: 'shipmentID', displayName:'Shipment Number', cellTemplate: '<div class="data_cell" ui-sref="buildOrder({ID:row.entity.userID,SearchType:row.entity.SearchType,orderID:row.entity.ID,orderDetails:true})">{{row.entity.shipmentID}}</div>', width:"11.11%"},
+				{ name: 'DateCreated', displayName:'Order Placed On', cellTemplate: '<div class="data_cell">{{row.entity.DateCreated | date:grid.appScope.dateFormat}}</div>', width:"11.11%"},
+				{ name: 'DestinationCode', displayName:'Destination Code', width:"11.11%"},
+				{ name: 'uname', displayName:'Recipient Name', cellTemplate: '<div class="data_cell">{{row.entity.uname}}</div>', width:"11.11%"},
+				{ name: 'DeliveryDate', displayName:'Delivery Date', cellTemplate: '<div class="data_cell">{{row.entity.DeliveryDate | date:grid.appScope.dateFormat}}</div>', width:"11.11%"},
+				{ name: 'Total', displayName:'Total', cellTemplate: '<div class="data_cell">{{row.entity.Total | currency:$}}</div>', width:"11.11%"},
+				{ name: 'Status', displayName:'Order Status', width:"11.11%"},
+				{ name: 'orderClaim', displayName:'', cellTemplate: '<div class="data_cell"><button ui-sref="orderClaim({userID:row.entity.userID, name:row.entity.uname, orderID:row.entity.ID})">Create Order Claim</button></div>', width:"11.11%"},
+				{ name: 'editOrder', displayName:'', cellTemplate: '<div class="data_cell" ng-disabled="row.entity.editOrder"><button ui-sref="buildOrder({SearchType:row.entity.SearchType, ID:row.entity.userID, orderID:row.entity.ID, editsubmitorder:row.entity.editOrder})">Edit Order</button></div>', width:"11.11%"}
 			]
 		}
+	}
+	vm.editorderfunc=function(data){
+		console.log(data);
+		vm.editsubmitorder=true;
+		$state.go('buildOrder', {SearchType:SearchType, ID:userID, orderID:ID});
 	}
 	$scope.$watch(angular.bind(this, function () {
         return this.searchText;
     }), function (newVal, oldVal) {
-		if (newVal) {
+		/*if (newVal) {
 			var temp = [];
 			angular.forEach(vm.completeshipmentold, function(shipment){
  				var filterColumns = [shipment.uname];
-				filterColumns.push(shipment.Status);
+				//filterColumns.push(shipment.ID);
 				var filteredData = $filter('filter')(filterColumns, newVal, undefined);
 				if(filteredData.length > 0) {
  					temp.push(shipment);
- 				}			
+ 				}
  			})
 			vm.completeshipment = temp;
 		}
  		else{
 			vm.completeshipment = vm.completeshipmentold;
- 		}
-        
+ 		}*/
+ 		if (newVal) {
+        	vm.saved = $filter('filter')(vm.completeshipment, newVal, undefined);
+        }
     });
 }

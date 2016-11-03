@@ -32,7 +32,7 @@ function CustInfoConfig( $stateProvider ) {
 						OrderCloud.Addresses.ListAssignments(null, $stateParams.ID).then(function(addrList){
 							var temp = [];
 							angular.forEach(addrList.Items, function(val){
-								temp.push(OrderCloud.Addresses.Get(val.AddressID));
+								temp.push(OrderCloud.As().Me.GetAddress(val.AddressID));
 							}, true);
 							$q.all(temp).then(function(result){
 									arr["addresses"] = result;
@@ -65,7 +65,7 @@ function CustInfoConfig( $stateProvider ) {
 									return _.indexOf(["Purple Perks"],row.Name) > -1;
 								});
 								var filterCharges = _.filter(arr, function(row){
-									return _.indexOf(["Bachman Charges"],row.Name) > -1;
+									return _.indexOf(["Bachmans Charge"],row.Name) > -1;
 								});
 								spendingAcc.purple=filterPurple[0];
 								spendingAcc.charges=filterCharges[0];
@@ -83,7 +83,7 @@ function CustInfoConfig( $stateProvider ) {
 						angular.forEach(response.Items, function(value, key) {
 							if(value.xp){
 								if(value.xp.BillingAddressID)
-									TempArr.push(OrderCloud.Addresses.Get(value.xp.BillingAddressID));
+									TempArr.push(OrderCloud.As().Me.GetAddress(value.xp.BillingAddressID));
 							}	
 						}, true);
 						$q.all(TempArr).then(function(result){
@@ -100,6 +100,7 @@ function CustInfoConfig( $stateProvider ) {
 
 						var ConstantContactId;
 						 OrderCloud.Users.Get($stateParams.ID).then(function(data){
+							if(data.xp.ConstantContact)
 							ConstantContactId=data.xp.ConstantContact.ID;
 						 })
 						ConstantContact.GetListOfSubscriptions().then(function(subscriptionList){
@@ -152,12 +153,12 @@ function CustInfoController($scope, $exceptionHandler, $stateParams, $state, Use
 		form.$submitted = true;
 		if(form.$valid){
 			AddressValidationService.Validate(vm.list.defaultAddr[0]).then(function(res){
-				if(res.ResponseBody.Address){
+				if(res.ResponseBody.ResultCode == 'Success') {
 					var validatedAddress = res.ResponseBody.Address;
 					var zip = validatedAddress.PostalCode.substring(0, 5);
 					vm.list.defaultAddr[0].Zip = parseInt(zip);
-					vm.list.defaultAddr[0].Street1 = validatedAddress.Line1;
-					vm.list.defaultAddr[0].Street2 = null;
+					vm.list.defaultAddr[0].Street1 = validatedAddress.Line2;
+					vm.list.defaultAddr[0].Street2 = validatedAddress.Line1;
 					vm.list.defaultAddr[0].City = validatedAddress.City;
 					vm.list.defaultAddr[0].State = validatedAddress.Region;
 					vm.list.defaultAddr[0].Country = validatedAddress.Country;
@@ -188,6 +189,11 @@ function CustInfoController($scope, $exceptionHandler, $stateParams, $state, Use
 									});
 								});
 							}
+				}
+				else{
+						if(form)
+							form.invalidAddress = true;
+							console.log("form.invalidAddress", form.invalidAddress);
 				}
 			});
 		}

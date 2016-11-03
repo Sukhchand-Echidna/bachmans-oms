@@ -92,7 +92,7 @@ function HoldController($scope, $state, $stateParams, Order, WiredProduct, Order
 		if(florist=="Teleflora"){
 			alert("Teleflora");
 			vm.wireservice=florist;
-			OrderCloud.Buyers.Get().then(function(res){
+			OrderCloud.Buyers.Get('Bachmans').then(function(res){
 				console.log(res);
 				vm.floristdata=res.xp.Floristdetails;
 			})

@@ -20,7 +20,7 @@
 				padding:0;
 			}
 			h1{
-				font-size:18px;
+				font-size:1.125em;
 				line-height:38px;
 				.helvetica-bold;
 				border-bottom:1px solid @color21;
@@ -41,18 +41,19 @@
 						    width: 47.5%;
 						}
 						div:nth-of-type(1) {
-							margin-right: 4.1%;
+							margin-right:3%;
 						}
 					}
 					h2{
-						.helvetica-medium;
-						font-size:16px;
+						.helvetica-bold;
+						font-size:1.250em;
 						line-height:20px;
 						margin:0;
+						color: #8c58b5
 					}
 					p{
 						.helvetica-regular;
-						font-size:15px;
+						font-size:0.938em;
 						line-height:25px;
 						color:@color26;
 						margin:0;
@@ -60,13 +61,13 @@
 					input{
 						background-color:@color23;
 						.helvetica-regular;
-						font-size:15px;
+						font-size:0.938em;
 						line-height:35px;
 						color:@color26;
 						border:1px solid @color21;
 						text-indent:10px;
 						&.zip-code{
-							width: 40%;
+							width: 100%;
 						}
 					}
 					.contact-num{
@@ -78,11 +79,11 @@
 						width:100%;
 					}
 					button{
-						width:48.5%;
+						width:40%;
 					}
 				}
 				.addr-top{
-					margin-top:25px;
+					margin-top:15px;
 					.check-common{
 						margin:-2px 2px 0 0;
 					}
@@ -97,7 +98,7 @@
 					color: #f00;
 					margin-top: 20px;
 					display: inline-block;
-					font-size:12px;
+					font-size:0.750em;
 				}
 				.addr-cont{
 				  div{
@@ -112,21 +113,23 @@
 				}
 				button{
 						.helvetica-bold;
-						font-size:16px;
-						line-height:40px;
+						font-size:1em;
+						line-height:35px;
+						height:35px;
 						.in-block;
 						width:19.3%;
 						color:@color0;
 						background-color:@gray-button;
 						.background-fade;
+						border-radius:5px;
 						&.save{
 							margin-right:1%;
-							background-color:@primary-color;
+							background-color:#a576ca;
 							&:hover{
-								background-color:@primary-dark-color;
+								background-color:#7a43a3;
 							}
 							&:disabled {
-								background-color:@primary-color;
+								background-color:#a576ca;
 							}
 						}
 						&:hover{
@@ -135,7 +138,7 @@
 				}
 				label {
 					.helvetica-regular;
-					font-size: 14px;
+					font-size: 0.875em;
 					color:@color26;
 					input[type="checkbox"]{
 						vertical-align: middle;
@@ -151,29 +154,32 @@
 					background-color:@color25;
 					margin-bottom: 15px;
 					td{
-						padding: 15px 10px 15px 5px;
+						padding: 15px 0;
 						vertical-align: top;
-						width:18.4%;
+						width:18.3%;
 						.in-block;
 						h4, a{
 							.helvetica-regular;
-							font-size:16px;
+							font-size:1em;
 							line-height:35px;
 							color:@color22;
 							margin:0;
+						}
+						label{
+							color:#464646;
 						}
 						a{
 							text-decoration:underline;
 							color:@primary-dark-color;
 							.font-spacing;
-							font-size:13px;
+							font-size:0.813em;
 							&.bar{
 								text-decoration:none;
 							}
 						}
 						p{
 							.helvetica-bold;
-							font-size:17px;
+							font-size:1.063em;
 							line-height:20px;
 							margin-bottom:0;
 							color:#000000;
@@ -231,7 +237,7 @@
 					.in-block;
 					input{
 						.helvetica-regular;
-						font-size:15px;
+						font-size:0.938em;
 						line-height:38px;
 						text-indent:10px;
 						color:#464646;
@@ -256,7 +262,7 @@
 					i{
 						left: 15px;
 						color: @primary-color;
-						font-size: 20px;
+						font-size: 1.250em;
 						position: absolute;
 						top: 8px;
 						z-index: 2;
@@ -265,7 +271,7 @@
 				a.addNewLink{
 					width:17.5%;
 					.in-block;
-					font-size:15px;
+					font-size:0.938em;
 					.helvetica-medium;
 					color:@primary-dark-color;
 					margin-left: 18px;
@@ -297,13 +303,13 @@
 				border:1px solid @base-bg-purple-light;
 				width:230px;
 				h2{
-					font-size: 15px;
+					font-size: 0.938em;
 					.helvetica-medium;
 					margin: 10px 0;
 				}
 				button{
 					.helvetica-bold;
-					font-size: 10px;
+					font-size: 0.625em;
 					color: #ffffff;
 					background-color: @base-bg-purple-light;
 					padding: 5px 10px 5px 10px;
@@ -347,7 +353,7 @@
 							text-decoration:none;
 							height:30px;
 							line-height:26px;
-							font-size:13px;
+							font-size:0.813em;
 							padding: 5px 10px;
 							.helvetica-regular;
 							color:@color1;

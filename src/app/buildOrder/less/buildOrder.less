@@ -9,6 +9,17 @@
   margin:0 !important;
 }
 
+.ContainerHide{
+	display:none;
+}
+
+.ng-hide.ng-hide-animate{
+     display: none !important;
+}
+.ng-show.ng-show-animate{
+     display: none !important;
+}
+
 .modal-body {
   top:0px; // height of header
   bottom:45px;  // height of footer
@@ -56,7 +67,7 @@ input.error, .errorCity {
 }
 .buildOrderPlp-main{
 	h1{
-		font-size: 20px;
+		font-size: 1.250em;
 		margin:0px 0 20px;
 		color:@color1;
 		.helvetica-regular;
@@ -64,12 +75,12 @@ input.error, .errorCity {
 		span{
 			.helvetica-bold;
 			color:@purple-medium;
-			font-size:30px;
+			font-size:1.250em;
 		}
 		span.count{
 			.helvetica-regular;
 			color:@color27;
-			font-size:16px;
+			font-size:1em;
 		}
 	}
 }
@@ -101,27 +112,7 @@ input.error, .errorCity {
 			text-align: center;
 			margin-top: 10%;
 			button {
-				float: none;
-				.helvetica-bold;
-				font-size: 12.5px ;
-				color: @primary-dark-color;
-				border:1px solid @primary-dark-color;
-				background-color: @color0;
-				padding: 4px 10px 4px;
-				border-radius: 7px;
-				text-transform: uppercase;
-				.background-fade;
-				&:hover {
-					background-color: @base-bg-purple-light;
-					color: @color0;
-				}
-				&:disabled {
-				background-color: @color0;
-					&:hover {
-						background-color: @color0;
-						color: @primary-dark-color;
-					}
-				}
+				.purple-btn;
 			}
 			}
 		.position-common;
@@ -132,14 +123,14 @@ input.error, .errorCity {
 			h1 {
 				padding: 0px 0 0 15px;
 				.helvetica-regular;
-				font-size: 15px;
+				font-size: 0.938em;
 				margin: 0 10px;
 			}
 			p {
 				padding: 0px 0 10px 15px;
 				margin: 0 10px;
 				.helvetica-bold;
-				font-size: 15px;
+				font-size: 0.938em;
 				text-transform: uppercase;
 				border-bottom: 1px solid @color16;
 			}
@@ -150,7 +141,7 @@ input.error, .errorCity {
 			background-color: @primary-dark-color;
 			p {
 				.helvetica-regular;
-				font-size: 12px; 
+				font-size:0.813em; 
 				margin-bottom:0;
 			}
 		}
@@ -166,15 +157,15 @@ input.error, .errorCity {
 			}
 			h2 {
 				.helvetica-regular;
-				font-size: 14px ;
+				font-size:0.938em;
 			}
 			p {
-				font-size: 14px;
+				font-size:0.938em;
 				.helvetica-medium;
 				text-align: right;
 			}
 			h3 {
-				font-size: 12px ;
+				font-size:0.938em;
 				.helvetica-medium;
 				margin: 0;
 				opacity:0.7;
@@ -197,7 +188,7 @@ input.error, .errorCity {
 				}
 				p {
 					.helvetica-bold;
-					font-size: 12px;
+					font-size: 1.120em;
 					display: inline-block;
 					padding-left: 10px;
 					margin-bottom: 0;
@@ -209,7 +200,6 @@ input.error, .errorCity {
 					height: 15px;
 					fill: @primary-color;
 					vertical-align:middle;
-					margin-top:-7px;
 				}
 				&:hover {
 					background-color: @base-bg-purple-light;
@@ -246,7 +236,7 @@ input.error, .errorCity {
 			h4,
 			span {
 				.helvetica-bold;
-				font-size: 15px ;
+				font-size: 0.938em ;
 			}
 			h4 {
 				width: 85px;
@@ -254,26 +244,12 @@ input.error, .errorCity {
 				margin: 5px 0 0;
 			}
 			button {
-				float: right;
-				.helvetica-bold;
-				font-size: 12.5px ;
-				color: @primary-dark-color;
-				border:1px solid @primary-dark-color;
-				background-color: @color0;
-				padding: 4px 10px 4px;
-				border-radius: 7px;
-				.background-fade;
-				&:hover {
-					background-color: @base-bg-purple-light;
-					color: @color0;
-				}
-				&:disabled {
-					background-color: @color0;
-					&:hover {
-						background-color: @color0;
-						color: @primary-dark-color;
-					}
-				}
+				.purple-btn;
+				line-height: 25px;
+				height: 25px;
+				font-size:0.750em;
+				float:right;
+
 			}
 		}
 		.order-messages {
@@ -290,7 +266,7 @@ input.error, .errorCity {
 				-webkit-border-radius: 0;
 				border-radius: 0;
 				.helvetica-regular;
-				font-size: 13px ;
+				font-size: 0.813em ;
 				color: #54565d;
 				height: 1.5em;
 				letter-spacing: -.025em;
@@ -311,13 +287,13 @@ input.error, .errorCity {
 				border-bottom: 1px solid @color21;
 				p {
 					.helvetica-regular;
-					font-size: 12px;
+					font-size: 0.750em;
 					color: @color3;
 				}
 				h5 {
 					.userSelect-common(auto);
 					.helvetica-regular;
-					font-size: 12px;
+					font-size: 0.750em;
 					color: @color1;
 					margin: 0;
 				}
@@ -340,7 +316,7 @@ input.error, .errorCity {
 		}
 		a {
 			.helvetica-bold;
-			font-size: 12.5px;
+			font-size: 0.781em;
 			padding: 20px 20px 10px;
 		}
 		.popover{
@@ -349,30 +325,70 @@ input.error, .errorCity {
 	}
 	.oms_main_container {
 		padding: 20px 0 0;
+		.search-container{
+		    position: absolute;
+		    top: 50%;
+		    transform: translateY(-50%);
+		    vertical-align: middle;
+		    text-align: center;
+		    width: 100%;
+		    svg{
+		    	width:100px;
+		    	height:90px;
+		    	.search0{fill:#A67BB6;}
+				.search1{fill:#885CA6;}
+				.search2{fill:#6D6E71;}
+				.search3{fill:#BCBEC0;}
+				.search4{clip-path:url(#SVGID_2_);fill:#D1D3D4;}
+		    }
+		   .search-add{
+		    	font-size:0.875em;
+		    	 color:#8c58b5;
+		    	 font-style:initial;
+		    	 margin:0;
+		    }
+		    p{
+		    	color:@color1;
+		    	font-size:0.750em;
+		    	font-style:italic;
+		    	 margin:0;
+		    }
+		}
 		li {
+			&.plp-block-main{
+				float:none;
+				.in-block;
+			}
 			padding: 0;
+			float:none;
+			/*.in-block;*/
+			display: block;
 			div.plp-block {
 				margin: 0 5% 15px 0;
 				background-color: @color0;
 				padding: 0 0 10px;
+				 &:hover{
+				 	background: #f2f2f2;
+    				.background-fade;
+				 }
 				.plp-product-data{
 					padding:5px 15px 0; 
-					height:91px;
+					height:95px;
 					h2 {
 						.helvetica-bold;
-						font-size: 15px;
+						font-size:0.875em;
 						color: #54565d;
-						height: 32px;
 						margin: 5px 0;
 						overflow: hidden;
+						height:30px;
 					}
 					h3,h4{
 						display:block !important;
 					}
 					h3,
-					h4 , h3 span, h4 span{
+					h4{
 						.helvetica-regular;
-						font-size: 10px;
+						font-size: 0.875em;
 						color: #54565d;
 						margin:0 0 2px 0;
 						text-transform:lowercase;
@@ -385,10 +401,23 @@ input.error, .errorCity {
 						min-width:25px;
 						.in-block;
 						margin:0;
+						text-transform:lowercase;
+						width:25%;
+						font-size:1em;
+						&:first-letter{
+							text-transform:uppercase;
+						}
+					}
+					.variant1{
+					.in-block;
+					text-transform:lowercase;
+					&:first-letter{
+							text-transform:uppercase;
+						}
 					}
 					h5 {
 						.helvetica-bold;
-						font-size: 12px;
+						font-size: 0.750em;
 						color: @primary-dark-color;
 						margin: 5px 0;
 					}
@@ -400,7 +429,7 @@ input.error, .errorCity {
 				.price_lst h5{
 					padding:0 15px 0 0;
 					.helvetica-bold;
-					font-size:12px;
+					font-size:0.875em;
 					color:@primary-dark-color;
 					margin:5px 0 0;
 				}
@@ -446,7 +475,7 @@ input.error, .errorCity {
 			left: 2%;
 			h1 {
 				.helvetica-regular;
-				font-size: 13px;
+				font-size:1em;
 				color: @color1;
 				margin: 10px 0;
 				svg {
@@ -455,13 +484,15 @@ input.error, .errorCity {
 					color: @color1;
 					.in-block;
 					.rotate(180deg);
+					float:left;
+					margin-top:4px; 
 				}
 				a {
 					color: @color1;
 					cursor: pointer;
 					text-decoration: none;
 					.font-spacing;
-					font-size:14px;
+					font-size:0.938em;
 				}
 				&:hover{
 					svg{
@@ -475,7 +506,108 @@ input.error, .errorCity {
 			}
 			.buildOrder-pdp-content {
 				background-color: @color0;
-				padding: 35px 15px 35px 35px;
+				padding: 35px 15px 35px 15px;
+				.giftcard-main{
+					.pdp-left{
+
+					}
+					.pdp-right{
+						h1{
+							.helvetica-bold;
+							font-size: 1.563em;
+							color:#000;
+						}
+					   p{
+					   	    line-height: 20px;
+                            font-size:0.813em;
+					   }
+					   .amount-main{
+					   	.amt-cont{
+					   		.amt{
+					   			font-size: 0.875em;
+					   			.helvetica-bold;
+					   			line-height:28px;
+					   			text-align: right;
+					   		}
+					   		.amt-input{
+					   			padding:0px;
+					   			input{
+				   				    font-size:0.813em;
+								    color: #54565d;
+								    border:1px solid #EAEAEA;
+								    height: 29px;
+								    padding:5px;
+					   			}
+					   		}
+					      }
+					      .amt-value{
+					      	float:right;
+					      	padding-right:18px;
+						      	.min-amt,.max-amt{
+						      	    display: inline-block;
+								    border-right: 1px solid #EAEAEA;
+								    height: 12px;
+								    line-height: 12px;
+								    margin: 0px;
+								    padding-right: 5px;
+								    font-size: 0.688em;
+								    color: #8b8e96;
+								    .helvetica-regular;
+								    span{
+								    	font-size:1em;
+								    	.helvetica-bold;
+								    	padding-left:2px;
+								    }
+						      }
+						      .max-amt{
+						      	padding:0;
+						        border-right:none;
+						      }
+					      }
+					      
+					   	}
+					   	.qty-main{
+					   		    margin-top: 15px;
+					   		    width: 100%;
+    							float: left;
+					   		    .qty{
+					   		    	padding:0;
+					   		    	.qty-name{
+							   			font-size: 0.875em;
+							   			.helvetica-bold;
+							   			line-height:28px;
+							   			padding:0;
+					   				}
+					   				.qty-input{
+					   					padding:0px;
+							   			input{
+							   				font-size:0.813em;
+										    color: #54565d;
+										    border: 2px solid #EAEAEA;
+										    height: 35px;
+										    width:75%;
+							   			}
+					   				}
+					   		    }
+					   		.add-cart{
+					   			.green-btn;
+					   			padding:0;
+					   			text-align:center;
+					   		}
+					   	}
+					}
+					.gift-msg{
+						background:#f5f5f5;
+						font-size:0.875em;
+						color:#000;
+						.helvetica-bold;
+						padding:10px 0;
+						width:100%;
+						float:left;
+						text-align:center;
+						margin-top: 30px;
+					}
+				}
 				.pdp-left{
 					img{
 						max-width:100%;
@@ -483,7 +615,7 @@ input.error, .errorCity {
 					}
 					.base-img{
 						text-align:center;
-						height:300px;
+						height:auto;
 					}	
 					.alternative-img{
 						position:relative;
@@ -512,11 +644,11 @@ input.error, .errorCity {
 						.title {
 							.helvetica-bold;
 							color: #8c58b5;
-							font-size: 16px;
+							font-size: 1em;
 						}
 						.desc-text {
 							.helvetica-regular;
-							font-size: 14px;
+							font-size: 0.875em;
 							display: -webkit-box;
 						    -webkit-line-clamp: 3;
 						    -webkit-box-orient: vertical;
@@ -527,7 +659,7 @@ input.error, .errorCity {
 						}
 						.view-more-link {
 							.helvetica-regular;
-							font-size: 13px;
+							font-size: 0.813em;
 							color: #a77bca;
 							text-decoration: underline;
 							cursor: pointer;
@@ -544,35 +676,28 @@ input.error, .errorCity {
 					padding-right:0;
 					h2 {
 						.helvetica-bold;
-						font-size: 20px;
+						font-size: 1.250em;
 						color: @primary-dark-color;
 						text-transform: capitalize;
 						margin:0 0 20px;
 					}
 					h5{
 						.helvetica-bold;
-						font-size: 13px;
+						font-size: 0.875em;
 						color: #54565d;
 						margin:0px;
-					
+						
+					}
+					.prod-size{
+						width:35%;	
 					}
 					button.addCart {
-						    padding: 10px 45px 10px 45px;
-						background-color: @color15;
-						.helvetica-bold;
-						font-size: 14px ;
-						color: @color1;
-						border-radius: 5px;
-						margin-top: 20px;
-						.background-fade;
-						 margin-bottom: 25px;
-						&:hover {
-							color: @color0;
-							background-color: @green-hover;
-						}
+						 .green-btn;
+						
 					}
 					.dropdown-box{
 						margin-bottom:7px;
+						margin-top:20px;
 						h5{
 							margin-bottom: 15px;
 						}
@@ -625,7 +750,7 @@ input.error, .errorCity {
 									.helvetica-regular;
 									color: #000;
 									margin-top: 5px;
-									font-size:14px;
+									font-size:0.875em;
 									white-space: nowrap;
 									overflow: hidden;
 									text-overflow: ellipsis;
@@ -660,7 +785,7 @@ input.error, .errorCity {
 									 }
 									
 									h5,p{
-										 font-size:14px;
+										 font-size:0.875em;
 										 color:#464646;
 										 .helvetica-regular;
 										  margin-left:10px;
@@ -669,6 +794,7 @@ input.error, .errorCity {
 									     margin: 11px 0 0 10px;
 									}
 									&.select-option-in-menu {
+										width: 100%;
 										.pro-del {
 											div.col-xs-10 {
 												width: 100%;
@@ -679,6 +805,10 @@ input.error, .errorCity {
 												}
 											}
 										}
+										
+												h6{
+													text-align: center;
+												}
 									}
 								}
 							}
@@ -688,7 +818,7 @@ input.error, .errorCity {
 					 	width:100%;
 					 	float:left;
 					 	h5{
-					 		font-size:13px;
+					 		font-size:0.875em;
 					 		color:#54565d;
 					 		.helvetica-bold;
 					 		margin:0;
@@ -703,7 +833,7 @@ input.error, .errorCity {
 					 .delivery-methods{
 					 	h5{
 							color:@color1;
-							font-size:13px;
+							font-size:0.813em;
 							.helvetica-bold;
 							margin-bottom:0;
 						}
@@ -715,6 +845,11 @@ input.error, .errorCity {
 					 	}
 					 }
 					 .workshop-events{
+							 uib-accordion{
+							 	margin-bottom:4px;
+							 	width:100%;
+							 	float:left;
+							 }
 					 		.workshop-cont{
 						 		   border-top: 1px solid #f2f5f7;
    									border-bottom: 1px solid #f2f5f7;
@@ -722,8 +857,10 @@ input.error, .errorCity {
     								width:100%;
     								float:left;
 						 		.workshop-del{
-									font-size:15px;
+									font-size:0.938em;
 									.helvetica-regular;
+									width:100%;
+									float:left;
 									p{
 										margin:0;
 									}
@@ -738,14 +875,14 @@ input.error, .errorCity {
 						 	}
 							.prod-price{
 								color:#333333;
-								font-size:20px;
+								font-size:1.250em;
 								.helvetica-regular;
 								margin: 10px 0 15px 0;
 							    float: left;
 							    width: 100%;
 						      }
 							 .register{
-								font-size:16px;
+								font-size:1em;
 								.helvetica-bold;
 								color:#333333;
 								margin: 0px;
@@ -792,23 +929,25 @@ input.error, .errorCity {
 
 									 }
 									.panel-heading {
-									    padding: 3px 10px;
+									    padding: 3px 0px;
 										background: #fff;
 										h4 {
+											    background: #f7f7f7;
+    											padding: 10px 0px;
 										   a{
 										   	  text-decoration:none;
 										   }
 											p {
 											       margin-left:24px;
 												    color: #333333;
-												    font-size: 15px;
+												    font-size: 0.938em;
 												    .helvetica-bold;
 												h3 {
-													font-size:15px;
+													font-size:0.938em;
 													.helvetica-bold;
 												}
 												span {
-													font-size:14px;
+													font-size:0.875em;
 													.helvetica-regular;
 													color: #424342;
 													display: block;
@@ -819,7 +958,7 @@ input.error, .errorCity {
 												    left: 0;
 												    display: inline-block;
 												    padding:2px 0px;
-												    margin-left: 25px;
+												    margin-left: 17px;
 													svg{
 														
 													    fill: #333333;
@@ -834,23 +973,20 @@ input.error, .errorCity {
 										border-top: 0;
 										padding: 5px 0 0 16px;
 										.event-drpDown {
-											label {
-												margin: 0;
-												display: block;
-												&+label {
-													padding-top: 15px;
-												}
-												span {
-													font-size:16px;
-													.helvetica-regular;
-												    padding-left: 15px;
-												}
-											}
-											.checkbox-custom + .checkbox-custom-label:before{
-											 height: 16px;
-											}
+											float:left;
+											width:100%;
+											
 											li{
-												margin:0 0 10px 0;
+												.radio-btn-container{
+													margin:0 0 3px 0;
+												  label{
+													 font-size: 0.875em;
+													 .radioOutline{
+													 	float:left;
+													 	margin-right:5px;
+													 }
+												   }
+												}
 											}
 										}
 									}
@@ -872,7 +1008,7 @@ input.error, .errorCity {
 					h3 {
 						margin: 0 0 10px;
 						.helvetica-bold;
-						font-size: 13px;
+						font-size: 0.813em;
 					}
 					p {
 						margin: 0px;
@@ -886,7 +1022,7 @@ input.error, .errorCity {
 						label {
 							display: inline-block;
 							.helvetica-regular;
-							font-size: 12.5px;
+							font-size: 0.781em;
 							line-height: 2.8;
 							vertical-align: initial;
 							margin-bottom: 0;
@@ -904,7 +1040,7 @@ input.error, .errorCity {
     						}
     						label{
 								.helvetica-bold;
-								font-size:13px;
+								font-size:0.813em;
 								text-transform: capitalize;
     						}					
 
@@ -912,6 +1048,7 @@ input.error, .errorCity {
 				}
 				.pdp-description {
 					padding:0;
+					margin-top:20px;
 					.panel-group .panel{
 						border-radius:0;
 						.panel-heading {
@@ -923,7 +1060,7 @@ input.error, .errorCity {
 								p {
 									padding: 10px 25px;
 									.helvetica-bold;
-									font-size: 13px;
+									font-size: 0.813em;
 									color: @color1;
 									margin-bottom: 10px;
 									svg.plus, svg.minus{
@@ -956,10 +1093,13 @@ input.error, .errorCity {
 						padding: 0 0px 15px 25px;
 						.footer_cat{
 							padding:0px;
+							p{
+							 font-size:0.875em;
+							}
 						}
 						a{
 							.helvetica-bold;
-							font-size: 12.5px;
+							font-size: 0.781em;
 							.font-spacing;
 						}
 						ul {
@@ -968,12 +1108,12 @@ input.error, .errorCity {
 							li {
 								p {
 									.helvetica-regular;
-									font-size: 12.5px;
+									font-size: 0.781em;
 									margin-bottom: 0;
 								}
 								a{
 									.helvetica-regular;
-									font-size: 12.5px;
+									font-size: 0.781em;
 									.font-spacing;
 								}
 							}
@@ -985,7 +1125,7 @@ input.error, .errorCity {
 						.table {
 							tr td {
 								.helvetica-regular;
-								font-size: 12.5px;
+								font-size: 0.781em;
 								&:first-child {
 									width: 30%;
 									background: #f1f1f1;
@@ -1049,7 +1189,7 @@ input.error, .errorCity {
 					width: auto;
 					height: 40px;
 					.helvetica-bold;
-					font-size: 11px;
+					font-size: 0.688em;
 					color: @primary-dark-color;
 					margin-right: 3px;
 					border-top-left-radius: 3px;
@@ -1115,10 +1255,10 @@ input.error, .errorCity {
 					color: @color1;
 					text-align: left;
 					span {
-						font-size: 13px;
+						font-size: 0.813em;
 						.helvetica-medium;
 						.in-block;
-						font-size: 17px;
+						font-size: 1.063em;
 						color:#8c58b5;
 						.helvetica-bold;
 					}
@@ -1130,7 +1270,7 @@ input.error, .errorCity {
 							border-right: 1px solid #ccc;
 							a {
 								.helvetica-regular;
-								font-size: 13px ;
+								font-size: 0.813em ;
 								color: @color1;
 								&.active{
 								 color:#a576ca;
@@ -1149,7 +1289,7 @@ input.error, .errorCity {
 					padding: 7px;
 					h2 {
 						.helvetica-bold;
-						font-size: 15px;
+						font-size: 0.938em;
 						color: #54565d;
 						height: 32px;
 						margin: 5px 0;
@@ -1158,16 +1298,16 @@ input.error, .errorCity {
 					h3,
 					h4 {
 						.helvetica-regular;
-						font-size: 11px;
+						font-size: 0.688em;
 						color: #54565d;
 						margin: 5px 0;
 						& > span {
-							font-size: 13px;
+							font-size: 0.813em;
 						}
 					}
 					h5 {
 						.helvetica-bold;
-						font-size: 12px;
+						font-size: 0.7500em;
 						color: @primary-dark-color;
 						margin: 5px 0;
 					}
@@ -1209,7 +1349,7 @@ input.error, .errorCity {
 			background: @color20;
 			.back-common{
 				    .helvetica-regular;
-				    font-size: 14px;
+				    font-size:0.938em;
 				    color: #54565d;
 				   margin-top:-2px;
 				    a{
@@ -1252,7 +1392,7 @@ input.error, .errorCity {
 		.order-info {
 			h1 {
 				.helvetica-bold;
-				font-size: 22px ;
+				font-size: 1.375em ;
 				color: @primary-dark-color;
 				margin-top:10px;
 				text-transform: capitalize;
@@ -1279,7 +1419,7 @@ input.error, .errorCity {
 					p {
 						display: inline-block;
 						margin-bottom: 0;
-						font-size: 14px;
+						font-size: 0.875em;
 						.helvetica-regular;
 					}
 					&.name {
@@ -1287,13 +1427,13 @@ input.error, .errorCity {
 						width: 126px;
 						p{
 							.helvetica-bold;
-							font-size: 14px;
+							font-size: 0.875em;
 							line-height:28px;
 							color: @primary-dark-color;
 						}
 						input{
 							.helvetica-bold;
-							font-size: 14px;
+							font-size: 0.875em;
 							line-height:28px;
 							width: 39%;
 						}
@@ -1301,12 +1441,12 @@ input.error, .errorCity {
 					&.address {
 						padding: 5px 0 0 15px;
 						.helvetica-regular;
-						font-size: 14px;
+						font-size:1em;
 						line-height:20px;
-						width:69%;
+						width:62%;
 						input{
 							.helvetica-regular;
-							font-size: 14px;
+							font-size: 0.875em;
 							line-height:22px;
 							width: 13.1%;
 						}
@@ -1321,27 +1461,27 @@ input.error, .errorCity {
 						line-height: 1.8;
 						text-align: right;
 						button {
-							.helvetica-bold;
-							font-size: 12px;
-							line-height: 24px;
-						    border-radius: 4px;
-						    color: #fff;
-						    background: #b0b3bd;
-						   padding: 0 10px 0 5px;
-                           
-							span {
+							.purple-btn;
+							height:25px;
+							line-height:25px;
+							padding: 0 10px;
+							font-size:0.75em;
+                           span {
 								 float:left;
 								 height: 24px;
 								svg {
-									fill: #fff;
-									width: 17px;
-								    height: 17px;
+									fill:#a576ca;
+									width: 18px;
+    								height: 18px;
 								    margin: 3px 0px 0px 0px;
 								}
+
 							}
 							&:hover{
-								background-color:@color1;
-							}
+									svg{
+										fill:#fff;
+									}
+								}
 						}
 					}
 					&.delivery-date{
@@ -1350,7 +1490,7 @@ input.error, .errorCity {
 						text-align:right;
 						span{
 							.helvetica-regular;
-							font-size: 12px;
+							font-size:0.875em;
 						}
 					}
 				}
@@ -1371,7 +1511,7 @@ input.error, .errorCity {
 					th {
 						padding: 0 0 0 15px;
 						.helvetica-bold;
-						font-size: 15px;
+						font-size: 0.938em;
 						line-height:48px;
 					}
 				}
@@ -1388,7 +1528,7 @@ input.error, .errorCity {
 									border: 1px solid @color21;
 									display: block;
 									text-align: center;
-									font-size: 13px;
+									font-size: 0.813em;
 									.helvetica-medium;
 									background: #fff;
 								}
@@ -1416,6 +1556,13 @@ input.error, .errorCity {
 										float: left;
 										padding-left: 12px;
 										width:71%;
+										.edit,.remove,.save{
+											.purple-btn;
+											line-height: 25px;
+											height: 25px;
+											font-size: 0.750em;
+											 padding:0 3px;
+										}
 										ul {
 											li {
 											.row{
@@ -1434,31 +1581,27 @@ input.error, .errorCity {
 											}
 												h5 {
 													margin: 0;
-													font-size: 14px;
+													font-size: 0.875em;
 													line-height:16px;
 													.helvetica-bold;
+													white-space: nowrap;
+													overflow: hidden;
+													text-overflow: ellipsis;
 												}
 												span {
 													display: block;
-													font-size: 13px;
+													font-size:0.875em;
 													line-height:16px;
 													.helvetica-regular;
 													svg{
 													    fill: #ccc;
-    width: 10px;
-    height: 10px;
+													    width: 10px;
+													    height: 10px;
 													}
 												}
 												&:last-child {
 													margin-top: 10px;
 													button {
-														padding: 2px 6px;
-														border-radius: 3px;
-														font-size: 12px;
-														.helvetica-medium;
-														color: #fff;
-														background: #b0b3bd;
-														.background-fade;
 														span {
 															float:left;
 															margin-right: 3px;
@@ -1467,23 +1610,31 @@ input.error, .errorCity {
 														}
 														&.edit {
 															svg {
-																fill: #fff;
-																width: 14px;
-																height: 14px;
+																width: 12px;
+															    height: 12px;
+															    fill: #a576ca;
+															    margin-top:6px;
+															}
+															&:hover{
+																svg{
+																	fill:#fff;
+																}
 															}
 														}
 														&.remove {
-															svg {
-																path {
-																	fill: #fff;
+															svg{
+																width:12px;
+															    height:12px;
+															    fill: #a576ca;
+															    margin-top:6px;
+															}
+															&:hover{
+																svg{
+																	fill:#fff;
 																}
-																width: 8px;
-																height: 8px;
 															}
 														}
-														&:hover{
-															background-color:@color1;
-														}
+														
 													}
 												}
 											}
@@ -1498,23 +1649,33 @@ input.error, .errorCity {
 									margin-bottom: 0;
 									li {
 										margin-bottom: 15px;
+										font-size:0.875em;
+										.helvetica-regular;
 										.row {
 											margin: 0;
 											div {
 												h5 {
 													.helvetica-bold;
-													font-size: 14px;
+													font-size: 0.875em;
 													line-height:13px;
 													margin: 0;
 												}
 												span {
-													.helvetica-regular;
-													font-size: 13px;
-													line-height:22px;
+													display: -webkit-box;
+													-webkit-line-clamp: 3;
+													-webkit-box-orient: vertical;
+													overflow: hidden;
+													text-overflow: ellipsis;
+													width:200px;
+													line-height: 15px;
+													font-size: 0.929em;
+													&.summary-edit{
+														width:10px;
+													}
 												}
 												input{
 													.helvetica-regular;
-													font-size: 13px;
+													font-size: 0.813em;
 													line-height:22px;
 												}
 												&:first-child {
@@ -1568,7 +1729,7 @@ input.error, .errorCity {
 									.popover-content{
 										button{
 										    font-family: 'ProximaNova-Bold';
-											font-size: 10px;
+											font-size: 0.625em;
 											color: #ffffff;
 											background-color: #a576ca !important;
 											padding: 5px 10px 5px 10px;
@@ -1604,12 +1765,12 @@ input.error, .errorCity {
 							h5 {
 								margin: 0;
 								.helvetica-regular;
-								font-size: 14px;
+								font-size: 0.875em;
 								line-height:35px;
 							}
 							span {
 								.helvetica-bold;
-								font-size: 16px;
+								font-size: 1em;
 								line-height:21px;
 								color: @primary-dark-color;
 							}
@@ -1624,26 +1785,26 @@ input.error, .errorCity {
 						line-height: 1.8;
 						text-align: right;
 						button {
-							.helvetica-bold;
-							font-size:12px;
-							line-height: 24px;
-						    border-radius: 4px;
-						    color: #fff;
-						    background: #b0b3bd;
-						   padding: 0 10px 0 5px;
-                           margin-right:6px;
+							.purple-btn;
+							height:25px;
+							line-height:25px;
+							padding:0 15px;
+							font-size:0.75em;
 							span {
 								 float:left;
 								 height: 24px;
 								svg {
-									fill: #fff;
-									width: 17px;
-								    height: 17px;
+									fill:#a576ca;
+									width: 18px;
+								    height: 18px;
 								    margin: 3px 6px 0px 0px;
 								}
+								
 							}
 							&:hover{
-								background-color:@color1;
+									svg{
+										fill:#fff;
+									}
 							}
 						}
 					}
@@ -1661,11 +1822,13 @@ input.error, .errorCity {
 								    padding-right: 0px;
 								    margin-right: 27px;
 								    .helvetica-regular;
-								    font-size: 14px;
+								    font-size: 0.875em;
 								    color:@color1;
+								    width:60%;
+								    float:left;
     					    	}
     					    	span{
-    					            font-size: 16px;
+    					            font-size: 1em;
 								    color: #8c58b5;
 								    float: right;
 								    width: 30%;
@@ -1708,12 +1871,12 @@ input.error, .errorCity {
 				vertical-align:top;
 				p{
 				    .helvetica-regular;
-					font-size: 14px;
+					font-size: 0.875em;
 					line-height: 24px;
 					i {
 						color:@primary-dark-color;
 						float:right;
-						font-size:12px;
+						font-size:0.750em;
 						padding: 6px 0;
 						.transition-common(all 0.5s ease);
 						.rotate(0deg);
@@ -1734,7 +1897,7 @@ input.error, .errorCity {
 				border-bottom:1px solid @color21;
 				border-radius:0;
 				a{
-					font-size:14px;
+					font-size:0.875em;
 					padding: 5px 10px;
 					.helvetica-regular;
 					color:@color1;
@@ -1775,7 +1938,7 @@ input.error, .errorCity {
 			right: 0;
 			height:43px;
 			p{
-				font-size:14px;
+				font-size:0.875em;
 				padding:0 18%;
 				.helvetica-regular;
 				color:@color1;
@@ -1788,7 +1951,7 @@ input.error, .errorCity {
 		}
 		& > h1 {
 			.helvetica-bold;
-			font-size: 15px;
+			font-size: 0.938em;
 			padding: 20px 0 10px 20px;
 			background-color: @primary-dark-color;
 			margin: 0 0 20px;
@@ -1799,7 +1962,7 @@ input.error, .errorCity {
 		}
 		.notes {
 			.helvetica-bold;
-			font-size: 11px;
+			font-size: 0.688em;
 			color: @primary-dark-color;
 			border: 1px solid @primary-dark-color;
 			padding: 5px 10px;
@@ -1831,6 +1994,9 @@ input.error, .errorCity {
 				.prod-variants{
 					margin:0;
 					.helvetica-bold;
+						&:first-letter{
+							font-weight:400;
+						}
 					span{
 						text-transform:lowercase;
 						display:inline-block;
@@ -1852,55 +2018,44 @@ input.error, .errorCity {
 					.in-block;
 				    vertical-align: middle;
 					text-align: left;
-					svg{
-						width: 22px;
-						height:17px;
-						fill:@base-bg-purple-light;
-						&.save-icon{
-							width: 18px;
-							height: 18px;
+				}
+				.edit-icon,.save-icon{
+						   .purple-btn;
+						   line-height: 29px;
+						   height:29px;
+						   font-size:0.750em;
+						   width:21%;
+						   display:inline-block;
+						   padding:0;
+						   svg{
+								width: 22px;
+								height:14px;
+								fill:@base-bg-purple-light;
+							&.save-icon{
+								width: 18px;
+								height: 18px;
+						   }
+					    }
+					    &:hover{
+					    	svg{
+					    		fill:#fff;
+					    	}
+					    }
+					}
+					.save-icon{
+						svg{
+							 width: 21px;
+    						height: 10px;
 						}
 					}
 					
-				}
-				.edit-icon{
-						   width:20%;
-					    display: inline-block;
-					    border: 1px solid #8c58b5;
-					    color: #8c58b5;
-					    border-radius: 5px;
-					    font-size: 12px;
-					    padding-top: 2px;
-					    margin-left:1%;
-					}
-					.save-icon{
-						    width: 20%;
-						    display: inline-block;
-						    border: 1px solid #8c58b5;
-						    color: #8c58b5;
-						    border-radius: 5px;
-						    font-size: 12px;
-						    padding-top: 2px;
-						    margin-left: 1%;
-						    height: 27px;
-						    padding: 7px 0 0 1px;
-						    line-height: 12px;
-					    svg{
-					    	 width: 12px;
-						    height: 12px;
-						    margin: 0 4px 0 3px;
-					    }
-					}
 					.notes {
-						.helvetica-bold;
-						font-size: 11px;
-						color: @color0;
-						padding: 5px 10px;
-						.background-fade;
-						float: right;
-						margin:0 5px 0 0;
-						background-color: @base-bg-purple-light;
-						text-transform:uppercase;
+						 .purple-btn;
+						 font-size:0.750em;
+						 line-height: 29px;
+						 height: 29px;
+						 padding:0 4px;
+						 margin-right: 5px;
 					}
 				form{
 					    width:49%;
@@ -1908,7 +2063,7 @@ input.error, .errorCity {
 					input{
 							width: 100%;
 						    border: 1px solid #EAEAEA;
-						    font-size: 12px;
+						    font-size: 0.750em;
 						    line-height: 25px;
 						   .helvetica-medium;
 						    color: #54565d;
@@ -1930,7 +2085,7 @@ input.error, .errorCity {
 			}
 			h2 {
 				.helvetica-bold;
-				font-size: 20px;
+				font-size: 1.250em;
 				color: @primary-dark-color;
 				display: inline-block;
 				width: 72%;
@@ -1942,12 +2097,12 @@ input.error, .errorCity {
 			}
 			p {
 				.helvetica-medium;
-				font-size: 13px;
+				font-size: 0.813em;
 				color: @color1;
 			}
 			.edit {
 				.helvetica-bold;
-				font-size: 10px;
+				font-size: 0.625em;
 				color: @color0;
 				background-color: #aaaeb9;
 				padding: 5px 10px 5px 5px;
@@ -1962,15 +2117,20 @@ input.error, .errorCity {
 				}
 			}
 			.notes {
-				.helvetica-bold;
-				font-size: 11px;
+				.helvetica-regular;
+				font-size: 0.750em;
 				color: @color0;
-				padding: 5px 10px;
+				padding:0px 10px;
 				.background-fade;
 				float: right;
-				margin:0 5px 0 0;
-				background-color: @base-bg-purple-light;
-				text-transform:uppercase;
+				margin:0 10px 0 0;
+				background-color:#a576ca;
+				text-transform:capitalize;
+			    line-height: 29px;
+				height: 29px;
+				&:hover{
+					background:#7a43a3;
+				}
 			}
 		}
 		.receipient-details {
@@ -1991,7 +2151,7 @@ input.error, .errorCity {
 						display:block;
 						span {
 							.helvetica-regular;
-							font-size: 14px;
+							font-size: 0.875em;
 							line-height:40px;
 							padding: 0 5px 0 5px;
 							color: @color2;
@@ -2002,7 +2162,7 @@ input.error, .errorCity {
 						}
 						i {
 							.helvetica-regular;
-						    font-size: 14px;
+						    font-size: 0.875em;
 							color: @color2;
 						}
 						svg.close {
@@ -2063,20 +2223,20 @@ input.error, .errorCity {
 					}
 				.star{
 				   color:#f32929;
-				   font-size:14px;
+				   font-size:0.875em;
 				 }
 				 .buyers-list{
 				 	float:left;
 				 	
 				 	width:53%;
 				 	label{
-				 		font-size:14px;
+				 		font-size:0.875em;
 				 		}
 				 }
 				.qty {
 					
 					p {
-						font-size: 13px ;
+						font-size: 0.813em ;
 						line-height:20px;
 						.helvetica-medium;
 						color: @color3;
@@ -2098,16 +2258,22 @@ input.error, .errorCity {
 							height:10px;
 							width:100%;
 							a{
-							font-size:13px;
+							font-size:0.813em;
 							.helvetica-bold;
-							&:last-child{
+								&:last-child{
 								float:right;
-							}
+								}
+								&:hover{
+									color:#333;
+								}
+								&:focus{
+									color:#333;
+								}
 							}
 						}
 				> a {
 					.helvetica-bold;
-					font-size: 12.5px;
+					font-size: 0.781em;
 					.font-spacing;
 				}
 				.above-addr{
@@ -2115,15 +2281,57 @@ input.error, .errorCity {
 					padding-top:4px;
 					
 				}
-				
+					.location-contact {
+			    		width:100%;
+			    		float:left;
+			    		p{
+						font-size: 0.813em ;
+						line-height:20px;
+						.helvetica-medium;
+						color: @color3;
+						}
+						input{
+							width:31%;
+							margin-right:1.5%;
+							font-size:0.875em;
+						    color: #54565d;
+						    border-radius: 5px;
+						    border: 1px solid #EAEAEA;
+						    height: 29px;
+							&:focus {
+								border-color: #aaa;
+							}
+						}
+						&.email{
+							margin:15px 0;
+							input{
+								width:65%;
+							}
+						}
+					}
 				.receipient-name,
 				.location-recipientName {
 					margin: 15px 0px;
 					width:100%;
 					float:left;
-					  h3{
+					.chruch{
+						float:left;
+						width:100%;
+						 h3{
 					  	.helvetica-bold;
 						font-size: 15px;
+						color: @primary-dark-color;
+						white-space: nowrap;
+						overflow: hidden;
+						text-overflow: ellipsis;
+						margin:10px 0;
+						float:right;
+						width:72%;
+					  }
+					}
+					  h3{
+					  	.helvetica-bold;
+						font-size: 0.938em;
 						color: @primary-dark-color;
 						white-space: nowrap;
 						overflow: hidden;
@@ -2133,7 +2341,7 @@ input.error, .errorCity {
 						width:100%;	
 					  }
 					  h1 {
-							font-size: 13px;
+							font-size:0.875em;
 							line-height:20px;
 							.helvetica-medium;
 							margin:0px 0 5px;
@@ -2164,14 +2372,14 @@ input.error, .errorCity {
 						}
 						p,
 						input {
-							font-size: 13px;
+							font-size:0.875em;
 							line-height:20px;
 							.helvetica-regular;
 							color: @color3;
 							width: 100%;
 						}
 						input {
-							font-size:12px;
+							font-size:0.875em;
 							color: @color1;
 							border-radius: 5px;
 							border: 1px solid @color21;
@@ -2186,8 +2394,40 @@ input.error, .errorCity {
 					margin:0 0 15px ;
 					width:100%;
 					float:left;
+					.popover{
+						width:100%;
+						right:44%;
+						left:initial !important;
+						.popover-content{
+							padding:9px 8px;
+							label{
+                                font-size:0.929em ;
+                                
+                               span{
+                                    font-size:1.077em;
+                                    line-height:18px;
+                                    vertical-align:top;
+                                    color:initial;
+                                    }
+                            }
+                            .radio-btn-container{
+                                margin:7px 0 0 0;
+                                .size-box{
+                                	line-height:10px;
+                                }
+                            }
+                            button{
+                                padding:5px 10px 5px 10px;
+                                margin:8px 0 0 8px;
+                            }
+                            .radio-btn-container{
+                                margin:7px 0 0 0;
+                            }
+						}
+
+					}
 					label.radio-common {
-						font-size: 13px;
+						font-size: 0.813em;
 						line-height:11px;
 						.helvetica-regular;
 						color: @color3;
@@ -2203,7 +2443,7 @@ input.error, .errorCity {
 				}
 				.outgoing-wire{
 					span{
-						font-size: 12px;
+						font-size: 0.750em;
 						.helvetica-medium;
 						color:@color2;
 						.in-block;
@@ -2220,18 +2460,23 @@ input.error, .errorCity {
 					h4,
 					span {
 						.helvetica-regular;
-						font-size: 13px ;
+						font-size:0.875em;
 						line-height:20px;
 						display: inline-block;
 						margin: 0;
 					}
+					h4{
+						span{
+							font-size:1em;
+						}
+					}
 
 					.estimate-total{
-						font-size:17px;
+						font-size:1.063em;
 						color:@color1;
 						.helvetica-bold;
 						span{
-						  font-size:17px;
+						  font-size:1.063em;
 						 color:@color1;	
 						   .helvetica-bold;
 						}
@@ -2245,7 +2490,7 @@ input.error, .errorCity {
 					}
 					h5,
 					span {
-						font-size: 13px ;
+						font-size: 0.813em ;
 						line-height:20px;
 						.helvetica-medium;
 						.in-block;
@@ -2266,7 +2511,7 @@ input.error, .errorCity {
 					}
 					.location-recipientName {
 						p {
-							font-size: 13px ;
+							font-size: 0.813em ;
 							line-height:15px;
 							.helvetica-regular;
 							margin-top: 0;
@@ -2274,7 +2519,7 @@ input.error, .errorCity {
 					}
 					input[type="date"] {
 						.helvetica-regular;
-						font-size: 11px;
+						font-size: 0.688em;
 						width: 50%;
 						border: 1px solid @color21;
 						height: 25px;
@@ -2293,8 +2538,8 @@ input.error, .errorCity {
 						  }
 						}
 						.delivery-date{
-							width:43%;
-							padding: 0 0 0 14px;
+							width:48%;
+							padding: 0 0 0 3%;
 							.btn{
 								padding:4px 12px;
 								line-height:9px;
@@ -2311,7 +2556,7 @@ input.error, .errorCity {
 						input {
 							width: 100%;
 							border: 1px solid @color21;
-							font-size:12px;
+							font-size:0.875em;
 							line-height:23px;
 							.helvetica-regular;
 							&:focus {
@@ -2323,7 +2568,7 @@ input.error, .errorCity {
 					
 					.location-addressL1 {
 						h1 {
-							font-size: 12px;
+							font-size: 0.750em;
 							line-height:20px;
 							.helvetica-medium;
 							color: @color3;
@@ -2332,7 +2577,7 @@ input.error, .errorCity {
 							margin-bottom: 5px;
 							height: 25px;
 							.helvetica-regular;
-							font-size: 11px;
+							font-size: 0.688em;
 						}
 						.location-addressL2 {
 							   
@@ -2349,7 +2594,7 @@ input.error, .errorCity {
 										i {
 											color:@primary-dark-color;
 											float:right;
-											font-size:12px;
+											font-size:0.750em;
 											padding: 8px 0;
 											.transition-common(all 0.5s ease);
 											.rotate(0deg);
@@ -2363,7 +2608,7 @@ input.error, .errorCity {
 											border-bottom:1px solid @color21;
 											border-radius:0;
 											a{
-												font-size:13px;
+												font-size:0.813em;
 												padding: 5px 10px;
 												.helvetica-regular;
 												color:@color1;
@@ -2396,7 +2641,7 @@ input.error, .errorCity {
 									height: 25px;
 									border: 1px solid @color6;
 									.helvetica-regular;
-									font-size: 11px;
+									font-size: 0.688em;
 									width: @width0;
 								}
 							}
@@ -2406,7 +2651,7 @@ input.error, .errorCity {
 						margin: 15px 0 15px;
 					  h3{
 					  	.helvetica-bold;
-						font-size: 15px;
+						font-size: 0.938em;
 						color: @primary-dark-color;
 						white-space: nowrap;
 						overflow: hidden;
@@ -2424,7 +2669,7 @@ input.error, .errorCity {
 						}
 						p,
 						input {
-							font-size: 11px;
+							font-size: 0.688em;
 							line-height:15px;
 							.helvetica-regular;
 							color: @color3;
@@ -2443,7 +2688,7 @@ input.error, .errorCity {
 						&.add-card{
 							h3{
 								.helvetica-bold;
-								font-size: 13px;
+								font-size:0.875em;
 								color: @primary-dark-color;
 								white-space: nowrap;
 								overflow: hidden;
@@ -2484,7 +2729,7 @@ input.error, .errorCity {
 							}
 						}
 						h1 {
-							font-size: 13px;
+							font-size:0.875em;
 							line-height:28px;
 							.helvetica-medium;
 							color: @color1;
@@ -2501,7 +2746,7 @@ input.error, .errorCity {
 							textarea {
 								width: @width0;
 								.helvetica-regular;
-								font-size: 12px;
+								font-size: 0.750em;
 								margin-top: 5px;
 								border-color:#E4E6EA;
 								text-indent:5px;
@@ -2518,7 +2763,7 @@ input.error, .errorCity {
 					    width: 100%;
 					    margin: 20px 0 10px 0;
 						span {
-							font-size: 12px;
+							font-size: 0.750em;
 							.helvetica-medium;
 							color: @color2;
 							.in-block;
@@ -2542,7 +2787,7 @@ input.error, .errorCity {
 						margin:0;
 						color: @color2;
 						p {
-							font-size: 13px;
+							font-size:0.875em;
 							.helvetica-medium;
 							margin: 5px 0 8px;
 							color: @color3;
@@ -2551,7 +2796,7 @@ input.error, .errorCity {
 						}
 						input {
 							.helvetica-regular;
-							font-size: 11px ;
+							font-size: 0.688em ;
 							width: @width0;
 							border: 1px solid @color21;
 							height: 27px;
@@ -2572,19 +2817,37 @@ input.error, .errorCity {
 								    width: 100%;
 								    input{
 								    	width:46%;
-								    	margin-right:4%;
+								    	margin-right:1.5%;
 								    	border-radius:5px;
 								    }
 								    .street,.state{
 								    	margin-right:0; 
 								    }
 								    .locations-city,.locations-state{
-								    	width:50%;
+								    	width:49%;
 								    	float:left;
 								    	margin:15px 0;
 								    	input{
-								    		 width: 93%;
+								    		 width: 94%;
 								    		 margin-right: 12%;
+								    	}
+								    	.select-city{
+								    		    border: 1px solid #EAEAEA;
+											    font-family: 'ProximaNova-Regular';
+											    font-size: 12px;
+											    height: 29px;
+											    background: #fff;
+											    .fa-chevron-down{
+											    	float:right;
+											    	}
+											    .dropdown-menu{
+											     min-width: 167px;
+											     li{
+											     	a {
+											     		text-decoration:none;
+											     	}
+											      }
+											    }
 								    	}
 								    }
 								    	.location-contact {
@@ -2595,7 +2858,8 @@ input.error, .errorCity {
 												border: 1px solid @color21;
 												height:29px;
 												font-size:12px;
-												margin-right:1.6%;
+												margin-right:1.5%;
+												font-size:0.875em;
 												&:focus {
 													border-color: #aaa;
 												}
@@ -2609,6 +2873,13 @@ input.error, .errorCity {
 							input{
 								border-radius:5px;
 							}
+
+							}
+							.willCall-search,.hospital-search{
+								.dropdown-menu{
+									height:200px;
+									overflow-y:auto;
+								}
 							}
 							
 						}
@@ -2621,7 +2892,7 @@ input.error, .errorCity {
 						input[type="text"] {
 						 border: 1px solid @color21;
 							.helvetica-regular;
-							font-size: 12px;
+							font-size:0.875em;
 							height:29px;
 							background:#fff;
 							
@@ -2631,7 +2902,7 @@ input.error, .errorCity {
 						}
 						
 						label {
-							font-size: 11px;
+							font-size: 0.688em;
 							.helvetica-medium;
 							color: @color3;
 							input[type="text"] {
@@ -2641,7 +2912,7 @@ input.error, .errorCity {
 							.in-block;
 						}
 						h1 {
-							font-size: 13px;
+							font-size: 0.875em;
 							line-height:20px;
 							.helvetica-medium;
 							margin:0px 0 5px;
@@ -2653,7 +2924,7 @@ input.error, .errorCity {
 						.willCall-search {
 							
 							h3 {
-								font-size: 12px ;
+								font-size: 0.750em ;
 								line-height:20px;
 								.helvetica-medium;
 								margin: 10px 0 5px;
@@ -2666,7 +2937,7 @@ input.error, .errorCity {
 								li{
 									border-bottom:1px solid @color21;
 									a{
-										font-size:13px;
+										font-size:0.813em;
 										padding: 5px 10px;
 										.helvetica-regular;
 										color:@color1;
@@ -2735,19 +3006,28 @@ input.error, .errorCity {
 				}
 			}
 		}
+		.cg-busy.cg-busy-backdrop {
+			position: absolute !important;
+			top: 0 !important;
+			left: 0 !important;
+			bottom: 0 !important;
+			right: 0 !important;
+			width: 100% !important; 
+			height: 1000% !important;
+		}
 	}
 	.popover{
 		border:1px solid @base-bg-purple-light;
 		width:96%;
 		.popover-inner .popover-content{
 			h2{
-				font-size: 15px ;
+				font-size: 0.938em ;
 				.helvetica-medium;
 				margin: 10px 0;
 				color:initial;
 			}
 			label{
-				font-size: 13px ;
+				font-size: 0.813em ;
 				width:100%;
 				.helvetica-regular;
 				input[type="radio"]{
@@ -2757,7 +3037,7 @@ input.error, .errorCity {
 			}
 			button{
 				.helvetica-bold;
-				font-size: 10px;
+				font-size: 0.625em;
 				color: #ffffff;
 				background-color: @base-bg-purple-light;
 				padding: 5px 10px 5px 10px;
@@ -2794,14 +3074,14 @@ input.error, .errorCity {
 	 .popover-inner{
 	   .popover-content{
 		   h2{
-			     font-size: 15px;
+			     font-size: 0.938em;
 		         .helvetica-medium;
 			     margin: 10px 0;
 			     color: initial;
 		   }
 	    	button{
 				.helvetica-bold;
-				font-size: 10px;
+				font-size: 0.625em;
 				color: #ffffff;
 				background-color: @base-bg-purple-light;
 				padding: 5px 10px 5px 10px;
@@ -2831,7 +3111,7 @@ input.error, .errorCity {
 		h5 {
 			color: #f32929;
 			.helvetica-bold;
-			font-size: 12.5px;
+			font-size: 0.781em;
 			line-height:50px;
 			margin-left: 4px;
 		}
@@ -2839,14 +3119,14 @@ input.error, .errorCity {
 			width: 12px;
 			height: 12px;
 			.in-block;
-			margin-top:-5px;
+			margin-top:0px;
 			.st0 {
 				fill: #F32929;
 			}
 		}
 		&:hover {
 			color: @color0;
-			background-color: @base-bg-purple-light;
+			background-color:#f32929;
 			svg {
 				.st0 {
 					fill: @color0;
@@ -2864,7 +3144,7 @@ input.error, .errorCity {
 		.background-fade;
 		h5 {
 			.helvetica-bold;
-			font-size: 12.5px;
+			font-size: 0.781em;
 			line-height:50px;
 			color:@primary-dark-color;
 			margin-left: 4px;
@@ -2878,7 +3158,7 @@ input.error, .errorCity {
 		}
 		&:hover {
 			color: @color0;
-			background-color: @base-bg-purple-light;
+			background-color:#7a43a3;
 			svg {
 				fill: @color0;
 			}
@@ -2902,48 +3182,41 @@ input.error, .errorCity {
 		}
 	}
 	.order-checkout {
-		width: 20%;
 		float:right;
 		button {
-			.helvetica-bold;
-			font-size: 14px;
+			.green-btn;
 			line-height:50px;
-			color: @primary-dark-color;
-			background-color: @color15;
-			width: 67%;
-			text-align: center;
-			.background-fade;
-			&:hover {
-				color: @color0;
-				background-color: @green-hover;
-			}
+			height:50px;
+			padding:0 26.4px;
+			.helvetica-bold;
 			&.savedisabled{
 				&:hover{
 				  background-color: @color15;	
 			}
 		}
 	}
+	.proceed-check{
+		padding:0 6.2px;
+	}
 		.order-total {
 			.in-block;
-			width: 33%;
+			padding:0 9px;
 			height: 50px;
 			background-color: @base-bg-purple-light;
 			.background-fade;
 			text-align: center;
 			float:right;
 			cursor:default;
-			&:hover {
-				background-color: #7a43a3;
-			}
+			
 			p {
-				font-size: 13px;
+				font-size: 0.813em;
 				.helvetica-medium;
 				margin: 7px 0 0;
 				color: @color0;
 			}
 			span {
 				.helvetica-bold;
-				font-size: 15px;
+				font-size: 0.938em;
 				color: @color0;
 			}
 		}
@@ -2965,11 +3238,14 @@ input.error, .errorCity {
 	.search_box {
 		background: none;
 		border: none;
-		width: 81%;
+		width: 66%;
+		margin:15px 0;
 		.search_feild {
 			border: none;
 			float: none;
 			margin: 0 auto;
+			width:100%;
+			margin:0;
 			a {
 				top: 12px;
 			}
@@ -2993,7 +3269,7 @@ input.error, .errorCity {
 				display: inline-block;
 				color: #fff;
 				.helvetica-regular;
-				font-size:21px;
+				font-size:1.313em;
 				span{
 					border: none;
 					color: #fff;
@@ -3017,7 +3293,7 @@ input.error, .errorCity {
 		.modal-header{
 			h4{
 				.helvetica-bold;
-			    font-size: 21px;
+			    font-size: 1.313em;
 			    color: #8c58b5;
 			    margin: 10px 0 0 10px;
 			}
@@ -3036,11 +3312,11 @@ input.error, .errorCity {
 			max-height:400px;
 			span{
 				.helvetica-bold;
-				font-size:15px;
+				font-size:0.938em;
 			}
 			input[type="text"], input[type="password"]{
 				.helvetica-regular;
-				font-size: 13px;
+				font-size: 0.813em;
 				line-height:28px;
 				margin: 8px 0;
 				width: 100%;
@@ -3051,7 +3327,7 @@ input.error, .errorCity {
 			input[type="button"]{
 				margin-top:10px;
 				.helvetica-bold;
-				font-size: 12.5px;
+				font-size: 0.781em;
 				color: #ffffff;
 				background-color: @primary-color;
 			    border: none;
@@ -3073,12 +3349,12 @@ input.error, .errorCity {
 				 	p{
 					    color: #464646;
 					    .helvetica-regular;
-					    font-size: 16px;
+					    font-size: 1em;
 					    margin-bottom: 10px;
 					}
 					button {
-						letter-spacing: normal;
-						font-size: 14px;
+						.purple-btn;
+						font-size:0.875em !important;
 					}
 				}
 				.addr-dropdown{
@@ -3097,14 +3373,14 @@ input.error, .errorCity {
 					}
 				}
 				h1{
-					font-size: 16px;
+					font-size: 1em;
 					.helvetica-bold;
 				}
 				.search-blk{
 					width:100%;
 					input{
 						.helvetica-regular;
-						font-size:14px;
+						font-size:0.875em;
 						line-height:35px;
 						text-indent:10px;
 						color:#464646;
@@ -3141,10 +3417,10 @@ input.error, .errorCity {
 					a.create{
 						width:23%;
 						.in-block;
-						font-size:14px;
+						font-size:0.875em;
 						.helvetica-medium;
 						color:@primary-dark-color;
-						margin: 5px 0 0 20px;
+						margin: 5px 0 0 17px;
 						vertical-align: top;
 						.font-spacing;
 						svg{
@@ -3172,7 +3448,7 @@ input.error, .errorCity {
 					}
 					p{
 						.helvetica-regular;
-						font-size:14px;
+						font-size:0.875em;
 						line-height:25px;
 						color:@color26;
 						margin:0;
@@ -3180,7 +3456,7 @@ input.error, .errorCity {
 					input{
 						background-color:@color23;
 						.helvetica-regular;
-						font-size:16px;
+						font-size:1em;
 						line-height:35px;
 						color:@color26;
 						border:1px solid @color21;
@@ -3203,21 +3479,20 @@ input.error, .errorCity {
 					}
 					button{
 						.helvetica-bold;
-						font-size:16px;
+						font-size:1em;
 						.in-block;
 						width:19.3%;
 						color:@color0;
 						background-color:@gray-button;
 						.background-fade;
+						border:1px solid transparent;
 						&.save{
 							margin-right:1%;
-							background-color:@primary-color;
-							&:hover{
-								background-color:@primary-dark-color;
-							}
+							.purple-big;
 						}
 						&:hover{
 							background-color:@color1;
+							border:1px solid transparent;
 						}
 					}
 				}
@@ -3232,7 +3507,7 @@ input.error, .errorCity {
 			.modal-header{
 				h4{
 					.helvetica-bold;
-					font-size: 21px ;
+					font-size: 1.313em ;
 					color: @primary-dark-color;
 					margin:10px 0 0 10px;
 				}
@@ -3254,8 +3529,8 @@ input.error, .errorCity {
 							margin-bottom: 15px;
 							th{
 							padding: 0 0 0 15px;
-						    .helvetica-bold;
-						    font-size: 14px;
+						    .helvetica-regular;
+						    font-size: 0.875em;
 						    line-height: 48px;
 						    background:#fff;
 							}
@@ -3265,14 +3540,14 @@ input.error, .errorCity {
 								width:50%;
 								h4{
 									.helvetica-regular;
-									font-size:14px;
+									font-size:0.875em;
 									line-height:35px;
 									color:@color22;
 									margin:0;
 								}
 								p{
 									.helvetica-medium;
-									font-size:15px;
+									font-size:0.938em;
 									line-height:20px;
 									margin-bottom:0;
 								}
@@ -3301,39 +3576,41 @@ input.error, .errorCity {
 	.modal-dialog{
 		.modal-content{
 			.modal-body{
-			
+					padding:0px;
 					.recipient-details{
-						width:100%;
+						 width: 96%;
 						border:1px solid #ccc;
 						border-radius:4px;
 						.helvetica-regular;
 					  	height:300px;
 					  	overflow-y:auto;
-					  	margin-bottom: 50px;
+					    margin: 10px 2% 68px 2%;
 					.panel-group .panel{
 					 margin-bottom:10px !important;
 					}
 					.panel-heading{
 					    background: #f2f5f7;
-					    padding: 13px 0 25px 0;
+					    padding: 15px 0 30px 0;
 					     div{
-					     	font-size:12px;
+					     	font-size:1em;
 					     	.recipient-name{
-					     		    font-size: 12px;
+					     		    font-size:1em;
 								    overflow: hidden;
 								    white-space: nowrap;
 								    text-overflow: ellipsis;
-								    width: 30%;
+								    width:40%;
 								    display: inline-block;
-								    line-height: 6px;
-								    padding: 5px 0 0 0px;
-								    border-right: 1px solid #000;
+								    line-height:15px;
+								   	border-right: 1px solid #000;
 								    margin-right: 8px;
-									height:13px;
+									height:15px;
+									vertical-align:top;
 							}
 							.zip-val{
-							 font-size: 12px;
-							 line-height:0;
+							 font-size:1em;
+							vertical-align:top;
+							height:15px;
+							line-height:15px;
 							}
 					     }
 
@@ -3342,7 +3619,7 @@ input.error, .errorCity {
 							svg.close {
 								width: 15px;
 								height: 15px;
-								margin:-1px 0 0 8px;
+								margin:1px 0 0 8px;
 								float: left;
 								display: inline-block;
 								opacity:1;
@@ -3362,7 +3639,7 @@ input.error, .errorCity {
 									display: inline-block;
 									width: 15px;
 									height: 15px;
-									margin:-1px 0 0 8px;
+									margin:1px 0 0 8px;
 									float: left;
 								}
 								svg.close {
@@ -3376,7 +3653,7 @@ input.error, .errorCity {
 						    float: left;
 						    width:100%;
 						    padding: 5px 0px;
-						    font-size:16px;
+						    font-size:1em;
 						   
 						    background:#f2f5f7;
 						    .recipient-name{
@@ -3389,18 +3666,18 @@ input.error, .errorCity {
 							   } 
 						}
 					.recipient-amt{
-						font-size: 12px;
+						font-size: 0.750em;
 					    line-height: 25px;
 					    margin-top:10px;
 					    .helvetica-regular;
 					   .amt-val{
 					    	float:right;
-					    	padding-left:35px;
 					    	.helvetica-bold;
+					    	text-align:right;
 					    }
 					    span{
 					    	padding:0px;
-					    	font-size:12px;
+					    	font-size:1.167em;
 					    	.helvetica-regular;
 					    }
 					}
@@ -3411,7 +3688,7 @@ input.error, .errorCity {
 						margin-top:10px;
 					}
 					.total-content{
-						background: #cccccb;
+						background:#f5f5f5;
 					    float: left;
 					    width: 100%;
 					    margin-top: 10px;
@@ -3434,39 +3711,27 @@ input.error, .errorCity {
 						margin: 10px 0 3px 0;
 					    position:absolute;
 					    bottom:0px;
-					    width: 93%;
-					    font-size: 18px;
+					    width: 100%;
 					    background:#f5f5f5;
 					    padding:10px 0;
 					    .modify-order{
 					     		.helvetica-bold;
-		    					font-size: 14px;
+		    					font-size: 0.875em;
 		    					text-align: center;
 		    					transition: background-color 0.5s ease-out;
 		    					text-decoration: none;
-		    					color: #fff;
+		    					color:#8c58b5;
 		    					padding:7px 0 0 0;
 		    					width: 20%;
 		    					margin-left: 2%;
-								color:#000;
-								border-bottom: 1px solid #000;
+								
 								text-align:left;
 						}
 					    .cont-shop{
-					     text-align: center;
-					    float: right;
-					    padding:7px 0 7px 0;
-					    background-color: #a576ca;
-					    border: none;
-					    color: #ffffff;
-					    transition:background-color 0.5s ease-out;
-					    width: 26%;
-					    margin-right: 2%;
-					    .helvetica-bold;
-					    font-size:14px;
-					     &:hover{
-					        background-color: #8c58b5;
-					      }
+					    .purple-btn;
+					        float: right;
+					    text-align: center;
+					    margin-right: 10px;
 					    }
 					}
 			}
@@ -3488,7 +3753,7 @@ input.error, .errorCity {
 		cursor: pointer;
 		-webkit-transition: all 0.25s linear;
 		span{
-			  font-size: 8px;
+			  font-size: 0.500em;
 		      color:#d80c0c; 
 		      margin-left: 4px;
 		}
@@ -3628,6 +3893,8 @@ input.error, .errorCity {
 		  	 .assembled{
 		  	 	padding-left:5px;
 		  	 	vertical-align: top;
+		  	 	  .helvetica-bold;
+		  	 	  font-size:0.813em;
 		  	 }
 		  	 .courier1{
 			   	  vertical-align:top;
@@ -3682,7 +3949,7 @@ input.error, .errorCity {
 		}
 		
 		h5, .price,.courier,.faster-del{
-			font-size:13px;
+			font-size:0.813em;
 			.helvetica-regular;
 			color:#8b8e96;
 			margin:0 0 10px 0;
@@ -3692,9 +3959,10 @@ input.error, .errorCity {
 			width:50px;
 		}
 		.price{
-			margin-left:20px;
+			   margin: 0px 0 0 14px;
 			.helvetica-bold;
 			vertical-align: top;
+			line-height: 24px;
 		}
 		.courier,.faster-del{
 		  text-transform:capitalize;
@@ -3704,7 +3972,7 @@ input.error, .errorCity {
     		top: -9px;
 		}
 		.courier1{
-	   	    font-size: 14px;
+	   	    font-size: 0.875em;
 	   	    .helvetica-bold;
 		}
 	}
@@ -3714,7 +3982,7 @@ input.error, .errorCity {
     height: 28px;
     width: 28px;
     border: 1px solid #f1f1f1;
-    display: inline-block;
+    display: inline-block !important;
     margin-right: 12px;
 	input{
 		display:none;
@@ -3740,7 +4008,7 @@ input.error, .errorCity {
 		}
 		h5, p{
 			margin:0;
-			font-size:13px;
+			font-size:0.813em;
 		}
 	}
 	&.disable-color{
@@ -3774,7 +4042,7 @@ input.error, .errorCity {
 			}
 			.page_header_back{
 					.helvetica-regular;
-				    font-size: 14px;
+				    font-size: 0.875em;
 				    color: #54565d;
 				    margin: 10px 0;
 				    a{
@@ -3806,11 +4074,11 @@ input.error, .errorCity {
 		    border: 0;
 		    vertical-align: middle;
 		    .helvetica-regular;
-		    font-size: 16px;
+		    font-size: 1em;
 		   
 		    margin: 10px 0px;
 		    h1{
-		     font-size:17px;
+		     font-size:1.063em;
 		     .helvetica-bold;
    			 color: #8c58b5;
    			 margin:10px 0px;
@@ -3827,7 +4095,7 @@ input.error, .errorCity {
 		.content-body-block{
 		       text-align: justify;
 			     .helvetica-regular;
-			     font-size:13px;
+			     font-size:0.813em;
 			     padding-right:14px;
 			     table{
 			     	ul{
@@ -3882,7 +4150,7 @@ input.error, .errorCity {
 								.helvetica-bold;
                                 color: @color1;
                                 margin-bottom: 0px;
-								font-size:13px;
+								font-size:0.813em;
                             }
 							.radio-btn-container{
 								width:50%;
@@ -3904,7 +4172,7 @@ input.error, .errorCity {
 									padding: 4px 0 0 0;							}
                             }
                             .note{
-                              font-size:11px;
+                              font-size:0.75em;
 							  .helvetica-regular;
                                 color: #666666;
                                 margin-top: 7px;
@@ -3991,7 +4259,7 @@ input.error, .errorCity {
                                             background-position: center;
                                         }
                                         &+label{
-                                        	font-size: 13px;
+                                        	font-size: 0.813em;
 											.helvetica-regular;
 										    display: inline-block;
 										    width: initial;
@@ -4002,7 +4270,7 @@ input.error, .errorCity {
                                         width: 100%;
                                         resize: none;
                                         padding: 5px 10px;
-                                        font-size:12px;
+                                        font-size:0.750em;
 										.helvetica-regular;
                                         line-height: initial;
                                         outline: 0;
@@ -4012,15 +4280,39 @@ input.error, .errorCity {
                                     }
                         }
 		.faster-location{
+			.check-avial-cont{
+				    background: rgb(247, 247, 247);
+    float: left;
+    width: 100%;
+    text-align: center;
+    margin-top: 10px;
+    padding: 20px 0px;
+			}
 			h5{
 				.helvetica-bold;
-				color: @color1;
 				margin-bottom: 10px;
-				font-size:13px;
+				font-size:0.813em;
+				 color:#a77bca !important;
+			}
+			.check-header{
+				margin-top: 10px !important;
+			    float: left;
+			    width: 100%;
+
+				&:after{
+					content:"+";
+					font-size: 15px;
+    				padding-left: 7px;
+				}
+				&.detailed:after{
+					content:"-";
+					font-size: 15px;
+    				padding-left: 7px;
+				}
 			}
 			input{
 				border: 1px solid #EAEAEA;
-				font-size: 11px;
+				font-size: 0.688em;
 				line-height: 23px;
 				.helvetica-regular;
 				height:29px;
@@ -4038,14 +4330,14 @@ input.error, .errorCity {
 					box-shadow:none;
 					p{
 						line-height:29px;
-						font-size:11px;
+						font-size:0.688em;
 						color:@color1;
 						cursor:pointer;
 						margin-bottom:0;
 						i {
 							color:@primary-dark-color;
 							float:right;
-							font-size:12px;
+							font-size:0.750em;
 							padding: 9px 0;
 							.transition-common(all 0.5s ease);
 							.rotate(0deg);
@@ -4061,7 +4353,7 @@ input.error, .errorCity {
 							border-bottom:1px solid @color21;
 							border-radius:0;
 							a{
-								font-size:13px;
+								font-size:0.813em;
 								padding: 5px 10px;
 								.helvetica-regular;
 								color:@color1;
@@ -4091,10 +4383,11 @@ input.error, .errorCity {
 				width:71%;
 				.in-block;
 				p{
-					font-size: 12px;
+					font-size:0.875em;
 					.helvetica-medium;
 					margin-bottom: 5px;
 					color: #8b8e96;
+					text-align:left;
 				}
 				.input-group{
 					width:100%;
@@ -4104,12 +4397,24 @@ input.error, .errorCity {
 						width: 100%;
 						border: 1px solid #EAEAEA;
 						.helvetica-regular;
-						font-size: 11px;
+						font-size:0.875em;
 						height: 29px;
 						background: #fff;
 						box-shadow:none;
 					    border-radius: 0px;
 					}
+				}
+				.delivery-success {
+					font-size: 0.750em;
+					.helvetica-medium;
+					margin: 5px 0;
+					color:#8dbb01;
+				}
+				.delivery-failure {
+					color: #ff0000;
+					font-size: 0.750em;
+					.helvetica-medium;
+					margin: 5px 0;
 				}
 			}
 			.uib-datepicker-popup-wrap ul{
@@ -4129,18 +4434,7 @@ input.error, .errorCity {
 					}
 				}
 			}
-			.delivery-success {
-				color: #008000;
-				font-size: 12px;
-				.helvetica-medium;
-				margin: 5px 0;
-			}
-			.delivery-failure {
-				color: #ff0000;
-				font-size: 12px;
-				.helvetica-medium;
-				margin: 5px 0;
-			}
+
 		}
 .modal-pop-up.assembled-popup{
 	modal-body{
@@ -4181,13 +4475,13 @@ input.error, .errorCity {
 				 float: left;
 				padding:5px 10px;
 				h2{
-					font-size:16px;
+					font-size:1em;
 					.helvetica-bold;
 					margin:3px 0;
 					color:@color1;
 				}
 				h3, h5, h4{
-					font-size:14px;
+					font-size:0.875em;
 					.helvetica-bold;
 					color:@color1;
 					margin:5px 0;
@@ -4206,14 +4500,7 @@ input.error, .errorCity {
 		}
 	}
 	button.done{
-		font-size:12px;
-		background-color:@primary-color;
-		padding:5px 10px;
-		color:@color0;
-		margin-top: 11px;
-		&:hover{
-			background-color:@primary-dark-color;
-		}
+		.purple-big;
 	}
 }
 .modal-pop-up.payment-method{
@@ -4230,7 +4517,7 @@ input.error, .errorCity {
 			margin:7px 0 8px 0;
 		}
 		h3{
-			font-size:15px;
+			font-size:0.938em;
 			.helvetica-bold;
 			color:@primary-dark-color;
 			margin:0 0 5px 0;
@@ -4251,13 +4538,14 @@ input.error, .errorCity {
 				th{
 					padding: 0 0 0 15px;
 					.helvetica-bold;
-					font-size: 14px;		
+					font-size: 0.875em;		
 					line-height: 48px;
+					font-weight:normal;
 					}
 				td{
 					padding: 15px 10px 15px 15px;
 					vertical-align: middle;
-					font-size: 15px;
+					font-size: 0.938em;
 					.helvetica-regular;
 					img{
 						max-width:100%;
@@ -4291,7 +4579,7 @@ input.error, .errorCity {
 		padding: 35px;
 		.pdp-right {
 			h3 {
-				font-size: 14px;
+				font-size: 0.875em;
 			    .helvetica-bold;
 			    color: #54565d;
 			    margin: 10px 0;
@@ -4307,7 +4595,7 @@ input.error, .errorCity {
 			}
 			.price {
 				h3 {
-					font-size: 16px;
+					font-size: 1em;
 				}
 			}
 		}
@@ -4316,12 +4604,12 @@ input.error, .errorCity {
 			margin-top: 15px;
 			.pdp-desc-title {
 				.helvetica-bold;
-				font-size: 14px;
+				font-size: 0.875em;
 				color: #8c58b5;
 			}
 			.pdp-desc-cont {
 				.helvetica-regular;
-				font-size: 14px;
+				font-size: 0.875em;
 			}
 		}
 	}
@@ -4336,6 +4624,8 @@ input.error, .errorCity {
 			background-color: #fff;
 			position: relative;
 			margin-bottom: 20px;
+			float:left;
+			width:100%;
 			.event-img {
 				padding: 0;
 			}
@@ -4373,7 +4663,7 @@ input.error, .errorCity {
 					float: right;
 					margin-top: 10px;
 					button {
-						font-size: 12px;
+						font-size: 0.750em;
 						line-height: 24px;
 						letter-spacing: normal;
 					}
@@ -4385,8 +4675,8 @@ input.error, .errorCity {
 					letter-spacing: normal;
 					font-weight: bold;
 					display: inline-block;
-					font-size: 20px;
-					margin: 0 0 27px 0
+					font-size: 1.250em;
+					margin: 0 0 15px 0
 				}
 				.price {
 					.helvetica-medium;
@@ -4397,14 +4687,13 @@ input.error, .errorCity {
 					margin-top: 10px;
 				}
 				.abs-bottom {
-					position: absolute;
-					bottom: 0;
-    				width: 63%;
+					    position: relative;
+    					bottom: 0;
     				.time {
     					display: block;
     					.day {
     						color: #afafaf;
-    						font-size: 10px;
+    						font-size: 0.625em;
     						.helvetica-regular;
 						    text-transform: uppercase;
     					}
@@ -4421,7 +4710,7 @@ input.error, .errorCity {
     						.etime {
 							    text-transform: uppercase;
 								color: #333;
-								font-size: 13px;
+								font-size: 0.813em;
 								.helvetica-regular;
     						}
     					}
@@ -4429,10 +4718,19 @@ input.error, .errorCity {
     				.btn-grp {
     					position: absolute;
     					right: 0;
-    					bottom: 10px;
+    					bottom: 0px;
+    					margin-top:0;
     				}
 				}
 			}
 		}
+	}
+}
+.save-later{
+	.save{
+		.purple-big;
+		padding:0 15px !important;
+		margin-top:0px !important;
+		font-size: 0.875em !important;
 	}
 }

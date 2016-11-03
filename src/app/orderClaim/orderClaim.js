@@ -97,11 +97,30 @@ function OrderClaimController($scope, $stateParams, OrderCloud, CreditCardServic
 			}
 		});
 	});
+	vm.orderclaimCheck=[];
 	vm.selectorderclaims = function(orderSummary){
-		if(orderSummary.checkclaim==true){
+		if(orderSummary.checkclaim==true && orderSummary.selectresolution!="" && orderSummary.selectcode!="" && orderSummary.selectresolution && orderSummary.selectcode){
 			vm.orderclaimarr1.push(orderSummary);
 			vm.orderclaimarr=_.uniq(vm.orderclaimarr1);
 			console.log(vm.orderclaimarr);
+			vm.orderclaimCheck=[];
+			if(vm.orderclaimarr){
+				_.filter(vm.orderclaimarr, function (row, key) {
+					if((row.checkclaim==true && row.selectresolution!="" && row.selectcode!="" && row.selectresolution && row.selectcode)){
+						vm.orderclaimCheck.push(row);
+					}
+				})
+			}
+		}
+		else{
+			vm.orderclaimCheck=[];
+			if(vm.orderclaimarr){
+				_.filter(vm.orderclaimarr, function (row, key) {
+					if((row.checkclaim==true && row.selectresolution!="" && row.selectcode!="" && row.selectresolution && row.selectcode)){
+						vm.orderclaimCheck.push(row);
+					}
+				})
+			}
 		}
 	}
 
