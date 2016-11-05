@@ -177,7 +177,7 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
     };
     vm.submitOrder = function(card, billingAddress){
 		vm.order.Total = angular.copy(vm.orderTotal);
-		if(vm.addCard && vm.paymentOption != 'PO'){
+		/*if(vm.addCard && vm.paymentOption != 'PO'){
 			vm.CheckOutLoader = checkoutService.AddCreditCard(card, billingAddress, vm).then(function(res1){
 				if(res1!="0"){
 					vm.CheckOutLoader = checkoutService.SpendingAccountsRedeemtion(vm.orderDtls.SpendingAccounts, angular.copy(GetCstDateTime.datetime), vm).then(function(res2){
@@ -253,8 +253,8 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 					vm.Shipments();
 				});
 			}
-		}
-		/*vm.CheckOutLoader = OrderCloud.Orders.Submit(vm.order.ID).then(function(){
+		}*/
+		vm.CheckOutLoader = OrderCloud.Orders.Submit(vm.order.ID).then(function(){
 			vm.CheckOutLoader = TaxService.CollectTax(vm.order.ID).then(function(){
 				$state.go('orderConfirmation' , {userID: vm.order.FromUserID ,ID: vm.orderID});
 				var obj = {"xp":{}};
@@ -271,7 +271,24 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 				vm.buyerList(vm.order.ID);
 			});
 			vm.Shipments();
-		});*/
+		}).catch(function(err){
+			vm.CheckOutLoader = TaxService.CollectTax(vm.order.ID).then(function(){
+				$state.go('orderConfirmation' , {userID: vm.order.FromUserID ,ID: vm.orderID});
+				var obj = {"xp":{}};
+				if(vm.paymentOption == 'PO'){
+					obj.xp.PO = {};
+					obj.xp.PO.PONumber = vm.CurrentUser.xp.PO.PONumber;
+				}	
+				obj.xp.PrintStatus=false;
+				obj.xp.PaymentStatus="Completed";
+				if(vm.order.Total > 0)
+					vm.orderDtls.SpendingAccounts['CreditCard'] = {"Amount": vm.order.Total};
+				obj.xp.SpendingAccounts = vm.orderDtls.SpendingAccounts;
+				OrderCloud.Orders.Patch(vm.order.ID, obj);
+				vm.buyerList(vm.order.ID);
+			});
+			vm.Shipments();
+		});
 		//Non-Wired Subtotal & tax break up
 		TaxService.GetTax(vm.order.ID).then(function(res){
 			var tempArr = [];
@@ -326,14 +343,34 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 			}, true);
 			ShipmentsPromise.push(OrderCloud.Shipments.Create({"Cost":TotalCost, "Items":items, "xp":Status}));
 		}
+		var d = $q.defer();
 		vm.CheckOutLoader = $q.all(ShipmentsPromise).then(function(results){
 			console.log("Shipments Created....");
+			d.resolve(results);
+			vm.FTService(vm.order, results);
 		});
+		return d.promise;
 	};
-	vm.FTService = function(order){
-		OrderCloud.Orders.Patch(order.ID, {"xp":{"OrderDestination": "TFE", "Status":"OnHold"}}).then(function(res){
-			$http.post("https://Four51TRIAL104401.jitterbit.net/Bachmans_Dev/v1/Teleflora", res).success(function(res1){
+	vm.FTService = function(order, shipments){
+		OrderCloud.As().Orders.Patch(order.ID, {"xp":{"OrderDestination": "TFE", "Status":"OnHold"}}).then(function(res){
+			TFEData.RouteParams.orderID = order.ID;
+			delete shipments[0].xp;
+			TFEData.Response.Body = _.extend(shipments[0],res);
+			$http.post("https://Four51TRIAL104401.jitterbit.net/Bachmans_Dev/v1/Teleflora", TFEData).success(function(res1){
 				console.log("Success"+JSON.stringify(res1));
+			}).error(function(err){
+				console.log("----->"+err);
+			});
+		}).catch(function(err){
+			OrderCloud.As().Orders.Get(order.ID).then(function(res){
+				TFEData.RouteParams.orderID = order.ID;
+				delete shipments[0].xp;
+				TFEData.Response.Body = _.extend(res, shipments[0]);
+				$http.post("https://Four51TRIAL104401.jitterbit.net/Bachmans_Dev/v1/Teleflora", TFEData).success(function(res1){
+					console.log("Success"+JSON.stringify(res1));
+				}).error(function(err){
+					console.log("----->"+err);
+				});
 			});
 		});	
 	};
@@ -1574,3 +1611,224 @@ function checkoutService(CreditCardService, $q, OrderCloud, $state, TaxService, 
 	}
 	return service;
 }
+
+var TFEData = {
+  "Route": "v1/buyers/{buyerID}/shipments",
+  "RouteParams": {
+    "buyerID": "Bachmans",
+    "orderID": "54321"
+  },
+  "Verb": "POST",
+  "Date": "2016-06-28T20:29:08.5416472Z",
+  "LogID": "a38f85f1-7914-491e-b878-c1d40aaa73b0",
+  "UserToken": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c3IiOiJraGFzaW0xMjNAZ21haWwuY29tIiwiY2lkIjoiODgzNmJlOGQtNzEwYS00ZDJkLTk4YmYtZWRiZTcyMjdlM2JiIiwidXNydHlwZSI6ImJ1eWVyIiwicm9sZSI6IkZ1bGxBY2Nlc3MiLCJpc3MiOiJodHRwczovL2F1dGgub3JkZXJjbG91ZC5pbyIsImF1ZCI6Imh0dHBzOi8vYXBpLm9yZGVyY2xvdWQuaW8iLCJleHAiOjE0NzA3OTIzNzgsIm5iZiI6MTQ3MDc1NjM3OH0.7BKa8fs6l4qg0-0tZ4giDNsUy1lWg0qI7iPKCZbGVdg",
+  "Request": {
+    "Body": {
+  "ID": "555555",
+  "Type": "Standard",
+  "FromUserID": "rb10ihRZ-UauG_nUzTlk-A",
+  "FromUserFirstName": "Default User",
+  "FromUserLastName": "Default User",
+  "BillingAddressID": null,
+  "BillingAddress": null,
+  "ShippingAddressID": null,
+  "Comments": "Bachmans test order",
+  "LineItemCount": 1,
+  "Status": "Open",
+  "DateCreated": "2016-09-09T14:09:41.08+00:00",
+  "DateSubmitted": "2016-09-09T14:16:24.77+00:00",
+  "DateApproved": null,
+  "DateDeclined": null,
+  "DateCanceled": null,
+  "DateCompleted": null,
+  "Subtotal": 65,
+  "ShippingCost": 0,
+  "TaxCost": 0,
+  "PromotionDiscount": 0,
+  "Total": 65,
+  "IsSubmitted": true,
+  "xp": {
+    "OrderSource": "…",
+    "OrderDestination": "…",
+    "CSRID": "…",
+    "PaymentType": "…",
+    "History": "…",
+    "Notes": [
+      {
+        "Dates": "…",
+        "Description": "…"
+      },
+      {
+        "Dates": "…",
+        "Description": "…"
+      }
+    ],
+    "ParentOrderID": "…",
+    "PrintStatus": "…",
+    "SavedOrder": [
+      {
+        "Name": "…",
+        "Flag": "…"
+      },
+      {
+        "Name": "…",
+        "Flag": "…"
+      }
+    ],
+    "Status": "…",
+    "Refunds": [
+      {
+        "ID": "…",
+        "LineItem": "…",
+        "LineItemLineItemID": "…",
+        "LineItemReasonCode": "…",
+        "LineItemClaimResolution": "…",
+        "LineItemReason": "…",
+        "LineItemAmount": "…",
+        "LineItemDate": "…"
+      },
+      {
+        "ID": "…",
+        "LineItem": "…",
+        "LineItemLineItemID": "…",
+        "LineItemReasonCode": "…",
+        "LineItemClaimResolution": "…",
+        "LineItemReason": "…",
+        "LineItemAmount": "…",
+        "LineItemDate": "…"
+      }
+    ],
+    "IsEvent": "…",
+    "LastModified": "…",
+    "ShipCount": "…",
+    "TotalCost": "…",
+    "WiredServices": {
+      "TFE": {
+        "SendingFlorist": {
+          "Name": "",
+          "City": "",
+          "State": "",
+          "Phone": "",
+          "ChangeRequest": "",
+          "NewDeliveryDate": "",
+          "Reason": "",
+          "StaticMessage": ""
+        },
+        "SequenceNumber": 0,
+        "TransactionId": "",
+        "Message": [
+          "",
+          ""
+        ],
+        "ConfirmationTransactionId": "",
+        "FillingFlorist": {
+          "VSC": 0,
+          "ChangeRequest": "",
+          "NewDeliveryDate": "",
+          "Reason": "",
+          "StaticMessage1": "The shop who received your order is requesting",
+          "StaticMessage2": "to change the Delivery Date from",
+          "StaticMessage3": "SAT, NOV 12, 2016 to FRI, NOV 25, 2016.",
+          "StaticMessage4": "asdasd",
+          "ETAMessage": "Please Confirm or Deny this request within 4 hours."
+        },
+        "Refusal": {
+          "Message": [
+            ""
+          ],
+          "SuggestedFloristVSC": 0
+        },
+        "Cancel": {
+          "Message": [
+            ""
+          ]
+        },
+        "Inquiry": {
+          "Message": [
+            ""
+          ]
+        },
+        "DeliveryConfirmation": "",
+        "DateDelivered": "",
+        "TimeDelivered": "",
+        "SignedBy": ""
+      },
+      "FTD": {
+        "SendingFlorist": {
+          "Name": "",
+          "City": "",
+          "State": "",
+          "Phone": "",
+          "ChangeRequest": "",
+          "NewDeliveryDate": "",
+          "Reason": "",
+          "StaticMessage": ""
+        },
+        "SequenceNumber": 0,
+        "TransactionId": "",
+        "Message": [
+          "",
+          ""
+        ],
+        "ConfirmationTransactionId": "",
+        "FillingFlorist": {
+          "VSC": 0,
+          "ChangeRequest": "",
+          "NewDeliveryDate": "",
+          "Reason": "",
+          "StaticMessage": "",
+          "ETAMessage": ""
+        },
+        "Refusal": {
+          "Message": [
+            ""
+          ],
+          "SuggestedFloristVSC": 0
+        },
+        "Cancel": {
+          "Message": [
+            ""
+          ]
+        },
+        "Inquiry": {
+          "Message": [
+            ""
+          ]
+        },
+        "DeliveryConfirmation": "",
+        "DateDelivered": "",
+        "TimeDelivered": "",
+        "SignedBy": ""
+      }
+    }
+  },
+      "Shipper": "LocalDelivery",
+      "DateShipped": "06/28/2016",
+      "TrackingNumber": "u8df8y7re78ref7h8gfreg87gfred7g",
+      "Cost": 56.75,
+      "Items": [
+			{
+      "OrderID": "54321",
+      "LineItemID": "1001",
+      "QuantityShipped": 1
+    },
+    {
+      "OrderID": "54321",
+      "LineItemID": "1003",
+      "QuantityShipped": 4
+    },
+    {
+      "OrderID": "54321",
+      "LineItemID": "1005",
+      "QuantityShipped": 2
+    }
+      ]
+    },
+    "Headers": "Origin: https://testdevcenter.ordercloud.io\r\nConsoleLog: true\r\nConnection: keep-alive\r\nContent-Length: 279\r\nContent-Type: application/json;charset=UTF-8\r\nAccept: application/json, text/plain, */*\r\nAccept-Encoding: gzip, deflate, br\r\nAccept-Language: en-US,en;q=0.8\r\ntokenClaims(from authorization): usr: 39a0cb4a-6767-4e48-ba55-74dc41b4c292,cid: 4e217d27-48c4-4f3c-aed3-41873af1d216,imp: 1061,usrtype: admin,http://schemas.microsoft.com/ws/2008/06/identity/claims/role: FullAccess,iss: https://testauth.ordercloud.io,aud: https://testapi.ordercloud.io,exp: 1467174523,nbf: 1467145723\r\nHost: testapi.ordercloud.io\r\nReferer: https://testdevcenter.ordercloud.io/console\r\nUser-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36\r\n"
+  },
+  "Response": {
+    "Body": {
+    },
+    "Headers": "Content-Length: 218\r\nAccess-Control-Allow-Origin: *\r\nLocation: https://testapi.ordercloud.io/v1/buyers/12345/1235\r\nContent-Type: application/json; charset=utf-8\r\nX-oc-logid: a38f85f1-7914-491e-b878-c1d40aaa73b0\r\nContent-Length: 218\r\n"
+  }
+};
