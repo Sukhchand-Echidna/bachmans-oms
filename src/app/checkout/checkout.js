@@ -354,6 +354,7 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 	vm.FTService = function(order, shipments){
 		OrderCloud.As().Orders.Patch(order.ID, {"xp":{"OrderDestination": "TFE", "Status":"OnHold"}}).then(function(res){
 			TFEData.RouteParams.orderID = order.ID;
+			TFEData.UserToken = $cookieStore.get('OMS.Admintoken');
 			delete shipments[0].xp;
 			TFEData.Response.Body = _.extend(shipments[0],res);
 			$http.post("https://Four51TRIAL104401.jitterbit.net/Bachmans_Dev/v1/Teleflora", TFEData).success(function(res1){
@@ -364,6 +365,7 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 		}).catch(function(err){
 			OrderCloud.As().Orders.Get(order.ID).then(function(res){
 				TFEData.RouteParams.orderID = order.ID;
+				TFEData.UserToken = $cookieStore.get('OMS.Admintoken');
 				delete shipments[0].xp;
 				TFEData.Response.Body = _.extend(res, shipments[0]);
 				$http.post("https://Four51TRIAL104401.jitterbit.net/Bachmans_Dev/v1/Teleflora", TFEData).success(function(res1){
