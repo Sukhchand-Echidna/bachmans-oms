@@ -235,8 +235,10 @@ function ordercloudSearchCtrl($state, $timeout, $scope, TrackSearch, OrderCloud,
 		else
 			$scope.controlleras.list="";
 	}
+	var filters;
 	if($scope.servicename=='products' && $scope.attribute=='buildorder-search'){
 		var noOfHits=50;
+		filters = "OmsVisible = 1";
 	}
 	else{
 		var noOfHits=1000;
@@ -280,7 +282,7 @@ function ordercloudSearchCtrl($state, $timeout, $scope, TrackSearch, OrderCloud,
 				searching = $timeout(function() {
 					n == '' ? n = null : angular.noop();
 					TrackSearch.SetTerm(n);
-			$scope.index.search($scope.search.query, {hitsPerPage: noOfHits})
+			$scope.index.search($scope.search.query, {hitsPerPage: noOfHits,  filters:filters})
 			.then(function searchSuccess(content) {
 				console.log(content);
 				// $scope.SearchResults= function(seqId){
@@ -326,6 +328,9 @@ function ordercloudSearchCtrl($state, $timeout, $scope, TrackSearch, OrderCloud,
 							var hitsPerPage=50;
 							var totalHits=content.nbPages*hitsPerPage;
 							$scope.controlleras.buildorderSearch=[content.hits, totalHits];
+							if($scope.controlleras.showPDP){
+								$scope.controlleras.showPDP=false;
+							}
 						}
 					}
 				}
@@ -336,13 +341,13 @@ function ordercloudSearchCtrl($state, $timeout, $scope, TrackSearch, OrderCloud,
 						// })
 					if($scope.search && $scope.search.query){
 						if($scope.search.query.length>2){
-							$scope.controlleras.searchList=content.hits;
+							$scope.controlleras.searchList=[content.hits, content.nbHits];
 						}
 					}
 				}
 				else if($scope.search && $scope.search.query){
 					if($scope.search.query.length>2){
-						$scope.controlleras.list = content.hits;
+						$scope.controlleras.list = [content.hits, content.nbHits];
 					}
 				}
 				console.log("dddddd", $scope.controlleras.list);

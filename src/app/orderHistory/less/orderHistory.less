@@ -30,7 +30,9 @@
             z-index: 1;
             top: 108px;
             border-radius: 2px;
-            padding-left: 5px;
+            padding: 3px 0 3px 10px;
+            .helvetica-regular;
+            font-size:0.875em;
         }
         .order-grid{
             box-sizing: border-box;
@@ -58,12 +60,30 @@
                         background-color:transparent;
                     }
                 }
+                .ui-grid-canvas .ui-grid-row .ui-grid-cell:nth-last-child(2){
+                    background-color:#fff;
+                    border-right:1px solid #ccc;
+                    .background-fade;
+                    .data_cell{
+                        color:#8c58b5;
+                    }
+                    &:hover{
+                        background-color:#7a43a3;
+                        button{
+                            color:@color0;
+                        }
+                    }
+                    button{
+                        background-color:transparent;
+                    }
+                }
                 .ui-grid-canvas .ui-grid-row .ui-grid-cell:first-child {
                     .data_cell{
                         text-decoration: underline;
                         text-decoration-color:@primary-dark-color;
                         text-overflow: ellipsis;
                         overflow: hidden;
+                        white-space:nowrap;
                     }
                     &:hover .data_cell{
                         color:@primary-dark-color;

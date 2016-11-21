@@ -2,16 +2,26 @@
 <div class="container-fluid orderConfirmation-Wrap">
 	<div class="col-lg-12 col-md-12 orderConfirm" ng-class="{orderConfirm2: orderConfirmation.ShowStorePrinters}">
 		<p class="orderConfirm-title">Order Successfully Placed</p>
-		<p class="orderConfirm-ID">Order Confirmation #: <span> {{orderConfirmation.order.ID}}</span></p>
+		<div class="orderConfirm-ID">
+			<p class="col-xs-5 col-sm-5 col-md-5 col-lg-5">Order Confirmation #: </p>
+			<p class="col-xs-7 col-sm-7 col-md-7 col-lg-7 order-id"> {{orderConfirmation.order.ID}}</p>
+		</div>
+		<p class="refundmoney orderConfirm-ID" ng-if="orderConfirmation.editsubmitorder">Amount to be refunded to the customer: {{orderConfirmation.editorderamount | currency}}. </p>
 		<div class="orderConfirm-mailContent">
-			<p class="orderConfirm-mail">Your order details has been sent to : <span>{{orderConfirmation.order.email}}</span></p>
-			<p class="orderConfirm-sendToDiff">Send to a Different Email Address : <input type="text" name="sendTo"></span></p>
+			<div class="orderConfirm-mail col-xs-12 col-sm-12 col-md-12 col-lg-12">
+			<p class="col-xs-5 col-sm-5 col-md-5 col-lg-5">Your Order Details Has Been Sent To :</p> 
+			<p class="col-xs-7 col-sm-7 col-md-7 col-lg-7 email-val">{{orderConfirmation.order.email}}</p>
+			</div>
+			<div class="orderConfirm-sendToDiff">
+			<p class="col-xs-5 col-sm-5 col-md-5 col-lg-5">Send To A Different Email Address : </p>
+			<p class="col-xs-7 col-sm-7 col-md-7 col-lg-7 order-input"><input type="text" name="sendTo"></p>
+			</div>
 		</div>
 		<div class="orderConfirm-Btn">
 			<button class="sendBtn" value="Send">Send</button>
 		</div> 
 		<div class="orderConfirm-Btn print-order" ng-if="!orderConfirmation.ShowStorePrinters" ng-click="orderConfirmation.ShowStorePrinters= !orderConfirmation.ShowStorePrinters">
-			<a>Print Order</a>
+			<button>Print Order</buttson>
 		</div>
 		<div ng-show="orderConfirmation.ShowStorePrinters">
 		<div class="print-order-header">Print Order</div>
@@ -30,16 +40,16 @@
 				</div>
 				<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 store-options">
 					<label class="radio-inline radio-common">
-					<input type="radio" id="Store" name="Store" ng-model="orderConfirmation.Store" value="otherStore"/>
-					<label for="Store">Other Store</label>
+					<input type="radio" id="otherStore" name="Store" ng-model="orderConfirmation.Store" value="otherStore"/>
+					<label for="otherStore">Other Store</label>
 					<div class="radio"></div>
 					</label>
 				</div>
 			</div>
 			</div>
 			<div ng-if="orderConfirmation.Store!='thisStore'" class="order-confirmation">
-				<label class="col-xs-4 col-sm-4 col-md-4 col-lg-4">Select from other Stores</label>
-				<div uib-dropdown class="form-control col-xs-6 col-sm-6 col-md-6 col-lg-6" id="selectStore">
+				<label class="col-xs-5 col-sm-5 col-md-5 col-lg-5">Select from other Stores</label>
+				<div uib-dropdown class="form-control col-xs-7 col-sm-7 col-md-7 col-lg-7" id="selectStore">
 					<div id="sort-dropdown" uib-dropdown-toggle>
 					<p class="sort-active-show" ng-init="orderConfirmation.SelectStore = 'Select Store'">{{orderConfirmation.SelectStore}}</p></div>
 					<ul class="dropdown-menu" uib-dropdown-menu aria-labelledby="sort-dropdown">

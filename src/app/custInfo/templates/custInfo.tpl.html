@@ -1,6 +1,6 @@
 <div class="container-fluid customer-info">
 	<div class="cust-info-container row">
-		<div class="col-sm-12 col-xs-12 col-md-12 col-lg-12 back-common">
+		<div class="col-sm-12 col-xs-12 col-md-12 col-lg-12 back">
 			<a href="javascript: window.history.go(-1)">
 			<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 					viewBox="0 0 14 21" style="enable-background:new 0 0 14 21;" xml:space="preserve">
@@ -15,15 +15,15 @@
 		</div>
 		<div class="col-sm-6 col-xs-6 col-md-6 col-lg-6">
 			<div class="col-sm-12 col-xs-12 col-md-12 col-lg-12" ng-init="readStatus=true">
-				<div ng-show="custInfo.list.userGroup[0].ID=='StoreFront' || custInfo.list.userGroup[0].ID=='Employee'">
+				<!-- <div ng-show="custInfo.list.userGroup[0].ID=='StoreFront' || custInfo.list.userGroup[0].ID=='Employee'">
 					<h1>PERSONAL INFORMATION <button ng-click="custInfo.editAddress(custInfo.list.user.Phone);" ng-show="!isEditing" class="edit">Edit</button></h1>
-				</div>
-				<div ng-show="custInfo.list.userGroup[0].ID!='StoreFront' && custInfo.list.userGroup[0].ID!='Employee'">
-					<h1>CORPORATE ACCOUNT INFORMATION <button ng-click="custInfo.editAddress(custInfo.list.user.Phone);" ng-show="!isEditing" class="edit">Edit</button></h1>
+				</div> -->
+				<div>
+					<h1>CUSTOMER ACCOUNT INFORMATION <button ng-click="custInfo.editAddress(custInfo.list.user.Phone);" ng-show="!isEditing" class="edit">Edit</button></h1>
 				</div>
 				<form name="CustEditForm" ng-submit="custInfo.Submit(CustEditForm)" novalidate>
 					<div ng-show="!isEditing">
-						<p ng-show="custInfo.list.userGroup[0].ID=='Employee'" class="employe">Bachmans's Employee : Yes</p>
+						<p ng-show="custInfo.list.userGroup[0].Name=='Employee'" class="employe">Bachmans's Employee : Yes</p>
 						<div class="info-blk form-group col-md-12 cust-form">
 							<p class="col-md-3 cust-del">Email Address:</p>
 						
@@ -31,7 +31,11 @@
 							<!-- <input ng-show="isEditing" type="email" class="form-control col-md-6" ng-model="custInfo.list.user.Email" placeholder="email"> -->
 							
 						</div>
-						<p class="cust-top col-md-12" ng-if="custInfo.list.userGroup.length>0">Primary Account Holder</p>
+						<p class="cust-top col-md-12 acc-holder" ng-if="custInfo.list.userGroup.length>0">Primary Account Holder</p>
+						<div class="info-blk form-group col-md-12" ng-if="custInfo.list.defaultAddr[0].xp.NickName">
+							<p class="col-md-3 cust-del">Nickname:</p>
+							<span class="col-md-6">{{custInfo.list.defaultAddr[0].xp.NickName}}</span>
+						</div>
 						<div class="info-blk form-group col-md-12">
 							<p class="col-md-3 cust-del">First Name:</p>
 							<span class="col-md-6">{{custInfo.list.user.FirstName}}</span>
@@ -56,14 +60,14 @@
 										<input type="text" ng-show="isEditing" ng-model="custInfo.list.defaultAddr[0].LastName" placeholder="LastName"> -->
 									</div>
 									<div>
-									<span>{{custInfo.list.defaultAddr[0].Street1}} {{custInfo.list.defaultAddr[0].Street2}} {{custInfo.list.defaultAddr[0].City}}</span>
+									<span>{{custInfo.list.defaultAddr[0].Street1}} {{custInfo.list.defaultAddr[0].Street2}}</span>
 									</div>
 								<!-- 	<input type="text" ng-show="isEditing" ng-model="custInfo.list.defaultAddr[0].Street1" placeholder="Street1" ng-blur="custInfo.getLocation()" required>
 									<input type="text" ng-show="isEditing" ng-model="custInfo.list.defaultAddr[0].Street2" placeholder="Street2">
 									<input type="text" ng-show="isEditing" ng-model="custInfo.list.defaultAddr[0].City" placeholder="City" ng-if="custInfo.list.defaultAddr[0].MultipleCities.length <= 1 || !custInfo.list.defaultAddr[0].MultipleCities" />
 									 -->
 									<div>
-										<span>{{custInfo.list.defaultAddr[0].State}} {{custInfo.list.defaultAddr[0].Country}} {{custInfo.list.defaultAddr[0].Zip}}</span>
+										<span>{{custInfo.list.defaultAddr[0].City}}, {{custInfo.list.defaultAddr[0].State}}, {{custInfo.list.defaultAddr[0].Country}}, {{custInfo.list.defaultAddr[0].Zip}}</span>
 								<!-- 		<input type="text" ng-show="isEditing" ng-model="custInfo.list.defaultAddr[0].State" placeholder="State">
 										<input type="text" ng-show="isEditing" ng-model="custInfo.list.defaultAddr[0].Country" placeholder="Country">
 										<input type="text" ng-show="isEditing" ng-model="custInfo.list.defaultAddr[0].Zip" ng-blur="custInfo.getLocation()" placeholder="Zip" required>
@@ -80,7 +84,7 @@
 								<input type="number" ng-show="isEditing" placeholder="Number" ng-model="custInfo.list.user.contact.Phone3" max-length="4" class="col-md-3 phone-val">
 								 -->
 							</div>
-							<div class="info-blk" ng-if="custInfo.list.userGroup[0].ID!='StoreFront' && custInfo.list.userGroup[0].ID!='Employee' && custInfo.list.user.xp.TaxExemption.TaxExemptionID">
+							<div class="info-blk" ng-if="custInfo.list.userGroup[0].Name=='Corporate' && custInfo.list.user.xp.TaxExemption.TaxExemptionID">
 								<p class="col-md-3">Tax Exempt Number:</p>
 								<span class="col-md-6">{{custInfo.list.user.xp.TaxExemption.TaxExemptionID}}</span>
 								<!-- <input type="text" ng-show="isEditing" value="" class="col-md-6 phone-val1"> -->
@@ -88,6 +92,12 @@
 						</div>
 				</div>	
 				<div ng-show="isEditing" class="edit-block">
+					<div class="group-blk">
+						<div class="blk">
+							<p>NickName</p>
+							<input type="text" name="fname" class="form-control" ng-model="custInfo.list.defaultAddr[0].xp.NickName" placeholder="NickName">
+						</div>
+					</div>
 					<div class="group-blk">
 						<div class="blk">
 							<p>FirstName <span class="star">*</span></p>
@@ -211,14 +221,22 @@
 					</tr>
 					<tr ng-repeat="subscriptionList in custInfo.subscribedList track by $index">
 						<td>
-							<label class="radio-common">
+							<label class="radio-common"  ng-if="subscriptionList.name!='Weekly Ad and Announcements'">
 								<input type="radio" name="group{{$index}}" ng-checked="subscriptionList.Checked" ng-click="subscriptionList.Checked=true">
+								<div class="radio"></div>
+							</label>
+							<label class="radio-common" ng-if="subscriptionList.name=='Weekly Ad and Announcements'">
+								<input type="radio" name="group{{$index}}" ng-checked="subscriptionList.Checked" ng-click="subscriptionList.Checked=true" ng-disabled="true">
 								<div class="radio"></div>
 							</label>
 						</td>
 						<td>
-							<label class="radio-common">
+							<label class="radio-common" ng-if="subscriptionList.name!='Weekly Ad and Announcements'">
 								<input type="radio" name="group{{$index}}" ng-checked="!subscriptionList.Checked" ng-click="subscriptionList.Checked=false">
+								<div class="radio"></div>
+							</label>
+							<label class="radio-common" ng-if="subscriptionList.name=='Weekly Ad and Announcements'">
+								<input type="radio" name="group{{$index}}" ng-checked="!subscriptionList.Checked" ng-click="subscriptionList.Checked=false" ng-disabled="true">
 								<div class="radio"></div>
 							</label>
 						</td>
@@ -337,31 +355,32 @@
 				</div>
 			</div>
 		</div>
-		<div class="col-sm-12 col-xs-12 col-md-12 col-lg-12 corporate-info" ng-if="custInfo.list.userGroup[0].ID!='StoreFront' && custInfo.list.userGroup[0].ID!='Employee'">
+		<div class="col-sm-12 col-xs-12 col-md-12 col-lg-12 corporate-info" ng-if="custInfo.list.userGroup[0].Name=='Corporate'">
 			<h1>CORPORATE CHARGE INFORMATION  <!-- <button>EDIT</button> --></h1>
 			<div class="left">
-				<p>Charge Limit</p>
+				<p ng-if="custInfo.spendingAcc.charges.xp.ChargeLimit">Charge Limit</p>
 				<p class="sub-addr">{{custInfo.spendingAcc.charges.xp.ChargeLimit | currency}}</p>
 				<p>Company</p>
 				<p class="sub-addr">Wells Fargo</p>
-			</div>
+			</div><!-- 
 			<div class="right" ng-init="chargelmt=custInfo.spendingAcc.charges.xp.ChargeLimit; balance=custInfo.spendingAcc.charges.Balance">
 				<p>Amount Owed</p>
 				<p class="sub-addr">{{chargelmt - balance | currency}}</p>
 				<p>Authorized Users</p>
 				<p class="sub-addr" ng-repeat="users in custInfo.list.userGroup[0].xp.AuthorisedUsers">{{users}}</p>
-			</div>
+			</div> -->
 		</div>
-		<div class="account-credits col-sm-12 col-xs-12 col-md-12 col-lg-12" ng-if="custInfo.list.userGroup[0].ID=='StoreFront' || custInfo.list.userGroup[0].ID=='Employee'">
+		<div class="account-credits col-sm-12 col-xs-12 col-md-12 col-lg-12" ng-if="custInfo.list.userGroup[0].Name=='General' || custInfo.list.userGroup[0].Name=='Employee'">
 			<h1>ACCOUNT CREDITS</h1>
-			<h2>CREDIT BALANCE: <span>{{custInfo.spendingAcc.charges.Balance | currency}}</span></h2>
+			<h2 ng-if="custInfo.spendingAcc.charges.Balance">CREDIT BALANCE: <span>{{custInfo.spendingAcc.charges.Balance | currency}}</span></h2>
+			<p ng-if="!custInfo.spendingAcc.charges.Balance">No Account Credits</p>
 		</div>
 <!-- 		<div class="col-sm-12 col-xs-12 col-md-12 col-lg-12">
 			<h1>PROMOTIONS</h1>
 			<p>Free Shipping</p>
 			<p class="sub-addr">Lorem lpsum dolor sit amet</p>
 		</div> -->
-		<div class="col-sm-12 col-xs-12 col-md-12 col-lg-12" ng-if="custInfo.list.user.xp.PO.PORequired=='Y'">
+		<div class="col-sm-12 col-xs-12 col-md-12 col-lg-12" ng-if="custInfo.list.user.xp.PO.PORequired">
 			<h1>Change Number</h1>
 			<a ng-click="custInfo.showPOModal=true">Change PO Number</a>
 		</div>

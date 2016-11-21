@@ -34,7 +34,10 @@
 											</svg>
 										</button>
 										<li ng-repeat="subchildcategories in subcategories.children" ng-if="($index < (baseTop.page2 * baseTop.numRecords)) && ($index >= ((baseTop.page2 - 1) * baseTop.numRecords))">
-											<a ui-sref="buildOrder({ID:subchildcategories.ID,SearchType:'plp', catName:subchildcategories.Name})" ng-click="base.isopen=false" ng-if="subchildcategories.Active">{{subchildcategories.Name}}</a>	 
+											<a ng-if="subchildcategories.ID != 'FlowersSpecialtyPlanters_CorsageBoutonniere_BuildYourOwn'" ui-sref="buildOrder({ID:subchildcategories.ID,SearchType:'plp', catName:subchildcategories.Name})" ng-click="base.isopen=false" ng-if="subchildcategories.Active">{{subchildcategories.Name}}</a>
+											<!--<a ui-sref="plp({catId:subchildcategories.ID,filters:'',productpage:'',infopage:'',min:'',max:''})" class="subchildmaincat_link">{{subchildcategories.Name}}</a> ui-sref="buildYourOwn({catId:subchildcategories.ID})"-->
+                                            <a ng-if="subchildcategories.ID == 'FlowersSpecialtyPlanters_CorsageBoutonniere_BuildYourOwn'" ui-sref="buildOrder({ID:subchildcategories.ID,SearchType:'buildYourOwn', catName:subchildcategories.Name})" ng-click="base.isopen=false">Build Your Own</a>
+                                                	 
 										</li>
 										<button class="down-arrow" ng-click="baseTop.next2()" ng-show="subcategories.children.length > (baseTop.page2 * baseTop.numRecords)">
 											<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
@@ -48,7 +51,7 @@
 								</li>
 								<!-- workshop events -->
 								<li ng-repeat="subcategories in categories.children track by $index" ng-if="(($index < (baseTop.page2 * baseTop.numRecords)) && ($index >= ((baseTop.page2 - 1) * baseTop.numRecords)) && categories.ID =='WorkshopsEvents')">
-									<a ng-mouseover="baseTop.page2 = 1" ng-class="{'category-arw': subcategories.ChildCount}" class="submaincat_link">{{subcategories.Name}}</a>
+									<a ng-mouseover="baseTop.page2 = 1" ng-class="{'category-arw': subcategories.ChildCount}" class="submaincat_link" ng-if="subcategories.ID!='WorkshopsEvents_Information' && subcategories.ID!='WorkshopsEvents_Shopping'">{{subcategories.Name}}</a>
 									<ul class="menu_level_3" ng-if="subcategories.ChildCount">
 										<li ng-repeat="subchildcategories in subcategories.children track by $index" ng-if="($index < (baseTop.page2 * baseTop.numRecords)) && ($index >= ((baseTop.page2 - 1) * baseTop.numRecords)) ">
 											<a ui-sref="buildOrder({ID:subchildcategories.ID,SearchType:'elp', catName:subchildcategories.Name})" ng-click="base.isopen=false">{{subchildcategories.Name}}</a>	 
@@ -79,36 +82,50 @@
 				<div class="search_feild" ng-switch on="switchSearch">
 					<i class="fa fa-search"></i>
 					<!-- algolia search for customer -->
-					<div ng-switch-when="customer" uib-dropdown>
+					<div ng-switch-when="customer" uib-dropdown keyboard-nav>
 						<ordercloud-search servicename="users" controlleras="base" placeholder="Search user" search="base.search" change="base.selectChange" uib-dropdown-toggle></ordercloud-search>
-						<div class="search_dropdown" uib-dropdown-menu>
-							<div class="searchelement"  ng-repeat="user in base.list track by $index" ng-if="base.qeueryLength > 2 && base.list.length != 0">
+						<div class="search_dropdown" uib-dropdown-menu aria-labelledby="simple-btn-keyboard-nav">
+							<div class="searchelement"  ng-repeat="user in base.list[0] track by $index" ng-if="base.qeueryLength > 2 && base.list[0].length != 0">
 								<a ui-sref="buildOrder({ID:user.ID,SearchType:'User',showOrdersummary: false})" class="search_result">
 									<p>{{user.UserName}}</p>
 									<div class="user-name">{{user.Email}}</div>
 								</a>
 							</div>
+							<div class="searchelement Searcherror" ng-if="base.qeueryLength > 2 && base.list[1] == 0">
+								<a class="search_result">
+									<p class="error">No user is found.</p>
+								</a>
+							</div>
 						</div>
 					</div>
 					<!-- algolia search for order -->
-					<div ng-switch-when="order" uib-dropdown>
+					<div ng-switch-when="order" uib-dropdown keyboard-nav>
 						<ordercloud-search servicename="orders" controlleras="base" placeholder="Search orders" search="base.search" change="base.selectChange" uib-dropdown-toggle></ordercloud-search>
-						<div class="search_dropdown" uib-dropdown-menu>
-							<div class="searchelement"  ng-repeat="orders in base.list track by $index" ng-if="base.qeueryLength > 2 && base.list.length != 0">
-								<a ng-click="baseTop.searchGoTo(orders.FromUserID, orders.ID)" class="search_result">
+						<div class="search_dropdown" uib-dropdown-menu aria-labelledby="simple-btn-keyboard-nav">
+							<div class="searchelement"  ng-repeat="orders in base.list[0] track by $index" ng-if="base.qeueryLength > 2 && base.list[0].length != 0">
+								<a ui-sref="buildOrder({ID:orders.FromUserID,SearchType:'User',orderID:orders.ID})" class="search_result" ng-if="orders.Status=='Unsubmitted'">
 									<p>{{orders.ID}}</p>
-									<div class="order-name">{{orders.FromUserFirstName}} {{orders.FromUserLastName}}</div>
+									<div class="order-name">{{orders.FromUserName}}</div>
+								</a>
+								<a ui-sref="orderHistory({userID:orders.FromUserID, orderId:orders.ID})" class="search_result" ng-if="orders.Status!='Unsubmitted'">
+									<p>{{orders.ID}}</p>
+									<div class="order-name">{{orders.FromUserName}}</div>
+								</a>
+							</div>
+							<div class="searchelement Searcherror" ng-if="base.qeueryLength > 2 && base.list[1] == 0">
+								<a class="search_result">
+									<p class="error">No order is found.</p>
 								</a>
 							</div>
 						</div>
 					</div>
 					<!-- algolia search for recipient -->
-					<div ng-switch-when="recipient" uib-dropdown>
+					<div ng-switch-when="recipient" uib-dropdown keyboard-nav>
 						<ordercloud-search servicename="orders" controlleras="base" placeholder="Search recipient" search="base.search" change="base.selectChange" uib-dropdown-toggle></ordercloud-search>
-						<div class="search_dropdown recipient-dropdown" uib-dropdown-menu>
-							<div class="searchelement"  ng-repeat="recipient in base.list track by $index" ng-if="base.qeueryLength > 2 && base.list.length != 0">
-								<a ng-click="baseTop.searchGoTo(recipient.FromUserID, recipient.ID)" class="search_result">
-									<p>
+						<div class="search_dropdown recipient-dropdown" uib-dropdown-menu aria-labelledby="simple-btn-keyboard-nav">
+							<div class="searchelement"  ng-repeat="recipient in base.list[0] track by $index" ng-if="base.qeueryLength > 2 && base.list[0].length != 0">
+								<a ui-sref="buildOrder({ID:recipient.FromUserID,SearchType:'User',orderID:recipient.ID})" class="search_result" ng-if="recipient.Status=='Unsubmitted'">
+									<p><!-- 
 									<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 											 viewBox="0 0 24 24" style="enable-background:new 0 0 24 24;" xml:space="preserve" ng-if="recipient.Status=='Open'" class="cs1">
 										<circle cx="12" cy="12" r="12"/>
@@ -140,7 +157,50 @@
 											<path d="M12.9,12l3.6,3.6l-0.9,0.9L12,12.9l-3.6,3.6l-0.9-0.9l3.6-3.6L7.5,8.4l0.9-0.9l3.6,3.6l3.6-3.6l0.9,0.9
 												L12.9,12z"/>
 										</g>
+									</svg> -->
+									
+									{{recipient.RecepientName}}</p>
+									<div class="recipient-name">{{recipient.FromUserName}}</div>
+									<div class="recepient-order">
+										<p>{{recipient.ID}}</p>
+										<div ng-if="recipient.DateSubmitted == 'null'">{{recipient.DateCreated | date }}</div>
+										<div ng-if="recipient.DateSubmitted != 'null'">{{recipient.DateSubmitted | date }}</div>
+									</div>
+								</a>
+								<a ui-sref="orderHistory({userID:recipient.FromUserID, orderId:recipient.ID})" class="search_result" ng-if="recipient.Status!='Unsubmitted'">
+									<p><!-- 
+									<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+											 viewBox="0 0 24 24" style="enable-background:new 0 0 24 24;" xml:space="preserve" ng-if="recipient.Status=='Open'" class="cs1">
+										<circle cx="12" cy="12" r="12"/>
+										<g>
+											<path d="M12.9,12l3.6,3.6l-0.9,0.9L12,12.9l-3.6,3.6l-0.9-0.9l3.6-3.6L7.5,8.4l0.9-0.9l3.6,3.6l3.6-3.6l0.9,0.9
+												L12.9,12z"/>
+										</g>
 									</svg>
+									<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+											 viewBox="0 0 24 24" style="enable-background:new 0 0 24 24;" xml:space="preserve" ng-if="recipient.Status=='Completed'" class="cs2">
+										<circle cx="12" cy="12" r="12"/>
+										<g>
+											<path d="M12.9,12l3.6,3.6l-0.9,0.9L12,12.9l-3.6,3.6l-0.9-0.9l3.6-3.6L7.5,8.4l0.9-0.9l3.6,3.6l3.6-3.6l0.9,0.9
+												L12.9,12z"/>
+										</g>
+									</svg>
+									<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+											 viewBox="0 0 24 24" style="enable-background:new 0 0 24 24;" xml:space="preserve" ng-if="recipient.Status=='Canceled'" class="cs3">
+										<circle cx="12" cy="12" r="12"/>
+										<g>
+											<path d="M12.9,12l3.6,3.6l-0.9,0.9L12,12.9l-3.6,3.6l-0.9-0.9l3.6-3.6L7.5,8.4l0.9-0.9l3.6,3.6l3.6-3.6l0.9,0.9
+												L12.9,12z"/>
+										</g>
+									</svg>
+									<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+											 viewBox="0 0 24 24" style="enable-background:new 0 0 24 24;" xml:space="preserve" ng-if="recipient.Status=='Unsubmitted'" class="cs4">
+										<circle cx="12" cy="12" r="12"/>
+										<g>
+											<path d="M12.9,12l3.6,3.6l-0.9,0.9L12,12.9l-3.6,3.6l-0.9-0.9l3.6-3.6L7.5,8.4l0.9-0.9l3.6,3.6l3.6-3.6l0.9,0.9
+												L12.9,12z"/>
+										</g>
+									</svg> -->
 									
 									{{recipient.RecepientName}}</p>
 									<div class="recipient-name">{{recipient.FromUserName}}</div>
@@ -151,27 +211,43 @@
 									</div>
 								</a>
 							</div>
+							<div class="searchelement Searcherror recipienterr" ng-if="base.qeueryLength > 2 && base.list[1] == 0">
+								<a class="search_result">
+									<p class="error">No recipient is found.</p>
+								</a>
+							</div>
 						</div>
 					</div>
 					<!-- algolia search for products -->
-					<div ng-switch-when="product" uib-dropdown>
+					<div ng-switch-when="product" uib-dropdown keyboard-nav>
 						<ordercloud-search servicename="products" controlleras="base" placeholder="Search products" search="base.search" change="base.selectChange" uib-dropdown-toggle></ordercloud-search>
-						<div class="search_dropdown" uib-dropdown-menu>
-							<div class="searchelement"  ng-repeat="products in base.searchList track by $index" ng-if="base.qeueryLength > 2 && base.searchList.length != 0">
+						<div class="search_dropdown" uib-dropdown-menu aria-labelledby="simple-btn-keyboard-nav">
+							<div class="searchelement"  ng-repeat="products in base.searchList[0] track by $index" ng-if="base.qeueryLength > 2 && base.searchList[0].length != 0">
 								<a ui-sref="buildOrder({ID:products.ID,SearchType:'PDP'})" class="search_result">
-									<p>{{products.Name}}</p>
+									<p ng-if="products.Title">{{products.Title}}</p>
+									<p ng-if="products.Title==undefined || products.Title=='null' || products.Title==''">{{products.Name}}</p>
+								</a>
+							</div>
+							<div class="searchelement Searcherror" ng-if="base.qeueryLength > 2 && base.searchList[1] == 0">
+								<a class="search_result">
+									<p class="error">No product is found.</p>
 								</a>
 							</div>
 						</div>
 					</div>
 					<!-- algolia search for phone -->
-					<div ng-switch-when="phone" uib-dropdown>
+					<div ng-switch-when="phone" uib-dropdown keyboard-nav>
 						<ordercloud-search servicename="users_phonenumber" controlleras="base" placeholder="Search phone number" search="base.search" change="base.selectChange" uib-dropdown-toggle></ordercloud-search>
-						<div class="search_dropdown" uib-dropdown-menu>
-							<div class="searchelement"  ng-repeat="phone in base.list track by $index" ng-if="base.qeueryLength > 2 && base.list.length != 0">
+						<div class="search_dropdown" uib-dropdown-menu aria-labelledby="simple-btn-keyboard-nav">
+							<div class="searchelement"  ng-repeat="phone in base.list[0] track by $index" ng-if="base.qeueryLength > 2 && base.list[0].length != 0">
 								<a ui-sref="buildOrder({ID:phone.ID,SearchType:'User',showOrdersummary: false})" class="search_result">
 									<p>{{phone.Phone}}</p>
 									<div class="phone-num">{{phone.UserName}}</div>
+								</a>
+							</div>
+							<div class="searchelement Searcherror" ng-if="base.qeueryLength > 2 && base.list[1] == 0">
+								<a class="search_result">
+									<p class="error">No phone number is found.</p>
 								</a>
 							</div>
 						</div>
@@ -190,6 +266,9 @@
 				<div uib-dropdown-menu>
 					<ul class="dropdown-menu-right" >
 						<li>
+							<a ng-click="base.giftcardchecker=!base.giftcardchecker">Gift Card Balance Checker</a>
+						</li>
+						<li>
 							<a href="" ui-sref="account.changePassword">Change Password</a>
 						</li>
 						<li class="divider"></li>
@@ -207,3 +286,11 @@
     <!--Header ends here -->
 </div>
 </div>
+<modal title="Gift Card Balance Checker" visible="base.giftcardchecker" id="giftcardchecker" class="gift-card-pop-up modal-pop-up" ng-init="base.giftcardchecker=false">
+	<p>Enter Gift Card Number:</p>
+	<input type="number" ng-model="base.giftcardbal"/>
+	<p ng-if="base.GCerr==''">Available Card Balance: <span>{{base.GCBalance | currency}}</span></p>
+	<p ng-if="base.GCerr!=''">{{base.GCerr}}</p>
+	<button ng-click="base.giftcardbal==null || base.checkGCbal(base.giftcardbal)" ng-disabled="base.giftcardbal==null" ng-class="{disabled:base.giftcardbal==null}" class="save-btn">OK</button>
+	<button ng-click="base.giftcardchecker=false" class="cancel-btn">Cancel</button>
+</modal>

@@ -81,6 +81,8 @@ function OrderClaimController($scope, $stateParams, OrderCloud, CreditCardServic
 		$scope.val=res;
 		LineItemHelpers.GetProductInfo(res.Items).then(function(data){
 			data = _.groupBy(data, function(value){
+				value.xp.TotalCost=parseFloat(Math.round(value.xp.TotalCost * 100) / 100);
+				value.xp.Refunded=value.xp.TotalCost;
 				if(value.ShippingAddress != null){
 					//totalCost += value.xp.TotalCost;
 					return value.ShippingAddress.FirstName + ' ' + value.ShippingAddress.LastName + ' ' + value.ShippingAddress.Zip;
@@ -123,7 +125,7 @@ function OrderClaimController($scope, $stateParams, OrderCloud, CreditCardServic
 			}
 		}
 	}
-
+	vm.Item_Refund_Amount=0;
 	vm.continueclaim = function(){
 		vm.totalrefundcost=0;
 		if(vm.orderclaimsummaryshow==false){
@@ -139,7 +141,7 @@ function OrderClaimController($scope, $stateParams, OrderCloud, CreditCardServic
 				console.log(vm.orderclaimarr[i]);
 				vm.totalrefundcost=vm.totalrefundcost+vm.orderclaimarr[i].xp.TotalCost;
 				vm.totaltax=vm.totaltax+vm.orderclaimarr[i].xp.Tax;
-				vm.Item_Refund_Amount=vm.Item_Refund_Amount+vm.orderclaimarr[i].LineTotal;
+				vm.Item_Refund_Amount=vm.Item_Refund_Amount+vm.orderclaimarr[i].xp.TotalCost;
 				vm.Delivery_Refund=vm.Delivery_Refund+vm.orderclaimarr[i].xp.deliveryCharges;
 				vm.Tax_Refund=vm.Tax_Refund+vm.orderclaimarr[i].xp.Tax;
 			}
@@ -326,6 +328,22 @@ function OrderClaimController($scope, $stateParams, OrderCloud, CreditCardServic
 			vm.lineValsummary.push(n);
 			$scope.lineTotalsummary[n] = _.reduce(_.pluck(data[n], 'LineTotal'), function(memo, num){ return memo + num; }, 0);
 		}
+	}
+	vm.addCharges=function(order){
+		if(order.xp.Tax==undefined){
+			order.xp.Tax="0";
+		}
+		else if(order.LineTotal==undefined){
+			order.LineTotal="0";
+		}
+		var sum=parseFloat(Math.round(order.LineTotal * 100) / 100) + parseFloat(Math.round(order.xp.Tax * 100) / 100);
+		var res=0;
+		_.filter(order.xp.deliveryFeesDtls, function(row){
+			res=res+parseFloat(Math.round(row * 100) / 100);
+		});
+		order.xp.deliveryCharges=res;
+		order.xp.TotalCost=parseFloat(Math.round((res+sum) * 100) / 100);
+		console.log("datadata", data)
 	}
 }
 function orderClaimPopupController($scope, ClaimResolution, userID, $uibModalInstance){

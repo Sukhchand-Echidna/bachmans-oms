@@ -11,10 +11,15 @@
   "alfrescoServiceUrl":"http://52.206.111.191:8080/alfresco/service/slingshot",
   "PMCStoresURL":"http://192.168.101.49:8080/Bachman/getStores",
   "GetCstTime": "http://52.206.111.191:8080/Bachman/localdeliverytime",
-  "OrderPrintURL": "http://192.168.101.49:8080/Bachman/omsprint/",
+  "OrderPrintURL": "https://Four51TRIAL104401.jitterbit.net/BachmansOnPrem/pmcOrderReprint",
   "GC_PP_Redemption": "https://Four51TRIAL104401.jitterbit.net/Bachmans_Dev/GiftCard_PurplePerks_Redemption",
   "PPBalance" : "https://Four51TRIAL104401.jitterbit.net/BachmansOnPrem/PurplePerksBalanceCheck",
   "GCBalance" : "https://Four51TRIAL104401.jitterbit.net/BachmansOnPrem/GiftCardBalance",
   "GoogleAPI": "https://maps.googleapis.com/maps/api/geocode/json?address=",
-  "BuyerListURL": "https://four51trial104401.jitterbit.net/Bachmans_Dev/OrderIntegrationAndBuyersData_onDemand_file"
+  "BuyerListURL": "https://four51trial104401.jitterbit.net/Bachmans_Dev/OrderIntegrationOnDemand",
+  "Teleflora":"https://Four51TRIAL104401.jitterbit.net/Bachmans_Dev/v1/Teleflora",
+  "FTD":"https://Four51TRIAL104401.jitterbit.net/Bachmans_Dev/FTD",
+  "alfImageFinder": "http://52.206.111.191:8080/alfresco/service/imagefinder/",
+  "ShippingRateURL":"https://api.ordercloud.io/v1/integrationproxy/shippingrates",
+  "DDMSPlaceOrder":"https://Four51TRIAL104401.jitterbit.net/Bachmans_Dev/BuyersList"
 }

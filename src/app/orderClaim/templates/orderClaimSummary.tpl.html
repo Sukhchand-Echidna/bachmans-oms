@@ -1,7 +1,7 @@
 <div class="container-fluid order-claim-page">
 	<div class="order-claim-container">
 		<div class="back-common">
-				<a href="javascript: window.history.go(-1)"><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 14 21" style="enable-background:new 0 0 14 21" xml:space="preserve"><style type="text/css">.st0{fill:#8B8E96;}</style><g><path d="M0.7,18.3l7.8-7.8L0.7,2.7L3,0.3l10.2,10.2L3,20.7L0.7,18.3z"></path></g></svg>Back To Previous Page</a>
+				<a ng-click="orderClaim.orderclaimsummaryshow=false"><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 14 21" style="enable-background:new 0 0 14 21" xml:space="preserve"><style type="text/css">.st0{fill:#8B8E96;}</style><g><path d="M0.7,18.3l7.8-7.8L0.7,2.7L3,0.3l10.2,10.2L3,20.7L0.7,18.3z"></path></g></svg>Back To Previous Page</a>
 		</div>
 	<div ng-repeat="line in orderClaim.lineValsummary track by line">
 		<div class="adress-details">
@@ -19,12 +19,12 @@
 				<thead class="thead-default">
 				    <tr>
 						<th>Quantity</th>
-						<th>Products*</th>
-						<th>Price*</th>
+						<th>Products</th>
+						<th>Refund Amount</th>
 						<th>Paid Through</th>
-						<th>Select Claim Resolution*</th>
-						<th>Reason Code*</th>
-						<th>Enter Reason for Claim*</th>     
+						<th>Select Claim Resolution</th>
+						<th>Reason Code</th>
+						<th>Enter Reason for Claim</th>     
 				    </tr>
 				</thead>
 				<tbody>
@@ -38,52 +38,47 @@
 				      			<p>SKU #123920 </p>
 				      			<p>Deluxe</p>
 				      			<p> - Purple</p>
-				      	  		<p class="delivery-date">Delivered: {{orderSummary.xp.deliveryDate | date:'MM/dd/yyyy'}}</p>
+				      	  		<p class="delivery-date">Delivered: {{orderSummary.xp.DeliveryDate | date:'MM/dd/yyyy'}}</p>
 				      	  		<a href="javascript:void(0)" class="view">View Notes</a>
 				      		</div>
 				  		</td>
-				    	<td class="price">{{orderSummary.LineTotal | currency}}</td>
-				    	<td class="item">
+				    	<td class="price-summary">
+							<p>Refunded Amount: <span>{{orderSummary.xp.Refunded| currency}}</span></p>
+							<p>Revised Amount: <span>{{orderSummary.xp.TotalCost | currency}}</span></p>
+						</td>
+				    	<td class="item-summary">
 							<div ng-if="orderClaim.order.xp.SpendingAccounts.BachmansCharges">
-								<span>Bachmans Charges amount :</span>
-								<span>{{orderClaim.order.xp.SpendingAccounts.BachmansCharges.Amount | currency}}</span>
+								<p>Bachmans Charges amount : <span>{{orderClaim.order.xp.SpendingAccounts.BachmansCharges.Amount | currency}}</span></p>
 							</div>
 							<div ng-if="orderClaim.order.xp.SpendingAccounts.BachmansCharges1">
-								<span>Bachmans Charges amount :</span>
-								<span>{{orderClaim.order.xp.SpendingAccounts.BachmansCharges.Amount | currency}}</span>
+								<p>Bachmans Charges amount : <span>{{orderClaim.order.xp.SpendingAccounts.BachmansCharges.Amount | currency}}</span></p>
 							</div>
 							<div ng-if="orderClaim.order.xp.SpendingAccounts.GiftCard">
-								<span>Gift Card amount :</span>
-								<span>{{orderClaim.order.xp.SpendingAccounts.GiftCard.Amount | currency}}</span>
+								<p>Gift Card amount : <span>{{orderClaim.order.xp.SpendingAccounts.GiftCard.Amount | currency}}</span></p>
 							</div>
 							<div ng-if="orderClaim.order.xp.SpendingAccounts.PurplePerks">
-								<span>Purple Perks amount :</span>
-								<span>{{orderClaim.order.xp.SpendingAccounts.PurplePerks.Amount | currency}}</span>
+								<p>Purple Perks amount : <span>{{orderClaim.order.xp.SpendingAccounts.PurplePerks.Amount | currency}}</span></p>
 							</div>
 							<div ng-if="orderClaim.order.xp.SpendingAccounts.PaidCash">
-								<span>Cash amount :</span>
-								<span>{{orderClaim.order.xp.SpendingAccounts.PaidCash.Amount | currency}}</span>
+								<p>Cash amount : <span>{{orderClaim.order.xp.SpendingAccounts.PaidCash.Amount | currency}}</span></p>
 							</div>
 							<div ng-if="orderClaim.order.xp.SpendingAccounts.Cheque">
-								<span>Cheque amount :</span>
-								<span>{{orderClaim.order.xp.SpendingAccounts.Cheque.Amount | currency}}</span>
+								<p>Cheque amount : <span>{{orderClaim.order.xp.SpendingAccounts.Cheque.Amount | currency}}</span></p>
 							</div>
 							<div ng-if="orderClaim.order.xp.SpendingAccounts.CreditCard">
-								<span>Credit Card amount :</span>
-								<span>{{orderClaim.order.xp.SpendingAccounts.CreditCard.Amount | currency}}</span>
+								<p>Credit Card amount : <span>{{orderClaim.order.xp.SpendingAccounts.CreditCard.Amount | currency}}</span></p>
 							</div>
 							<div ng-if="orderClaim.order.xp.SpendingAccounts.PO">
-								<span>Purchase Order amount :</span>
-								<span>{{orderClaim.order.Total | currency}}</span>
+								<p>Purchase Order amount : <span>{{orderClaim.order.Total | currency}}</span></p>
 							</div>
 						</td>
-				    	<td class="item">
+				    	<td class="price-summary">
 				    		<p>{{orderSummary.selectresolution}}</p>
 				    	</td>
-				    	<td>
+				    	<td  class="price-summary">
 				    		<p>{{orderSummary.selectcode}}</p>
 				    	</td>
-				    	<td class="item">
+				    	<td  class="price-summary">
 				    		<p>{{orderSummary.descp}}</p>
 				    	</td>
 				    </tr>

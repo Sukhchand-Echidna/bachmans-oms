@@ -66,7 +66,7 @@ function checkoutConfig( $stateProvider ) {
 	$stateProvider
 	.state( 'checkout', {
 		parent: 'base',
-		url: '/checkout/:ID/:FromUserID',
+		url: '/checkout/:ID/:FromUserID/:editsubmitorder',
 		templateUrl:'checkout/templates/checkout.tpl.html',
         data: {
             loadingMessage: 'Loading...'
@@ -112,11 +112,16 @@ function checkoutConfig( $stateProvider ) {
 	});
 }
 
-function checkoutController($scope, $state, Underscore, Order, OrderLineItems, ProductInfo, CreditCardService, TaxService, AddressValidationService, OrderCloud, $stateParams, BuildOrderService, $q, AlfrescoFact, $http, checkoutService, LineItemHelpers, GetCstDateTime, GC_PP_Redemption, PPBalance, GCBalance, alfrescoAccessURL, BuyerListURL, GetBuyer, GetUser, LocalDeliveryCities, $cookieStore) {
+function checkoutController($scope, $state, Underscore, Order, OrderLineItems, ProductInfo, CreditCardService, TaxService, AddressValidationService, OrderCloud, $stateParams, BuildOrderService, $q, AlfrescoFact, $http, checkoutService, LineItemHelpers, GetCstDateTime, GC_PP_Redemption, PPBalance, GCBalance, alfrescoAccessURL, BuyerListURL, GetBuyer, GetUser, LocalDeliveryCities, toastr, $cookieStore, DDMSPlaceOrder) {
 	var vm = this, Promotions = [];
+	vm.editsubmitorder=$stateParams.editsubmitorder;
 	vm.logo = AlfrescoFact.logo;
 	vm.ShowCancelOrderToolTip=false;
     vm.order = angular.copy(Order);
+    /*if(vm.editsubmitorder=="true"){
+    	vm.orderTotal=vm.order.Total-vm.order.xp.oldPrice;
+    	vm.actualorderTotal=vm.order.Total;
+    }*/
     vm.orderID = angular.copy(Order.ID);
     //vm.order.TaxInfo = GetTax;
     vm.lineItems = OrderLineItems.Items;
@@ -169,7 +174,6 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 		isFirstDisabled: false,
 		isSecondDisabled: false
 	};
-
     vm.getRecipientSubTotal = function(lineitems) {
 		return Underscore.pluck(lineitems, 'LineTotal').reduce(function(prev, current) {
 			return prev + current;
@@ -177,7 +181,7 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
     };
     vm.submitOrder = function(card, billingAddress){
 		vm.order.Total = angular.copy(vm.orderTotal);
-		/*if(vm.addCard && vm.paymentOption != 'PO'){
+		if(vm.addCard && vm.paymentOption != 'PO'){
 			vm.CheckOutLoader = checkoutService.AddCreditCard(card, billingAddress, vm).then(function(res1){
 				if(res1!="0"){
 					vm.CheckOutLoader = checkoutService.SpendingAccountsRedeemtion(vm.orderDtls.SpendingAccounts, angular.copy(GetCstDateTime.datetime), vm).then(function(res2){
@@ -185,6 +189,8 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 							vm.selectedCard = res1;
 							vm.CheckOutLoader = checkoutService.CreditCardPayment(vm).then(function(res3){
 								if(res3=="1"){
+									vm.DDMSService(vm.order.ID);
+									vm.GiftCardSpendingAccounts();
 									vm.Shipments();
 									var obj = {"xp":{}};
 									obj.xp.PrintStatus=false;
@@ -192,12 +198,17 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 									if(vm.OrderOnHold)
 										obj.xp.Status = "OnHold";
 									if(vm.order.Total > 0)
-										vm.orderDtls.SpendingAccounts['CreditCard'] = {"Amount": vm.order.Total};
+										vm.orderDtls.SpendingAccounts['CreditCard'] = {"Amount": vm.order.Total, "CardType": res1.CardType};
 									obj.xp.SpendingAccounts = vm.orderDtls.SpendingAccounts;
+									if(vm.order.xp.SavedOrder){
+										if(vm.order.xp.SavedOrder.Flag){
+											obj.xp.SavedOrder = {};
+											obj.xp.SavedOrder.Flag = false;
+										}	
+									}
 									OrderCloud.Orders.Patch(vm.order.ID, obj);
 									OrderCloud.Orders.SetBillingAddress(vm.order.ID, billingAddress);
 									vm.buyerList(vm.order.ID);
-									vm.FTService(vm.order);
 								}
 							});
 						}
@@ -210,28 +221,41 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 					if(res1=="1"){
 						vm.CheckOutLoader = checkoutService.CreditCardPayment(vm).then(function(res2){
 							if(res2=="1"){
+								vm.DDMSService(vm.order.ID);
+								vm.GiftCardSpendingAccounts();
 								vm.Shipments();
 								var obj = {"xp":{}};
 								obj.xp.PrintStatus=false;
 								obj.xp.PaymentStatus="Completed";
 								if(vm.OrderOnHold)
 									obj.xp.Status = "OnHold";
-								if(vm.order.Total > 0)
-									vm.orderDtls.SpendingAccounts['CreditCard'] = {"Amount": vm.order.Total};
+								if(vm.order.Total > 0){
+									if(vm.card.CardType)
+										vm.orderDtls.SpendingAccounts['CreditCard'] = {"Amount": vm.order.Total, "CardType": vm.card.CardType};
+									if(vm.selectedCard.CardType)
+										vm.orderDtls.SpendingAccounts['CreditCard'] = {"Amount": vm.order.Total, "CardType": vm.selectedCard.CardType};	
+								}	
 								obj.xp.SpendingAccounts = vm.orderDtls.SpendingAccounts;
+								if(vm.order.xp.SavedOrder){
+									if(vm.order.xp.SavedOrder.Flag){
+										obj.xp.SavedOrder = {};
+										obj.xp.SavedOrder.Flag = false;
+									}	
+								}
 								OrderCloud.Orders.Patch(vm.order.ID, obj);
 								if(vm.selectedCard){
 									if(vm.selectedCard.BillingAddress)
 										OrderCloud.Orders.SetBillingAddress(vm.order.ID, vm.selectedCard.BillingAddress);
 								}
 								vm.buyerList(vm.order.ID);
-								vm.FTService(vm.order);
 							}
 						});
 					}
 				});
 			}else{
 				vm.CheckOutLoader = OrderCloud.Orders.Submit(vm.order.ID).then(function(){
+					vm.DDMSService(vm.order.ID);
+					vm.GiftCardSpendingAccounts();
 					vm.CheckOutLoader = TaxService.CollectTax(vm.order.ID).then(function(){
 						$state.go('orderConfirmation' , {userID: vm.order.FromUserID ,ID: vm.orderID});
 						var obj = {"xp":{}};
@@ -243,18 +267,60 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 						obj.xp.PaymentStatus="Pending";
 						if(vm.OrderOnHold)
 							obj.xp.Status = "OnHold";
-						if(vm.order.Total > 0)
-							vm.orderDtls.SpendingAccounts['CreditCard'] = {"Amount": vm.order.Total};
+						if(vm.order.Total > 0){
+							if(vm.card.CardType)
+								vm.orderDtls.SpendingAccounts['CreditCard'] = {"Amount": vm.order.Total, "CardType": vm.card.CardType};
+							if(vm.selectedCard.CardType)
+								vm.orderDtls.SpendingAccounts['CreditCard'] = {"Amount": vm.order.Total, "CardType": vm.selectedCard.CardType};	
+						}
 						obj.xp.SpendingAccounts = vm.orderDtls.SpendingAccounts;
+						if(vm.order.xp.SavedOrder){
+							if(vm.order.xp.SavedOrder.Flag){
+								obj.xp.SavedOrder = {};
+								obj.xp.SavedOrder.Flag = false;
+							}	
+						}
 						OrderCloud.Orders.Patch(vm.order.ID, obj);
 						vm.buyerList(vm.order.ID);
-						vm.FTService(vm.order);
 					});
 					vm.Shipments();
+				}).catch(function(err){
+					OrderCloud.Orders.Get(vm.order.ID).then(function(res1){
+						if(res1.Status=="Open"){
+							vm.CheckOutLoader = TaxService.CollectTax(vm.order.ID).then(function(){
+								$state.go('orderConfirmation' , {userID: vm.order.FromUserID ,ID: vm.orderID});
+								var obj = {"xp":{}};
+								if(vm.paymentOption == 'PO'){
+									obj.xp.PO = {};
+									obj.xp.PO.PONumber = vm.CurrentUser.xp.PO.PONumber;
+								}	
+								obj.xp.PrintStatus=false;
+								obj.xp.PaymentStatus="Pending";
+								if(vm.OrderOnHold)
+									obj.xp.Status = "OnHold";
+								if(vm.order.Total > 0){
+									if(vm.card.CardType)
+										vm.orderDtls.SpendingAccounts['CreditCard'] = {"Amount": vm.order.Total, "CardType": vm.card.CardType};
+									if(vm.selectedCard.CardType)
+										vm.orderDtls.SpendingAccounts['CreditCard'] = {"Amount": vm.order.Total, "CardType": vm.selectedCard.CardType};	
+								}
+								obj.xp.SpendingAccounts = vm.orderDtls.SpendingAccounts;
+								if(vm.order.xp.SavedOrder){
+									if(vm.order.xp.SavedOrder.Flag){
+										obj.xp.SavedOrder = {};
+										obj.xp.SavedOrder.Flag = false;
+									}	
+								}
+								OrderCloud.Orders.Patch(vm.order.ID, obj);
+								vm.buyerList(vm.order.ID);
+							});
+							vm.Shipments();
+						}
+					});
 				});
 			}
-		}*/
-		vm.CheckOutLoader = OrderCloud.Orders.Submit(vm.order.ID).then(function(){
+		}
+		/*vm.CheckOutLoader = OrderCloud.Orders.Submit(vm.order.ID).then(function(){
 			vm.CheckOutLoader = TaxService.CollectTax(vm.order.ID).then(function(){
 				$state.go('orderConfirmation' , {userID: vm.order.FromUserID ,ID: vm.orderID});
 				var obj = {"xp":{}};
@@ -271,24 +337,7 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 				vm.buyerList(vm.order.ID);
 			});
 			vm.Shipments();
-		}).catch(function(err){
-			vm.CheckOutLoader = TaxService.CollectTax(vm.order.ID).then(function(){
-				$state.go('orderConfirmation' , {userID: vm.order.FromUserID ,ID: vm.orderID});
-				var obj = {"xp":{}};
-				if(vm.paymentOption == 'PO'){
-					obj.xp.PO = {};
-					obj.xp.PO.PONumber = vm.CurrentUser.xp.PO.PONumber;
-				}	
-				obj.xp.PrintStatus=false;
-				obj.xp.PaymentStatus="Completed";
-				if(vm.order.Total > 0)
-					vm.orderDtls.SpendingAccounts['CreditCard'] = {"Amount": vm.order.Total};
-				obj.xp.SpendingAccounts = vm.orderDtls.SpendingAccounts;
-				OrderCloud.Orders.Patch(vm.order.ID, obj);
-				vm.buyerList(vm.order.ID);
-			});
-			vm.Shipments();
-		});
+		});*/
 		//Non-Wired Subtotal & tax break up
 		TaxService.GetTax(vm.order.ID).then(function(res){
 			var tempArr = [];
@@ -321,66 +370,84 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 			});
 		}
     };
+	vm.DDMSService = function(orderID){
+		$http.post(DDMSPlaceOrder, {"Order_ID": orderID}).success(function(res){
+			
+		}).catch(function(){
+			
+		});
+	};
 	vm.Shipments = function(){
 		var ShipmentsPromise = [];
 		vm.recipients = [];
 		for(var n in vm.activeOrders){
-			var items = [], Status = null, TotalCost = 0;
+			var items = [], Status = null, TotalCost = 0, date;
 			angular.forEach(vm.activeOrders[n], function(val, key){
 				items.push({"OrderID": vm.order.ID, "LineItemID": val.ID, "QuantityShipped": val.Quantity});
 				if(val.xp.Status == "OnHold" || vm.OrderOnHold){
-					if(val.xp.deliveryDate)
-						Status = {"Status": "OnHold", "deliveryDate": val.xp.deliveryDate};
+					if(val.xp.DeliveryDate)
+						Status = {"Status": "OnHold", "deliveryDate": val.xp.DeliveryDate};
 					if(val.xp.pickupDate)
 						Status = {"Status": "OnHold", "pickupDate": val.xp.pickupDate};
 				}else {
-					if(val.xp.deliveryDate)
-						Status = {"Status": null, "deliveryDate": val.xp.deliveryDate};
+					if(val.xp.DeliveryDate)
+						Status = {"Status": null, "deliveryDate": val.xp.DeliveryDate};
 					if(val.xp.pickupDate)
 						Status = {"Status": null, "pickupDate": val.xp.pickupDate};
 				}	
 				TotalCost += Math.floor(parseFloat(val.xp.TotalCost) * 100) / 100;
 			}, true);
-			ShipmentsPromise.push(OrderCloud.Shipments.Create({"Cost":TotalCost, "Items":items, "xp":Status}));
+			if(vm.order.xp.Status=="OnHold")
+				Status.Status = "OnHold";
+			if(vm.activeOrders[n][0].xp.DeliveryDate)
+				date = vm.activeOrders[n][0].xp.DeliveryDate;
+			if(vm.activeOrders[n][0].xp.pickupDate)
+				date = vm.activeOrders[n][0].xp.pickupDate;	
+			ShipmentsPromise.push(OrderCloud.Shipments.Create({"DateDelivered": date, "Cost":TotalCost, "Items":items, "xp":Status}));
+			if(!vm.TFEUsed && vm.order.xp.oldPrice){
+				vm.TFEUsed = true;
+				vm.EditedOrderTFE(vm.activeOrders[n][0]);
+			}
 		}
-		var d = $q.defer();
 		vm.CheckOutLoader = $q.all(ShipmentsPromise).then(function(results){
 			console.log("Shipments Created....");
-			d.resolve(results);
 			vm.FTService(vm.order, results);
 		});
-		return d.promise;
-	};
-	vm.FTService = function(order, shipments){
-		OrderCloud.As().Orders.Patch(order.ID, {"xp":{"OrderDestination": "TFE", "Status":"OnHold"}}).then(function(res){
-			TFEData.RouteParams.orderID = order.ID;
-			TFEData.UserToken = $cookieStore.get('OMS.Admintoken');
-			delete shipments[0].xp;
-			TFEData.Response.Body = _.extend(shipments[0],res);
-			$http.post("https://Four51TRIAL104401.jitterbit.net/Bachmans_Dev/v1/Teleflora", TFEData).success(function(res1){
-				console.log("Success"+JSON.stringify(res1));
-			}).error(function(err){
-				console.log("----->"+err);
-			});
-		}).catch(function(err){
-			OrderCloud.As().Orders.Get(order.ID).then(function(res){
-				TFEData.RouteParams.orderID = order.ID;
-				TFEData.UserToken = $cookieStore.get('OMS.Admintoken');
-				delete shipments[0].xp;
-				TFEData.Response.Body = _.extend(res, shipments[0]);
-				$http.post("https://Four51TRIAL104401.jitterbit.net/Bachmans_Dev/v1/Teleflora", TFEData).success(function(res1){
-					console.log("Success"+JSON.stringify(res1));
-				}).error(function(err){
-					console.log("----->"+err);
-				});
-			});
-		});	
 	};
 	vm.deleteCreditCard = function(){
 		var card = {"ID":""};
 		CreditCardService.Delete(card).then(function(res){
 			console.log("deleted credit card....."+res);
 		});
+	};
+	vm.EditedOrderTFE = function(line){
+		var obj = {
+			"xp": {
+				"Status": "ChangeDeliveryDate",
+				"WiredServices": {
+					"TFE": {
+						"SequenceNumber": "0",
+						"FillingFlorist": {
+							"ChangeRequest": "Inquiry",
+							"NewDeliveryDate": line.xp.DeliveryDate,
+							"Reason": "Testing Of Change date",
+							"StaticMessage1": line.xp.CardMessage.Line1,
+							"StaticMessage2": line.xp.CardMessage.Line2,
+							"StaticMessage3": line.xp.CardMessage.Line3,
+							"StaticMessage4": line.xp.CardMessage.Line4
+						},
+						"Inquiry": {
+							"Message": [
+								"Testing the Inquiry operation"
+							]
+						}
+					}
+				}
+			}
+		};
+		OrderCloud.As().Orders.Patch(vm.order.ID, obj).then(function(res){
+			console.log(res);
+		});	
 	};
 	vm.getBillingAddress = function(card){
 		OrderCloud.As().Me.GetAddress(card.xp.BillingAddressID).then(function(res) {
@@ -409,7 +476,7 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 				form.invalidAddress = true;
 			}
 		}).catch(function(err){
-			vm.AddressError = err.Errors[0].Message;
+			vm.AddressError = err.data.Errors[0].Message;
 		});		
 	};
 	vm.ShowEditBillingAddress = function(billingAddress, index){
@@ -466,7 +533,7 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 					}	
 				});
 			}
-			obj.ShippingAddress.deliveryDate = obj.xp.deliveryDate;
+			obj.ShippingAddress.deliveryDate = obj.xp.DeliveryDate;
 			obj.ShippingAddress.lineID = obj.ID;
 			if(obj.xp.deliveryFeesDtls)
 				obj.ShippingAddress.deliveryPresent = true;
@@ -478,8 +545,8 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 			else if(dat==tomorrow)
 				vm['data'+index] = "tom"+index;
 			else{*/
-			if(obj.xp.deliveryDate){
-				dt = new Date(obj.xp.deliveryDate);
+			if(obj.xp.DeliveryDate){
+				dt = new Date(obj.xp.DeliveryDate);
 				obj.dateVal = {"Month":dt.getMonth()+1,"Date":dt.getDate(),"Year":dt.getFullYear()};
 			}else{
 				dt = new Date(obj.xp.pickupDate);
@@ -525,7 +592,7 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 				obj.LocalOrUPSMinDate = obj.xp.MinDays['MinToday'];
 			else
 				obj.LocalOrUPSMinDate = obj.xp.MinDays['UPS'];
-			return obj.ShippingAddress.FirstName + ' ' + obj.ShippingAddress.LastName + ' ' + obj.ShippingAddress.Zip + ' ' + (obj.ShippingAddress.Street1).split(/(\d+)/g)[1] + ' ' + obj.xp.DeliveryMethod + ' ' + obj.xp.deliveryDate;
+			return obj.ShippingAddress.FirstName + ' ' + obj.ShippingAddress.LastName + ' ' + obj.ShippingAddress.Zip + ' ' + (obj.ShippingAddress.Street1).split(/(\d+)/g)[1] + ' ' + obj.xp.DeliveryMethod + ' ' + obj.xp.DeliveryDate;
 		});
 		vm.AvoidMultipleDelryChrgs = _.uniq(vm.AvoidMultipleDelryChrgs, 'lineID');
 		vm.orderDtls.subTotal = orderDtls.subTotal;
@@ -560,6 +627,7 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 			});
 		}
 		vm.activeOrders = groups;
+		setTimeout(function(){$('#noMessage0').focus();}, 1000);
 	};
     vm.Grouping(ProductInfo);
 	vm.CheckDeliveryEmpty = function(data){
@@ -568,7 +636,7 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 	};
 	vm.ProceedToPayment = function(lineitems,index, form) {
 		form.$submitted = true;
-		if(form.$valid && !form.invalidAddress && (lineitems[0].xp.deliveryRun || lineitems[0].xp.addressType=="InStorePickUp")){
+		if(form.$valid && !form.invalidAddress && (lineitems[0].xp.deliveryRun || lineitems[0].xp.addressType=="InStorePickUp" || lineitems[0].xp.IsWorkShopEvent)){
 			if (vm.delInfoRecipient[index + 1] != null) {
 				vm.delInfoRecipient[index + 1] = true;
 			} else{
@@ -580,13 +648,35 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 			}
 			vm.delInfoTab[index+1]=false;
 			vm.lineDtlsSubmit(lineitems,0);
+			$(".checkoutContainer-left").animate({ scrollTop: 0 }, "slow");
+		}else{
+			if($('input.ng-invalid')[0])
+				$('input.ng-invalid')[0].focus();
+			if(!lineitems[0].xp.deliveryRun && lineitems[0].xp.addressType!="InStorePickUp")
+				lineitems[0].SelectStore='Delivery';
+			vm['isAddrShow'+index] = false;
 		}
 	};
 	vm.ProceedToReview = function(billingform, creditcardform){
 		if(creditcardform && vm.paymentOption != 'PO'){
 			billingform.$submitted = true;
 			creditcardform.$submitted = true;
-			if(billingform.$valid && creditcardform.$valid && vm.card.ExpMonth!="MM" && vm.card.ExpYear!="YYYY"){
+			var date = new Date(angular.copy(GetCstDateTime.datetime));
+			if(vm.card.ExpYear < date.getFullYear()){
+				vm.InvalidExpYear = true;
+				vm.InvalidExpMonth = true;
+			}else{
+				vm.InvalidExpYear = false;
+				vm.InvalidExpMonth = false;
+			}
+			if(vm.card.ExpYear == date.getFullYear()){
+				if((vm.card.ExpMonth).substring(0, 2) < date.getMonth()+1){
+					vm.InvalidExpMonth = true;
+				}else{
+					vm.InvalidExpMonth = false;
+				}
+			}
+			if(billingform.$valid && !vm.InvalidExpMonth && !vm.InvalidExpYear && creditcardform.$valid && vm.card.ExpMonth!="MM" && vm.card.ExpYear!="YYYY"){
 				vm.paymentDone = true;
 				vm.status.delInfoOpen = false;
 				vm.status.paymentOpen = false;
@@ -607,6 +697,26 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 					vm.status.isSecondDisabled = true;
 					vm.status.isThirdDisabled = false;
 				}
+			}
+			if(vm.selectedCard.cvvform && vm.paymentOption != 'PO'){
+				if(vm.selectedCard.cvvform.$invalid){
+					vm.selectedCard.cvvform.$submitted = true;
+				}else{
+					vm.paymentDone = true;
+					vm.status.delInfoOpen = false;
+					vm.status.paymentOpen = false;
+					vm.status.reviewOpen = true;
+					vm.status.isSecondDisabled = true;
+					vm.status.isThirdDisabled = false;
+				}
+			}
+			if(vm.selectedCard.CVV && vm.selectedCard.ID && vm.paymentOption != 'PO'){
+				vm.paymentDone = true;
+				vm.status.delInfoOpen = false;
+				vm.status.paymentOpen = false;
+				vm.status.reviewOpen = true;
+				vm.status.isSecondDisabled = true;
+				vm.status.isThirdDisabled = false;
 			}
 		}
 		if(vm.orderTotal == 0){
@@ -630,7 +740,7 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 		var line = lineitems[index];
 		if(lineitems[0].xp.ShippingAddress){
 			lineitems[0].xp.ShippingAddress.Phone = "("+lineitems[0].Events.Phone1+") "+lineitems[0].Events.Phone2+"-"+lineitems[0].Events.Phone3;
-			lineitems[0].xp.deliveryDate = lineitems[0].Product.xp.EventDate;
+			lineitems[0].xp.DeliveryDate = lineitems[0].Product.xp.EventDate;
 		}
 		if(lineitems[0].ShippingAddress){
 			lineitems[0].ShippingAddress.Phone = "("+lineitems[0].ShippingAddress.Phone1+") "+lineitems[0].ShippingAddress.Phone2+"-"+lineitems[0].ShippingAddress.Phone3;
@@ -696,7 +806,7 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 										angular.forEach(res3.ResponseBody.TaxLines, function(val, key){
 											var row = _.findWhere(res.Items, {ID: val.LineNo}), tax = 0;
 											if(GetUser.xp.TaxExemption){// Tax exemption for user
-												if(!GetUser.xp.TaxExemption.Enabled)
+												if(GetUser.xp.TaxExemption.Enabled=="N" || GetUser.xp.TaxExemption.Enabled==false)
 													tax = val.Tax;
 											}else{
 												tax = val.Tax;
@@ -743,9 +853,11 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 					if(val.xp)
 						defualtAddressID = val.xp.DefaultAddress;
 					BuildOrderService.GetPhoneNumber(val.Phone).then(function(res){
-						val.Phone1 = res[0];
-						val.Phone2 = res[1];
-						val.Phone3 = res[2];
+						if(res){
+							val.Phone1 = res[0];
+							val.Phone2 = res[1];
+							val.Phone3 = res[2];
+						}	
 					});
 					if(defualtAddressID == val.ID)
 						$scope.addressesList.unshift(val);
@@ -767,7 +879,6 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 		form.$submitted = true;
 		var $this = this;
 		addr.Phone = "("+addr.Phone1+") "+addr.Phone2+"-"+addr.Phone3;
-
 		AddressValidationService.Validate(addr).then(function(response){
 			delete vm.AddressError;
 			if(response.ResponseBody.ResultCode == 'Success') {
@@ -805,13 +916,12 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 				form.invalidAddress = true;
 			}
 		}).catch(function(err){
-			vm.AddressError = err.Errors[0].Message;
+			vm.AddressError = err.data.Errors[0].Message;
 		});
 	};
 	vm.CreateAddress = function(line, index, form){
 		form.$submitted = true;
 		line.Phone = "("+line.Phone1+") "+line.Phone2+"-"+line.Phone3;
-
 		AddressValidationService.Validate(line).then(function(response){
 			delete vm.AddressError;
 			if(response.ResponseBody.ResultCode == 'Success'){
@@ -826,7 +936,10 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 				line.Country = validatedAddress.Country;
 				line.Shipping = true;
 				if(!form.invalidAddress && form.$valid){
-					OrderCloud.Me.CreateAddress(line).then(function(data){
+					OrderCloud.Addresses.Create(line).then(function(data){
+						OrderCloud.Addresses.SaveAssignment({"AddressID": data.ID, "UserID": $stateParams.ID, "IsShipping": true, "IsBilling": false});
+						toastr.info('Sorry, something went wrong. Please try again');
+						toastr.success('Address Created', 'Success');
 						data.Zip = parseInt(data.Zip);
 						BuildOrderService.GetPhoneNumber(data.Phone).then(function(res){
 							data.Phone1 = res[0];
@@ -842,7 +955,7 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 				form.invalidAddress = true;
 			}
 		}).catch(function(err){
-			vm.AddressError = err.Errors[0].Message;
+			vm.AddressError = err.data.Errors[0].Message;
 		});
 	};
 	vm.viewMore = function(line){
@@ -850,6 +963,9 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 			line.limit = $scope.addressesList.length;
 		else
 			line.limit = 3;
+	};
+	vm.focusSelect = function($event){
+		$event.target.select();
 	};
 	vm.newAddress = function(Index){
 		$scope['showNewAddress'+Index] = !$scope['showNewAddress'+Index];
@@ -879,7 +995,7 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 		var filt = _.filter(storesData, function(row){
 			return _.indexOf([item], row.CompanyName) > -1;
 		});
-		if(line.ShippingAddress == null)
+		/*if(line.ShippingAddress == null)
 			line.ShippingAddress = {};
 		line.ShippingAddress.Street1 = filt[0].Street1;
 		line.ShippingAddress.Street2 = filt[0].Street2;
@@ -892,7 +1008,7 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 			line.ShippingAddress.Phone3 = res[2];
 		});
 		line.invalidAddress = false;
-		vm.GetDeliveryFees(line, vm.lineItemForm[line.ID], lineitems);
+		vm.GetDeliveryFees(line, vm.lineItemForm[line.ID], lineitems);*/
 	};
 	vm.changeAddrType = function(line, lineitems, onload, index){
 		if(vm.TempAddrType != line.xp.addressType && vm.TempAddrType && onload != "onload"){
@@ -900,11 +1016,13 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 			line.ShippingAddress = {};
 			line.ShippingAddress.FirstName = txt.FirstName;
 			line.ShippingAddress.LastName = txt.LastName;
-			line.xp.deliveryDate = null;
+			if(line.xp.addressType=="InStorePickUp")
+				line.xp.DeliveryDate = null;
+			else
+				line.xp.pickupDate = null;	
 			delete line.xp.deliveryRun;
 			line.PatientFName = null;
 			line.PatientLName = null;
-			line.xp.pickupDate = null;
 			line.dateVal = {};
 			line.dateValStore = {};
 			vm.MultipleCities = [];
@@ -1012,11 +1130,11 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 		filt[0].LastName = line.ShippingAddress.LastName;
 		line.ShippingAddress = filt[0];
 		line.ShippingAddress.Zip = parseInt(filt[0].Zip);
-		BuildOrderService.GetPhoneNumber(line.ShippingAddress.Phone).then(function(res){
+		/*BuildOrderService.GetPhoneNumber(line.ShippingAddress.Phone).then(function(res){
 			line.ShippingAddress.Phone1 = res[0];
 			line.ShippingAddress.Phone2 = res[1];
 			line.ShippingAddress.Phone3 = res[2];
-		});
+		});*/
 		vm.GetDeliveryFees(line, vm.lineItemForm[line.ID], lineitems);
 	};
 	//------Date picker starts----------
@@ -1025,9 +1143,9 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 		vm['data'+index]=text;
 		line.dateVal = {};
 		if(text.indexOf("dt") > -1)
-			line.xp.deliveryDate = $scope.dt;
+			line.xp.DeliveryDate = $scope.dt;
 		else if(text.indexOf("tom") > -1)
-			line.xp.deliveryDate = new Date($scope.tom);*/
+			line.xp.DeliveryDate = new Date($scope.tom);*/
 		vm.GetDeliveryFees(line, vm.lineItemForm[line.ID], lineitems);
 	};
 	vm.dateSelectStore = function(line, index, lineitems){
@@ -1059,24 +1177,24 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 		var date1 = dateVar.getMonth()+1+"/"+dateVar.getDate()+"/"+dateVar.getFullYear();
 		/*if(today==date1){
 			vm['data'+$scope.datePickerLine.index] = "dt"+$scope.datePickerLine.index;
-			$scope.datePickerLine.xp.deliveryDate = $scope.dt;
+			$scope.datePickerLine.xp.DeliveryDate = $scope.dt;
 			$scope.datePickerLine.dateVal = {};
 		}
 		else if(tomorrow==date1){
 			vm['data'+$scope.datePickerLine.index] = "tom"+$scope.datePickerLine.index;
-			$scope.datePickerLine.xp.deliveryDate = $scope.tom;
+			$scope.datePickerLine.xp.DeliveryDate = $scope.tom;
 			$scope.datePickerLine.dateVal = {};
 		}
 		else{
 			if($scope.datePickerLine){
 				$scope.datePickerLine.dateVal = {"Month":dateVar.getMonth()+1,"Date":dateVar.getDate(),"Year":dateVar.getFullYear()};
-				$scope.datePickerLine.xp.deliveryDate = dateVar;
+				$scope.datePickerLine.xp.DeliveryDate = dateVar;
 				vm['data'+$scope.datePickerLine.index] = "selDate"+$scope.datePickerLine.index;	
 			}
 		}*/
 		if($scope.datePickerLine){
 			$scope.datePickerLine.dateVal = {"Month":dateVar.getMonth()+1,"Date":dateVar.getDate(),"Year":dateVar.getFullYear()};
-			$scope.datePickerLine.xp.deliveryDate = dateVar;
+			$scope.datePickerLine.xp.DeliveryDate = dateVar;
 			vm['data'+$scope.datePickerLine.index] = "selDate"+$scope.datePickerLine.index;	
 			vm.GetDeliveryFees($scope.datePickerLine, vm.lineItemForm[$scope.datePickerLine.ID],vm.datePickerLineItems);
 		}	
@@ -1189,7 +1307,7 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 				addr.Country = res.ResponseBody.Address.Country;
 			}
 		}).catch(function(err){
-			vm.AddressError = err.Errors[0].Message;
+			vm.AddressError = err.data.Errors[0].Message;
 		});
 	}
 	vm.ApplyCoupon = function(coupon, orderDtls){
@@ -1216,22 +1334,37 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 			vm.orderDtls.SpendingAccounts.PurplePerks = {"ID":obj.ID, "Amount":dat};
 		vm.SumSpendingAccChrgs(orderDtls);	
 	};
-	vm.orderTotal = angular.copy(vm.order.Total);
+	if(vm.editsubmitorder=="true"){
+    	vm.orderTotal=vm.order.Total-vm.order.xp.oldPrice;
+		vm.orderTotal = parseFloat(vm.orderTotal);
+    	/*if(vm.orderTotal==0){
+    		vm.orderTotal=vm.order.Total;
+    	}*/
+    	vm.orderDtls.SpendingAccounts.submittedorderamount={"Amount":vm.order.xp.oldPrice};
+    }
+    else{
+    	vm.order.Total = parseFloat(vm.order.Total);
+		vm.orderTotal = angular.copy(vm.order.Total);
+    }
 
 	vm.SumSpendingAccChrgs = function(orderDtls){
-		var sum=0;
+		var sum = 0;
 		angular.forEach(vm.orderDtls.SpendingAccounts, function(val, key){
-			//if(key!="Cheque")
-			sum = sum + Math.floor(parseFloat(val.Amount) * 100) / 100;
+			sum = sum + parseFloat(Math.round(val.Amount * 100) / 100);
 		}, true);
 		if(_.isEmpty(vm.orderDtls.SpendingAccounts)){
-			vm.orderTotal = angular.copy(vm.order.Subtotal + vm.order.ShippingCost + vm.order.TaxCost + vm.order.PromotionDiscount);
+			vm.orderTotal = angular.copy(parseFloat(Math.round((vm.order.Subtotal + vm.order.ShippingCost + vm.order.TaxCost + vm.order.PromotionDiscount) * 100) / 100));
 		}else{
-			vm.orderTotal = angular.copy(vm.order.Subtotal + vm.order.ShippingCost + vm.order.TaxCost + vm.order.PromotionDiscount - sum);
+			vm.orderTotal = angular.copy(parseFloat(Math.round((vm.order.Subtotal + vm.order.ShippingCost + vm.order.TaxCost + vm.order.PromotionDiscount) * 100) / 100) - sum);
+		}
+		if(vm.orderTotal < 0){
+			vm.orderTotal = 0;
 		}
 	};
 	vm.deleteSpendingAcc = function(orderDtls, ChargesType){
 		delete vm.orderDtls.SpendingAccounts[ChargesType];
+		if(ChargesType=="PaidCash")
+			delete vm.orderDtls.SpendingAccounts.CashDueAmount;
 		vm.SumSpendingAccChrgs(orderDtls);
 	};
 	vm.RemoveCoupon = function(){
@@ -1246,14 +1379,20 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 	};
 	vm.PayByChequeOrCash = function(orderDtls){
 		if(vm.PayCashCheque=='PayCash'){
-			vm.txtChequeAmt = null;
-			vm.txtChequeNumber = null;
-			vm.orderDtls.SpendingAccounts.PaidCash = {"Amount":vm.txtPayCash};
-			delete vm.orderDtls.SpendingAccounts.Cheque;
+			//vm.txtChequeAmt = null;
+			//vm.txtChequeNumber = null;
+			if(vm.txtPayCash > vm.orderTotal){
+				vm.orderDtls.SpendingAccounts.PaidCash = {"Amount":angular.copy(vm.orderTotal)};
+				vm.orderDtls.SpendingAccounts.CashDueAmount = {"Amount": Math.abs(vm.txtPayCash - vm.orderTotal)};
+			}else{
+				vm.orderDtls.SpendingAccounts.PaidCash = {"Amount":vm.txtPayCash};
+				delete vm.orderDtls.SpendingAccounts.CashDueAmount;
+			}	
+			//delete vm.orderDtls.SpendingAccounts.Cheque;
 		}else if(vm.PayCashCheque=='PayCheque'){
-			vm.txtPayCash = null;
+			//vm.txtPayCash = null;
 			vm.orderDtls.SpendingAccounts.Cheque = {"ChequeNo":vm.txtChequeNumber, "Amount":vm.txtChequeAmt};
-			delete vm.orderDtls.SpendingAccounts.PaidCash;
+			//delete vm.orderDtls.SpendingAccounts.PaidCash;
 		}
 		vm.SumSpendingAccChrgs(orderDtls);		
 	};
@@ -1314,12 +1453,12 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 				// val.xp.addressType = line.xp.addressType;
 				// val.xp.deliveryRun = line.xp.deliveryRun;
 				// if(line.xp.addressType!="InStorePickUp"){
-					// val.xp.deliveryDate = line.xp.deliveryDate;
+					// val.xp.DeliveryDate = line.xp.DeliveryDate;
 					// delete val.xp.pickupDate;
 					// val.xp.addressType = line.xp.addressType;
 				// }else{
 					// val.xp.pickupDate = line.xp.pickupDate;
-					// delete val.xp.deliveryDate;
+					// delete val.xp.DeliveryDate;
 					// val.xp.addressType = "InStorePickUp";
 				// }	
 				// TempArr.push(BuildOrderService.DeliveryFeesService(val, form, vm, GetCstDateTime.datetime));
@@ -1441,7 +1580,80 @@ function checkoutController($scope, $state, Underscore, Order, OrderLineItems, P
 				});
 			});
 		});
-	}
+	};
+	
+	vm.GiftCardSpendingAccounts = function(){
+		var TempArr = [], Arr = [];
+		_.filter(vm.activeOrders, function(arr){
+			_.each(arr, function(row){
+				if(row.ProductID == "Gift_Card_Product"){
+					Arr.push(row);
+				}
+			});
+		});
+		OrderCloud.SpendingAccounts.List('Gift Card', null, null, 'Name', '!ID', {'xp.Claimed':false,'xp.IsAssigned':false}).then(function(resultdata){
+			angular.forEach(Arr, function(val){
+				angular.forEach(val.xp.GiftCardSA, function(val1, key){
+					val.xp.GiftCardSA[key].ID = resultdata.Items[key].ID;
+					TempArr.push(OrderCloud.SpendingAccounts.Patch(resultdata.Items[key].ID, {"Balance":val.UnitPrice,"xp":{"IsAssigned":true, "Claimed":true}}));
+				});
+				TempArr.push(OrderCloud.LineItems.Patch(vm.order.ID, val.ID, {"Quantity":val.Quantity, "xp": {"GiftCardSA": val.xp.GiftCardSA, "TotalCost": val.xp.TotalCost}}));
+			});
+			$q.all(TempArr).then(function(patchdata){
+				console.log("success");
+			});
+		});
+	};
+	
+	vm.FTService = function(order, shipments){
+		OrderCloud.As().Orders.Patch(order.ID, {"xp":{"OrderDestination": "FTD", "Status":"OnHold"}}).then(function(res){
+			TFEData.RouteParams.orderID = order.ID;
+			TFEData.UserToken = $cookieStore.get('OMS.Admintoken');
+			delete shipments[0].xp;
+			TFEData.Response.Body = _.extend(shipments[0],res);
+			
+			EmailData.RouteParams.orderID = order.ID;
+			EmailData.UserToken = $cookieStore.get('OMS.Admintoken');
+			EmailData.Response.Body = _.extend(shipments[0],res);
+			EmailData.Request.Body = _.extend(shipments[0],res);
+			if(!vm.order.xp.oldPrice){
+				$http.post("https://Four51TRIAL104401.jitterbit.net/Bachmans_Dev/FTD", TFEData).success(function(res1){
+					console.log("Success"+JSON.stringify(res1));
+				}).error(function(err){
+					console.log("----->"+err);
+				});
+			}
+			$http.post("https://Four51TRIAL104401.jitterbit.net/Bachmans_Dev/EmailService", EmailData).success(function(res1){
+				console.log("Success"+JSON.stringify(res1));
+			}).error(function(err){
+				console.log("-->"+err);
+			});
+		}).catch(function(err){
+			OrderCloud.As().Orders.Get(order.ID).then(function(res){
+				TFEData.RouteParams.orderID = order.ID;
+				TFEData.UserToken = $cookieStore.get('OMS.Admintoken');
+				delete shipments[0].xp;
+				TFEData.Response.Body = _.extend(res, shipments[0]);
+				
+				EmailData.RouteParams.orderID = order.ID;
+				EmailData.UserToken = $cookieStore.get('OMS.Admintoken');
+				EmailData.Response.Body = _.extend(shipments[0],res);
+				EmailData.Request.Body = _.extend(shipments[0],res);
+				if(!vm.order.xp.oldPrice){
+					$http.post("https://Four51TRIAL104401.jitterbit.net/Bachmans_Dev/v1/Teleflora", TFEData).success(function(res1){
+						console.log("Success"+JSON.stringify(res1));
+					}).error(function(err){
+						console.log("----->"+err);
+					});
+				}	
+				$http.post("https://Four51TRIAL104401.jitterbit.net/Bachmans_Dev/EmailService", EmailData).success(function(res1){
+					console.log("Success"+JSON.stringify(res1));
+				}).error(function(err){
+					console.log("-->"+err);
+				});
+			});
+		});	
+	};
 }
 
 function checkoutService(CreditCardService, $q, OrderCloud, $state, TaxService, $http, GC_PP_Redemption){
@@ -1487,7 +1699,8 @@ function checkoutService(CreditCardService, $q, OrderCloud, $state, TaxService, 
 			CreditCardService.Create(card).then(function(res){
 				if(res.ResponseBody.ID){
 					if(!billingAddress.ID){
-						OrderCloud.As().Me.CreateAddress(billingAddress).then(function(res1) {
+						OrderCloud.Addresses.Create(billingAddress).then(function(res1){
+							OrderCloud.Addresses.SaveAssignment({"AddressID": res1.ID, "UserID": $stateParams.ID, "IsShipping": false, "IsBilling": true});
 							OrderCloud.As().Me.PatchCreditCard(res.ResponseBody.ID, {"xp":{"BillingAddressID":res1.ID}}).then(function(res2) {
 								console.log(res2);
 							});
@@ -1555,8 +1768,11 @@ function checkoutService(CreditCardService, $q, OrderCloud, $state, TaxService, 
 					}, true);
 					$q.all(TempStoredArray).then(function(result){
 						console.log("========>>>>>>"+result);
+						d.resolve("1");
 					});
 				});
+			}).catch(function(err){
+				d.resolve("1");
 			});
 		}else{
 			d.resolve("1");
@@ -1568,11 +1784,22 @@ function checkoutService(CreditCardService, $q, OrderCloud, $state, TaxService, 
 		if(vm.selectedCard!="createcreditcard" && vm.order.Total > 0) {
             CreditCardService.ExistingCardAuthCapture(vm.selectedCard, vm.order)
                 .then(function(res){
-					if(!res.ResponseBody.messages.resultCode!="Error"){
+					if(res.ResponseBody.messages.resultCode!="Error"){
 						OrderCloud.Orders.Submit(vm.order.ID).then(function(){
 							TaxService.CollectTax(vm.order.ID).then(function(){
 								d.resolve("1");
 								$state.go('orderConfirmation' , {userID: vm.order.FromUserID ,ID: vm.order.ID});
+							});
+						}).catch(function(err){
+							OrderCloud.Orders.Get(vm.order.ID).then(function(res1){
+								if(res1.Status=="Open"){
+									TaxService.CollectTax(vm.order.ID).then(function(){
+										d.resolve("1");
+										$state.go('orderConfirmation' , {userID: vm.order.FromUserID ,ID: vm.order.ID});
+									});
+								}else{
+									d.resolve("0");
+								}
 							});
 						});
 					}else{
@@ -1594,6 +1821,17 @@ function checkoutService(CreditCardService, $q, OrderCloud, $state, TaxService, 
 									d.resolve("1");
 									$state.go('orderConfirmation' , {userID: vm.order.FromUserID ,ID: vm.order.ID});
 								});
+							}).catch(function(err){
+								OrderCloud.Orders.Get(vm.order.ID).then(function(res1){
+									if(res1.Status=="Open"){
+										TaxService.CollectTax(vm.order.ID).then(function(){
+											d.resolve("1");
+											$state.go('orderConfirmation' , {userID: vm.order.FromUserID ,ID: vm.order.ID});
+										});
+									}else{
+										d.resolve("0");
+									}
+								});
 							});
 						}else{
 							vm.TransactionError = res.ResponseBody.Error;
@@ -1606,6 +1844,17 @@ function checkoutService(CreditCardService, $q, OrderCloud, $state, TaxService, 
 				TaxService.CollectTax(vm.order.ID).then(function(){
 					d.resolve("1");
 					$state.go('orderConfirmation' , {userID: vm.order.FromUserID ,ID: vm.order.ID});
+				});
+			}).catch(function(err){
+				OrderCloud.Orders.Get(vm.order.ID).then(function(res1){
+					if(res1.Status=="Open"){
+						TaxService.CollectTax(vm.order.ID).then(function(){
+							d.resolve("1");
+							$state.go('orderConfirmation' , {userID: vm.order.FromUserID ,ID: vm.order.ID});
+						});
+					}else{
+						d.resolve("0");
+					}
 				});
 			});
         }
@@ -1834,3 +2083,27 @@ var TFEData = {
     "Headers": "Content-Length: 218\r\nAccess-Control-Allow-Origin: *\r\nLocation: https://testapi.ordercloud.io/v1/buyers/12345/1235\r\nContent-Type: application/json; charset=utf-8\r\nX-oc-logid: a38f85f1-7914-491e-b878-c1d40aaa73b0\r\nContent-Length: 218\r\n"
   }
 };
+
+var EmailData = {
+	"Route": "v1/buyers/{buyerID}/orders",
+	"RouteParams": {
+		"buyerID": "Bachmans",
+		"orderID": "444444"
+	},
+	"Verb": "POST",
+	"Date": "2016-05-31T19:42:36.1073254Z",
+	"LogID": "69f32bd0-8f97-409d-845f-d3295d0653f2",
+	"UserToken": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c3IiOiJib2JzIiwiY2lkIjoiOTgyZTdkMDAtNzFiZS00YTJhLTkzZTQtZjBmYjVhNmE4OTExIiwidXNydHlwZSI6ImJ1eWVyIiwicm9sZSI6IkZ1bGxBY2Nlc3MiLCJpc3MiOiJodHRwczovL3Rlc3RhdXRoLm9yZGVyY2xvdWQuaW8iLCJhdWQiOiJodHRwczovL3Rlc3RhcGkub3JkZXJjbG91ZC5pbyIsImV4cCI6MTQ3MzQ4MjExOCwibmJmIjoxNDczNDQ2MTE4fQ.x1tqj-LSagJfQMsUnnsGpC9wzW19p45opMzuSdJA_Eo",
+	"Request": {
+		"Body": {
+			
+		},
+		"Headers": "Origin: https://testdevcenter.ordercloud.io\r\nConsoleLog: true\r\nConnection: keep-alive\r\nContent-Length: 214\r\nContent-Type: application/json;charset=UTF-8\r\nAccept: application/json, text/plain, */*\r\nAccept-Encoding: gzip, deflate, br\r\nAccept-Language: en-US,en;q=0.8\r\ntokenClaims(from authorization): usr: bobs,cid: 982e7d00-71be-4a2a-93e4-f0fb5a6a8911,imp: 22030,usrtype: buyer,http://schemas.microsoft.com/ws/2008/06/identity/claims/role: FullAccess,iss: https://testauth.ordercloud.io,aud: https://testapi.ordercloud.io,exp: 1464727287,nbf: 1464723687\r\nHost: testapi.ordercloud.io\r\nReferer: https://testdevcenter.ordercloud.io/console\r\nUser-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36\r\n"
+	},
+	"Response": {
+		"Body": {
+			
+		},
+		"Headers": "Content-Length: 499\r\nAccess-Control-Allow-Origin: *\r\nLocation: https://testapi.ordercloud.io/v1/buyers/12345/333333\r\nContent-Type: application/json; charset=utf-8\r\nX-oc-logid: 69f32bd0-8f97-409d-845f-d3295d0653f2\r\nContent-Length: 499\r\n"
+	}
+}

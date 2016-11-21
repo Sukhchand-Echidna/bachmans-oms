@@ -10,6 +10,7 @@ angular.module( 'orderCloud' )
     .controller('BuildOrderTopCtrl', BuildOrderTopController)
     .factory('AlfrescoFact', AlfrescoFact)
 	.filter('CategoriesAsPerSeason', CategoriesAsPerSeasonFilter)
+    .filter('capitalize', CapitalizeFilter)
 ;
 
 function CategoriesAsPerSeasonFilter($filter) {
@@ -56,20 +57,24 @@ function BaseConfig( $stateProvider ) {
                 }
             },
             resolve: {
-                CurrentUser: function($q, $state, OrderCloud) {
-                    var dfd = $q.defer();
-                    OrderCloud.Me.Get()
-                        .then(function(data) {
-                            dfd.resolve(data);
-                        })
-                        .catch(function(){
-                            OrderCloud.Auth.RemoveToken();
-                            OrderCloud.Auth.RemoveImpersonationToken();
-                            OrderCloud.BuyerID.Set(null);
-                            $state.go('login');
-                            dfd.resolve();
-                        });
-                    return dfd.promise;
+                CurrentUser: function($q, $state, OrderCloud,$location) {
+                    if($location.path().indexOf('resetPassword') < 0){
+                        var dfd = $q.defer();
+                        OrderCloud.Me.Get()
+                            .then(function(data) {
+                                dfd.resolve(data);
+                            })
+                            .catch(function(){
+                                OrderCloud.Auth.RemoveToken();
+                                OrderCloud.Auth.RemoveImpersonationToken();
+                                OrderCloud.BuyerID.Set(null);
+                                
+                                    $state.go('login');
+                                
+                            // dfd.resolve();
+                            });
+                        return dfd.promise;
+                    }
                 },
                 ComponentList: function($state, $q, Underscore, CurrentUser) {
                     var deferred = $q.defer();
@@ -99,11 +104,15 @@ function BaseConfig( $stateProvider ) {
                     deferred.resolve(components);
                     return deferred.promise;
                 },
-                Tree: function (BaseService) {
-                    return BaseService.GetCategoryTree();
+                Tree: function (BaseService,$location) {
+                    if($location.path().indexOf('resetPassword') < 0){
+                        return BaseService.GetCategoryTree();
+                    }
                 },
-                UserList: function (OrderCloud) {
-                    return OrderCloud.Users.List();
+                UserList: function (OrderCloud,$location) {
+                    if($location.path().indexOf('resetPassword') < 0){
+                        return OrderCloud.Users.List();
+                    }
                 },
                 /*ProductList: function (OrderCloud) {
                     return OrderCloud.Products.List();
@@ -199,7 +208,7 @@ function BaseService($q, $localForage, Underscore, OrderCloud) {
     return service;
 }
 
-function BaseController($sce, $state, CurrentUser, defaultErrorMessageResolver, AlfrescoFact, $scope, AlfrescoCommon, GetCstTimeFunction) {
+function BaseController($sce, $http, GCBalance, $state, CurrentUser, defaultErrorMessageResolver, AlfrescoFact, $scope, AlfrescoCommon, GetCstTimeFunction) {
     var vm = this;
 	vm.cstdate = GetCstTimeFunction;
 	vm.logo=AlfrescoCommon;
@@ -222,6 +231,19 @@ function BaseController($sce, $state, CurrentUser, defaultErrorMessageResolver, 
         errorMessages['confirmpassword'] = 'Your passwords do not match';
         errorMessages['noSpecialChars'] = 'Only Alphanumeric characters are allowed';
     });
+
+    vm.checkGCbal = function(giftcardbal){
+        alert(giftcardbal.length);
+        $http.post(GCBalance, {"card_number": giftcardbal}).success(function(res2){
+            console.log(res2);
+            if(res2.card_value!="cardNumber not available"){
+               vm.GCBalance = res2.card_value;
+                vm.GCerr=""; 
+            }   
+            else
+                vm.GCerr="Enter valid Gift Card";
+        });
+    }
 	//vm.product = ProductList;
     // AlfrescoFact.Get().then(function (data) {
         // console.log(data);
@@ -287,17 +309,17 @@ function BaseTopController($scope, $state, Tree, UserList, OrderCloud, GetCstTim
     vm.back2 = function(){
         vm.page2 = vm.page2 - 1;
     };
-	vm.searchGoTo= function(userId, orderId){
-		OrderCloud.Orders.Get(orderId).then(function(res){
-			console.log("resssssssss",res);
-			if(res.Status=='Unsubmitted'){
-				$state.go('buildOrder',{ID:userId,SearchType:'User',orderID:orderId});
-			}
-			else{
-				$state.go('orderHistory',{userID:userId, orderId:orderId});
-			}
-		});
-	}
+	// vm.searchGoTo= function(userId, orderId){
+		// OrderCloud.Orders.Get(orderId).then(function(res){
+			// console.log("resssssssss",res);
+			// if(res.Status=='Unsubmitted'){
+				// $state.go('buildOrder',{ID:userId,SearchType:'User',orderID:orderId});
+			// }
+			// else{
+				// $state.go('orderHistory',{userID:userId, orderId:orderId});
+			// }
+		// });
+	// }
 }
 
 function BaseDownController() {
@@ -377,4 +399,15 @@ function GlobalObjectService() {
     }
  
     return service;
+}
+
+function CapitalizeFilter() {
+    return function (input) {
+        if (input != null && input != undefined) {
+            return input.replace(/\w\S*/g, function (txt) {
+                return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+            });
+        }
+        return input;
+    }
 }

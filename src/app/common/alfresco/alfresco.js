@@ -70,7 +70,7 @@ function Alfresco($q, $http, urls, alfrescoServiceUrl) {
             query: "",
             pageSize: 100,
             maxResults: 0,
-            spellcheck: true,
+            spellcheck: false,
             repo:true
         }
 		var alfrescoToken = localStorage.getItem("alfrescoTicket");

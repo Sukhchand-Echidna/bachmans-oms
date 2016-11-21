@@ -25,12 +25,15 @@ function HomeConfig( $stateProvider ) {
 						var result=_.sortBy(promo.Items, function(data){ return data.xp.DateCreated; });
 						return [result.reverse(), totalCount];
 					});
+				},
+				RemoveImpersonatedUser: function(OrderCloud){
+					return OrderCloud.Auth.RemoveImpersonationToken();
 				}
             }
 		});
 }
 
-function HomeController($sce, $rootScope, $state, $compile, $uibModal,$log, $stateParams, Underscore, $scope, OrderCloud,$q, $http, PromotionsList,$filter) {
+function HomeController($sce, $rootScope, $state, $compile, $uibModal,$log, $stateParams, Underscore, $scope, OrderCloud,$q, $http, PromotionsList,$filter, ShippingRateURL, $cookieStore) {
 	var vm = this;
 	vm.showcalendarModal = false;
 	vm.showpromotionsmodal = false;
@@ -39,7 +42,6 @@ function HomeController($sce, $rootScope, $state, $compile, $uibModal,$log, $sta
 		$scope.$parent.base.search.query = ' ';
 	}
 	$scope.$parent.base.selectChange('customer');
-	OrderCloud.Auth.RemoveImpersonationToken();
 	//$scope.events=[];
     //$scope.events = EventList.events;
 	vm.promoList=[];
@@ -70,7 +72,7 @@ function HomeController($sce, $rootScope, $state, $compile, $uibModal,$log, $sta
         console.log(lineitem);
     });*/
 	var onholdorders = [];
-	OrderCloud.Shipments.List(null, null, null, null, null, null, {"xp.Status":"OnHold"}).then(function(res){
+	OrderCloud.Shipments.List(null, null, 1, 50, null, null, {"xp.Status":"OnHold"}).then(function(res){
 		angular.forEach(res.Items, function(res, key){
 			angular.forEach(res.Items, function(res1, key1){
 				OrderCloud.Orders.Get(res1.OrderID).then(function(res2){
@@ -87,7 +89,10 @@ function HomeController($sce, $rootScope, $state, $compile, $uibModal,$log, $sta
 						}
 						if(res3.xp.Destination==null)
 							res3.xp.Destination='';
-						onholdorders.push({"ID":res.ID,"DeliveryDate":res3.xp.deliveryDate,"FromUserID":res2.FromUserID,"RecipientName":res3.ShippingAddress.FirstName+" "+res3.ShippingAddress.LastName,"OrderID":res1.OrderID,"LineItemID":res1.LineItemID,"DatePlaced":res2.DateSubmitted,"FromUserFirstName":res2.FromUserFirstName,"Destination":res3.xp.addressType,"WireStatusCode":res3.xp.Destination,"CSRID":res2.xp.CSRID});
+						var dummy="Outgoing";
+						if(res2.Comments=="TFEIncomingOrder" || res2.Comments=="FTDIncomingOrder")
+							dummy = "Incoming"
+						onholdorders.push({"ID":res.ID,"DeliveryDate":res3.xp.DeliveryDate,"FromUserID":res2.FromUserID,"RecipientName":res3.ShippingAddress.FirstName+" "+res3.ShippingAddress.LastName,"OrderID":res1.OrderID,"LineItemID":res1.LineItemID,"DatePlaced":res2.DateSubmitted,"FromUserFirstName":res2.FromUserFirstName,"Destination":res3.xp.addressType,"WireStatusCode":res2.xp.TransactionId,"TypeOfHold":dummy,"CSRID":res2.xp.CSRID});
 					})
 				})
 				//onholdorders.push(OrderCloud.Orders.Get(res1.OrderID));
@@ -101,19 +106,21 @@ function HomeController($sce, $rootScope, $state, $compile, $uibModal,$log, $sta
 	  data: 'home.onHold',
 	  enableSorting: true,
 	  columnDefs: [
-	   { name: 'ID', displayName:'Shipment'},
-	   { name: 'DateCreated', displayName:'Order Placed On', cellTemplate: '<div class="data_cell">{{row.entity.DateCreated | date:grid.appScope.dateFormat}}</div>', width:"11.11%"},
-	   { name: 'FromUserFirstName', displayName:'Sender Name',width:"11.11%"},
-	   { name: 'DeliveryDate', displayName:'Delivery Date', cellTemplate: '<div class="data_cell">{{row.entity.DeliveryDate | date:grid.appScope.dateFormat}}</div>', width:"11.11%"},
-	   { name: 'RecipientName', displayName:'Recipient Name',width:"11.11%"},
-	   { name: 'Destination', displayName:'Destination',width:"11.11%"},
-	   { name: 'WireStatusCode', displayName:'Wire Status Code',width:"11.11%"},
-	   { name: 'CSRID', displayName:'CSR ID',width:"11.11%"},
-	   { name: 'ShippingCost', displayName:'', cellTemplate: '<div class="data_cell" ng-click="grid.appScope.home.onholdfunc(row.entity)"><a> <i class="fa fa-upload"></i> Open Order</a></div>', width:"11.11%"}
+		{ name: 'LineItemID', displayName:'Line Item',width:"9.09%"},
+	   { name: 'ID', displayName:'Shipment',width:"9.09%"},
+	   { name: 'DatePlaced', displayName:'Order Placed On', cellTemplate: '<div class="data_cell">{{row.entity.DatePlaced | date:grid.appScope.dateFormat}}</div>',width:"9.09%"},
+	   { name: 'FromUserFirstName', displayName:'Sender Name',width:"9.09%"},
+	   { name: 'DeliveryDate', displayName:'Delivery Date', cellTemplate: '<div class="data_cell">{{row.entity.DeliveryDate | date:grid.appScope.dateFormat}}</div>',width:"9.09%"},
+	   { name: 'RecipientName', displayName:'Recipient Name',width:"9.09%"},
+	   { name: 'Destination', displayName:'Destination',width:"9.09%"},
+	   { name: 'TypeOfHold', displayName:'OnHold Type',width:"9.09%"},
+	   { name: 'WireStatusCode', displayName:'Wire Status Code',width:"8%"},
+	   { name: 'CSRID', displayName:'CSR ID',width:"9.09%"},
+	   { name: 'ShippingCost', displayName:'', cellTemplate: '<div class="data_cell" ng-click="grid.appScope.home.onholdfunc(row.entity)"><a> <i class="fa fa-upload"></i> Open Order</a></div>',width:"10.09%"}
 	  ]
 	 };
 	//vm.saved = OrderList.saved;
-	OrderCloud.Orders.ListOutgoing(null, null, null, null, null, null, null, {"xp.SavedOrder.Flag":true}).then(function(data){
+	OrderCloud.Orders.ListOutgoing(null, null, null, null, null, null, null, {"xp.SavedOrder.Flag":true,"Status":"Unsubmitted"}).then(function(data){
 		vm.oldSaved = data.Items;
 		vm.saved = angular.copy(vm.oldSaved);
 	});
@@ -123,16 +130,40 @@ function HomeController($sce, $rootScope, $state, $compile, $uibModal,$log, $sta
 	    enableSorting: false,
 	  columnDefs: [ 
 		{ name: 'xp.SavedOrder.Name', displayName:'Order Name'},
+		{ name: 'DateCreated', displayName:'Date Created', cellTemplate: '<div class="data_cell">{{row.entity.DateCreated | date:grid.appScope.dateFormat}}</div>', width:"15%"},
 		{ name: 'FromUserFirstName', displayName:'Customer'},
 		{ name: 'Delete', displayName:'', enableFiltering:false, cellTemplate: '<div class="data_cell"><a popover-trigger="none" popover-is-open="grid.appScope.showDeliveryToolTip[row.entity.ID]" ng-click="grid.appScope.showDeliveryToolTip[row.entity.ID] = !grid.appScope.showDeliveryToolTip[row.entity.ID]" uib-popover-template="grid.appScope.deleteAddress.templateUrl" popover-placement="bottom"><img src="../assets/images/icons-svg/cancel.svg">Delete</a></div><script type="text/ng-template" id="deleteAddress.html"><div click-outside="grid.appScope.closePopover()"><h2>Delete this Order</h2><button type="button" ng-click="grid.appScope.deleteOrder(row)">Yes</button><button type="button" ng-click="grid.appScope.cancelPopUp()">No</button></div></script>', width: "15%"},
 		{ name: 'openOrder', displayName:'', enableFiltering:false, cellTemplate: '<div class="data_cell" ui-sref="buildOrder({ID:row.entity.FromUserID,SearchType:grid.appScope.user,orderID:row.entity.ID})"><a> <i class="fa fa-upload"></i> Open Order</a></div>', width: "15.2%"}
 	  ]
 	};
-
+	
+	vm.GetUPSCharges = function(){
+		var data = {
+			"BuyerID": "Bachmans",
+		 	"TransactionType": "GetRates",
+			"OrderID": "Wixz7z6bvUqZp02QiU6htw"
+		};
+		$http({
+			method: 'POST',
+			dataType: "json",
+			url: ShippingRateURL,
+			data: data,
+			headers: {
+				'Authorization': 'Bearer '+$cookieStore.get('OMS.Admintoken'),
+				'Content-Type': 'application/json'
+			}
+		}).success(function (res, status, headers, config) {
+			console.log("Success-->"+res);
+		}).error(function (err, status, headers, config) {
+			console.log("Error-->"+err);
+		});
+	};
+	vm.GetUPSCharges();
+	
 	vm.onholdfunc=function(data){
 		console.log(data);
 		if(data.WireStatusCode==''){
-			$state.go('buildOrder',{ID:data.FromUserID,SearchType:'User',orderID:data.OrderID});
+			$state.go('buildOrder',{ID:data.FromUserID,SearchType:'User',orderID:data.OrderID,editsubmitorder:"true"});
 		}
 		else{
 			$state.go('hold',{ID:data.ID,LineItemID:data.LineItemID,OrderID:data.OrderID});

@@ -13,6 +13,14 @@
 	display:none;
 }
 
+.disabledDiv{
+    pointer-events:none;
+}
+
+.greenBg{
+	background-color: #afd833 !important;
+}
+
 .ng-hide.ng-hide-animate{
      display: none !important;
 }
@@ -75,13 +83,20 @@ input.error, .errorCity {
 		span{
 			.helvetica-bold;
 			color:@purple-medium;
-			font-size:1.250em;
+			 text-transform: lowercase;
+		    white-space: nowrap;
+		    overflow: hidden;
+		    text-overflow: ellipsis;
+		    display: inline-block;
+		    max-width: 50%;
+		    font-size:1em;
+		    vertical-align:top;
 		}
 		span.count{
 			.helvetica-regular;
 			color:@color27;
-			font-size:1em;
-		}
+			font-size: 1em;
+   			}
 	}
 }
 .buildOrder-plp {
@@ -157,15 +172,15 @@ input.error, .errorCity {
 			}
 			h2 {
 				.helvetica-regular;
-				font-size:0.938em;
+				font-size:1em;
 			}
 			p {
-				font-size:0.938em;
+				font-size:1em;
 				.helvetica-medium;
 				text-align: right;
 			}
 			h3 {
-				font-size:0.938em;
+				font-size:0.813em;
 				.helvetica-medium;
 				margin: 0;
 				opacity:0.7;
@@ -236,18 +251,17 @@ input.error, .errorCity {
 			h4,
 			span {
 				.helvetica-bold;
-				font-size: 0.938em ;
+				font-size: 1em ;
+				color:#54565d;
+				line-height:15px;
 			}
 			h4 {
 				width: 85px;
 				float: left;
-				margin: 5px 0 0;
+				
 			}
 			button {
-				.purple-btn;
-				line-height: 25px;
-				height: 25px;
-				font-size:0.750em;
+				.purple-btn-small;
 				float:right;
 
 			}
@@ -363,6 +377,26 @@ input.error, .errorCity {
 			float:none;
 			/*.in-block;*/
 			display: block;
+			.events{
+				    position: absolute;
+				    background: #a576ca;
+				    padding: 0px 10px;
+				    color: #fff;
+				    font-size: 0.813em;
+				    text-transform: capitalize;
+				    line-height: 30px;
+				    height: 30px;
+			    svg{
+			    	    width: 16px;
+					    height: 16px;
+					    fill: #fff;
+					    margin-top: 6px;
+			    }
+
+			    span{
+			    	vertical-align:top;
+			    }
+			}
 			div.plp-block {
 				margin: 0 5% 15px 0;
 				background-color: @color0;
@@ -405,7 +439,7 @@ input.error, .errorCity {
 						width:25%;
 						font-size:1em;
 						&:first-letter{
-							text-transform:uppercase;
+						   text-transform:uppercase;
 						}
 					}
 					.variant1{
@@ -465,10 +499,13 @@ input.error, .errorCity {
 		width: 100%;
 		left: 0%;
 		overflow: hidden;
+		&.no-tabs{
+			bottom:0
+		}
 		.buildOrder-pdp {
 			position: absolute;
 			top:0px;
-			bottom: 70px;
+			bottom: 50px;
 			overflow-x: hidden;
 			overflow-y: auto;
 			width: 98%;
@@ -492,7 +529,7 @@ input.error, .errorCity {
 					cursor: pointer;
 					text-decoration: none;
 					.font-spacing;
-					font-size:0.938em;
+					font-size:1em;
 				}
 				&:hover{
 					svg{
@@ -512,6 +549,7 @@ input.error, .errorCity {
 
 					}
 					.pdp-right{
+						
 						h1{
 							.helvetica-bold;
 							font-size: 1.563em;
@@ -595,6 +633,7 @@ input.error, .errorCity {
 					   			text-align:center;
 					   		}
 					   	}
+
 					}
 					.gift-msg{
 						background:#f5f5f5;
@@ -674,6 +713,9 @@ input.error, .errorCity {
 				}
 				.pdp-right {
 					padding-right:0;
+					.error{
+							.helvetica-bold;
+						}
 					h2 {
 						.helvetica-bold;
 						font-size: 1.250em;
@@ -1047,7 +1089,7 @@ input.error, .errorCity {
 					}
 				}
 				.pdp-description {
-					padding:0;
+					padding-right:0;
 					margin-top:20px;
 					.panel-group .panel{
 						border-radius:0;
@@ -1179,7 +1221,7 @@ input.error, .errorCity {
 		}
 		.pdp-tabs {
 			position: absolute;
-			bottom: 0;
+			bottom: 0px;
 			width: 100%;
 			z-index: 13;
 			.nav.nav-pills.nav-stacked {
@@ -1231,7 +1273,7 @@ input.error, .errorCity {
 				background-color: @color18;
 				.transition-common(all linear 0.3s);
 				min-height: 1px;
-				padding-top:15px;
+				padding:0;
 				a {
 					text-decoration: none;
 				}
@@ -1251,7 +1293,7 @@ input.error, .errorCity {
 					}
 				}
 				.items-list {
-					padding: 0 0 15px 20px;
+					padding: 15px 0 15px 20px;
 					color: @color1;
 					text-align: left;
 					span {
@@ -1287,9 +1329,10 @@ input.error, .errorCity {
 					margin: 0 10px 10px 0;
 					background-color: @color0;
 					padding: 7px;
+					min-height: 200px;
 					h2 {
 						.helvetica-bold;
-						font-size: 0.938em;
+						font-size:0.75em;
 						color: #54565d;
 						height: 32px;
 						margin: 5px 0;
@@ -1298,11 +1341,11 @@ input.error, .errorCity {
 					h3,
 					h4 {
 						.helvetica-regular;
-						font-size: 0.688em;
+						font-size:0.75em;
 						color: #54565d;
 						margin: 5px 0;
 						& > span {
-							font-size: 0.813em;
+							font-size: 1em;
 						}
 					}
 					h5 {
@@ -1347,36 +1390,9 @@ input.error, .errorCity {
 			width: 96%;
 			margin: auto;
 			background: @color20;
-			.back-common{
-				    .helvetica-regular;
-				    font-size:0.938em;
-				    color: #54565d;
-				   margin-top:-2px;
-				    a{
-				    	color: #54565d;
-					    cursor: pointer;
-					    text-decoration: none;
-						svg{
-					    width: 15px;
-					    height: 10px;
-					    color: rgb(84, 86, 93);
-					    display: inline-block;
-					    transform: rotate(180deg);
-					    margin-top: 5px;
-    					float: left;
-					    }
-				    }
-				    &:hover{
-				    	a{
-				    		color:#a77bca;
-				    		text-decoration:underline;
-				    	}
-				    	svg{
-				    		fill:#a77bca;
-				    	}
-				    }
-				   
-				}
+			.back{
+				.back-common;
+			}
 		}
 		input{
 			border-top:none;
@@ -1427,7 +1443,7 @@ input.error, .errorCity {
 						width: 126px;
 						p{
 							.helvetica-bold;
-							font-size: 0.875em;
+							font-size:0.875em;
 							line-height:28px;
 							color: @primary-dark-color;
 						}
@@ -1453,6 +1469,7 @@ input.error, .errorCity {
 						p{
 							width:96%;
 							vertical-align: top;
+							.helvetica-bold;
 						}
 					}
 					&.edit {
@@ -1460,12 +1477,30 @@ input.error, .errorCity {
 						padding: 0;
 						line-height: 1.8;
 						text-align: right;
+						 button.cancel{
+							margin:10px 0 0 0;
+							span{
+								svg{
+									fill:#a576ca;
+								    width: 11px;
+								    height:10px;
+								    margin:0;
+
+								}
+
+							}
+								&:hover{
+									svg{
+										fill:#fff;
+										path{
+											stroke:#fff;
+										}
+									}
+								}
+							
+						}
 						button {
-							.purple-btn;
-							height:25px;
-							line-height:25px;
-							padding: 0 10px;
-							font-size:0.75em;
+							.purple-btn-small;
                            span {
 								 float:left;
 								 height: 24px;
@@ -1473,7 +1508,7 @@ input.error, .errorCity {
 									fill:#a576ca;
 									width: 18px;
     								height: 18px;
-								    margin: 3px 0px 0px 0px;
+								    margin: 5px 0px 0px 0px;
 								}
 
 							}
@@ -1486,8 +1521,8 @@ input.error, .errorCity {
 					}
 					&.delivery-date{
 						padding:5px 0 0 0;
-						float:right;
-						text-align:right;
+						float:left;
+						text-align:left;
 						span{
 							.helvetica-regular;
 							font-size:0.875em;
@@ -1513,6 +1548,7 @@ input.error, .errorCity {
 						.helvetica-bold;
 						font-size: 0.938em;
 						line-height:48px;
+						font-weight:normal;
 					}
 				}
 				tbody {
@@ -1557,11 +1593,15 @@ input.error, .errorCity {
 										padding-left: 12px;
 										width:71%;
 										.edit,.remove,.save{
-											.purple-btn;
-											line-height: 25px;
-											height: 25px;
+											color:#a576ca;
 											font-size: 0.750em;
-											 padding:0 3px;
+											 border-bottom:1px solid #8c58b5;
+											 background:transparent;
+											 margin-right:5px;
+											 &:hover{
+											 	color:#242424;
+											 	border-bottom:1px solid #242424;
+											 }
 										}
 										ul {
 											li {
@@ -1784,12 +1824,9 @@ input.error, .errorCity {
 						padding: 0;
 						line-height: 1.8;
 						text-align: right;
+						
 						button {
-							.purple-btn;
-							height:25px;
-							line-height:25px;
-							padding:0 15px;
-							font-size:0.75em;
+							.purple-btn-small;
 							span {
 								 float:left;
 								 height: 24px;
@@ -1797,7 +1834,7 @@ input.error, .errorCity {
 									fill:#a576ca;
 									width: 18px;
 								    height: 18px;
-								    margin: 3px 6px 0px 0px;
+								    margin: 5px 6px 0px 0px;
 								}
 								
 							}
@@ -1806,32 +1843,34 @@ input.error, .errorCity {
 										fill:#fff;
 									}
 							}
+
 						}
+
 					}
 					.delivery-content {
 					    padding:0;
 					    .delivery{
-					    	width: 35%;
+					    	width:50%;
     				        float: right;
     					    border-left: 1px solid @color21 !important;
+    					    padding-top:5px;
     					    div{
-    					    	padding: 0 16px 0px 0;
+    					    	padding: 0 8px 0px 0;
     					    	h5{
-    					    		display: inline;
+    					    		display: inline-block;
 								    text-align: right;
 								    padding-right: 0px;
 								    margin-right: 27px;
 								    .helvetica-regular;
 								    font-size: 0.875em;
 								    color:@color1;
-								    width:60%;
-								    float:left;
+								    
     					    	}
     					    	span{
     					            font-size: 1em;
 								    color: #8c58b5;
 								    float: right;
-								    width: 30%;
+								    width:30%;
 								    border-left:1px solid @color21;
 								    line-height: 35px;
 								    .helvetica-bold;
@@ -1840,20 +1879,99 @@ input.error, .errorCity {
     								text-align: center;
     					    	}
     					    	.edit-input{
-    					    		display:inline;
-    					    		padding: 10px 0px 10px 35px;
+    					    		    display: inline-block;
+    					    		/*padding:10px 0;*/
     					    		border-left:1px solid @color21;
+    					    		width:30%;
     					    		input{
-    					    			width: 20%;
+    					    			width:100%;
                                         text-align: center;
                                          color: @primary-dark-color;
     					    		}
+    					    		select{
+    					    			border:1px solid @color21;
+							    		height:45px;
+							    		
+							    		background-color: @color23;
+						    			color: @color26;
+						    			border-radius: 5px;
+									    height:25px;
+									    margin-top:10px;
+									    width:97%;
+									    margin-left:10px;
+									}
     					    	}
     					    }
 					    }
 					}
 				}
 			}
+			/* Audit Table */
+            .audit-button {
+                button {
+                    .purple-btn-small;
+                    float: right;
+                    font-size: 0.875em;
+                    line-height: normal;
+                }
+                margin-bottom: 15px;
+                float: left;
+                width: 100%;
+            }
+            .audit-tabel {
+				p.order-header {
+                    .helvetica-regular;
+                    text-align: center;
+                    text-transform: capitalize;
+                    font-size: 1.1em;
+                }
+                table {
+                    border-radius: 6px;
+                    tbody {
+                        tr {
+                            &:hover {
+                                td {
+                                    background-color: transparent;
+                                }
+                            }
+                            &:nth-child(even) {
+                                &:hover {
+                                    background-color: transparent;
+                                }
+                            }
+                        }
+                        td {
+                            .helvetica-regular;
+                            font-size: 0.86em;
+                            line-height: 16px;
+                            padding-bottom: 10px;
+                            padding-left: 10px;
+                            div{
+                            	span{
+                            		margin-bottom: 5px;
+                            		display: block;
+                            	}
+                            }
+                            &:nth-of-type(1) {
+                                width: 8%;
+                            }
+                            &:nth-of-type(2) {
+                                width: 15%;
+                            }
+                            &:nth-of-type(3) {
+                                width: 20%;
+                            }
+                            &:nth-of-type(4) {
+                                width: 20%;
+                            }
+                            &:nth-of-type(5) {
+                            	width: 15%;
+                                padding-left: 10px;
+                            }
+                        }
+                    }
+                }
+            }
 		}
 		.city-list{
 			width:13.1%;
@@ -1994,9 +2112,6 @@ input.error, .errorCity {
 				.prod-variants{
 					margin:0;
 					.helvetica-bold;
-						&:first-letter{
-							font-weight:400;
-						}
 					span{
 						text-transform:lowercase;
 						display:inline-block;
@@ -2027,6 +2142,7 @@ input.error, .errorCity {
 						   width:21%;
 						   display:inline-block;
 						   padding:0;
+						   margin-left:4px;
 						   svg{
 								width: 22px;
 								height:14px;
@@ -2082,6 +2198,7 @@ input.error, .errorCity {
 					vertical-align: sub;
 				}
 				margin-left: 10px;
+
 			}
 			h2 {
 				.helvetica-bold;
@@ -2223,7 +2340,7 @@ input.error, .errorCity {
 					}
 				.star{
 				   color:#f32929;
-				   font-size:0.875em;
+				   font-size:1.143em;
 				 }
 				 .buyers-list{
 				 	float:left;
@@ -2763,7 +2880,7 @@ input.error, .errorCity {
 					    width: 100%;
 					    margin: 20px 0 10px 0;
 						span {
-							font-size: 0.750em;
+							font-size:1em;
 							.helvetica-medium;
 							color: @color2;
 							.in-block;
@@ -2823,6 +2940,12 @@ input.error, .errorCity {
 								    .street,.state{
 								    	margin-right:0; 
 								    }
+								    .locations-city{
+								    	 width: 46% !important;
+									    float: left;
+									    margin: 15px 3% 15px 0 !important;
+									    padding: 0px !important;
+								    }
 								    .locations-city,.locations-state{
 								    	width:49%;
 								    	float:left;
@@ -2866,6 +2989,49 @@ input.error, .errorCity {
 											}
 									}
 							}
+																.cementary-help-icon{
+			                           display:inline-block;
+			                        svg{
+			                                width: 15px;
+			                                height: 15px;
+			                                fill: #a983c8;
+			                                vertical-align: middle;
+			                                margin-left: 10px;
+			                                margin-top:0;
+			                            }
+			                            &:hover{
+			                                .cementary-cont{
+			                                   display:block; 
+			                                }
+			                            }
+			                       .cementary-cont{
+			                        display:none;
+			                        box-shadow: 0px 0px 12px 3px rgba(0, 0, 0, 0.2);
+			                        background:#fff;
+			                        padding:10px;
+			                        position: absolute;
+			                        left:2%;
+			                        width: 80%;
+			                        z-index: 10;
+                                     margin-top: 10px;
+			                         &:before{
+			                                content: "";
+										    border: 10px solid transparent;
+										    border-bottom-color: #fff;
+										    position: absolute;
+										    left: 54% !important;
+										    width: 0;
+										    opacity: 1;
+										    top: -19px;
+			                        }
+									p{
+										font-size:0.813em;
+                                     .helvetica-regular;
+									 text-indent: 10px;
+									 margin-bottom:2px;
+									}
+			                       }     
+			                    }
 							.hospital-search,.willCall-search{
 							margin:0 0 15px 0;
 							float:left;
@@ -3015,15 +3181,30 @@ input.error, .errorCity {
 			width: 100% !important; 
 			height: 1000% !important;
 		}
+		.scroll-top{
+			background-color:transparent;
+			.helvetica-regular;
+			font-size:0.875em;
+			padding-left:10px;
+			color:@purple-medium;
+			margin-bottom:10px;
+			svg{
+				width:20px;
+				height:20px;
+				fill:@purple-medium;
+				vertical-align:top;
+			}
+		}
 	}
 	.popover{
 		border:1px solid @base-bg-purple-light;
 		width:96%;
 		.popover-inner .popover-content{
+			padding:10px 14px;
 			h2{
 				font-size: 0.938em ;
 				.helvetica-medium;
-				margin: 10px 0;
+				margin:0 0 10px 0;
 				color:initial;
 			}
 			label{
@@ -3033,6 +3214,9 @@ input.error, .errorCity {
 				input[type="radio"]{
 				    vertical-align: middle;
 					margin: 0 3px 0 0;
+				}
+				.courier1{
+					font-size:1em;
 				}
 			}
 			button{
@@ -3188,7 +3372,7 @@ input.error, .errorCity {
 			line-height:50px;
 			height:50px;
 			padding:0 26.4px;
-			.helvetica-bold;
+			 
 			&.savedisabled{
 				&:hover{
 				  background-color: @color15;	
@@ -3341,9 +3525,9 @@ input.error, .errorCity {
 	}
 	&.create-user-pop-up{
 		.modal-dialog{
-		
+			
 			.modal-body{
-				
+				min-height:290px;
 				.user-top{
 					padding-top:5px;
 				 	p{
@@ -3584,7 +3768,7 @@ input.error, .errorCity {
 						.helvetica-regular;
 					  	height:300px;
 					  	overflow-y:auto;
-					    margin: 10px 2% 68px 2%;
+					    margin: 10px 2% 60px 2%;
 					.panel-group .panel{
 					 margin-bottom:10px !important;
 					}
@@ -3708,31 +3892,31 @@ input.error, .errorCity {
 						
 				}
 				.continue-shop{
-						margin: 10px 0 3px 0;
-					    position:absolute;
+						position:absolute;
 					    bottom:0px;
 					    width: 100%;
 					    background:#f5f5f5;
-					    padding:10px 0;
+					    padding:14px 0;
 					    .modify-order{
 					     		.helvetica-bold;
 		    					font-size: 0.875em;
-		    					text-align: center;
+		    					float:left;
 		    					transition: background-color 0.5s ease-out;
 		    					text-decoration: none;
 		    					color:#8c58b5;
-		    					padding:7px 0 0 0;
-		    					width: 20%;
-		    					margin-left: 2%;
-								
-								text-align:left;
+		    					text-align:left;
+		    					padding-left:31px;
 						}
 					    .cont-shop{
-					    .purple-btn;
-					        float: right;
-					    text-align: center;
-					    margin-right: 10px;
-					    }
+					           .helvetica-bold;
+		    					font-size: 0.875em;
+		    					transition: background-color 0.5s ease-out;
+		    					text-decoration: none;
+		    					color:#8c58b5;
+		    					float:right;
+		    					text-align:right;
+		    					padding-right:28px;
+		    			 }
 					}
 			}
 		}
@@ -3997,7 +4181,6 @@ input.error, .errorCity {
 		cursor: pointer;
 		padding: 0px;
 		margin: 0px;
-		background-color: blue;
 		h5{
 			.helvetica-regular;
 			margin-left:10px;
@@ -4282,11 +4465,11 @@ input.error, .errorCity {
 		.faster-location{
 			.check-avial-cont{
 				    background: rgb(247, 247, 247);
-    float: left;
-    width: 100%;
-    text-align: center;
-    margin-top: 10px;
-    padding: 20px 0px;
+				    float: left;
+				    width: 100%;
+				    text-align: center;
+				    margin-top: 10px;
+				    padding: 20px 0px;
 			}
 			h5{
 				.helvetica-bold;
@@ -4298,21 +4481,23 @@ input.error, .errorCity {
 				margin-top: 10px !important;
 			    float: left;
 			    width: 100%;
-
-				&:after{
-					content:"+";
-					font-size: 15px;
-    				padding-left: 7px;
+				height:35px;
+				line-height:35px;
+				background-color:#f4f4f4;
+				padding-left:5px;
+				border-radius:3px;
+				span{
+					font-size:0.813em;
+					.helvetica-bold;
 				}
-				&.detailed:after{
-					content:"-";
-					font-size: 15px;
-    				padding-left: 7px;
+				i{
+					float:right;
+					padding:9px 5px 0;
 				}
 			}
 			input{
 				border: 1px solid #EAEAEA;
-				font-size: 0.688em;
+				font-size:1em;
 				line-height: 23px;
 				.helvetica-regular;
 				height:29px;
@@ -4383,7 +4568,7 @@ input.error, .errorCity {
 				width:71%;
 				.in-block;
 				p{
-					font-size:0.875em;
+					font-size:1em;
 					.helvetica-medium;
 					margin-bottom: 5px;
 					color: #8b8e96;
@@ -4397,7 +4582,7 @@ input.error, .errorCity {
 						width: 100%;
 						border: 1px solid #EAEAEA;
 						.helvetica-regular;
-						font-size:0.875em;
+						font-size:1em;
 						height: 29px;
 						background: #fff;
 						box-shadow:none;
@@ -4434,7 +4619,38 @@ input.error, .errorCity {
 					}
 				}
 			}
-
+			.dropdown{
+				width:100%;
+				.avail{
+					text-align: left;
+				    background-color: #f4f4f4;
+				    padding: 5px 10px;
+				    border: 1px solid #e4e4e4;
+				    border-radius: 2px;
+				    margin-bottom: 7px;
+				    background-image: url(/assets/images/button-down.svg);
+				    background-repeat: no-repeat;
+				    background-position: right center;
+				    background-size: 35px 11px;
+				    height: 45px;
+				    line-height: 1.013em;
+				    box-shadow: none;
+				    margin: 12px 0 0 0;
+				    width:100%;
+				    font-size:0.875em;
+				    .helvetica-bold;
+				    span{
+				    	color:#a77bca;
+				    	font-size:0.929em;
+				    	margin-left:10px;
+				    }
+				}
+				&.open{
+						.avail{
+							background-image:url(/assets/images/button-up.svg);				
+						}
+				}
+			}
 		}
 .modal-pop-up.assembled-popup{
 	modal-body{
@@ -4559,12 +4775,15 @@ input.error, .errorCity {
 					background: #f7f8fa;
 				}
 				&:hover{
-					background-color:@color14;
+					td{
+					 background-color:@color14;
+					 
+					}
 				}
 			}
 		}
 		.payment-container{
-			position:absolute;
+			position:relative;
 			top:110px;
 			width:98%;
 			bottom:30px;
@@ -4663,9 +4882,7 @@ input.error, .errorCity {
 					float: right;
 					margin-top: 10px;
 					button {
-						font-size: 0.750em;
-						line-height: 24px;
-						letter-spacing: normal;
+						.green-btn;
 					}
 				}
 				.date {
@@ -4733,4 +4950,238 @@ input.error, .errorCity {
 		margin-top:0px !important;
 		font-size: 0.875em !important;
 	}
+}
+
+.product-avail-pop-up{
+	.modal-dialog{
+	  .modal-content{
+	  		.modal-body{
+	  			p{
+	  			.helvetica-regular;
+	  			font-size:0.875em;
+	  		}
+	  	 }
+	  }
+	}
+}
+
+/* corsage page */
+
+.build-your-own-page {
+    .container-fluid {
+        padding: 0px 5px;
+        .instructions {
+            h1 {
+                color: #a77bca;
+                .helvetica-bold;
+                margin: 0px;
+                font-size: 1.4em;
+            }
+            h2 {
+                &.subTitle {
+                    .helvetica-bold;
+                    font-size: 1.20em;
+                    display: inline-block;
+                    margin-bottom: 0;
+                    vertical-align: top;
+                    color: @color1;
+                    margin: 20px 0px;
+                }
+            }
+            h3 {
+                &.terms-italic {
+                    margin: 0px 0px 10px 0px;
+                    .helvetica-bold;
+                    font-style: italic;
+                    font-size: 1.1em;
+                    color: #000;
+                }
+            }
+            ol {
+                li {
+                    .helvetica-regular;
+                    font-size: 0.9em;
+                    color: #666;
+                    margin-bottom: 3px;
+                    span {
+                        color: #000;
+                    }
+                }
+            }
+            .design-recommendation-block {
+                margin: 0px;
+            }
+        }
+        .page-body {
+            .panel {
+                border-radius: 0;
+                .panel-heading {
+                    border-radius: 0;
+                    border-bottom: 1px solid #ccc;
+                    .helvetica-bold;
+                    font-size: 1em;
+                    background-color: #f4f4f4;
+                    color: #a77bca;
+                    h4,
+                    h3 {
+                        font-size: inherit;
+                        margin: 0;
+                        .helvetica-bold;
+                    }
+                    .selected {
+                        display: block;
+                        color: #424242;
+                        font-size: 0.9em;
+                        margin-top: 5px
+                    }
+                }
+                .panel-body {
+                    padding: 15px 10px;
+                    .panel {
+                                    padding: 0px 10px;
+                                }
+                    .panel-item {
+                        padding: 0px 7px;
+                    }
+                    .caption {
+                        padding: 0px 5px;
+                    }
+                    .thumbnail {
+                        min-height: 155px;
+                    }
+                    .not-found {
+                        p {
+                            .helvetica-regular;
+                            font-size: 0.9em;
+                            color: @color1;
+                            text-align: center;
+                        }
+                    }
+                    .pdt-name {
+                        .helvetica-regular;
+                        font-size: 0.85em;
+                        -webkit-line-clamp: 2;
+                        -webkit-box-orient: vertical;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        -o-text-overflow: ellipsis;
+                        -ms-text-overflow: ellipsis;
+                        -moz-binding: url('ellipsis.xml#ellipsis');
+                        display: -webkit-box;
+                        min-height: 30px;
+                        text-align: center;
+                        margin-bottom: 0px;
+                    }
+                    .pdt-price {
+                        .helvetica-regular;
+                        font-size: 0.85em;
+                        text-align: center;
+                        display: block;
+                    }
+                }
+                &.inner-panel {
+                	padding: 15px 0px;
+                    .panel-body {
+                        padding: 0px 0px;
+                        .panel {
+                            .panel-body {
+                            	padding: 15px 0px 10px 0px;
+                                .panel {
+                                    padding: 0px 10px;
+                                }
+                            }
+                        }
+                        .panel-item {
+                            padding: 0px 15px;
+                        }
+                        .thumbnail {
+                            min-height: 140px;
+                            max-height: 140px;
+                        }
+                        .caption {
+                            margin-top: 25px;
+                        }
+                        .pdt-name {
+                            min-height: initial;
+                        }
+                    }
+                }
+            }
+            .left-panel,
+            .right-panel {
+                padding: 0px 7px;
+            }
+            .right-panel {
+                .panel {
+                    .panel-body {
+                        padding: 10px 10px;
+                        .row {
+                            margin: 0px;
+                            div {
+                                padding: 0px;
+                            }
+                            .row {
+                                margin: 0;
+                                border-bottom: 1px solid #f4f4f4;
+                                margin-bottom: 10px;
+                            }
+                        }
+                        .name {
+                            width: 80%;
+                            display: inline-block;
+                            .pdt-name,
+                            .price {
+                                width: 100%;
+                                text-align: left;
+                                font-size: 0.9em;
+                                .helvetica-regular;
+                                color: #666;
+                            }
+                            .price {
+                                .helvetica-bold;
+                                font-size: 1em;
+                                color: #000;
+                                width: 125%;
+                                text-align: right;
+                                display: block;
+                                margin-top: 20px;
+                                color: #666;
+                            }
+                        }
+                        .close-icon {
+                            width: 20%;
+                            display: inline-block;
+                            text-align: right;
+                            img {
+                                width: 17px;
+                            }
+                        }
+                        .summary-block {
+                            p {
+                                display: inline-block;
+                                .helvetica-regular;
+                                text-align: left;
+                                width: 48%;
+                                font-size: 1.2em;
+                                color: #000;
+                                &.total-price {
+                                    text-align: right;
+                                    font-size: 1.3em;
+                                }
+                            }
+							 button {
+                                .green-btn;
+                                .helvetica-bold;
+                                width: 100%;
+                                border-radius: 0px;
+                                margin-top: 20px;
+                                text-transform: uppercase;
+                                font-size: 1em;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

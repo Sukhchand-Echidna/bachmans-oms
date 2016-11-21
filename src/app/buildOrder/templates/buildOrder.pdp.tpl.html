@@ -1,5 +1,5 @@
 <ui-view>
-   <div class="oms_main_container buildOrder-pdp-container" id="buildOrder-pdp-container" cg-busy="{promise:buildOrder.PLPLoader,templateUrl:'common/loading-indicators/templates/view.loading.tpl.html'}">
+   <div class="oms_main_container buildOrder-pdp-container" id="buildOrder-pdp-container" cg-busy="{promise:buildOrder.PLPLoader,templateUrl:'common/loading-indicators/templates/view.loading.tpl.html'}" ng-class="buildOrder.CategoryItemsUpsell['0'].length || buildOrder.CategoryItemsSimilar.length > 0?'':'no-tabs'">
       <div class="upselloverlay" ng-show="!buildOrder.upsell || !buildOrder.similar" ng-click="buildOrder.HideUpsellNCross()"></div>
       <div class="buildOrder-pdp" ng-if="buildOrder.UpsellSimilar!=true">
          <h1>
@@ -53,7 +53,7 @@
             </a>
          </h1>
          <div class="buildOrder-pdp-content row">
-            <div ng-if="buildOrder.searchType!='GiftCard' && buildOrder.nonOrderClaim!='true'">
+            <div ng-if="buildOrder.searchType!='GiftCard' && buildOrder.nonOrderClaim!='true' && buildOrderPDP.giftCard.data.Name!='Gift Card'">
                <div class="pdp-left col-md-7 col-lg-7">
                   <div class="base-img" ng-if="buildOrder.changeImg != undefined">
                      <img  ng-src="{{buildOrder.changeImg}}">
@@ -72,14 +72,16 @@
                   </div>
                   <div class="productdescp">
                      <h1 class="title">Description:</h1>
-                     <p class="desc-text" ng-class="{expanded:expandDesc == true}">{{buildOrder.prodDesription}}</p>
+                     <p class="desc-text" ng-class="{expanded:expandDesc == true}" ng-bind-html='buildOrder.prodDesription'></p>
                      <span class="view-more-link" ng-show="!expandDesc" ng-click="expandDesc=!expandDesc">View More +</span>
                      <span class="view-more-link" ng-show="expandDesc" ng-click="expandDesc=!expandDesc">View Less -</span>
                   </div>
                </div>
                <div class="pdp-right col-md-5 col-lg-5">
                   <div ng-if="!buildOrder.IsWorkShopEvent">
-                     <h2 ng-init="sizeval=''">{{buildOrder.productTitle | lowercase}}</h2>
+                     <h2 ng-init="sizeval=''" ng-if="!buildOrder.productWebTitle">{{buildOrder.productTitle | lowercase}}</h2>
+                     <h2 ng-init="sizeval=''" ng-if="buildOrder.productWebTitle">
+                        {{buildOrder.productWebTitle | lowercase}}</h2>
                      <h5 ng-if="buildOrder.allSizes.length > 0 && buildOrder.allSizes[0].xp.SpecsOptions.Size !== null">Type</h5>
                      <div class="radio-btn-container">
                         <div ng-repeat="opt in buildOrder.allSizes" ng-if="buildOrder.allSizes[0].xp.SpecsOptions.Size !== null">
@@ -201,8 +203,8 @@
                      <div class="color-circle">
                         <ul class="list-inline">
                            <li ng-model="prodColor" style="padding:0" ng-repeat="coloropt in buildOrder.allColors  track by $index" ng-class="{ 'active-circle': $index == buildOrder.selectedProductIndex, 'disable-color': coloropt.isNotAvailable == true }" ng-attr-title="{{ coloropt.isNotAvailable ? 'Color not available' : coloropt.xp.SpecsOptions.Color}}">
-                              <input type="radio"  name="colors" id="{{coloropt.xp.SpecsOptions.Color}}" ng-disabled="coloropt.isNotAvailable" ng-model="radio.selectedColor" ng-change="buildOrder.selectColor($index,  coloropt.xp.SpecsOptions.Color)" value="{{coloropt.xp.SpecsOptions.Color}}"/>
-                              <label style="display:block;display: block;position: absolute;right: 3px;left: 3px;top: 3px;bottom: 3px;cursor: pointer;padding: 0;margin: 0;" for="{{coloropt.xp.SpecsOptions.Color}}" ng-style="{'background-color': coloropt.xp.SpecsOptions.Color}" class="{{coloropt.xp.SpecsOptions.Color}}"> 
+							  <input type="radio"  name="colors" id="{{coloropt.xp.SpecsOptions.Color}}" ng-disabled="coloropt.isNotAvailable" ng-model="radio.selectedColor" ng-change="buildOrder.selectColor($index,  coloropt.xp.SpecsOptions.Color)" value="{{coloropt.xp.SpecsOptions.Color}}" ng-if="coloropt.xp.SpecsOptions.Color != null"/>
+                              <label style="display:block;display: block;position: absolute;right: 3px;left: 3px;top: 3px;bottom: 3px;cursor: pointer;padding: 0;margin: 0;" for="{{coloropt.xp.SpecsOptions.Color}}"  ng-style="{'background-color': coloropt.xp.SpecsOptions.Color}" class="{{coloropt.xp.SpecsOptions.Color}}" ng-if="coloropt.xp.SpecsOptions.Color != null"> 
                               </label>                                             
                            </li>
                         </ul>
@@ -222,7 +224,8 @@
                      </ul>
                   </div>
                   <button class="addCart" ng-if="buildOrder.IsWorkShopEvent" ng-click="AddtoCart(buildOrder.selectedProductId, true, buildOrder.selectedSkuXp)" ng-disabled="buildOrder.OutOfStock">REGISTER</button>
-                  <button class="addCart" ng-click="AddtoCart(buildOrder.selectedProductId)" ng-if="!buildOrder.IsWorkShopEvent" ng-disabled="buildOrder.OutOfStock">ADD TO CART</button>
+                  <!-- <button class="addCart" ng-click="AddtoCart(buildOrder.selectedProductId)" ng-if="!buildOrder.IsWorkShopEvent" ng-disabled="buildOrder.OutOfStock">ADD TO CART</button> -->
+				  <button class="addCart" ng-click="AddtoCart(buildOrder.selectedProductId)" ng-if="!buildOrder.IsWorkShopEvent">ADD TO CART</button>
                   <p ng-if="buildOrder.OutOfStock" class="error">Product Is Out Of Stock</p>
                   <div class="dropdown-box" ng-if="!buildOrder.IsWorkShopEvent">
                      <h5 ng-if="buildOrder.Categories.length > 0">Add Something Extra</h5>
@@ -244,7 +247,7 @@
                                           </div>
                                        </div>
                                     </li>
-                                    <li role="menuitem" ng-repeat="upsell in buildOrder.CategoryItemsUpsell[$index]" ng-click="buildOrder.AddExtra[$parent.$index] = upsell">
+                                    <li role="menuitem" ng-repeat="upsell in buildOrder.CategoryItemsUpsell[$index]" ng-click="buildOrder.AddExtra[$parent.$index] = upsell" ng-hide="upsell.OutOfStock">
                                        <div class="row pro-del">
                                           <div class="col-xs-2 col-sm-3 col-md-3 col-lg-3 img-cont">
                                              <img ng-src="{{buildOrderPDP.alfrescoAccessURL}}/imagefinder/{{upsell.ID}}?alf_ticket={{buildOrderPDP.alfticket}}" class="img-responsive" title="img">
@@ -319,19 +322,7 @@
                         <textarea ng-if="buildOrder.IsPlacement == 'Placed'" placeholder="Placement Instruction" rows="4" cols="10" ng-model="buildOrder.PlacementInstruction"></textarea>
                         <p class="note"><span>Note: </span>Placement Charges Will be applicable</p>
                      </div>
-                     <div class="fastDelivery" ng-if="!buildOrder.IsWorkShopEvent && (buildOrder.Courier || buildOrder.Faster)">
-                        <!-- <div class="radio-btn-container" ng-if="buildOrder.Faster">
-                           <div class="size-box">
-                              <input type="radio" id="fastDelivery" name="optradio1" ng-model="buildOrder.DeliveryType" value="Faster Delivery" />
-                              <label for="fastDelivery">
-                                 <span class="radioOutline">
-                                 <span class="radioInside"></span>
-                                 </span>
-                                 <span class="assembled">Select Faster Delivery</span>
-                              </label>
-                           </div>
-                           </div>
-                                   <p class="note" ng-if="buildOrder.Faster"><span>Note: </span>Faster Delivery Charges Will be applicable</p> -->
+                     <!-- <div class="fastDelivery" ng-if="!buildOrder.IsWorkShopEvent && (buildOrder.Courier || buildOrder.Faster)">
                         <div class="radio-btn-container" ng-if="buildOrder.Courier">
                            <div class="size-box">
                               <input type="radio" id="courier" name="optradio1" ng-model="buildOrder.DeliveryType" value="Courier">
@@ -343,10 +334,36 @@
                               </label>
                            </div>
                         </div>
+                     </div> -->
+					 <div class="assembly" ng-if="!buildOrder.IsWorkShopEvent && (buildOrder.Courier || buildOrder.Faster)" ng-init="buildOrder.DeliveryType='Not Courier'">
+                        <div class="radio-btn-container">
+                           <div class="size-box">
+                              <input type="radio" id="courier" name="optradio1" 
+                                 ng-model="buildOrder.DeliveryType" value="Courier" />
+                              <label for="courier">
+                              <span class="radioOutline">
+                              <span class="radioInside"></span>
+                              </span>
+                              <span class="assembled">Courier</span>
+                              </label>
+                           </div>
+                        </div>
+                        <div class="radio-btn-container">
+                           <div class="size-box">
+                              <input type="radio" id="notcourier" name="optradio1" 
+                                 ng-model="buildOrder.DeliveryType" value="Not Courier" />
+                              <label for="notcourier">
+                              <span class="radioOutline">
+                              <span class="radioInside"></span>
+                              </span>
+                              <span class="assembled">Not Courier</span>
+                              </label>
+                           </div>
+                        </div>
                      </div>
                   </div>
                   <div class="faster-location" ng-if="!buildOrder.IsWorkShopEvent">
-                     <h5 class="check-header" ng-click="checkavail=!checkavail" ng-class="{detailed:checkavail==true}">Check Availability</h5>
+                     <h5 class="check-header" ng-click="checkavail=!checkavail" ng-class="{detailed:checkavail==true}">Check Availability<span> (Optional)</span><i class="fa fa-chevron-up" ng-if="checkavail"></i><i class="fa fa-chevron-down" ng-if="!checkavail"></i></h5>
                      <div class="check-avial-cont" ng-show="checkavail">
                         <div class="side-block">
                            <p>Zip Code <span class="star">*</span></p>
@@ -400,6 +417,24 @@
                         </div>
                      </div>
                   </div>
+				  <div class="select-store" ng-init="buildOrder.ProductFromStore='MyStore'">
+						<p>Is this product coming from my store or elsewhere</p>
+						<input type="search" ng-model="buildOrder.StoreName" autocomplete="off" uib-typeahead="st for st in buildOrder.storeNames | filter:$viewValue" typeahead-on-select="buildOrder.StoreGet($item)" />
+						<p>
+							<fieldset id="group2">
+								<label class="radio-inline radio-common">
+									<input type="radio" name="group2" ng-model="buildOrder.ProductFromStore" value="MyStore" />
+									<span>This store</span>
+									<div class="radio"></div>
+								</label>
+								<label class="radio-inline radio-common">
+									<input type="radio" name="group2" ng-model="buildOrder.ProductFromStore" value="OtherStore" />
+									<span>Other store</span>
+									<div class="radio"></div>
+								</label>
+							</fieldset>
+						</p>
+					</div>
                   <!-- <button class="addCart" ng-if="buildOrder.IsWorkShopEvent">REGISTER</button>
                      <button class="addCart" ng-click="AddtoCart(buildOrder.selectedProductId)" ng-if="!buildOrder.IsWorkShopEvent">ADD TO CART</button> -->
                </div>
@@ -528,7 +563,7 @@
                   </uib-accordion>
                </div>
             </div>
-            <div class="giftcard-main" ng-if="buildOrder.searchType=='GiftCard' || (buildOrder.searchType=='User' && buildOrder.nonOrderClaim=='true')">
+            <div class="giftcard-main" ng-if="buildOrder.searchType=='GiftCard' || (buildOrder.searchType=='User' && buildOrder.nonOrderClaim=='true') || buildOrderPDP.giftCard.data.Name=='Gift Card'">
                <div class="pdp-left col-md-7 col-lg-7">
                   <div class="base-img" ng-if="buildOrder.changeImg != undefined">
                      <img  ng-src="{{buildOrder.changeImg}}">
@@ -598,7 +633,7 @@
                   <div class="price">
                      <h3>{{prods.Price | currency}}</h3>
                   </div>
-                  <button class="addCart" ng-click="AddtoCart(prods.ID)" ng-disabled="buildOrder.OutOfStock">ADD TO CART</button>
+                  <button class="addCart" ng-click="AddtoCart(prods.ID, null, null, buildOrder.selectedProductId)" ng-disabled="buildOrder.OutOfStock">ADD TO CART</button>
                   <p ng-if="buildOrder.OutOfStock">Product Is Out Of Stock</p>
                </div>
                <div class="pdp-description col-xs-12 col-md-12 col-lg-12 p0">
@@ -622,7 +657,7 @@
                </a>
             </li>
             <li ng-class="{active:buildOrder.similar == false}" ng-if="buildOrder.CategoryItemsSimilar.length > 0">
-               <a ng-click="buildOrder.similarToggle('similar', {'ID':buildOrder.selectedProductId});">
+               <a ng-click="buildOrder.similarOpen('similar')">
                   SIMILAR ITEMS
                   <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 21 10" style="enable-background:new 0 0 21 10;" xml:space="preserve">
                      <g>
@@ -662,14 +697,14 @@
             <div ng-hide='buildOrder.similar' class="pdp-similarItems col-md-12" ng-class="{upsellAnimation:buildOrder.similar == false}">
                <ul class="pdp-upsell-container" id="owl-carousel-similar">
                   <li class="item" ng-repeat="cross in buildOrder.CategoryItemsSimilar">
-                     <div class="pdp-upsell-block" ng-click="buildOrder.UpsellProductItem(cross, buildOrder.CategoryItemsSimilar, $index)">
+                     <div class="pdp-upsell-block" ng-click="buildOrder.UpsellProductItem(cross, buildOrder.CategoryItemsSimilar, $index, 'similar')">
                         <div class="product_img"><img ng-src="{{buildOrderPDP.alfrescoAccessURL}}/imagefinder/{{cross.ID}}?alf_ticket={{buildOrderPDP.alfticket}}" class="owl-lazy"></div>
                         <h2>{{cross.Name}}</h2>
                         <h3>SKU #{{cross.ID}}</h3>
                         <h3>{{cross.xp.SpecsOptions.Size}}</h3>
                         <h4>{{cross.xp.SpecsOptions.Color}}</h4>
                         <div class="price_lst">
-                           <h5>{{pricelist.Price | currency}}</h5>
+                           <h5>{{cross.Price | currency}}</h5>
                         </div>
                      </div>
                   </li>
@@ -677,6 +712,7 @@
             </div>
          </div>
       </div>
+   </div>
    </div>
 </ui-view>
 <modal title="Order Details Confirmation" visible="buildOrder.OrderConfirmPopUp" id="OrderConfirmPopUp" class="create-user-pop-up modal-pop-up">
@@ -714,7 +750,7 @@
 <modal title="Assembled Items" visible="buildOrder.AssemblyModal" class="modal-pop-up assembled-popup">
    <div>
       <ul>
-         <li ng-repeat="items in buildOrder.AssemblyProducts" ng-click="">
+         <li ng-repeat="items in buildOrder.AssemblyProducts" ng-click="" ng-hide="items.OutOfStock">
             <div class="check">
                <input type="checkbox" id="saved{{$index}}" class="checkbox-custom" ng-model="buildOrder.ItemSelected[items.ID]">
                <label  for="saved{{$index}}" class="checkbox-custom-label"></label>
@@ -732,4 +768,11 @@
       </ul>
       <button ng-click="buildOrder.SelectedProducts()" class="done">Done</button>
    </div>
+</modal>
+<modal title="Similar Send As Bundle" visible="buildOrder.SimilarPopUp" class="modal-pop-up assembled-popup">
+	<div>
+		<p>Add As Bundle Product</p>
+		<button ng-click="buildOrder.BundleProduct('Bundle')" class="done">Bundle</button>
+		<button ng-click="buildOrder.BundleProduct('Separate')" class="done">Separate</button>
+	</div>
 </modal>

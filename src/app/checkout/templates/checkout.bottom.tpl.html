@@ -1,6 +1,6 @@
 <div class="checkoutfooter" ng-show="application.headerstat">
-	<div class="cancel-order" ng-click="checkout.CancelToolTip()" popover-is-open="checkout.ShowCancelOrderToolTip"  uib-popover-template="checkout.ToolTip.templateUrl">
-	<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 34 34" style="enable-background:new 0 0 34 34;" xml:space="preserve" class="footer-svg">
+	<button class="cancel-order" ng-click="checkout.editsubmitorder=='true' || checkout.CancelToolTip()" popover-is-open="checkout.ShowCancelOrderToolTip"  uib-popover-template="checkout.ToolTip.templateUrl" ng-disabled="checkout.editsubmitorder=='true'" ng-class="{disabled: checkout.editsubmitorder=='true'}">
+		<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 34 34" style="enable-background:new 0 0 34 34;" xml:space="preserve" class="footer-svg">
 			<g transform="translate(0,-952.36218)">
 				<path  d="M17,952.7c-4.3,0-8.5,1.6-11.8,4.9c-6.5,6.5-6.5,17.1,0,23.6c6.5,6.5,17.1,6.5,23.6,0c6.5-6.5,6.5-17.1,0-23.6
 					v0C25.5,954.3,21.3,952.7,17,952.7L17,952.7z M17,955.8c3.5,0,6.9,1.3,9.6,4c5.3,5.3,5.3,13.8,0,19.1c-5.3,5.3-13.8,5.3-19.1,0
@@ -11,21 +11,28 @@
 			</g>
 		</svg>
 		<h5>Cancel Order</h5>
-		<script type="text/ng-template" id="CancelOrderToolTip1.html">
+		<!-- <script type="text/ng-template" id="CancelOrderToolTip1.html">
 			<div click-outside="checkout.closePopover()">
 				<h2>Are you sure to want cancel?</h2>
 				<button type="button" ng-click="cancelOrder()">Yes</button>
 				<button type="button" ng-click="checkout.closePopover()">No</button>
 			</div>
-		</script>
-	</div>
-	<div class="save-later" ng-click="checkout.saveLaterPopup()">
+		</script> -->
+	</button>
+	<script type="text/ng-template" id="CancelOrderToolTip1.html">
+		<div click-outside="checkout.closePopover()">
+			<h2>Are you sure to want cancel?</h2>
+			<button type="button" ng-click="cancelOrder()">Yes</button>
+			<button type="button" ng-click="checkout.closePopover()">No</button>
+		</div>
+	</script>
+	<button class="save-later" ng-click="checkout.editsubmitorder=='true' || checkout.saveLaterPopup()"  ng-disabled="checkout.editsubmitorder=='true' || checkout.order.FromUserID=='gby8nYybikCZhjMcwVPAiQ'" ng-class="{disabled: checkout.editsubmitorder=='true' || checkout.order.FromUserID=='gby8nYybikCZhjMcwVPAiQ'}">
 		<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="-630.3 455.4 25.2 24" style="enable-background:new -630.3 455.4 25.2 24;" xml:space="preserve" class="footer-svg">
 		<polygon points="-617.7,456.4 -614.9,464.8 -606.1,464.8 -613.2,470 -610.5,478.5 -617.7,473.3 -624.8,478.5 
 			-622.1,470 -629.2,464.8 -620.4,464.8 "></polygon>
 		</svg>
 		<h5>Save For Later</h5>
-	</div>
+	</button>
 </div>
 <modal title="Save Order For Later" visible="checkout.showModal" id="mymodal" class="modal-pop-up save-later">
 	Save Order As<span class="star">*</span>:<br/>

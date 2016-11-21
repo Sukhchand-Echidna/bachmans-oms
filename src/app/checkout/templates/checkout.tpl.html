@@ -38,6 +38,7 @@
 											</span>
 										</div>
 									</div>
+									<div class="memory-off" ng-if="line.xp.addressType=='Funeral'">In Memory Of</div>
 									<div class="check-top inline-blk" ng-if="!line.xp.IsWorkShopEvent">
 										<p>First Name <span class="star">*</span></p>
 										<input type="text" name="firstname" ng-model="line.ShippingAddress.FirstName" ng-required="!line.xp.IsWorkShopEvent" ng-class="{error: checkout.lineItemForm[line.ID].$submitted && checkout.lineItemForm[line.ID].firstname.$invalid}"></input>
@@ -93,9 +94,9 @@
 											<label for="hospital{{$index}}">Hospital</label>
 											<div class="radio"></div>
 										</label>
-										<label class="radio-inline radio-common">
+										<label class="radio-inline radio-common" ng-if="line.Product.Name!='Gift Card'">
 											<input type="radio" id="funeral{{$index}}" name="optradio{{$index}}" ng-model="line.xp.addressType" ng-click="checkout.changeAddrType(line, lineitems)" ng-disabled="{{line.xp.NoDeliveryExInStore}}" value="Funeral" />
-											<label for="funeral{{$index}}">Funeral</label>
+											<label for="funeral{{$index}}">Funeral Home</label>
 											<div class="radio"></div>
 										</label>
 										<label class="radio-inline radio-common">
@@ -103,7 +104,7 @@
 											<label for="church{{$index}}">Church</label>
 											<div class="radio"></div>
 										</label>
-										<label class="radio-inline radio-common">
+										<label class="radio-inline radio-common" ng-if="line.Product.Name!='Gift Card'">
 											<input type="radio" id="cemetery{{$index}}" name="optradio{{$index}}" ng-model="line.xp.addressType" ng-click="checkout.changeAddrType(line, lineitems)" ng-disabled="{{line.xp.NoDeliveryExInStore}}" value="Cemetery" />
 											<label for="cemetery{{$index}}">Cemetery</label>
 											<div class="radio"></div>
@@ -136,16 +137,94 @@
 											<input type="text" ng-model="line.xp.PatientLName"></input>
 										</div>
 									</div>
-									<div class=" zip-code check-top col-xs-6 col-sm-6 col-md-6 col-lg-6" ng-if="line.xp.addressType!='Residence' && line.xp.addressType!='InStorePickUp' && !line.xp.IsWorkShopEvent">
-										<p><span ng-if="line.xp.addressType!='School' && line.xp.addressType!='Business'">Find</span> {{line.xp.addressType}} <span class="star">*</span></p>
-										<input type="search" name="{{line.xp.addressType}}" autocomplete="off" uib-typeahead="hosp for hosp in checkout[line.xp.addressType+'Names'] | filter:$viewValue" typeahead-on-select="checkout.AllDtls($item, line, checkout.lineItemForm[line.ID], lineitems)" ng-model="line.ShippingAddress.CompanyName" ng-required="line.xp.addressType!='Residence' && line.xp.addressType!='InStorePickUp'" ng-class="{error: checkout.lineItemForm[line.ID].$submitted && checkout.lineItemForm[line.ID][line.xp.addressType].$invalid}" />
+									<div class="cementary-cont col-xs-12 col-sm-12 col-md-12 col-lg-12">
+									<div class="zip-code check-top col-xs-6 col-sm-6 col-md-6 col-lg-6" ng-if="line.xp.addressType!='Residence' && line.xp.addressType!='InStorePickUp' && !line.xp.IsWorkShopEvent">
+										<p><span ng-if="line.xp.addressType!='School' && line.xp.addressType!='Business' && !line.noResults">Find</span><span ng-if="line.xp.addressType=='School' || line.xp.addressType=='Business' || line.noResults">Enter</span> {{line.xp.addressType}} <span ng-if="line.xp.addressType=='Funeral'"> Home </span><span ng-if="line.xp.addressType=='School' || line.xp.addressType=='Business'"> Name </span><span class="star">*</span></p>
+										<input type="search" name="{{line.xp.addressType}}" autocomplete="off" uib-typeahead="hosp for hosp in checkout[line.xp.addressType+'Names'] | filter:$viewValue" typeahead-on-select="checkout.AllDtls($item, line, checkout.lineItemForm[line.ID], lineitems)" typeahead-no-results="line.noResults" ng-model="line.ShippingAddress.CompanyName" ng-required="line.xp.addressType!='Residence' && line.xp.addressType!='InStorePickUp'" ng-class="{error: checkout.lineItemForm[line.ID].$submitted && checkout.lineItemForm[line.ID][line.xp.addressType].$invalid}" />
+
+					                       <div class="cementry-help-icon">
+													<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="-652.2 494.3 18.7 18.7" style="enable-background:new -652.2 494.3 18.7 18.7;" xml:space="preserve">
+													<g>
+														<g>
+															<path d="M-643.1,505.6c-0.3-0.3-0.5-0.6-0.5-1.1c0-0.3,0.1-0.6,0.2-0.8c0.2-0.2,0.4-0.5,0.6-0.6
+																c0.2-0.2,0.5-0.3,0.7-0.5c0.2-0.2,0.4-0.3,0.6-0.6c0.2-0.2,0.2-0.4,0.2-0.7c0-0.4-0.1-0.6-0.4-0.9c-0.3-0.2-0.6-0.3-1.1-0.3
+																c-0.9,0-1.6,0.4-2.1,1.1l-0.7-0.7c0.7-0.9,1.6-1.3,2.9-1.3c0.8,0,1.4,0.2,1.9,0.6c0.5,0.4,0.7,0.9,0.7,1.5c0,0.4-0.1,0.7-0.3,1
+																c-0.2,0.3-0.4,0.5-0.6,0.7s-0.5,0.4-0.7,0.5c-0.2,0.2-0.5,0.4-0.6,0.6c-0.2,0.2-0.3,0.4-0.3,0.7c0,0.3,0.1,0.5,0.3,0.6
+																L-643.1,505.6z M-642.3,507.9c-0.1,0.1-0.3,0.2-0.5,0.2c-0.2,0-0.4-0.1-0.5-0.2c-0.1-0.1-0.2-0.3-0.2-0.5c0-0.2,0.1-0.4,0.2-0.5
+																c0.1-0.1,0.3-0.2,0.5-0.2c0.2,0,0.4,0.1,0.5,0.2c0.1,0.1,0.2,0.3,0.2,0.5C-642.1,507.6-642.2,507.8-642.3,507.9z"></path>
+														</g>
+														<g>
+															<path d="M-642.8,512.4c-4.8,0-8.8-3.9-8.8-8.8s3.9-8.8,8.8-8.8s8.8,3.9,8.8,8.8S-638,512.4-642.8,512.4z
+																 M-642.8,495.6c-4.4,0-8,3.6-8,8s3.6,8,8,8s8-3.6,8-8S-638.4,495.6-642.8,495.6z"></path>
+														</g>
+													</g>
+													</svg>
+													<div class="cementry-info" ng-if="line.xp.addressType=='Cemetery'">
+														<p>To ensure proper placement of your item, we request the section number, block or lot number and the site number of the grave or mausoleum site.  Not providing this information may result in a delay in placement.</p>
+													</div>
+													<div class="cementry-info" ng-if="line.xp.addressType=='Church'">
+														<p>Find Church field is an abbreviated list of churches within our local delivery area.  Begin keying in the field for the list to display and select the appropriate church.  View carefully to ensure the correct church is selected. </p>
+														<p>If the required church is not found, manually key in the church name, address and phone number in the appropriate fields.</p>
+														<p>For a visitation or a funeral service, in Delivery Instructions, add dates and times as known. </p>
+													</div>
+													<div class="cementry-info" ng-if="line.xp.addressType=='Funeral'">
+														<p>Find Funeral Home field is an abbreviated list of funeral homes within our local delivery area.  Begin keying in the field for the list to display and select the appropriate funeral home.  View carefully to ensure the correct funeral home is selected.</p>
+														<p>	If the required funeral home is not found in the list, manually key in the funeral home name, address and phone number in the appropriate fields.</p>
+														<p>  In Delivery Instructions, add visitation or service dates and times if known.</p>
+													</div>
+													<div class="cementry-info" ng-if="line.xp.addressType=='Business'">
+														<p>
+															Enter Business Name field is a required field to manually key in the business name to ensure timely delivery of the product.  If suite number or department is known, this information can be added in the Delivery Instructions field.
+														</p>
+													</div>
+													<div class="cementry-info" ng-if="line.xp.addressType=='School'">
+														<p>
+															Enter School Name field is a required field to manually key in the school name to ensure a timely delivery of the product.  Please note schools prefer delivery for students to be sent to home addresses.  Deliveries to staff members are allowed.
+														</p>
+													</div>
+													<div class="cementry-info" ng-if="line.xp.addressType=='Hospital'">
+														<p>Find Hospital field is a list of hospitals within our local delivery area.  Begin keying in the field for the list to display and select the appropriate hospital.  View carefully to ensure the correct hospital is selected. </p>
+														<p>To ensure timely deliveries, if a patient, please confirm they may receive deliveries.  Patients in ICU are not allowed deliveries while in ICU.  If a staff member, please include department of the hospital they work.</p>
+													</div>
+													<div class="cementry-info" ng-if="line.xp.addressType=='InStorePickUp'">
+														<p>
+															Find Store field will begin to populate as you key in the field with our store locations which can accommodate product pick ups.  View carefully to ensure the correct store location is selected.  The store telephone number will not auto populate, the recipient/customer telephone number is required. 
+														</p>
+													</div>
+												</div>
 									</div>
 									<div class="zip-code check-top col-xs-6 col-sm-6 col-md-6 col-lg-6" ng-show="line.xp.addressType=='InStorePickUp'" ng-if="line.xp.addressType=='InStorePickUp' ? DeliveryMethod = 'InStorePickUp' : DeliveryMethod = 'LocalDelivery'" ng-if="!line.xp.IsWorkShopEvent">
 										<p class="check-top">Find Store <span class="star">*</span></p>
 										<input type="search" name="store" autocomplete="off" ng-model="line.ShippingAddress.CompanyName" uib-typeahead="st for st in checkout.storeNames | filter:$viewValue" typeahead-on-select="checkout.storesDtls($item, line, lineitems)" ng-required="line.xp.addressType=='InStorePickUp'"  ng-class="{error: checkout.lineItemForm[line.ID].$submitted && checkout.lineItemForm[line.ID].store.$invalid}" />
+										<div class="cementry-help-icon">
+													<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="-652.2 494.3 18.7 18.7" style="enable-background:new -652.2 494.3 18.7 18.7;" xml:space="preserve">
+													<g>
+														<g>
+															<path d="M-643.1,505.6c-0.3-0.3-0.5-0.6-0.5-1.1c0-0.3,0.1-0.6,0.2-0.8c0.2-0.2,0.4-0.5,0.6-0.6
+																c0.2-0.2,0.5-0.3,0.7-0.5c0.2-0.2,0.4-0.3,0.6-0.6c0.2-0.2,0.2-0.4,0.2-0.7c0-0.4-0.1-0.6-0.4-0.9c-0.3-0.2-0.6-0.3-1.1-0.3
+																c-0.9,0-1.6,0.4-2.1,1.1l-0.7-0.7c0.7-0.9,1.6-1.3,2.9-1.3c0.8,0,1.4,0.2,1.9,0.6c0.5,0.4,0.7,0.9,0.7,1.5c0,0.4-0.1,0.7-0.3,1
+																c-0.2,0.3-0.4,0.5-0.6,0.7s-0.5,0.4-0.7,0.5c-0.2,0.2-0.5,0.4-0.6,0.6c-0.2,0.2-0.3,0.4-0.3,0.7c0,0.3,0.1,0.5,0.3,0.6
+																L-643.1,505.6z M-642.3,507.9c-0.1,0.1-0.3,0.2-0.5,0.2c-0.2,0-0.4-0.1-0.5-0.2c-0.1-0.1-0.2-0.3-0.2-0.5c0-0.2,0.1-0.4,0.2-0.5
+																c0.1-0.1,0.3-0.2,0.5-0.2c0.2,0,0.4,0.1,0.5,0.2c0.1,0.1,0.2,0.3,0.2,0.5C-642.1,507.6-642.2,507.8-642.3,507.9z"></path>
+														</g>
+														<g>
+															<path d="M-642.8,512.4c-4.8,0-8.8-3.9-8.8-8.8s3.9-8.8,8.8-8.8s8.8,3.9,8.8,8.8S-638,512.4-642.8,512.4z
+																 M-642.8,495.6c-4.4,0-8,3.6-8,8s3.6,8,8,8s8-3.6,8-8S-638.4,495.6-642.8,495.6z"></path>
+														</g>
+													</g>
+													</svg>
+												<div class="cementry-info">
+												  <p>
+												  		Find Store field will begin to populate as you key in the field with our store locations which can accommodate product pick ups.  View carefully to ensure the correct store location is selected.  The store telephone number will not auto populate, the recipient/customer telephone number is required. 
+												  </p>
+												 </div>
+												</div>
 									</div>
+									<div class="zip-code1 col-xs-6 col-sm-6 col-md-6 col-lg-6" ng-class="{zipAdjustment: line.xp.addressType=='Residence'}">
 									<p class="check-top" ng-if="!line.xp.IsWorkShopEvent">Zip Code <span class="star">*</span></p>
-									<input type="text" name="zip" ng-model="line.ShippingAddress.Zip" ng-blur="checkout.GetDeliveryFees(line, checkout.lineItemForm[line.ID], lineitems)"  max-length="5" ng-minlength="5" required ng-class="{error: checkout.lineItemForm[line.ID].$submitted && checkout.lineItemForm[line.ID].zip.$invalid}" class="zip-code" ng-if="!line.xp.IsWorkShopEvent"></input>
+									<input type="text" name="zip" ng-model="line.ShippingAddress.Zip" ng-blur="checkout.GetDeliveryFees(line, checkout.lineItemForm[line.ID], lineitems)" max-length="5" ng-minlength="5" required ng-class="{error: checkout.lineItemForm[line.ID].$submitted && checkout.lineItemForm[line.ID].zip.$invalid}" class="zip-code" ng-if="!line.xp.IsWorkShopEvent" />
+									</div>
+									</div>
 									<p class="check-top" ng-if="!line.xp.IsWorkShopEvent">Address 1 <span class="star">*</span></p>
 									<input type="text" name="street1" ng-model="line.ShippingAddress.Street1" ng-blur="checkout.GetDeliveryFees(line, checkout.lineItemForm[line.ID], lineitems)"  required ng-class="{error: checkout.lineItemForm[line.ID].$submitted && checkout.lineItemForm[line.ID].street1.$invalid}" ng-if="!line.xp.IsWorkShopEvent"></input>
 									<p class="check-top" ng-if="!line.xp.IsWorkShopEvent">Address 2</p>
@@ -156,7 +235,7 @@
 										<p>City <span class="star">*</span><span ng-if="line.ShippingAddress.City == 'Select City' ? checkout.lineItemForm[line.ID].$valid = false : ''"></span></p>
 										<input type="text" name="city" ng-if="line.MultipleCities.length <= 1 || !line.MultipleCities" ng-model="line.ShippingAddress.City"  required ng-class="{error: checkout.lineItemForm[line.ID].$submitted && checkout.lineItemForm[line.ID].city.$invalid}"></input>
 										<div ng-if="line.MultipleCities.length > 1" class="multiple-cities">
-											<div uib-dropdown class="form-control " id="MultipleCities" ng-class="{errorMMyy: checkout.lineItemForm[line.ID].$submitted && line.ShippingAddress.City == 'Select City'}">
+											<div uib-dropdown class="form-control " id="MultipleCities" ng-class="{errorMMyy:line.ShippingAddress.City == 'Select City'}">
 												<div id="sort-dropdown" uib-dropdown-toggle>
 													<p class="sort-active-show" ng-init="line.ShippingAddress.City = 'Select City'">{{line.ShippingAddress.City}} <i class="fa fa-chevron-down"></i></p>
 												</div>
@@ -286,12 +365,13 @@
 													</button>
 													</div>
 												</li>
-											</ul>
-											<p class="modify" ng-init="checkout.deliveryAdj(line)" ng-show="checkout.CheckDeliveryEmpty(line.TempCharges)">
+												<p class="modify" ng-init="checkout.deliveryAdj(line)" ng-show="checkout.CheckDeliveryEmpty(line.TempCharges)">
 												<span>
 													<a tabindex="0" popover-trigger="none" popover-is-open="showDeliveryToolTip" ng-click="showDeliveryToolTip = !showDeliveryToolTip" uib-popover-template="checkout.modifyDeliveryPopover.templateUrl">Modify Delivery Fees</a>
 												</span>
 											</p>
+											</ul>
+											
 											<p class="delivery-date" ng-if="line.xp.addressType!='InStorePickUp'">Delivery Preference <span class="star">*</span></p>
 											<ul class="delivery-days-info" ng-class="{errorDeliveryPref: checkout.lineItemForm[line.ID].$submitted && !line.xp.deliveryRun}" ng-if="line.xp.addressType!='InStorePickUp'">
 												<li ng-click="line.xp.deliveryRun='Run1'" ng-class="{active:line.xp.deliveryRun=='Run1'}" class="preference">
@@ -310,7 +390,7 @@
 										</div>
 										<div ng-if="line.SelectStore=='InStorePickUp'" class="select-store" ng-init="line.xp.ProductFromStore='MyStore'">
 											<p>Select Store</p>
-											<input type="search" ng-model="line.ShippingAddress.CompanyName" autocomplete="off" ng-value="line.xp.addressType=='InStorePickUp' ? line.ShippingAddress.CompanyName : ''" uib-typeahead="st for st in checkout.storeNames | filter:$viewValue" typeahead-on-select="checkout.addStoreAddress($item, line, lineitems)" />
+											<input type="search" ng-model="line.xp.StoreName" autocomplete="off" ng-value="line.xp.addressType=='InStorePickUp' ? line.ShippingAddress.CompanyName : ''" uib-typeahead="st for st in checkout.storeNames | filter:$viewValue" typeahead-on-select="checkout.addStoreAddress($item, line, lineitems)" />
 											<p>
 												<fieldset id="group2">
 													<label class="radio-inline radio-common">
@@ -487,7 +567,7 @@
 										</option>
 									</select> -->
 									<select name="mySelect" id="mySelect" ng-init="checkout.selectproduct=lineitems[0]" ng-options="option.Product.Name for option in lineitems track by option.ID" ng-model="checkout.selectproduct" ng-value="checkout.selectproduct.ID">
-										<option value="" selected="selected">Choose</option>
+										<!-- <option value="" selected="selected">Choose</option> -->
 									</select>
 									<p>Delivery Instructions:</p>
 									<textarea rows="3" ng-model="checkout.selectproduct.xp.deliveryNote"></textarea>
@@ -495,23 +575,24 @@
 										<div class="no-msg">
 											<span>Card Message</span>
 											<div class="no-msg-cont">
- 												<input type="checkbox" ng-model="checkout.selectproduct.cardMsg" id="noMessage{{$index}}" class="checkbox-custom" name="cardmessage">
+ 												<input type="checkbox" ng-model="checkout.selectproduct.cardMsg" id="noMessage{{$index}}" class="checkbox-custom" name="cardmessage" />
  												<label  for="noMessage{{$index}}" class="checkbox-custom-label">No Message</label>
 											</div>
 										</div>
 										<div class="line-msgs" ng-class="{'hideItem': !checkout.selectproduct.cardMsg}">
 											<p>Line 1</p>
-											<input type="text" ng-model="checkout.selectproduct.xp.CardMessage.line1"></input>
+											<input type="text" ng-model="checkout.selectproduct.xp.CardMessage.line1" spellcheck="true"></input>
 											<p>Line 2</p>
-											<input type="text" ng-model="checkout.selectproduct.xp.CardMessage.line2"></input>
+											<input type="text" ng-model="checkout.selectproduct.xp.CardMessage.line2" spellcheck="true"></input>
 											<p>Line 3</p>
-											<input type="text" ng-model="checkout.selectproduct.xp.CardMessage.line3"></input>
+											<input type="text" ng-model="checkout.selectproduct.xp.CardMessage.line3" spellcheck="true"></input>
 											<p>Line 4</p>
-											<input type="text" ng-model="checkout.selectproduct.xp.CardMessage.line4"></input>
+											<input type="text" ng-model="checkout.selectproduct.xp.CardMessage.line4" spellcheck="true"></input>
 										</div>
 									</div>
 									<div class="instruction">
 										<b>Instruction :</b>
+										The message sent with the enclosure card will read exactly as entered. Please use characters and numbers only. Bachman’s reserves the right to contact a customer to adjust any card messages with inappropriate language.
 									</div>
 								</div>
 								<div class="col-lg-12 col-md-12">
@@ -563,7 +644,7 @@
 									<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14"><path d="M5.378 11.37L2 7.59l1.438-1.286L5.374 8.47l5.185-5.84L12 3.91l-6.622 7.46" fill="#fff"/></svg>
 								</span>
 							</div>
-							<div ng-if="checkout.CurrentUser.xp.PO.PORequired=='Y'" ng-click="checkout.ClearOtherPayments()" ng-class="{'active-tab': checkout.paymentOption == 'PO', 'highlight': checkout.paymentOption == 'PO'}">PO
+							<div ng-if="checkout.CurrentUser.xp.PO.PORequired" ng-click="checkout.ClearOtherPayments()" ng-class="{'active-tab': checkout.paymentOption == 'PO', 'highlight': checkout.paymentOption == 'PO'}">PO
 								<span class="selected">
 									<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14"><path d="M5.378 11.37L2 7.59l1.438-1.286L5.374 8.47l5.185-5.84L12 3.91l-6.622 7.46" fill="#fff"/></svg>
 								</span>
@@ -591,7 +672,7 @@
 										<form class="cvv-from" novalidate name="card.cvvform">
 											<div class="form-group">
 												<input type="number" ng-minlength="card.CardType!='AmericanExpress' ? checkout.CVVLength=3 : checkout.CVVLength=4" class="form-control" name="cvv" id="cvvNumber" ng-model="card.CVV" ng-required="card == checkout.selectedCard" max-length="checkout.CVVLength" ng-minlength="checkout.CVVLength" ng-maxlength="checkout.CVVLength" ng-class="{error: card.cvvform.$submitted && card.cvvform.cvv.$invalid}" placeholder="CVV" />
-												<span class="cvv-help-icon">
+												<div class="cvv-help-icon">
 													<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="-652.2 494.3 18.7 18.7" style="enable-background:new -652.2 494.3 18.7 18.7;" xml:space="preserve">
 													<g>
 														<g>
@@ -608,7 +689,8 @@
 														</g>
 													</g>
 													</svg>
-												</span>
+													<p class="card-cont">For Visa/Mastercard, the three-digit CVV number is printed on the signature panel on the back of the card immediately after the card’s account number. For American Express, the four-digit CVV number is printed on the front of the card above the card account number.</p>
+												</div>
 												<label for="cvvNumber">CVV code is on the back side of your card-radio</label>
 											</div>
 										</form>
@@ -668,7 +750,7 @@
 												<input type="number" ng-model="card.BillingAddress.Phone3" placeholder="Number" max-length="4" ng-minlength="4" name="phone3" ng-required="checkout.EditBillAddress{{$index}}" ng-class="{error: checkout.EditBillingForm.$submitted && checkout.EditBillingForm.phone3.$invalid}" />
 											</div>
 											<div class="col-xs-12 form-group card-number p0">
-	                                            <label for="email">Enter Your Email Address</label>
+	                                            <label for="email">Enter Your Email Address <span class="star">*</span></label>
 	                                            <input type="email" class="form-control" id="email" placeholder="Email Address" ng-model="card.BillingAddress.xp.Email" name="email" ng-required="checkout.EditBillAddress{{$index}}" ng-class="{error: checkout.EditBillingForm.$submitted && checkout.EditBillingForm.email.$invalid}" ng-pattern="/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/" />
 	                                        </div>
 											<div class="col-xs-12 form-group card-number p0 save-button">
@@ -713,7 +795,7 @@
 	                                        <div class="col-xs-6 form-group exp-date p0">
 	                                            <label for="expDate">Expiration Date <span class="star">*</span></label>
 		                                         <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-		                                         	<div uib-dropdown class="form-control " id="expmonth" ng-class="{errorMMyy: checkout.CreditCardDetailForm.$submitted && checkout.card.ExpMonth=='MM' && checkout.selectedCard=='createcreditcard'}">
+		                                         	<div uib-dropdown class="form-control " id="expmonth" ng-class="{errorMMyy: checkout.CreditCardDetailForm.$submitted && (checkout.card.ExpMonth=='MM' || checkout.InvalidExpMonth) && checkout.selectedCard=='createcreditcard'}">
 								                     <div id="sort-dropdown" uib-dropdown-toggle>
 								                     <p class="sort-active-show" ng-init="checkout.card.ExpMonth = 'MM'">{{checkout.card.ExpMonth}}</p></div>
 								                     <ul class="dropdown-menu" uib-dropdown-menu aria-labelledby="sort-dropdown">
@@ -722,7 +804,7 @@
 								                    </div>
 		                                         </div>
 		                                       	<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-		                                       		 <div uib-dropdown class="form-control " id="expyear" ng-class="{errorMMyy: checkout.CreditCardDetailForm.$submitted && checkout.card.ExpYear=='YYYY' && checkout.selectedCard=='createcreditcard'}">
+		                                       		 <div uib-dropdown class="form-control " id="expyear" ng-class="{errorMMyy: checkout.CreditCardDetailForm.$submitted && (checkout.card.ExpYear=='YYYY' || checkout.InvalidExpYear) && checkout.selectedCard=='createcreditcard'}">
 								                     <div id="sort-dropdown" uib-dropdown-toggle>
 								                     <p class="sort-active-show" ng-init="checkout.card.ExpYear = 'YYYY'">{{checkout.card.ExpYear}}</p></div>
 								                     <ul class="dropdown-menu" uib-dropdown-menu aria-labelledby="sort-dropdown">
@@ -779,13 +861,13 @@
 											<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 											<div class="col-xs-7 col-sm-7 col-md-7 col-lg-7 charges-cont">
 												<label class="radio-inline radio-common">
-												<input type="radio" ng-model="BachmansCharges" name="BachmansCharge" value="Custom" /><span>Enter Custom Charge</span>
+												<input type="radio" ng-model="BachmansCharges" name="BachmansCharge" value="Custom" /><span>Dollar Amount</span>
 												<div class="radio"></div>
 											   </label>
 												</div>
 												<input type="number" name="bachmanchargeAmt" ng-model="txtBachmanCharges" class="col-xs-5 col-sm-5 col-md-5 col-lg-5" ng-disabled="BachmansCharges == 'Full' || !BachmansCharges" ng-max="checkout.orderTotal" /><span></span>
 											</div>
-											<p class="error" ng-if="checkout.BachmanChargeForm.bachmanchargeAmt.$error.max">Cannot Exceed Balance Limit.</p>
+											<p class="error" ng-if="checkout.BachmanChargeForm.bachmanchargeAmt.$error.max && checkout.orderTotal > 0">Cannot Exceed Balance Limit.</p>
 											<button ng-disabled="checkout.BachmanChargeForm.$invalid" ng-click="checkout.ApplySpendingAccCharges(checkout.UserSpendingAcc['Bachmans Charge'], BachmansCharges, txtBachmanCharges, checkout.orderDtls, 'Bachmans Charge')">Apply</button>
 										</div>
 									</div>
@@ -801,11 +883,30 @@
 								<div class="payment-container row">
 									<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 										<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9 payment-options">
-											<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+											<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
 												<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 gift-card">
 													<span>Enter Gift Card No : </span>
 												</div>
 												<input ng-model="GiftCardNo" type="text" class="col-xs-6 col-sm-6 col-md-6 col-lg-6" placeholder="Card Number" />
+												<div class="gift-icon">
+													<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="-652.2 494.3 18.7 18.7" style="enable-background:new -652.2 494.3 18.7 18.7;" xml:space="preserve">
+													<g>
+														<g>
+															<path d="M-643.1,505.6c-0.3-0.3-0.5-0.6-0.5-1.1c0-0.3,0.1-0.6,0.2-0.8c0.2-0.2,0.4-0.5,0.6-0.6
+																c0.2-0.2,0.5-0.3,0.7-0.5c0.2-0.2,0.4-0.3,0.6-0.6c0.2-0.2,0.2-0.4,0.2-0.7c0-0.4-0.1-0.6-0.4-0.9c-0.3-0.2-0.6-0.3-1.1-0.3
+																c-0.9,0-1.6,0.4-2.1,1.1l-0.7-0.7c0.7-0.9,1.6-1.3,2.9-1.3c0.8,0,1.4,0.2,1.9,0.6c0.5,0.4,0.7,0.9,0.7,1.5c0,0.4-0.1,0.7-0.3,1
+																c-0.2,0.3-0.4,0.5-0.6,0.7s-0.5,0.4-0.7,0.5c-0.2,0.2-0.5,0.4-0.6,0.6c-0.2,0.2-0.3,0.4-0.3,0.7c0,0.3,0.1,0.5,0.3,0.6
+																L-643.1,505.6z M-642.3,507.9c-0.1,0.1-0.3,0.2-0.5,0.2c-0.2,0-0.4-0.1-0.5-0.2c-0.1-0.1-0.2-0.3-0.2-0.5c0-0.2,0.1-0.4,0.2-0.5
+																c0.1-0.1,0.3-0.2,0.5-0.2c0.2,0,0.4,0.1,0.5,0.2c0.1,0.1,0.2,0.3,0.2,0.5C-642.1,507.6-642.2,507.8-642.3,507.9z"></path>
+														</g>
+														<g>
+															<path d="M-642.8,512.4c-4.8,0-8.8-3.9-8.8-8.8s3.9-8.8,8.8-8.8s8.8,3.9,8.8,8.8S-638,512.4-642.8,512.4z
+																 M-642.8,495.6c-4.4,0-8,3.6-8,8s3.6,8,8,8s8-3.6,8-8S-638.4,495.6-642.8,495.6z"></path>
+														</g>
+													</g>
+													</svg>
+													<p class="gift-cont">Refer to the back of your Bachman’s gift card for the 14 or 16-digit gift card number.</p>
+												</div>
 											</div>
 											<span class="error" ng-if="checkout.InvalidGiftCard">Gift Card Not Available/Expired...!</span>
 											<button ng-click="checkout.GCApply(GiftCardNo, checkout.orderDtls)">Apply</button>
@@ -830,20 +931,21 @@
 														<div class="radio"></div>
 													</label>
 												</div>
-												<input type="number" name="cash" ng-disabled="checkout.PayCashCheque == 'PayCheque' || !checkout.PayCashCheque" ng-model="checkout.txtPayCash" class="col-xs-6 col-sm-6 col-md-6 col-lg-6" placeholder="Amount" ng-max="checkout.orderTotal" />
-												<span class="error" ng-if="checkout.CashChequeForm.cash.$error.max && !checkout.orderDtls.SpendingAccounts.PaidCash">Cannot Exceed Order Total Limit.</span>
+												<input type="number" name="cash" ng-disabled="checkout.PayCashCheque == 'PayCheque' || !checkout.PayCashCheque" ng-model="checkout.txtPayCash" class="col-xs-6 col-sm-6 col-md-6 col-lg-6" placeholder="Amount" ng-required="checkout.PayCashCheque=='PayCash'" />
+												<!-- <input type="number" name="cash" ng-disabled="checkout.PayCashCheque == 'PayCheque' || !checkout.PayCashCheque" ng-model="checkout.txtPayCash" class="col-xs-6 col-sm-6 col-md-6 col-lg-6" placeholder="Amount" ng-max="checkout.orderTotal" />
+												<span class="error" ng-if="checkout.CashChequeForm.cash.$error.max && !checkout.orderDtls.SpendingAccounts.PaidCash">Cannot Exceed Order Total Limit.</span> -->
 											</div>
 											<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 												<div>
 													<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-													<label class="radio-inline radio-common">
-														<input type="radio" name="CashCharge" ng-model="checkout.PayCashCheque" value="PayCheque" />
-														<p>Pay through Cheque</p><br>
-														<p>Check Number</p>
-														<div class="radio"></div>
-													</label>
+														<label class="radio-inline radio-common">
+															<input type="radio" name="CashCharge" ng-model="checkout.PayCashCheque" value="PayCheque" />
+															<p>Pay through Cheque</p><br>
+															<p>Check Number</p>
+															<div class="radio"></div>
+														</label>
 													</div>
-													<input type="number" class="col-xs-6 col-sm-6 col-md-6 col-lg-6" ng-disabled="checkout.PayCashCheque == 'PayCash' || !checkout.PayCashCheque" ng-model="checkout.txtChequeNumber" placeholder="Check Number" />
+													<input type="number" class="col-xs-6 col-sm-6 col-md-6 col-lg-6" ng-disabled="checkout.PayCashCheque == 'PayCash' || !checkout.PayCashCheque" ng-model="checkout.txtChequeNumber" placeholder="Check Number" ng-required="checkout.PayCashCheque=='PayCheque'" />
 													<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 payment-amt">
 													<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
 														<label class="radio-inline radio-common">
@@ -851,13 +953,13 @@
 															<!-- <div class="radio"></div> -->
 														</label>
 													</div>
-													<input name="chequeamount" ng-disabled="checkout.PayCashCheque == 'PayCash' || !checkout.PayCashCheque" type="number" ng-model="checkout.txtChequeAmt" class="col-xs-6 col-sm-6 col-md-6 col-lg-6" placeholder="Amount" ng-max="checkout.orderTotal" />
+													<input name="chequeamount" ng-disabled="checkout.PayCashCheque == 'PayCash' || !checkout.PayCashCheque" type="number" ng-model="checkout.txtChequeAmt" class="col-xs-6 col-sm-6 col-md-6 col-lg-6" placeholder="Amount" ng-max="checkout.orderTotal" ng-required="checkout.PayCashCheque=='PayCheque'" />
 													<span class="error" ng-if="checkout.CashChequeForm.chequeamount.$error.max && !checkout.orderDtls.SpendingAccounts.Cheque">Cannot Exceed Order Total Limit.</span>
 													</div>
 													</div>
 												</div>
 											</div>
-										<button ng-disabled="checkout.CashChequeForm.$invalid" ng-click="checkout.PayByChequeOrCash(checkout.orderDtls)">Apply</button>
+										<button ng-disabled="checkout.CashChequeForm.$invalid || checkout.orderTotal == 0" ng-click="checkout.PayByChequeOrCash(checkout.orderDtls)">Apply</button>
 									</div>
 								</div>
 							</div>
@@ -885,7 +987,7 @@
 												<div class="col-xs-7 col-sm-7 col-md-7 col-lg-7 charges-cont">
 													 <label class="radio-inline radio-common">
 														<input type="radio" ng-model="PurpleCharges" name="PurpleCharge" value="Custom" /><span>
-															Enter Custom charge
+															Dollar Amount
 														</span>
 														<div class="radio"></div>
 													 </label>
@@ -932,7 +1034,8 @@
 											<div class="col-xs-6">
 											<label class="radio-inline radio-common">
 											<input type="radio" id="current-recp" ng-model="checkout.BillingAddresses" value="currentrecipients" name="address" />
-											<label for="current-recp">Current Recipients</label>
+											<label for="current-recp" ng-if="checkout.order.FromUserID!='gby8nYybikCZhjMcwVPAiQ'">Current Recipients</label>
+											<label for="current-recp" ng-if="checkout.order.FromUserID=='gby8nYybikCZhjMcwVPAiQ'">Current Customer</label>
 											<div class="radio"></div>
 										    </label>
 											</div>
@@ -1043,7 +1146,7 @@
 					                   </div>
 								<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 review-button">
 								<div class="total-amt col-xs-12">
-					             	<p>Total Amount Payable </p>
+					             	<p>Total Amount Due </p>
 					             	<p class="price">{{checkout.orderTotal | currency}}</p>
 						         </div>
 						         <div class="col-xs-12">
@@ -1076,6 +1179,7 @@
 								<li class="shipping-FirstName" ng-if="!lineitems[0].xp.IsWorkShopEvent"><p>{{lineitems[0].ShippingAddress.FirstName}} {{lineitems[0].ShippingAddress.LastName}}</p></li>
 								<li class="shipping-FirstName" ng-if="lineitems[0].xp.IsWorkShopEvent"><p>{{lineitems[0].xp.ShippingAddress.FirstName}} {{lineitems[0].xp.ShippingAddress.LastName}}</p></li>
 								<li class="shipping-Addresses" ng-if="!lineitems[0].xp.IsWorkShopEvent">
+									<p>{{lineitems[0].ShippingAddress.CompanyName}}</p>
 									<p>{{lineitems[0].ShippingAddress.Street1}}</p>
 									<p>{{lineitems[0].ShippingAddress.Street2}}</p>
 									<p>{{lineitems[0].ShippingAddress.City}} {{lineitems[0].ShippingAddress.State}}</p>
@@ -1090,7 +1194,7 @@
 								<li class="shipping-Date" ng-if="lineitems[0].xp.addressType!='InStorePickUp'">
 									<p class="shipping-subTitle" ng-if="!lineitems[0].xp.IsWorkShopEvent">Delivery Date</p>
 									<p class="shipping-subTitle" ng-if="lineitems[0].xp.IsWorkShopEvent">Event Date</p>
-									<p>{{lineitems[0].xp.deliveryDate | date}}</p>
+									<p>{{lineitems[0].xp.DeliveryDate | date}}</p>
 								</li>
 								<li class="shipping-Date" ng-if="lineitems[0].xp.addressType=='InStorePickUp'">
 									<p class="shipping-subTitle">Pick-Up Date</p>
@@ -1137,17 +1241,17 @@
 										Credit Card: xxxx xxxx xxxx {{checkout.card.CardNumber | limitTo: -4}}
 									</p>
 									<p ng-if="checkout.selectedCard=='createcreditcard' && checkout.card.ExpMonth">Card Expires: {{checkout.card.ExpMonth | limitTo: 2}}/{{checkout.card.ExpYear | limitTo: -2}}</p>
-									<p ng-if="checkout.orderDtls.SpendingAccounts.PurplePerks">Purple Perks Points Applied:{{checkout.orderDtls.SpendingAccounts.PurplePerks.Amount | currency}}</p>
+									<p ng-if="checkout.orderDtls.SpendingAccounts.PurplePerks">Purple Perks Applied:{{checkout.orderDtls.SpendingAccounts.PurplePerks.Amount | currency}}</p>
 									<p ng-if="checkout.orderDtls.SpendingAccounts.BachmansCharges">Bachmans Charges Applied:{{checkout.orderDtls.SpendingAccounts.BachmansCharges.Amount | currency}}</p>
 									<p ng-if="checkout.orderDtls.SpendingAccounts.GiftCard">Gift Card Applied:{{checkout.orderDtls.SpendingAccounts.GiftCard.Amount | currency}}</p>
-									<p ng-if="checkout.orderDtls.SpendingAccounts.PaidCash">Cash Paid:{{checkout.orderDtls.SpendingAccounts.PaidCash.Amount | currency}}</p>
+									<p ng-if="checkout.orderDtls.SpendingAccounts.PaidCash">Cash Paid: {{checkout.orderDtls.SpendingAccounts.PaidCash.Amount | currency}}</p>
 									<p ng-if="checkout.orderDtls.SpendingAccounts.Cheque">Cheque Amount:{{checkout.orderDtls.SpendingAccounts.Cheque.Amount | currency}}</p>
 									<p ng-if="checkout.orderDtls.SpendingAccounts.Cheque">Cheque Number:{{checkout.orderDtls.SpendingAccounts.Cheque.ChequeNo}}</p>
 								</li>
 							</ul>
 						</uib-accordion-group>
 						<div class="row review-content">
-							<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+							<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 transactionError">
 								<span class="error">{{checkout.TransactionError}}</span>
 							</div>
 							<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
@@ -1187,9 +1291,78 @@
 					</div>
 				</uib-accordion-group>
 				<div class="charges-total">
-					<p>Subtotal  <span>{{checkout.order.Subtotal | currency}}</span></p>
-					<p>Delivery Charges   <span>{{checkout.order.ShippingCost | currency}} </span></p>
-					<p>Estimated Tax   <span>{{checkout.order.TaxCost | currency}} </span></p>
+					<p>Sub Total  <span  class="del-val">{{checkout.order.Subtotal | currency}}</span></p>
+					<!-- <p>Delivery Charges  
+					<span class="cvv-help-icon" popover-trigger="none" popover-is-open="checkout.showChargesToolTip" ng-click="checkout.showChargesToolTip = !checkout.showChargesToolTip" uib-popover-template="checkout.deliveryToolTip.templateUrl">
+						<span click-outside="checkout.closeOusideClick()">
+							<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="-652.2 494.3 18.7 18.7" style="enable-background:new -652.2 494.3 18.7 18.7;" xml:space="preserve">
+													<g>
+														<g>
+															<path d="M-643.1,505.6c-0.3-0.3-0.5-0.6-0.5-1.1c0-0.3,0.1-0.6,0.2-0.8c0.2-0.2,0.4-0.5,0.6-0.6
+																c0.2-0.2,0.5-0.3,0.7-0.5c0.2-0.2,0.4-0.3,0.6-0.6c0.2-0.2,0.2-0.4,0.2-0.7c0-0.4-0.1-0.6-0.4-0.9c-0.3-0.2-0.6-0.3-1.1-0.3
+																c-0.9,0-1.6,0.4-2.1,1.1l-0.7-0.7c0.7-0.9,1.6-1.3,2.9-1.3c0.8,0,1.4,0.2,1.9,0.6c0.5,0.4,0.7,0.9,0.7,1.5c0,0.4-0.1,0.7-0.3,1
+																c-0.2,0.3-0.4,0.5-0.6,0.7s-0.5,0.4-0.7,0.5c-0.2,0.2-0.5,0.4-0.6,0.6c-0.2,0.2-0.3,0.4-0.3,0.7c0,0.3,0.1,0.5,0.3,0.6
+																L-643.1,505.6z M-642.3,507.9c-0.1,0.1-0.3,0.2-0.5,0.2c-0.2,0-0.4-0.1-0.5-0.2c-0.1-0.1-0.2-0.3-0.2-0.5c0-0.2,0.1-0.4,0.2-0.5
+																c0.1-0.1,0.3-0.2,0.5-0.2c0.2,0,0.4,0.1,0.5,0.2c0.1,0.1,0.2,0.3,0.2,0.5C-642.1,507.6-642.2,507.8-642.3,507.9z"></path>
+														</g>
+														<g>
+															<path d="M-642.8,512.4c-4.8,0-8.8-3.9-8.8-8.8s3.9-8.8,8.8-8.8s8.8,3.9,8.8,8.8S-638,512.4-642.8,512.4z
+																 M-642.8,495.6c-4.4,0-8,3.6-8,8s3.6,8,8,8s8-3.6,8-8S-638.4,495.6-642.8,495.6z"></path>
+														</g>
+													</g>
+							</svg>
+						</span>
+					</span>
+					<span class="del-val">{{checkout.order.ShippingCost | currency}} </span></p> -->
+					<div class="del-charges">
+					Delivery Charges  
+			          <div class="del-cvv-help-icon">
+			            <div>
+			              <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="-652.2 494.3 18.7 18.7" style="enable-background:new -652.2 494.3 18.7 18.7;" xml:space="preserve">
+			                          <g>
+			                            <g>
+			                              <path d="M-643.1,505.6c-0.3-0.3-0.5-0.6-0.5-1.1c0-0.3,0.1-0.6,0.2-0.8c0.2-0.2,0.4-0.5,0.6-0.6
+			                                c0.2-0.2,0.5-0.3,0.7-0.5c0.2-0.2,0.4-0.3,0.6-0.6c0.2-0.2,0.2-0.4,0.2-0.7c0-0.4-0.1-0.6-0.4-0.9c-0.3-0.2-0.6-0.3-1.1-0.3
+			                                c-0.9,0-1.6,0.4-2.1,1.1l-0.7-0.7c0.7-0.9,1.6-1.3,2.9-1.3c0.8,0,1.4,0.2,1.9,0.6c0.5,0.4,0.7,0.9,0.7,1.5c0,0.4-0.1,0.7-0.3,1
+			                                c-0.2,0.3-0.4,0.5-0.6,0.7s-0.5,0.4-0.7,0.5c-0.2,0.2-0.5,0.4-0.6,0.6c-0.2,0.2-0.3,0.4-0.3,0.7c0,0.3,0.1,0.5,0.3,0.6
+			                                L-643.1,505.6z M-642.3,507.9c-0.1,0.1-0.3,0.2-0.5,0.2c-0.2,0-0.4-0.1-0.5-0.2c-0.1-0.1-0.2-0.3-0.2-0.5c0-0.2,0.1-0.4,0.2-0.5
+			                                c0.1-0.1,0.3-0.2,0.5-0.2c0.2,0,0.4,0.1,0.5,0.2c0.1,0.1,0.2,0.3,0.2,0.5C-642.1,507.6-642.2,507.8-642.3,507.9z"></path>
+			                            </g>
+			                            <g>
+			                              <path d="M-642.8,512.4c-4.8,0-8.8-3.9-8.8-8.8s3.9-8.8,8.8-8.8s8.8,3.9,8.8,8.8S-638,512.4-642.8,512.4z
+			                                 M-642.8,495.6c-4.4,0-8,3.6-8,8s3.6,8,8,8s8-3.6,8-8S-638.4,495.6-642.8,495.6z"></path>
+			                            </g>
+			                          </g>
+			              </svg>
+			            </div>
+			            <p class="del-cont">Our standard delivery fee for local delivery is $12.99 per delivery location. Additional fees or handling charges may apply depending on the order. Please refer to our FAQ’s for delivery information. <a href="http://52.206.111.191:9100/CustomerService/FAQs" target="_blank">Click Here</a></p>
+			          </div>
+			             <span class="del-val">{{checkout.order.ShippingCost | currency}} </span> 
+			         </div>
+                  
+					<div class="estimate-charges">
+                        Estimated Tax
+                        <div class="est-cvv-help-icon">
+													<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="-652.2 494.3 18.7 18.7" style="enable-background:new -652.2 494.3 18.7 18.7;" xml:space="preserve">
+													<g>
+														<g>
+															<path d="M-643.1,505.6c-0.3-0.3-0.5-0.6-0.5-1.1c0-0.3,0.1-0.6,0.2-0.8c0.2-0.2,0.4-0.5,0.6-0.6
+																c0.2-0.2,0.5-0.3,0.7-0.5c0.2-0.2,0.4-0.3,0.6-0.6c0.2-0.2,0.2-0.4,0.2-0.7c0-0.4-0.1-0.6-0.4-0.9c-0.3-0.2-0.6-0.3-1.1-0.3
+																c-0.9,0-1.6,0.4-2.1,1.1l-0.7-0.7c0.7-0.9,1.6-1.3,2.9-1.3c0.8,0,1.4,0.2,1.9,0.6c0.5,0.4,0.7,0.9,0.7,1.5c0,0.4-0.1,0.7-0.3,1
+																c-0.2,0.3-0.4,0.5-0.6,0.7s-0.5,0.4-0.7,0.5c-0.2,0.2-0.5,0.4-0.6,0.6c-0.2,0.2-0.3,0.4-0.3,0.7c0,0.3,0.1,0.5,0.3,0.6
+																L-643.1,505.6z M-642.3,507.9c-0.1,0.1-0.3,0.2-0.5,0.2c-0.2,0-0.4-0.1-0.5-0.2c-0.1-0.1-0.2-0.3-0.2-0.5c0-0.2,0.1-0.4,0.2-0.5
+																c0.1-0.1,0.3-0.2,0.5-0.2c0.2,0,0.4,0.1,0.5,0.2c0.1,0.1,0.2,0.3,0.2,0.5C-642.1,507.6-642.2,507.8-642.3,507.9z"></path>
+														</g>
+														<g>
+															<path d="M-642.8,512.4c-4.8,0-8.8-3.9-8.8-8.8s3.9-8.8,8.8-8.8s8.8,3.9,8.8,8.8S-638,512.4-642.8,512.4z
+																 M-642.8,495.6c-4.4,0-8,3.6-8,8s3.6,8,8,8s8-3.6,8-8S-638.4,495.6-642.8,495.6z"></path>
+														</g>
+													</g>
+													</svg>
+                            <p class="del-cont">Bachman’s calculates sales tax based on the destination of the shipment in accordance with state and local tax laws. If you have designated in-store pick-up, sales tax will be applied based on the local tax rate of the desired pick-up location. For all nationwide deliveries, tax is calculated from Bachman’s Lyndale location.</p>
+									</div>
+                        
+                        <span class="del-val">{{checkout.order.TaxCost | currency}} </span></div>
 					<p ng-if="checkout.order.PromotionDiscount > 0"><button ng-click="checkout.RemoveCoupon()">
 						<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 							 viewBox="0 0 34 34" style="enable-background:new 0 0 34 34;" xml:space="preserve">
@@ -1202,7 +1375,7 @@
 								c-0.3-0.3-0.7-0.5-1.2-0.5c-0.4,0-0.8,0.2-1.1,0.5l-2.7,2.7l-2.7-2.7C14,964.1,13.6,963.9,13.1,963.9L13.1,963.9z"/>
 							</g>
 					  	</svg>
-						</button> Coupon/Promotion Applied <span>-{{checkout.order.PromotionDiscount | currency}} </span>
+						</button> Coupon/Promotion Applied <span class="del-val">-{{checkout.order.PromotionDiscount | currency}} </span>
 					</p>
 					<p ng-if="checkout.orderDtls.SpendingAccounts.BachmansCharges">
 					<button ng-click="checkout.deleteSpendingAcc(checkout.orderDtls, 'BachmansCharges')">
@@ -1218,7 +1391,7 @@
 								c-0.3-0.3-0.7-0.5-1.2-0.5c-0.4,0-0.8,0.2-1.1,0.5l-2.7,2.7l-2.7-2.7C14,964.1,13.6,963.9,13.1,963.9L13.1,963.9z"/>
 							</g>
 					  	</svg>
-					</button>Bachman’s Charge applied   <span>-{{checkout.orderDtls.SpendingAccounts.BachmansCharges.Amount | currency}} </span>
+					</button>Bachman’s Charge applied   <span class="del-val">-{{checkout.orderDtls.SpendingAccounts.BachmansCharges.Amount | currency}} </span>
 					</p>
 					<p ng-if="checkout.orderDtls.SpendingAccounts.GiftCard"><button ng-click="checkout.deleteSpendingAcc(checkout.orderDtls, 'GiftCard')"><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 							 viewBox="0 0 34 34" style="enable-background:new 0 0 34 34;" xml:space="preserve">
@@ -1231,8 +1404,8 @@
 								c0.6,0.7,1.6,0.7,2.2,0.2c0.7-0.6,0.7-1.6,0.2-2.2c-0.1-0.1-0.1-0.1-0.2-0.2l-2.7-2.7l2.7-2.7c0.6-0.6,0.6-1.6,0-2.2
 								c-0.3-0.3-0.7-0.5-1.2-0.5c-0.4,0-0.8,0.2-1.1,0.5l-2.7,2.7l-2.7-2.7C14,964.1,13.6,963.9,13.1,963.9L13.1,963.9z"/>
 							</g>
-					  	</svg></button>Gift Card applied   <span>-{{checkout.orderDtls.SpendingAccounts.GiftCard.Amount | currency}} </span></p>
-					<p ng-if="checkout.orderDtls.SpendingAccounts.PaidCash"><button ng-click="checkout.deleteSpendingAcc(checkout.orderDtls, 'PaidCash')"><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+					  	</svg></button>Gift Card applied   <span class="del-val">-{{checkout.orderDtls.SpendingAccounts.GiftCard.Amount | currency}} </span></p>
+					<p ng-if="checkout.orderDtls.SpendingAccounts.PaidCash.Amount > 0"><button ng-click="checkout.deleteSpendingAcc(checkout.orderDtls, 'PaidCash')"><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 							 viewBox="0 0 34 34" style="enable-background:new 0 0 34 34;" xml:space="preserve">
 
 							<g transform="translate(0,-952.36218)">
@@ -1243,8 +1416,20 @@
 								c0.6,0.7,1.6,0.7,2.2,0.2c0.7-0.6,0.7-1.6,0.2-2.2c-0.1-0.1-0.1-0.1-0.2-0.2l-2.7-2.7l2.7-2.7c0.6-0.6,0.6-1.6,0-2.2
 								c-0.3-0.3-0.7-0.5-1.2-0.5c-0.4,0-0.8,0.2-1.1,0.5l-2.7,2.7l-2.7-2.7C14,964.1,13.6,963.9,13.1,963.9L13.1,963.9z"/>
 							</g>
-					  	</svg></button>Paid Through Cash   <span>-{{checkout.orderDtls.SpendingAccounts.PaidCash.Amount | currency}} </span></p>
-					<p ng-if="checkout.orderDtls.SpendingAccounts.Cheque"><button ng-click="checkout.deleteSpendingAcc(checkout.orderDtls, 'Cheque')"><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+					  	</svg></button>Paid Through Cash   <span class="del-val">-{{checkout.orderDtls.SpendingAccounts.PaidCash.Amount | currency}} </span></p>
+						<p ng-if="checkout.orderDtls.SpendingAccounts.CashDueAmount"><button><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+							 viewBox="0 0 34 34" style="enable-background:new 0 0 34 34;" xml:space="preserve">
+							<g transform="translate(0,-952.36218)">
+							<path  d="M17,952.7c-4.3,0-8.5,1.6-11.8,4.9c-6.5,6.5-6.5,17.1,0,23.6c6.5,6.5,17.1,6.5,23.6,0c6.5-6.5,6.5-17.1,0-23.6
+								v0C25.5,954.3,21.3,952.7,17,952.7L17,952.7z M17,955.8c3.5,0,6.9,1.3,9.6,4c5.3,5.3,5.3,13.8,0,19.1c-5.3,5.3-13.8,5.3-19.1,0
+								c-5.3-5.3-5.3-13.8,0-19.1C10.1,957.2,13.5,955.8,17,955.8z M13.1,963.9c-0.1,0-0.1,0-0.2,0c-0.9,0.1-1.5,0.9-1.4,1.7
+								c0,0.4,0.2,0.7,0.5,1l2.7,2.7l-2.7,2.7c-0.6,0.6-0.6,1.6,0,2.2c0.6,0.6,1.6,0.6,2.2,0c0,0,0,0,0,0l2.7-2.7l2.7,2.7
+								c0.6,0.7,1.6,0.7,2.2,0.2c0.7-0.6,0.7-1.6,0.2-2.2c-0.1-0.1-0.1-0.1-0.2-0.2l-2.7-2.7l2.7-2.7c0.6-0.6,0.6-1.6,0-2.2
+								c-0.3-0.3-0.7-0.5-1.2-0.5c-0.4,0-0.8,0.2-1.1,0.5l-2.7,2.7l-2.7-2.7C14,964.1,13.6,963.9,13.1,963.9L13.1,963.9z"/>
+							</g>
+					  	</svg></button>Due Amount Cash <span class="del-val">{{checkout.orderDtls.SpendingAccounts.CashDueAmount.Amount | currency}} </span>
+					</p>	
+					<p ng-if="checkout.orderDtls.SpendingAccounts.Cheque.Amount > 0"><button ng-click="checkout.deleteSpendingAcc(checkout.orderDtls, 'Cheque')"><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 							 viewBox="0 0 34 34" style="enable-background:new 0 0 34 34;" xml:space="preserve">
 
 							<g transform="translate(0,-952.36218)">
@@ -1255,7 +1440,7 @@
 								c0.6,0.7,1.6,0.7,2.2,0.2c0.7-0.6,0.7-1.6,0.2-2.2c-0.1-0.1-0.1-0.1-0.2-0.2l-2.7-2.7l2.7-2.7c0.6-0.6,0.6-1.6,0-2.2
 								c-0.3-0.3-0.7-0.5-1.2-0.5c-0.4,0-0.8,0.2-1.1,0.5l-2.7,2.7l-2.7-2.7C14,964.1,13.6,963.9,13.1,963.9L13.1,963.9z"/>
 							</g>
-					  	</svg></button>Paid through Cheque   <span>-{{checkout.orderDtls.SpendingAccounts.Cheque.Amount | currency}} </span></p>
+					  	</svg></button>Paid through Cheque   <span class="del-val">-{{checkout.orderDtls.SpendingAccounts.Cheque.Amount | currency}} </span></p>
 					<p ng-if="checkout.orderDtls.SpendingAccounts.PurplePerks"><button ng-click="checkout.deleteSpendingAcc(checkout.orderDtls, 'PurplePerks')"><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 							 viewBox="0 0 34 34" style="enable-background:new 0 0 34 34;" xml:space="preserve">
 
@@ -1267,8 +1452,10 @@
 								c0.6,0.7,1.6,0.7,2.2,0.2c0.7-0.6,0.7-1.6,0.2-2.2c-0.1-0.1-0.1-0.1-0.2-0.2l-2.7-2.7l2.7-2.7c0.6-0.6,0.6-1.6,0-2.2
 								c-0.3-0.3-0.7-0.5-1.2-0.5c-0.4,0-0.8,0.2-1.1,0.5l-2.7,2.7l-2.7-2.7C14,964.1,13.6,963.9,13.1,963.9L13.1,963.9z"/>
 							</g>
-					  	</svg></button>Purple Perks Balance applied   <span>-{{checkout.orderDtls.SpendingAccounts.PurplePerks.Amount | currency}} </span></p>
-					<p class="total">Total <span>{{checkout.orderTotal | currency}}  </span></p>
+					  	</svg></button>Purple Perks Balance applied   <span class="del-val">-{{checkout.orderDtls.SpendingAccounts.PurplePerks.Amount | currency}} </span></p>
+					<p class="total" ng-if="checkout.editsubmitorder=='true'">Edited Order Total <span>-{{checkout.order.xp.oldPrice | currency}}  </span></p>
+					<p class="total" ng-if="checkout.editsubmitorder=='true'">Total <span>{{checkout.orderTotal | currency}} </span></p>
+					<p class="total" ng-if="checkout.editsubmitorder==''">Total <span>{{checkout.orderTotal | currency}}  </span></p>
 				</div>
 				<div class="promo-code">
 					<p>Apply Promo Code</p>

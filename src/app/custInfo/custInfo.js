@@ -132,7 +132,10 @@ function CustInfoConfig( $stateProvider ) {
 function CustInfoController($scope, $exceptionHandler, $stateParams, $state, UserList, spendingAccounts, creditCard, OrderCloud, userSubscription, Underscore, ConstantContact, BuildOrderService, AddressValidationService, $http, GoogleAPI) {
 	var vm = this;
 	vm.list = UserList;
-	vm.subscribedList=userSubscription;
+	vm.subscribedList = Underscore.where(angular.copy(userSubscription), {
+		status: "ACTIVE"
+	});
+	//vm.subscribedList=userSubscription;
 	$scope.$parent.base.list = ' ';
 	if($scope.$parent.base.search){
 		$scope.$parent.base.search.query = ' ';
@@ -157,8 +160,8 @@ function CustInfoController($scope, $exceptionHandler, $stateParams, $state, Use
 					var validatedAddress = res.ResponseBody.Address;
 					var zip = validatedAddress.PostalCode.substring(0, 5);
 					vm.list.defaultAddr[0].Zip = parseInt(zip);
-					vm.list.defaultAddr[0].Street1 = validatedAddress.Line2;
-					vm.list.defaultAddr[0].Street2 = validatedAddress.Line1;
+					//vm.list.defaultAddr[0].Street1 = validatedAddress.Line1;
+					//vm.list.defaultAddr[0].Street2 = validatedAddress.Line2;
 					vm.list.defaultAddr[0].City = validatedAddress.City;
 					vm.list.defaultAddr[0].State = validatedAddress.Region;
 					vm.list.defaultAddr[0].Country = validatedAddress.Country;

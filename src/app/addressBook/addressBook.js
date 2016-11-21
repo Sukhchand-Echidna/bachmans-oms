@@ -116,8 +116,8 @@ function AddressBookController($scope, $http, $state, $stateParams, $location, $
 						var validatedAddress = res.ResponseBody.Address;
 						var zip = validatedAddress.PostalCode.substring(0, 5);
 						line.Zip = parseInt(zip);
-						line.Street1 = validatedAddress.Line2;
-						line.Street2 = validatedAddress.Line1;
+						//line.Street1 = validatedAddress.Line2;
+						//line.Street2 = validatedAddress.Line1;
 						line.City = validatedAddress.City;
 						line.State = validatedAddress.Region;
 						line.Country = validatedAddress.Country;
@@ -203,8 +203,8 @@ function AddressBookController($scope, $http, $state, $stateParams, $location, $
 						var validatedAddress = res.ResponseBody.Address;
 						var zip = validatedAddress.PostalCode.substring(0, 5);
 						saveAddr.Zip = parseInt(zip);
-						saveAddr.Street1 = validatedAddress.Line2;
-						saveAddr.Street2 = validatedAddress.Line1;
+						//saveAddr.Street1 = validatedAddress.Line2;
+						//saveAddr.Street2 = validatedAddress.Line1;
 						saveAddr.City = validatedAddress.City;
 						saveAddr.State = validatedAddress.Region;
 						saveAddr.Country = validatedAddress.Country;

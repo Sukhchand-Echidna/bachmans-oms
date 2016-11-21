@@ -5,7 +5,7 @@ function OrderConfirmationConfig( $stateProvider ) {
 	$stateProvider
 		.state( 'orderConfirmation', {
 			parent: 'base',
-			url: '/orderConfirmation/:userID/:ID',
+			url: '/orderConfirmation/:userID/:ID/:editsubmitorder',
 			templateUrl: 'orderConfirmation/templates/orderConfirmation.tpl.html',
 			data: {
 	            loadingMessage: 'Loading...'
@@ -19,16 +19,28 @@ function OrderConfirmationConfig( $stateProvider ) {
 				'orderConfirmationtop@orderConfirmation': {
 					templateUrl: 'orderConfirmation/templates/orderConfirmation.top.tpl.html'
 				}
+			},
+			resolve: {
+				Order: function($rootScope, $q, $state, toastr, $stateParams, CurrentOrder, OrderCloud) {
+					var d = $q.defer();
+					OrderCloud.Orders.Get($stateParams.ID).then(function(res){
+						console.log(res);
+						d.resolve(res);
+					})
+					return d.promise;
+				}
 			}
 		})
 }
 
 
 
-function OrderConfirmationController($stateParams, OrderCloud, $http, PMCStoresURL, OrderPrintURL) {
+function OrderConfirmationController($stateParams, OrderCloud, $http, PMCStoresURL, OrderPrintURL, Order) {
 	var vm = this;
-	vm.order = {};
-	vm.order.ID = $stateParams.ID;
+	vm.order = Order;
+	vm.editorderamount = vm.order.xp.oldPrice-vm.order.Total;
+	//vm.order.ID = $stateParams.ID;
+	vm.editsubmitorder = $stateParams.editsubmitorder;
 	OrderCloud.Users.Get($stateParams.userID).then(function(user){
 		vm.order.email= user.Email;
 		vm.CSRStoreID = user.xp.CSRStoreID;
@@ -55,12 +67,12 @@ function OrderConfirmationController($stateParams, OrderCloud, $http, PMCStoresU
 		});
 	};
 	vm.Print = function(){
-		var params = [
-			{
-				"orderId": $stateParams.ID,
-				"lineItem": ""
-			}
-		];
+		var params = [];
+		OrderCloud.LineItems.List($stateParams.ID).then(function(res){
+			angular.forEach(res.Items, function(val, key){
+				params.push({"orderId": $stateParams.ID, "lineItem":val.ID});
+			});
+		});
 		$http.post(OrderPrintURL+vm.SelectStore, params).success(function(res){
 			console.log("Print sent to printer.."+res);
 		});

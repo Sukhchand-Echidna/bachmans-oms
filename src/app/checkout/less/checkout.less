@@ -20,6 +20,9 @@ input[type="password"] {
         background: #fff !important;
     }
 }
+.zipAdjustment{
+	float:left !important;
+}
 
 input.error,
 .errorMMyy, .errorDeliveryPref {
@@ -33,6 +36,7 @@ input.error,
             position: absolute;
         }
         .returnbtn {
+            width: 220px;
             width: 220px;
             display: inline-block;
             a {
@@ -135,12 +139,15 @@ input.error,
         -o-transition: background-color 0.5s ease-out;
         transition: background-color 0.5s ease-out;
         .background-fade;
-        
+        background:transparent;
+            height: 50px;
+         line-height: 50px;
         h5 {
             color: #f32929;
             .helvetica-bold;
     		font-size: 0.781em;
-            line-height: 50px;
+            
+            display:inline-block;
         }
         &:hover {
             color: #ffffff;
@@ -157,7 +164,7 @@ input.error,
             height: 12px;
             display: inline-block;
             fill: #F32929;
-            margin-top: -5px;
+            
         }
     }
     .save-later {
@@ -170,10 +177,13 @@ input.error,
         -o-transition: background-color 0.5s ease-out;
         transition: background-color 0.5s ease-out;
         .background-fade;
+         height: 50px;
+         line-height: 50px;
+         background:transparent;
         h5 {
             .helvetica-bold;
 	    	font-size: 0.781em;
-            line-height: 50px;
+            display:inline-block;
         }
         &:hover {
             background-color:#7a43a3;
@@ -278,6 +288,7 @@ input.error,
         padding-right: 0;
         left: 0;
         top: 90px;
+        bottom:70px !important;
         .checkoutSection {
             .review-container {
                 .panel-body {
@@ -359,7 +370,7 @@ input.error,
                 vertical-align: top;
             }
             .panel.panel-default {
-                padding: 8px 0 1px;
+                padding: 0px 0 1px;
             }
             .panel-group {
                 margin-bottom: 0;
@@ -378,14 +389,75 @@ input.error,
                          }
                     }
                     .delivery-address {
-                        .zip-code {
-                            width: 50%;
-                            padding-left: 0px;
+						.memory-off{
+							font-size:0.938em;
+							color:@primary-dark-color;
+							.helvetica-bold;
+						  }
+                        .cementary-cont{
+                            padding:0;
+                          .zip-code {
+                             width: 50%;
+                             padding:0px;   
                             input{
-                            	width: 100%;
+                                width: 100%;
                             }
+                         }
+                          .zip-code1{
+                              width:30%;
+                             padding:0px;
+                             float:right;
+                            input{
+                                width: 100%;
+                            }
+                          } 
+                          .cementry-help-icon{
+                                   position: absolute;
+                                    right: -24px;
+                                    top: 40px;
+                                svg{
+                                        width: 15px;
+                                        height: 15px;
+                                        fill: #a983c8;
+                                        vertical-align: middle;
+                                        margin-left: 10px;
+                                        margin-top:0;
+                                    }
+                                    &:hover{
+                                        .cementry-info{
+                                           display:block; 
+                                        }
+                                    }
+                               .cementry-info{
+                                display:none;
+                                box-shadow: 0px 0px 12px 3px rgba(0, 0, 0, 0.2);
+                                background:#fff;
+                                padding:10px;
+                                position: absolute;
+                                  left:5%;
+                                  min-width:400px;
+                                   z-index:1;
+                                   margin-top:10px;
+								p{
+									font-size:0.813em;
+									.helvetica-regular;
+									text-indent:10px;
+								}
+                                 &:before{
+                                        content: "";
+                                        border: 10px solid transparent;
+                                        border-bottom-color:#fff;
+                                        position: absolute;
+                                           left:3%;
+                                        width: 0;
+                                        opacity: 1;
+                                        top: -20px;
+                                }
+                               }     
+                            }
+                             
                         }
-                            .popover{
+                         .popover{
                                 border:1px solid @base-bg-purple-light;
                                 width:100%;
                                 .popover-inner .popover-content{
@@ -673,6 +745,19 @@ input.error,
                     }
                     .delivery-instructions {
                         padding-right: 0;
+                        select{
+                            border: 1px solid #e4e6ea;
+                            font-family: 'ProximaNova-Regular';
+                            font-size: 1em;
+                            line-height: 25px;
+                            text-indent: 5px;
+                            width: 75%;
+                            height: 35px;
+                            -webkit-appearance: none;
+                            background: #F4F4F4;
+                            border-radius: 2px;
+                            margin-bottom: 25px;
+                        }
                         h3 {
                             color: #000000;
 						    font-size: 1.125em;
@@ -689,7 +774,9 @@ input.error,
                         .no-msg {
                             margin: 0 0 20px 0;
                             .helvetica-bold;
-                            font-size:0.875em;
+							span{
+								font-size:1em;
+							}
                             .msg {
                                 margin-left: 20px;
                             }
@@ -697,7 +784,7 @@ input.error,
                                 display: inline-block;
                                 margin-left: 15px;
                                 label{
-                                 font-size:1em;
+                                 font-size:0.938em;
                                 }
                             }
                         }
@@ -736,7 +823,7 @@ input.error,
                             border-color: @color20;
                             vertical-align: top;
                             .helvetica-regular;
-                            font-size: 0.750em;
+                            font-size: 0.813em;
                             padding: 5px;
                             margin-right: 10px;
                         }
@@ -757,8 +844,9 @@ input.error,
                     .delivery-details {
                         .modify {
                             text-align: right;
-                            margin-top: -10px;
-                            clear: both;
+                            float:right;
+                            vertical-align:middle;
+                            margin-top:40px;
                            a {
                                 text-decoration: underline;
                                 .helvetica-regular;
@@ -1374,6 +1462,19 @@ input.error,
                 .payment-container {
                     margin: 0 auto;
                     width: auto;
+                    .cvv-help-icon{
+                            position: absolute;
+                            right: 20%;
+                            top: 11px;
+                             svg {
+                                    width: 15px;
+                                    height: 15px;
+                                    fill: #a983c8;
+                                    vertical-align: middle;
+                                    margin-left: 10px;
+                                    margin-top: -7px;
+                                }
+                    }
                     .payment-amt{
                         margin:0 !important;
                     }
@@ -1403,7 +1504,47 @@ input.error,
                             height: 35px;
                             line-height: 35px;
                             margin:0;
+
                         }
+                        .gift-icon{
+                            position:absolute;
+                          right:-20px;
+                        svg{
+                                width: 15px;
+                                height: 15px;
+                                fill: #a983c8;
+                                vertical-align: middle;
+                                margin-left: 10px;
+                                margin-top:0;
+                            }
+                            &:hover{
+                                .gift-cont{
+                                   display:block; 
+                                }
+                            }
+                       .gift-cont{
+                        display:none;
+                        box-shadow: 0px 0px 12px 3px rgba(0, 0, 0, 0.2);
+                        background:#fff;
+                        padding:10px;
+                         font-size:0.813em;
+                        position: absolute;
+                        left:0;
+                        min-width:400px;
+                           z-index:1;
+                           margin-top:10px;
+                           .helvetica-regular;
+                         &:before{
+                                content: "";
+                                border: 10px solid transparent;
+                                border-bottom-color:#fff;
+                                position: absolute;
+                                left:2%;
+                                opacity: 1;
+                                top: -20px;
+                        }
+                       }     
+                    }
                         .po-num {
                             margin: 5px 0 0 0;
                         }
@@ -1485,17 +1626,45 @@ input.error,
                                 margin-bottom: 5px;
                                 font-size: 1em;
                             }
-                            .cvv-help-icon {
-                                svg {
-                                    width: 15px;
-                                    height: 15px;
-                                    fill: #a983c8;
-                                    vertical-align: middle;
-                                    margin-left: 10px;
-                                    margin-top: -7px;
+                             
+                        .cvv-help-icon{
+                            display:inline-block;
+                                svg{
+                                        width: 15px;
+                                        height: 15px;
+                                        fill: #a983c8;
+                                        vertical-align: middle;
+                                        margin-left: 10px;
+                                        margin-top:0;
+                                    }
+                                    &:hover{
+                                        .card-cont{
+                                           display:block; 
+                                        }
+                                    }
+                               .card-cont{
+                                display:none;
+                                box-shadow: 0px 0px 12px 3px rgba(0, 0, 0, 0.2);
+                                background:#fff;
+                                padding:10px;
+                                 font-size:0.813em;
+                                position: absolute;
+                                left: 3%;
+                                z-index:1;
+                                margin-top:10px;
+                                min-width: 400px;
+                                 &:before{
+                                    content: "";
+                                    border: 10px solid transparent;
+                                    border-bottom-color:#fff;
+                                    position: absolute;
+                                    left:3%;
+                                    opacity: 1;
+                                    top: -20px;
                                 }
-                            }
-                            label {
+                       }     
+                    }
+                    label {
                                 color: #464646;
                                 font-size: 0.688em;
                                 .helvetica-regular;
@@ -1837,9 +2006,12 @@ input.error,
         .billing-address {
             h1 {
                 .helvetica-bold;
-		font-size: 0.938em;
+				font-size: 0.938em;
                 margin: 30px 0 20px;
             }
+			.help-block.has-error.error-msg{
+				display:none;
+			}
             .zip-code {
                 input {
                     width: 46%;
@@ -1946,6 +2118,7 @@ input.error,
                 float:right;
                 width:20%;
                 .green-btn;
+                margin-bottom:10px;
                   &:disabled {
                         opacity: 0.6;
                         cursor: not-allowed;
@@ -1967,6 +2140,11 @@ input.error,
                   float:right;
              }
          }
+		.transactionError{
+			span{
+				font-size:1.063em;
+			}
+		 }
         /*Ends*/
     }
     .checkoutContainer-right {
@@ -2005,6 +2183,7 @@ input.error,
                     }
                     &:last-child {
                         text-align: right;
+                        margin-left:15px;
                     }
                 }
             }
@@ -2069,12 +2248,133 @@ input.error,
                 border-top: 1px solid @color20;
                 border-bottom: 1px solid @color20;
                 padding: 5px 10px;
+                .del-cont{
+                    .helvetica-regular;
+                    font-size: 0.875em;
+                    
+                }
+                .del-val{
+                    float:right;
+                }
+                
+               .estimate-charges{
+                    .helvetica-bold;
+                    font-size:0.813em;
+                    margin-bottom: 5px;
+                    color: @color2;
+                    
+                       .est-cvv-help-icon{
+                           display:inline-block;
+                        svg{
+                                width: 15px;
+                                height: 15px;
+                                fill: #a983c8;
+                                vertical-align: middle;
+                                margin-left: 10px;
+                                margin-top:0;
+                            }
+                            &:hover{
+                                .del-cont{
+                                   display:block; 
+                                }
+                            }
+                       .del-cont{
+                        display:none;
+                        box-shadow: 0px 0px 12px 3px rgba(0, 0, 0, 0.2);
+                        background:#fff;
+                        padding:10px;
+                         font-size:1em;
+                        position: absolute;
+                            left: 2%;
+                            width: 80%;
+                            z-index: 1;
+                            margin-top: 10px;
+                           
+                         &:before{
+                                   content: "";
+                                    border: 10px solid transparent;
+                                    border-bottom-color:#fff;
+                                    position: absolute;
+                                    left: 46% !important;
+                                    width: 0;
+                                    opacity: 1;
+                                    top: -20px;
+                        }
+                       }     
+                    }
+                     span {
+                            color: @color5;
+                            float:right;
+                        }
+                       
+                }.del-charges{
+                    .helvetica-bold;
+                    font-size:0.813em;
+                    margin-bottom: 5px;
+                    color: @color2;
+                    
+                       .del-cvv-help-icon{
+                           display:inline-block;
+                        svg{
+                                width: 15px;
+                                height: 15px;
+                                fill: #a983c8;
+                                vertical-align: middle;
+                                margin-left: 10px;
+                                margin-top:0;
+                            }
+                            &:hover{
+                                .del-cont{
+                                   display:block; 
+                                }
+                            }
+                       .del-cont{
+                        display:none;
+                        box-shadow: 0px 0px 12px 3px rgba(0, 0, 0, 0.2);
+                        background:#fff;
+                        padding:10px;
+                         font-size:1em;
+                        position: absolute;
+                        left: 10%;
+                        width: 80%;
+                           z-index:1;
+                           margin-top:10px;
+                         &:before{
+                                content: "";
+                                border: 10px solid transparent;
+                                border-bottom-color:#fff;
+                                position: absolute;
+                                   left: 43%;
+                                width: 0;
+                                opacity: 1;
+                                top: -20px;
+                        }
+                       }     
+                    }
+                     span {
+                            color: @color5;
+                            float:right;
+                        }
+                 }
+               .cvv-help-icon{
+                    svg{
+                            width: 15px;
+                            height: 15px;
+                            fill: #a983c8;
+                            vertical-align: middle;
+                            margin-left: 10px;
+                            margin-top:0;
+                        }
+                        
+                       
+                }
+
                 p {
                     .helvetica-bold;
 					font-size:0.813em;
                     margin-bottom: 5px;
                     color: @color2;
-                    span {
+                    .del-val{
                         color: @color2;
                         float: right;
                     }
@@ -2084,12 +2384,13 @@ input.error,
                         color: @color5;
                         span {
                             color: @color5;
+                            float:right;
                         }
                     }
                     button {
                         background: transparent;
                         position: absolute;
-                        left: 210px;
+                        left:200px;
                         line-height: 20px;
                         svg {
                             width: 11px;
@@ -2139,3 +2440,4 @@ input.error,
         }
     }
 }
+            

@@ -1,7 +1,7 @@
 <ui-view>
 	<div id="order-summary" class="oms_main_container buildOrder-order-summary buildOrder-order-historyDetails" ng-show="orderDetails" cg-busy="{promise:buildordersummary.OrderSummaryLoader,templateUrl:'common/loading-indicators/templates/view.loading.tpl.html'}">
 		<div class="buildOrder-order-summary-content">
-		<div class="buildordersummaryheader back-common" ng-show="orderDetails">	
+		<div class="buildordersummaryheader back" ng-show="orderDetails">	
                 <!-- <a ng-click="backTocreate()"> -->
 				<a href="javascript: window.history.go(-1)">
 				
@@ -10,6 +10,7 @@
             </div>
 			<div class="order-info">
 				<h1>Order History Details</h1>
+				
 				<div ng-repeat="line in buildordersummary.activeOrders track by $index">
 				<div class="order-header  row">
 					<div class="col-xs-2 name">
@@ -32,14 +33,21 @@
 							M-20.4,79.4c-2.8,0-5,2.2-5,5s2.2,5,5,5s5-2.2,5-5S-17.6,79.4-20.4,79.4z"/>
 						</svg>
 						</span>
-						<p ng-show="!isEditing">
+						<p ng-show="!isEditing && !line[0].xp.IsWorkShopEvent">
+							{{line[0].ShippingAddress.CompanyName}}<i ng-if="line[0].ShippingAddress.CompanyName">,</i> 
 							{{line[0].ShippingAddress.Street1}}, {{line[0].ShippingAddress.Street2}}, {{line[0].ShippingAddress.City}}, {{line[0].ShippingAddress.State}} {{line[0].ShippingAddress.Country}} {{line[0].ShippingAddress.Zip}}, {{line[0].ShippingAddress.Phone}}
 						</p>
+						<p ng-show="!isEditing && line[0].xp.IsWorkShopEvent">
+							{{line[0].ShippingAddress.CompanyName}}<i ng-if="line[0].ShippingAddress.CompanyName">,</i> 
+							{{line[0].xp.ShippingAddress.Phone}}, {{line[0].xp.ShippingAddress.Email}}
+						</p>
 					</div>
-					<div class="col-xs-3 delivery-date">
-				    	<span ng-if="!line[0].xp.IsWorkShopEvent && line[0].xp.addressType!='InStorePickUp'">Delivery Date: {{line[0].xp.deliveryDate | date: MM/dd/yyyy}}</span>
-						<span ng-if="!line[0].xp.IsWorkShopEvent && line[0].xp.addressType=='InStorePickUp'">PickUp Date: {{line[0].xp.pickupDate | date: MM/dd/yyyy}}</span>
-						<span ng-if="line[0].xp.IsWorkShopEvent">Event Date: {{line[0].xp.deliveryDate | date: MM/dd/yyyy}}</span>
+
+					<div class="col-xs-12 delivery-date">
+				    	<span ng-if="!line[0].xp.IsWorkShopEvent && line[0].xp.addressType!='InStorePickUp'">Delivery Date: {{line[0].xp.DeliveryDate | date: 'MM/dd/yyyy'}}</span>
+						<span ng-if="!line[0].xp.IsWorkShopEvent && line[0].xp.addressType=='InStorePickUp'">PickUp Date: {{line[0].xp.pickupDate | date: 'MM/dd/yyyy'}}</span>
+						<span ng-if="line[0].xp.IsWorkShopEvent">Event Date: {{line[0].xp.DeliveryDate | date: 'MM/dd/yyyy'}}</span>
+
 				    </div>
 				</div>
 				<div class="row">
@@ -72,8 +80,9 @@
 													<li>
 														<h5>{{orderSummary.Product.Name}}</h5></li>
 													<li><span>SKU #{{orderSummary.Product.ID}}</span></li>
-													<li><span>Size: {{orderSummary.Product.xp.SpecsOptions.Size}}</span></li>
-													<li><span>Color: {{orderSummary.Product.xp.SpecsOptions.Color}}</span></li>
+													<li ng-if="!orderSummary.xp.IsWorkShopEvent"><span>Size: {{orderSummary.Product.xp.SpecsOptions.Size}}</span></li>
+													<li ng-if="!orderSummary.xp.IsWorkShopEvent"><span>Color: {{orderSummary.Product.xp.SpecsOptions.Color}}</span></li>
+													<li ng-if="orderSummary.xp.IsWorkShopEvent"><span>Time Slot: {{orderSummary.Product.xp.SpecsOptions.Size}} - {{orderSummary.Product.xp.SpecsOptions.Color}}</span></li>
 													<li>
 													</li>
 												</ul>
@@ -88,6 +97,17 @@
 														<h5>Florist Notes </h5>
 														<span ng-show="!isProEdit">{{orderSummary.Product.xp.productNote}}</span>
 														<input type="text" ng-show="isProEdit" ng-model="orderSummary.Product.xp.productNote"/>
+													</div>
+													<div>
+													</div>
+												</div>
+											</li>
+											<li>
+												<div class="row">
+													<div>
+														<h5>Product Notes </h5>
+														<span ng-show="!isProEdit">{{orderSummary.xp.productNote}}</span>
+														<input type="text" ng-show="isProEdit" ng-model="orderSummary.Product.xp.productNote" />
 													</div>
 													<div>
 													</div>
@@ -189,9 +209,9 @@
 										<h5>{{key}}  </h5>
 										<div class="edit-input"><input type="text" value="{{val}}" ng-model="line[0].xp.deliveryFeesDtls[key]" /></div>
 									 </div>
-									 <div>
+									 <!-- <div>
 										<h5>Total Delivery Charges </h5><span>{{line[0].xp.deliveryCharges | currency}}</span>
-									 </div>
+									 </div> -->
 									  <div>
 										<h5>SubTotal </h5><span>{{line[0].TotalCost | currency}}</span>
 									 </div>
@@ -203,6 +223,77 @@
 					</div>
 				</div>
 				</div>
+
+				<div class="audit-button">
+					<button ng-click="auditDisplay = !auditDisplay">Audit Log</button>
+				</div>
+
+				<div class="row audit-tabel" ng-if="auditDisplay">
+					<div class="col-xs-12" ng-if="!buildordersummary.order.xp.SubmittedOrderAuditLog">
+						<p class="order-header">No Edits Have been made to order</p>
+					</div>
+					<div class="col-xs-12" ng-if="buildordersummary.order.xp.SubmittedOrderAuditLog">
+                        <div class="table-responsive">
+
+						<table class="table table-hover">
+							<thead>
+								<th>Date</th>
+								<th>Edit Type</th>
+								<th>Edit From</th>
+								<th>Edit To</th>
+								<th>Reason</th>
+								<th>First Name</th>
+								<th>Last Name</th>
+							</thead>
+							<tbody>
+
+								<tr ng-repeat="audit in buildordersummary.order.xp.SubmittedOrderAuditLog">
+									<td>{{audit.Date.TimeStamp |  date:'MM/dd/yyyy'}}</td>
+									<td>{{audit.Name}}</td>
+									<td>
+                                        <div ng-if="!audit.Edit.FromShipping">
+                                            {{audit.Edit.From}}
+                                        </div>
+                                        <div ng-if="audit.Edit.FromShipping">
+                                            <p>{{audit.Edit.FromShipping.FirstName}}  {{audit.Edit.FromShipping.LastName}},</p> 
+                                            <p>{{audit.Edit.FromShipping.Street1}}, <span ng-if="audit.Edit.FromShipping.Street2">{{audit.Edit.FromShipping.Street2}},</span>
+                                            </p>
+                                            <p>{{audit.Edit.FromShipping.City}}, {{audit.Edit.FromShipping.State}}, {{audit.Edit.FromShipping.Country}}, {{audit.Edit.FromShipping.Zip}},</p> 
+                                            <p>{{audit.Edit.FromShipping.Phone}}</p>
+                                        </div>
+										<div ng-if="audit.Edit.FromCardMessage">
+											<span ng-if="audit.Edit.FromCardMessage.line1">Line1: {{audit.Edit.FromCardMessage.line1}}<br></span>
+											<span ng-if="audit.Edit.FromCardMessage.line2">Line2: {{audit.Edit.FromCardMessage.line2}}<br> </span>
+											<span ng-if="audit.Edit.FromCardMessage.line3">Line3: {{audit.Edit.FromCardMessage.line3}}<br></span>
+											<span ng-if="audit.Edit.FromCardMessage.line4">Line4: {{audit.Edit.FromCardMessage.line4}} </span>
+										</div>
+                                    </td>
+                                    <td>
+                                        <div ng-if="!audit.Edit.ToShipping">{{audit.Edit.To}}</div>
+                                        <div ng-if="audit.Edit.ToShipping">
+                                            <p>{{audit.Edit.ToShipping.FirstName}}  {{audit.Edit.ToShipping.LastName}},</p> 
+                                            <p>{{audit.Edit.ToShipping.Street1}}, <span ng-if="audit.Edit.ToShipping.Street2">{{audit.Edit.ToShipping.Street2}},</span></p>
+                                            <p>{{audit.Edit.ToShipping.City}}, {{audit.Edit.ToShipping.State}},  {{audit.Edit.ToShipping.Country}}, {{audit.Edit.ToShipping.Zip}},</p> <p>{{audit.Edit.ToShipping.Phone}}</p>
+                                        </div>
+										<div ng-if="audit.Edit.ToCardMessage">
+											<span ng-if="audit.Edit.ToCardMessage.line1">Line1: {{audit.Edit.ToCardMessage.line1}}<br></span>
+											<span ng-if="audit.Edit.ToCardMessage.line2">Line2: {{audit.Edit.ToCardMessage.line2}}<br> </span>
+											<span ng-if="audit.Edit.ToCardMessage.line3">Line3: {{audit.Edit.ToCardMessage.line3}}<br></span>
+											<span ng-if="audit.Edit.ToCardMessage.line4">Line4: {{audit.Edit.ToCardMessage.line4}} </span>
+										</div>
+                                    </td>
+									<td>{{audit.EditReason}}</td>
+									<td>{{audit.User.FirstName}}</td>
+									<td>{{audit.User.LastName}}</td>
+
+								</tr>
+							</tbody>
+						</table>
+
+                        </div>
+					</div>
+				</div>
+				
 			</div>
 		</div>
 	</div>

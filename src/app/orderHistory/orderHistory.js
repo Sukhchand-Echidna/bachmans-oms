@@ -129,15 +129,17 @@ function OrderHistoryController($scope, $stateParams, Order, OrderCloud, $filter
 					if(TempArr.ShipmentArr[key].xp==null){
 						orderHistorydetails.Status="";
 						TempArr.ShipmentArr[key].xp={};
-						TempArr.ShipmentArr[key].xp.deliveryDate='--';							
+						TempArr.ShipmentArr[key].xp.DeliveryDate='--';							
 					}
 					else{
 						orderHistorydetails.Status=TempArr.ShipmentArr[key].xp.Status;
-						if(TempArr.ShipmentArr[key].xp.deliveryDate==''){
+						if(TempArr.ShipmentArr[key].xp.DeliveryDate==''){
 							orderHistorydetails.DeliveryDate = "--";
 						}
 						else
-							orderHistorydetails.DeliveryDate = TempArr.ShipmentArr[key].xp.deliveryDate;
+							orderHistorydetails.DeliveryDate = TempArr.ShipmentArr[key].xp.DeliveryDate;
+						if(TempArr.ShipmentArr[key].xp.pickupDate)
+							orderHistorydetails.DeliveryDate = TempArr.ShipmentArr[key].xp.pickupDate;
 					}	
 					if(TempArr.ShipmentArr[key].xp.Status=="Delivered" || TempArr.ShipmentArr[key].xp.Status=="Dispatched")
 						orderHistorydetails.editOrder = false;
@@ -156,7 +158,7 @@ function OrderHistoryController($scope, $stateParams, Order, OrderCloud, $filter
 		console.log("vm.uname", vm.completeshipment);
 		vm.userID=$stateParams.userID;
 		vm.searchType='User';
-		$scope.dateFormat="dd/MM/yyyy";
+		$scope.dateFormat="MM/dd/yyyy";
 		$scope.gridHistory = {
 			enableSorting: true,
 			columnDefs: [
@@ -177,8 +179,8 @@ function OrderHistoryController($scope, $stateParams, Order, OrderCloud, $filter
 		vm.editsubmitorder=true;
 		$state.go('buildOrder', {SearchType:SearchType, ID:userID, orderID:ID});
 	}
+	return this.searchText;
 	$scope.$watch(angular.bind(this, function () {
-        return this.searchText;
     }), function (newVal, oldVal) {
 		/*if (newVal) {
 			var temp = [];

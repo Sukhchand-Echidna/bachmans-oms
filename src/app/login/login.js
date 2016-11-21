@@ -3,6 +3,7 @@ angular.module( 'orderCloud' )
     .config( LoginConfig )
     .factory( 'LoginService', LoginService )
     .controller( 'LoginCtrl', LoginController )
+    .controller('resetPasswordCtrl', resetPasswordController)
 
 ;
 
@@ -31,13 +32,20 @@ function LoginConfig( $stateProvider, $locationProvider ) {
 						 });
                     });
 					 return df.promise;
-				}
-			}
+                }
+            }
+        })
+        .state('resetPassword', {
+            parent: 'base',
+            url: '/resetPassword',
+            templateUrl: 'login/templates/resetPassword.tpl.html',
+            controller: 'resetPasswordCtrl',
+            controllerAs: 'reset'
         });
 		$locationProvider.html5Mode(true);
 }
 
-function LoginService( $q, $window, toastr, $state,OrderCloud, clientid, buyerid, TokenRefresh ) {
+function LoginService( $q, $window, toastr, $state,OrderCloud, clientid, buyerid, TokenRefresh ,$location) {
     return {
         SendVerificationCode: _sendVerificationCode,
         ResetPassword: _resetPassword,
@@ -51,7 +59,8 @@ function LoginService( $q, $window, toastr, $state,OrderCloud, clientid, buyerid
         var passwordResetRequest = {
             Email: email,
             ClientID: clientid,
-            URL: encodeURIComponent($window.location.href) + '{0}'
+            URL: $window.location.origin + '/resetPassword',
+            Username: email
         };
 
         OrderCloud.PasswordResets.SendVerificationCode(passwordResetRequest)
@@ -101,13 +110,18 @@ function LoginService( $q, $window, toastr, $state,OrderCloud, clientid, buyerid
                         .then(function (token) {
                             OrderCloud.BuyerID.Set(buyerid);
                             OrderCloud.Auth.SetToken(token.access_token);
-                            $state.go('home')
+                            if($location.path().indexOf('resetPassword') < 0){
+                                $state.go('home');
+                            }
                         })
                         .catch(function () {
                             //toastr.error("Your token has expired, please log in again.")
                         });
                 }else{
-                    _logout();
+                    if ($location.path().indexOf('resetPassword') < 0) {
+                        _logout();
+                     }
+                    
                 }
             })
     }
@@ -134,6 +148,7 @@ function LoginController( $state, $stateParams, $exceptionHandler, OrderCloud, L
                 vm.LoginSubmit = OrderCloud.Auth.SetToken(data['access_token']);
                 console.log($cookieStore);
                 $cookieStore.put('OMS.Admintoken',data['access_token']);
+				console.log("===>Token"+data['access_token']);
                 $state.go('home');
 				vm.LoginSubmit = OrderCloud.AdminUsers.List(null, 1, 100, null, null, {"Username":vm.credentials.Username, "Password":vm.credentials.Password}).then(function(res){
 					$cookieStore.put('OMS.CSRID', res.Items[0].ID);
@@ -146,7 +161,8 @@ function LoginController( $state, $stateParams, $exceptionHandler, OrderCloud, L
     };
 
     vm.forgotPassword = function() {
-        LoginService.SendVerificationCode(vm.credentials.Email)
+        OrderCloud.AdminUsers.List(vm.credentials.Email, null, null, "Username", null, null).then(function(){
+            LoginService.SendVerificationCode(vm.credentials.Email)
             .then(function() {
                 vm.setForm('verificationCodeSuccess');
                 vm.credentials.Email = null;
@@ -154,6 +170,7 @@ function LoginController( $state, $stateParams, $exceptionHandler, OrderCloud, L
             .catch(function(ex) {
                 $exceptionHandler(ex);
             });
+        });
     };
 
     vm.resetPassword = function() {
@@ -172,6 +189,10 @@ function LoginController( $state, $stateParams, $exceptionHandler, OrderCloud, L
                 vm.credentials.ConfirmPassword = null;
             });
     };
+}
+
+function resetPasswordController( $state, $stateParams, $exceptionHandler, OrderCloud, LoginService, buyerid, TokenRefresh, AlfrescoCommon, $cookieStore) {
+    var vm = this;
 }
 $(document).ready(function () {
   $("#tab1").click(function () {

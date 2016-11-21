@@ -507,9 +507,9 @@
 			<script type="text/ng-template" id="deleteAddress.html">
 				<div click-outside="closePopover()">
 					<h2>Delete this Address</h2>
-					<button type="button" ng-click="addressBook.deleteAddr(addressList.ID)" ng-if="addressList.ID!=null">DELETE</button>
-					<button type="button" ng-click="addressBook.deleteAddr(addressBook.defaultAddr[0].ID)"  ng-if="addressList.ID==null">DELETE</button>
-					<button type="button" ng-click="cancelPopUp()">CANCEL</button>
+					<button type="button" ng-click="addressBook.deleteAddr(addressList.ID)" ng-if="addressList.ID!=null">Yes</button>
+					<button type="button" ng-click="addressBook.deleteAddr(addressBook.defaultAddr[0].ID)"  ng-if="addressList.ID==null">Yes</button>
+					<button type="button" ng-click="cancelPopUp()">No</button>
 				</div>
 			</script>
 	</div> 

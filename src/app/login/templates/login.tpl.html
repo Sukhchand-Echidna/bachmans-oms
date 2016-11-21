@@ -53,7 +53,7 @@
             <form class="panel-body" name="ForgotPasswordForm" ng-submit="login.forgotPassword()">
             <div class="input-group form-group">
               <span class="input-group-addon" id="basic-addon1"><span class="login-lock glyphicon glyphicon-envelope" ></span></span>
-              <input type="email" class="form-control" id="Email" placeholder="Email" ng-model="login.credentials.Email" ng-required="true">
+              <input type="text" class="form-control" id="Email" placeholder="Username" ng-model="login.credentials.Email" ng-required="true">
             </div>
             <div class="input-group form-group login-submit">
               <button type="submit" id="email_submit" class="btn btn-primary" ng-disabled="ForgotPasswordForm.$invalid">Submit</button>

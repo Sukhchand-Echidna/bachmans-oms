@@ -22,59 +22,36 @@ input.error, .errorCity {
 	.nocards{
 	.helvetica-regular;
 	}
-		.back-common{
-			.helvetica-regular;
-		    font-size:0.938em;
-		    color: #54565d;
-		    margin:0px;
-		    a{
-		    	color: #54565d;
-			    cursor: pointer;
-			    text-decoration: none;
-			     .helvetica-regular;
-			     font-size:1em;
-				svg{
-			    width: 15px;
-			    height: 10px;
-			    color: rgb(84, 86, 93);
-			    display: inline-block;
-			    transform: rotate(180deg);
-			    }
-		    }
-		    &:hover{
-		    	a{
-		    		color:#a77bca;
-		    		text-decoration:underline;
-		    	}
-		    	svg{
-		    		fill:#a77bca;
-		    	}
-		    }
+		.back{
+		  .back-common;
 		}
+		
 		 .employe{
-			padding-left:15px;
+			padding-left:8px;
 		}
 		padding: 15px 0px 35px 15px;
 		h1{
 			.helvetica-bold;
-			font-size: 0.938em;
-			padding:10px;
+			font-size: 1em;
+			padding:0 10px;
 			background-color:@color20;
-			height:35px;
+			height: 50px;
+            line-height: 50px;
 			.edit{
-				  .purple-btn;
-			     line-height:23px;
-			     height:25px;
-			     float:right;
-			     margin-top: -4px;
+				 .purple-btn-small;
+				 font-size:0.867em;
+				 position: absolute;
+				right: 14px;
+				top:1.6%;
 			}
 		}
 		.credit-card-details{
 			position:absolute;
-			width:100%;
+			width:98%;
 			overflow-y:auto;
 			top:0px;
 			bottom:0px;
+			left:11px;
 			.billing-addr{
 				border:1px solid @color25;
 				background-color:rgba(244, 244, 244, 0.17);
@@ -100,6 +77,7 @@ input.error, .errorCity {
 			text-decoration: underline;
 			.font-spacing;
 			text-transform: capitalize;
+			margin-left:11px;
 		}
 		.col-sm-12.col-xs-12.col-md-12.col-lg-12, .col-sm-6.col-xs-6.col-md-6.col-lg-6{
 			padding: 0 8px 0 0;
@@ -117,6 +95,7 @@ input.error, .errorCity {
 		}
 		button{
 			.purple-big;
+			margin:15px 0;
 		}
 		/*button.save{
 			padding:5px 10px;
@@ -132,6 +111,7 @@ input.error, .errorCity {
 		}*/
 		.info-blk{
 			margin-bottom:0;
+			padding-left:8px;
 			p{
 				.in-block;
 				box-shadow:none;
@@ -170,6 +150,7 @@ input.error, .errorCity {
 		}
 		.cust-top{
 			margin-top:10px;
+			padding-left:8px;
 			.phone-val{
 			 width:21%;
 			 margin-right: 15px;
@@ -180,6 +161,9 @@ input.error, .errorCity {
 			.phone-num{
 				width:28%;
 			}
+		}
+		.acc-holder{
+			font-size:1em;
 		}
 		.cust-street{
 			.cust-addr1{
@@ -194,6 +178,7 @@ input.error, .errorCity {
 			div{
 				.in-block;
 				width:70%;
+				padding:0;
 				input{
 				border:1px solid @color20;
 				.helvetica-regular;
@@ -221,7 +206,7 @@ input.error, .errorCity {
 				font-size: 0.938em;
 			}
 			.cust-del{
-			 width:23%;
+			 width:	28%;
 			}
 			.cust-addrs{
 			  width: 50%;
@@ -270,10 +255,10 @@ input.error, .errorCity {
 				}
 				tbody{
 					position: absolute;
-					top: 90px;
+					top:100px;
 					overflow-y: auto;
 					bottom:-15px;
-					width:@width0;
+					width:99%;
 					tr{
 						border:1px solid @color25;
 						background-color:rgba(244, 244, 244, 0.17);
@@ -328,30 +313,25 @@ input.error, .errorCity {
 				background-color: #e4e6ea;
 			    float: left;
 			    width: 100%;
-			   padding: 5px 10px;
-    			margin-top: 8px;
-				h1{
-					float:left;
-					.helvetica-bold;
-				    font-size: 0.938em;
-				    padding: 5px 0 0 0;
-				    margin: 0px;
-				    height:auto;
-				}
+			 	h1{
+			 	  margin:0;
+			 	}
 				.save {
-			     .purple-btn;
-			     line-height:23px;
-			     height:25px;
-			     float:right;
+			      .purple-btn-small;
+				 font-size:0.867em;
+				 position: absolute;
+				right: 14px;
+				top:-2%;
     		  }
 
 			}
 			.sud-del{
 			    overflow-y: auto;
-			    width: 100%;
+			    width:97%;
 			    position: absolute;
 			   	top:55px;
 			   	bottom:0;
+			   	left:8px;
 				table{
 					th, td{
 						width:20%;
@@ -374,7 +354,7 @@ input.error, .errorCity {
 		}
 		.sub-addr{	
 			.helvetica-regular;
-			font-size: 0.938em;
+			font-size:0.875em;
 			margin-bottom:4px;
 		}
 		.payment{
@@ -388,6 +368,10 @@ input.error, .errorCity {
 					.in-block;
 					&.expires p{
 						text-align:right;
+					}
+					&.expires p:last-child{
+						font-size:0.875em;
+						.helvetica-regular;
 					}
 				}
 				p{
@@ -422,6 +406,7 @@ input.error, .errorCity {
 			p{
 				.helvetica-regular;
 				font-size: 0.813em;
+				margin-left:12px;
 				span{
 					.helvetica-regular;
 					font-size: 0.813em;
@@ -432,7 +417,7 @@ input.error, .errorCity {
 			h2, span{
 				.helvetica-bold;
 				font-size: 1em;
-				margin: 18px 0 0;
+				margin: 18px 0 0 10px;
 			}
 		}
 		.credit-card-edit{
@@ -493,16 +478,16 @@ input.error, .errorCity {
 					.helvetica-regular;
 				}
 				input{
-						width:100%;
-						margin:0;
-						box-shadow:none;
-						background-color: #f4f4f4;
-						.helvetica-regular;
-						font-size:0.813em;
-						line-height: 35px;
-						color: #464646;
-						border: 1px solid #EAEAEA;
-						text-indent: 8px;
+						border:1px solid @color21;
+		    		height:45px;
+		    		padding-left:5px;
+		    		width:100%;
+	    			background-color: @color23;
+	    			color: @color26;
+	    			border-radius: 5px;
+				    height: 35px;
+				    box-shadow:none;
+				    margin:0;
 				}
 			}
 			.full-blk{
@@ -516,11 +501,15 @@ input.error, .errorCity {
 				}
 			}
 			.form-control{
-				padding:0px 5px;
-				height:29px;
-				border:1px solid #eaeaea;
-				line-height:29px;
-				cursor:pointer;
+				    border:1px solid @color21;
+		    		height:45px;
+		    		padding-left:5px;
+		    		width:100%;
+	    			background-color: @color23;
+	    			color: @color26;
+	    			border-radius: 5px;
+				    height: 35px;
+				    margin-top:10px;
 				i {
 					color:@primary-dark-color;
 					float:right;
@@ -588,20 +577,19 @@ input.error, .errorCity {
 			margin-bottom:10px;
 			padding:0;
 			input{
-					width:100%;
-					margin:0 !important;
-					box-shadow:none;
-					background-color: #f4f4f4;
-					.helvetica-regular;
-					font-size: 1em;
-					line-height: 35px;
-					color: #464646;
-					border: 1px solid #EAEAEA;
-					text-indent: 8px;
-					padding:0;
+					border:1px solid @color21;
+		    		height:45px;
+		    		padding-left:5px;
+		    		width:100%;
+	    			background-color: @color23;
+	    			color: @color26;
+	    			border-radius: 5px;
+				    height: 35px;
+				    box-shadow:none;
+				    margin:0 !important;
 				}
 			label{
-				margin:10px 0 5px 0;
+				margin:18px 0 8px 0;
 				font-weight:normal;
 				font-size:0.875em;
 			}
@@ -704,6 +692,7 @@ input.error, .errorCity {
 		 	}
 		 	button.close{
 		 		font-size:1.250em;
+		 		margin:0;
 		 	}
 		 }
 		 .modal-body{

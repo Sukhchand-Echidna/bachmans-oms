@@ -22,7 +22,7 @@ main:not(.build-order).orderclaim{
 		background-color:@color0;
 	}
 	.adress-details{
-		background: #f5f5f5;
+		/*background: #f5f5f5;*/
     	float: left;
     	width: 32%;
     	padding: 10px;
@@ -51,9 +51,9 @@ main:not(.build-order).orderclaim{
 			font-weight:normal;
 		}
 		.select-module{
-			    vertical-align: middle;
+			    vertical-align:top;
 			    position: relative;
-			    top: 0px;
+			    top:10px;
 			    bottom: 0;
 			    left: 0;
 			    right: 0;
@@ -128,6 +128,15 @@ main:not(.build-order).orderclaim{
 					}
 				}
 			}
+			.price-summary, .item-summary{
+				p{
+					font-size: 0.875em;
+					span{
+						font-size: 0.875em;
+						.helvetica-bold;
+					}
+				}
+			}
 			.qty-value{
 			    text-align: center;
 			    position: relative;
@@ -146,30 +155,54 @@ main:not(.build-order).orderclaim{
 			    padding:5px;
 			}
 			.price{
-			    position: relative;
 				top: 10px;
-
-				svg{
-					position:absolute;
-					right:0px;
-					top:11px;
-					width:15px;
-					height:15px;
-					margin-right:3px;
-					fill:@primary-dark-color;
+				padding:0 0 5px;
+				button.editBtn{
+						width:16px;
+						position:absolute;
+						right:0px;
+						bottom:0;
+						background-color:transparent;
+					svg{
+						width:15px;
+						height:15px;
+						margin-right:3px;
+						fill:@primary-dark-color;
+					}
 				}
 				input{
 					width:96%;
-					border: 1px solid #ccc;
+					border-bottom: 1px solid @primary-dark-color;
 				    padding: 2px 4px;
-				    background: #f7f7f7;
+					font-size:0.813em;
+					-webkit-appearance:none;
+					box-shadow:none;
+					border-top:none;
+					border-left:none;
+					border-right:none;
+					background-color:transparent;
 				}
-				.save{
-				   .purple-btn;
+				.savePrice{
+				  .purple-btn;
 				   margin-top: 10px;
 				   line-height:25px;
 				   height:25px;
 				   font-size:0.75em;
+				}
+				.price-block{
+					position:relative;
+					padding:0 14px 5px;
+				}
+				p{
+						margin-bottom:2px;
+						font-size:0.875em;
+					}
+				.price-top{
+					margin-top:10px;
+				}
+				.divider{
+					border-top:1px solid #ddd;
+					margin-top:10px;
 				}
 			}
 			.delivery{
@@ -189,6 +222,7 @@ main:not(.build-order).orderclaim{
 				select{
 				    padding: 3px 0;
    					border: 1px solid #ccc;
+   					width:100%;
 				}
 			}
 		}
@@ -225,7 +259,7 @@ main:not(.build-order).orderclaim{
 		}
 }
 .claim-edit{
-		background: #000;
+		background:#fff;
 		float: left;
 		width: 100%;
 		color: #fff;
@@ -233,27 +267,27 @@ main:not(.build-order).orderclaim{
 			float: left;
 			.purple-big;
 			border-radius:0px;
-			padding:0 30px;
+			line-height:33px;
 			a{
 				color: #fff;
     			text-decoration: none;
+				vertical-align:top;
 			}
 		}
 	.continue-claim{
 		.green-btn;
 		float:right;
-		padding:0 30px;
+		line-height:inherit;
 	}
-	.disabled{
-		border:1px solid red;
-	}
+	
 }
 .orderclaimtotal{
-	float:right;
-	font-size:0.875em;
-	margin-bottom: 20px;
-	margin-right: 16px;
-	width:180px;
+	float: right;
+    font-size: 0.875em;
+    margin-bottom: 20px;
+    width:17%;
+    line-height: 20px;
+    .helvetica-regular;
 	h3{
 		margin:0px 0 10px 0;
 		font-size:1.250em;
@@ -261,17 +295,15 @@ main:not(.build-order).orderclaim{
 	}
 	div{
 		 span:last-child{
-			text-align: left;
-		    float: right;
-		    font-family: 'ProximaNova-Bold';
-		    width: 41%;
+			float:right;
+		    text-align: right;
+		    .helvetica-bold;
+		    margin-right:16px;
+		    color: #8c58b5;
 		}
 		span:first-child{
-		      width: 55%;
-		    float: left;
-		    text-align: right;
-		    margin-right: 4%;
-		}
+		    text-align: left;
+		  }
 	}
 }
 #orderclaimfooter .footer{

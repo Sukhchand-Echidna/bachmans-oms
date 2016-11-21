@@ -16,103 +16,367 @@
 <!-- Sweta -->
 <div class="hold-screen-main">
 	<div class="col-sm-12 col-xs-12 col-md-12 col-lg-12 back-common">
-	<a href="javascript: window.history.go(-1)">Back</a>
+	<a href="javascript: window.history.go(-1)"><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 14 21" style="enable-background:new 0 0 14 21;" xml:space="preserve">
+                      
+                        <g>
+                            <path d="M0.7,18.3l7.8-7.8L0.7,2.7L3,0.3l10.2,10.2L3,20.7L0.7,18.3z"></path>
+                        </g>
+        </svg>Back To Previous Page</a>
 	</div>
-	<h1>Order Details</h1>
+	<h1>Order Shipment:<span class="order-id">{{hold.dataDisplay['shipId']}}</span></h1>
+	<div class="hold-screen">
+	    <div>
+			<h2>Order Details</h2>
+		</div>
+		<div class="cust-name">
+			<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">Recipient Name:</div>
+			<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">{{hold.onholdlineitems1[0].ShippingAddress.FirstName}} {{hold.onholdlineitems1[0].ShippingAddress.LastName}}</div>
+		</div>
+		<div class="cust-addr">
+			<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">Street Address:</div>
+			<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+					<p>{{hold.onholdlineitems1[0].ShippingAddress.Street1}}</p>
+					<p>{{hold.onholdlineitems1[0].ShippingAddress.Street2}}</p>
+					<p>{{hold.onholdlineitems1[0].ShippingAddress.State}}, {{hold.onholdlineitems1[0].ShippingAddress.Country}}, {{hold.onholdlineitems1[0].ShippingAddress.Zip}}</p>
+			</div>
+		</div>
+		<div class="cust-num">
+			<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">Phone Number:</div>
+			<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">{{hold.onholdlineitems1[0].ShippingAddress.Phone}}</div>
+		</div>
+		<!-- sender details -->
+		<div class="cust-name">
+			<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">Sender Name:</div>
+			<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">{{hold.dataDisplay['user'].FirstName}} {{hold.dataDisplay['user'].LastName}}</div>
+		</div>
+		<div class="cust-addr">
+			<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">Street Address:</div>
+			<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+					<p>{{hold.dataDisplay['addr'].Street1}}</p>
+					<p>{{hold.dataDisplay['addr'].Street2}}</p>
+					<p>{{hold.dataDisplay['addr'].State}}, {{hold.dataDisplay['addr'].Country}}, {{hold.dataDisplay['addr'].Zip}}</p>
+			</div>
+		</div>
+		<div class="cust-num">
+			<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">Phone Number:</div>
+			<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">{{hold.dataDisplay['addr'].Phone}}</div>
+		</div>
+		<div class="cust-code">
+			<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">Destination Code:</div>
+			<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">{{hold.onholdlineitems1[0].xp.addressType}}</div>
+		</div>
+		<div class="cust-ship">
+			<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">Shipment Number:</div>
+			<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">{{hold.dataDisplay['shipId']}}</div>
+		</div>
+		<div class="cust-payement">
+			<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">Form Of Payment:</div>
+			<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+				<p ng-repeat="(key, value) in hold.dataDisplay['payment']">{{key}}</p>
+			</div>
+		</div>
+		<div class="cust-dist">
+			<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">Discount:</div>
+			<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">{{hold.dataDisplay['discount'] | currency}}</div>
+		</div>
+	</div>
 	<div class="hold-screen">
 		<div>
 			<h2>Items</h2>
 		</div>
-		<div class="item-action">
-			<button ng-click="hold.removeItem()">REMOVE ITEM</button>
-			<button ng-click="hold.addItem()">ADD ITEM</button>
-		</div>
-		<div ui-grid="gridOptions" class="order-grid" ui-grid-edit></div>
+<!-- 	<div class="item-action">
+			<button ng-click="hold.removeItem()">Remove Item</button>
+			<button ng-click="hold.addItem()">Add Item</button>
+		</div> -->
+		
+		<!-- 
+		 <div ui-grid="gridOptions" class="order-grid hold-grid" ui-grid-edit></div>  -->
+		<table class="onHold table-bordered" ng-repeat="onHold in hold.onholdlineitems1">
+			<thead>
+				<tr>
+				<th colspan="8" class="button-item">
+					<div class="item-action" ng-if="!hold.hideEdit">
+						<button ng-click="hold.hideEdit=true">Edit Item</button>
+					</div>
+					<div class="item-action" ng-if="hold.hideEdit">
+						<button ng-click="hold.hideEdit=false">Save Item</button>
+					</div>
+				</th>
+				</tr>
+			  <tr>
+				<th><h4>SKU Code</h4></th>
+				<th><h4>Product Name</h4></th>
+				<th><h4>SKU Option</h4></th>
+				<th><h4>List Price</h4></th>
+				<th><h4>Qty.</h4></th>
+				<th><h4>Invoice Price</h4></th>
+				<th><h4>Item Discount</h4></th>
+				<th><h4>Additional Item Information</h4></th>
+			  </tr>
+			 </thead>
+			 <tbody>
+				<tr>
+					<td>
+						<p ng-if="!hold.hideEdit">{{onHold.ProductID}}</p>
+						<div uib-dropdown keyboard-nav ng-if="hold.hideEdit">
+							<div uib-dropdown-toggle ng-init="hold.selected='select SKUID'">{{hold.selected}} <i class="fa fa-chevron-down"></i></div>
+							<div class="search_dropdown" uib-dropdown-menu>
+								<div class="searchelement"  ng-repeat="wiredProd in hold.wiredproducts">
+									<P ng-click="hold.selectedWired(wiredProd.ID);onHold.ProductID=hold.selected">{{wiredProd.ID}}</p>
+								</div>
+							</div>
+						</div>
+					</td>
+					  <td>
+						<p ng-if="!hold.hideEdit">{{onHold.Product.Name}}</p>
+						<input type="text" class="hold-items" ng-model="onHold.Product.Name" ng-if="hold.hideEdit">
+					</td>
+					<td class="sku-option">
+						<p ng-if="!hold.hideEdit">
+						<span>{{onHold.Product.xp.SpecsOptions.Size}}</span> 
+						<span>{{onHold.Product.xp.SpecsOptions.Color}}</span></p>
+						<p  ng-if="hold.hideEdit">
+						<span>Size:<input type="text" class="qty"ng-model="onHold.Product.xp.SpecsOptions.Size"></span>
+						<span>Color:<input type="text" class="qty" ng-model="onHold.Product.xp.SpecsOptions.Color"></span>
+
+						</p>
+					</td>
+					<td>
+						<p ng-if="!hold.hideEdit">{{onHold.LineTotal}}</p>
+						<input class="hold-items" type="text" ng-model="onHold.LineTotal" ng-if="hold.hideEdit">
+					</td>
+					<td>
+						<p ng-if="!hold.hideEdit">{{onHold.Quantity}}</p>
+						<input type="text" class="hold-items" class="hold-items" ng-model="onHold.Quantity" ng-if="hold.hideEdit">
+					</td>
+					<td>
+						<p ng-if="!hold.hideEdit">{{onHold.xp.TotalCost}}</p>
+						<input type="text" class="hold-items" ng-model="onHold.xp.TotalCost" ng-if="hold.hideEdit">
+					</td>
+					<td>
+						<p ng-if="!hold.hideEdit">{{onHold.ShippingCost}}</p>
+						<input type="text" class="hold-items"   ng-model="onHold.ShippingCost" ng-if="hold.hideEdit">
+					</td>
+					<td>
+						<p ng-if="!hold.hideEdit">{{onHold.Product.xp.productNote}}</p>
+						<input type="text" class="hold-items" ng-model="onHold.Product.xp.productNote" ng-if="hold.hideEdit">
+					</td>
+				</tr>
+			</tbody>
+		</table>
 	</div>
-	<div class="hold-screen row">
-		<div class="col-md-12 col-lg-12">
+	<div class="hold-screen">
+		<div class="hold-btm">
 			<h2>Delivery Information</h2>
 		</div>
 		<div class="hold-btm col-md-12 col-lg-12">
 			<p class="col-md-2 col-lg-2">Delivery Date</p>
-			<input type="text" class="col-md-2 col-lg-2" ng-model="hold.deliveryinfo.xp.deliveryDate" ng-disabled="true"/>
-			<!-- <p>{{hold.deliveryinfo.xp.deliveryDate | date : 'MMM dd,yyyy'}}</p> -->
+			<!-- <div>{{hold.deliveryinfo[0].xp.DeliveryDate | date:'MM/dd/yyyy'}}</div> -->
+			<!-- <p>{{hold.deliveryinfo.xp.DeliveryDate | date : 'MMM dd,yyyy'}}</p> -->
+			<div class="input-group date-pick col-md-3 col-lg-3">
+			  <input type="text" name="deliverydate" readonly class="form-control dateSelect" placeholder="MM/DD/YYYY" uib-datepicker-popup="MM/dd/yyyy" ng-model="hold.deliveryinfo[0].xp.DeliveryDate" is-open="lineitem.openCalenderPopUp" datepicker-options="{formatYear: 'yy', minDate: lineitem.LocalOrUPSMinDate, startingDay: 0, dateDisabled:buildOrderRight.disabledDates}" ng-required="lineitem.xp.addressType!='InStorePickUp'" ng-change="buildOrderRight.GetDeliveryFees(lineitem, buildOrderRight.lineItemForm[lineitem.ID])" ng-class="{error: buildOrderRight.lineItemForm[lineitem.ID].$submitted && buildOrderRight.lineItemForm[lineitem.ID].deliverydate.$invalid}" />
+			  <span class="input-group-btn">
+					<button type="button" class="btn btn-default" ng-click="lineitem.openCalenderPopUp=!lineitem.openCalenderPopUp">
+						<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+						 viewBox="0 0 33 36" style="enable-background:new 0 0 33 36;" xml:space="preserve">
+					
+						<g>
+						<path  d="M0,10.2v20c0,2.7,2.2,4.9,4.9,4.9H28c2.7,0,4.9-2.2,4.9-4.9v-20c0-2.7-2.2-4.9-4.9-4.9h-1v-3
+							c0-0.8-0.7-1.5-1.5-1.5c-0.8,0-1.5,0.7-1.5,1.5v6c0,0.7-0.6,1.3-1.3,1.3c-0.7,0-1.3-0.6-1.3-1.3V5.3h-2.6v-3c0-0.8-0.7-1.5-1.5-1.5
+							c-0.8,0-1.5,0.7-1.5,1.5v6c0,0.7-0.6,1.3-1.3,1.3c-0.7,0-1.3-0.6-1.3-1.3V5.3h-2.6v-3c0-0.8-0.7-1.5-1.5-1.5
+							c-0.8,0-1.5,0.7-1.5,1.5v6c0,0.7-0.6,1.3-1.3,1.3c-0.7,0-1.3-0.6-1.3-1.3V5.3C2.2,5.3,0,7.5,0,10.2z M29.4,29.6
+							c0,0.9-0.7,1.6-1.6,1.6H5.4c-0.9,0-1.6-0.7-1.6-1.6V16.7h25.6L29.4,29.6z"/>
+						<path  d="M19.2,29h-7l2.8-3.7c0.3-0.4,0.6-0.8,0.8-1.1c0.2-0.3,0.4-0.6,0.5-0.9c0.2-0.5,0.4-1,0.4-1.5
+							c0-0.3-0.1-0.5-0.2-0.7c-0.1-0.2-0.3-0.2-0.5-0.2c-0.4,0-0.7,0.4-0.7,1.2c0,0,0,0.1,0,0.2c0,0.1,0,0.1,0,0.2h-2.7l0-0.4
+							c0-1,0.3-1.8,0.9-2.5c0.6-0.6,1.5-0.9,2.4-0.9c1,0,1.7,0.3,2.3,0.9c0.6,0.6,0.9,1.4,0.9,2.4c0,0.8-0.2,1.6-0.6,2.3
+							c-0.2,0.4-0.5,0.8-0.8,1.2c-0.3,0.4-0.7,0.8-1.2,1.3c0.4-0.1,0.8-0.2,1.2-0.2c0.4,0,0.8-0.1,1.3-0.1L19.2,29L19.2,29z"/>
+						</g>
+						</svg>
+					</button>
+				</span>
+			</div>
 		</div>
-		<div class="hold-btm col-md-12 col-lg-12">
+		<div class="hold-btm delivery-time col-md-12 col-lg-12" ng-init="showTime=false">
 			<p class="col-md-2 col-lg-2">Delivery Time</p>
-			<input type="text" class="col-md-2 col-lg-2" ng-model="hold.deliveryinfo.xp.deliveryRun"  ng-disabled="true"/>
+			<input type="text" class="col-md-3 col-lg-3" ng-model="hold.dataDisplay['deliveryTime'][hold.deliveryinfo[0].xp.deliveryRun].TimeSlot"  ng-disabled="true"/>
+			<button ng-show="!showTime" ng-click="showTime=true">
+				<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+					 viewBox="0 0 140.5 140" style="enable-background:new 0 0 140.5 140;" xml:space="preserve">
+				<g>
+					<path d="M118.2,243.9c-0.5,0-0.9-0.4-0.9-0.9V238H116v5.1c0,0.5-0.4,0.9-0.9,0.9s-0.9-0.4-0.9-0.9V238h-1.3v5.1
+						c0,0.5-0.4,0.9-0.9,0.9c-0.5,0-0.9-0.4-0.9-0.9v-5.9c0-0.5,0.4-0.9,0.9-0.9h6.2c0.2,0,0.5,0.1,0.6,0.3s0.3,0.4,0.3,0.6v5.9
+						C119.1,243.6,118.7,243.9,118.2,243.9z M121.2,240c-0.4,0-0.8-0.3-0.9-0.7l-0.7-4.5l0,0l0-0.2l0,0l0,0l0,0l0,0l0-0.1l0,0l0-0.1l0,0
+						l0,0l0-0.1l0,0l0-0.1l0,0l0,0l0-0.1l0-0.1l0,0l0,0l0,0l0,0h0l0.1-0.1l0,0l0.1,0l0.1,0l0.1,0l0.1,0l0.1,0l0.1,0l0.1,0l0.1,0l0.1,0
+						l0.1,0l0.1,0c0,0,0.1,0,0.1,0c0,0,0,0,0,0l0,0l0.1,0.1l0,0l0,0l0,0l0,0l0.1,0.1l3.1,3.1c0.3,0.3,0.3,0.9,0,1.3
+						c-0.2,0.2-0.4,0.3-0.6,0.3c-0.2,0-0.5-0.1-0.6-0.3l-1.1-1.1l0.3,1.8c0,0.2,0,0.5-0.2,0.7s-0.3,0.3-0.6,0.4
+						C121.3,240,121.3,240,121.2,240z M112.2,235.4c-0.5,0-0.9-0.4-0.9-0.9s0.4-0.9,0.9-0.9h5.9c0.5,0,0.9,0.4,0.9,0.9s-0.4,0.9-0.9,0.9
+						H112.2z M112,232.8c0,0-0.1,0-0.1,0c-0.1,0-0.1,0-0.1,0c-0.1,0-0.1,0-0.1,0c0,0-0.1,0-0.1,0c-0.1,0-0.1-0.1-0.1-0.1
+						c0,0-0.1-0.1-0.1-0.1c0-0.1-0.1-0.1-0.1-0.1c0,0,0-0.1-0.1-0.1l-4.9-10c-0.2-0.4,0-1,0.4-1.2c0.1-0.1,0.3-0.1,0.4-0.1
+						c0.3,0,0.6,0.2,0.8,0.5l4.6,9.5h1.7v-5c0-0.5,0.4-0.9,0.9-0.9s0.9,0.4,0.9,0.9v5h1.7l4.8-9.5c0.2-0.3,0.5-0.5,0.8-0.5
+						c0.1,0,0.3,0,0.4,0.1c0.2,0.1,0.4,0.3,0.4,0.5c0.1,0.2,0.1,0.5-0.1,0.7l-5.1,10l-0.1,0.1c0,0.1-0.1,0.1-0.1,0.1
+						c0,0-0.1,0.1-0.1,0.1l-0.1,0.1c-0.1,0-0.1,0-0.1,0.1c0,0-0.1,0-0.1,0c-0.1,0-0.1,0-0.1,0c-0.1,0-0.1,0-0.1,0H112z M117.4,224.7
+						c-0.8,0-1.6-0.3-2.3-0.7l0,0c-0.7,0.5-1.5,0.8-2.3,0.8c-0.8,0-1.6-0.3-2.3-0.7c-1.3-1-1.9-2.7-1.4-4.3l0,0
+						c-1.7-1.2-2.1-3.6-0.8-5.4c0.7-1,1.9-1.6,3.1-1.6l0,0c0.1-0.4,0.3-0.8,0.6-1.1c0.7-1,1.9-1.6,3.1-1.6c0.8,0,1.6,0.3,2.3,0.7
+						c0.7,0.5,1.2,1.2,1.4,1.9l0,0c0.8,0,1.6,0.3,2.3,0.7c1.7,1.2,2.1,3.6,0.8,5.4c-0.2,0.3-0.5,0.6-0.9,0.9c0.4,1.2,0.2,2.5-0.5,3.5
+						C119.8,224.1,118.6,224.7,117.4,224.7z M115.1,221.9c0.3,0,0.5,0.1,0.7,0.3c0.1,0.1,0.2,0.3,0.4,0.3c0.4,0.3,0.8,0.4,1.3,0.4
+						c0.7,0,1.3-0.3,1.7-0.9c0.5-0.7,0.5-1.6,0.1-2.4c-0.1-0.2-0.2-0.5-0.1-0.7c0.1-0.2,0.3-0.4,0.5-0.5c0.4-0.1,0.7-0.4,0.9-0.7
+						c0.7-1,0.5-2.3-0.5-3c-0.4-0.3-0.8-0.4-1.2-0.4c-0.2,0-0.3,0-0.5,0.1c-0.1,0-0.1,0-0.2,0c-0.2,0-0.4-0.1-0.5-0.2
+						c-0.2-0.1-0.3-0.4-0.3-0.6c0-0.6-0.4-1.2-0.9-1.6c-0.4-0.3-0.8-0.4-1.3-0.4c-0.7,0-1.3,0.3-1.7,0.9c-0.2,0.3-0.4,0.7-0.4,1.1
+						c0,0.2-0.1,0.5-0.3,0.6c-0.1,0.1-0.3,0.2-0.5,0.2c-0.1,0-0.1,0-0.2,0c-0.2,0-0.3-0.1-0.5-0.1c-0.7,0-1.3,0.3-1.7,0.9
+						c-0.3,0.5-0.5,1-0.4,1.6c0.1,0.6,0.4,1.1,0.9,1.4c0.1,0.1,0.3,0.2,0.4,0.3c0.2,0.1,0.4,0.3,0.5,0.5c0.1,0.2,0,0.5-0.1,0.7
+						c-0.6,0.9-0.3,2.2,0.6,2.8c0.4,0.3,0.8,0.4,1.2,0.4c0.6,0,1.2-0.3,1.6-0.8C114.6,222,114.9,221.9,115.1,221.9L115.1,221.9z
+						 M115.1,221.5c-0.8,0-1.6-0.3-2.2-0.7c-0.8-0.6-1.4-1.5-1.5-2.5c-0.2-1,0.1-2,0.7-2.8c0.7-1,1.9-1.6,3.1-1.6c0.8,0,1.6,0.3,2.2,0.7
+						c1.7,1.2,2.1,3.6,0.8,5.3C117.5,220.9,116.3,221.5,115.1,221.5z M115.1,215.6c-0.7,0-1.3,0.3-1.7,0.9c-0.3,0.5-0.5,1-0.4,1.6
+						c0.1,0.6,0.4,1,0.8,1.4c0.4,0.3,0.8,0.4,1.2,0.4c0.7,0,1.3-0.3,1.7-0.9c0.7-0.9,0.5-2.3-0.5-2.9C116,215.7,115.6,215.6,115.1,215.6
+						z M128.4,220.2c-0.8,0-1.6-0.3-2.3-0.7l0,0c-0.7,0.5-1.5,0.8-2.3,0.8c-0.6,0-1.2-0.2-1.8-0.5l-0.2-0.1l0.2-0.2
+						c0.1-0.1,0.2-0.3,0.3-0.4c0.1-0.2,0.3-0.4,0.4-0.6l0.1-0.2l0.2,0.1c0.3,0.1,0.6,0.2,0.9,0.2c0.6,0,1.2-0.3,1.6-0.8
+						c0.2-0.2,0.4-0.3,0.6-0.3c0.3,0,0.5,0.1,0.7,0.3c0.1,0.1,0.2,0.2,0.4,0.4c0.4,0.3,0.8,0.4,1.3,0.4c0.7,0,1.3-0.3,1.7-0.9
+						c0.5-0.7,0.5-1.6,0.1-2.4c-0.1-0.2-0.2-0.5-0.1-0.7c0.1-0.2,0.3-0.4,0.5-0.5c0.4-0.1,0.7-0.4,0.9-0.7c0.7-1,0.5-2.3-0.5-3
+						c-0.4-0.3-0.8-0.4-1.2-0.4c-0.2,0-0.3,0-0.5,0.1c-0.1,0-0.1,0-0.2,0c-0.2,0-0.4-0.1-0.5-0.2c-0.2-0.1-0.3-0.4-0.3-0.6
+						c0-0.6-0.4-1.2-0.9-1.6c-0.4-0.3-0.8-0.4-1.3-0.4c-0.7,0-1.3,0.3-1.7,0.9c-0.2,0.3-0.4,0.7-0.4,1.1c0,0.2-0.1,0.5-0.3,0.6
+						c-0.1,0.1-0.3,0.2-0.5,0.2c-0.1,0-0.1,0-0.2,0c-0.2,0-0.3-0.1-0.5-0.1c-0.7,0-1.3,0.3-1.7,0.9c-0.3,0.4-0.4,0.9-0.4,1.4l0,0.3
+						l-0.3-0.1c-0.3-0.1-0.5-0.1-0.8-0.2l-0.1,0l0-0.1c-0.1-0.2-0.2-0.5-0.4-0.7l0,0l0-0.1c0.1-0.6,0.3-1.1,0.7-1.5
+						c0.7-1,1.9-1.6,3.1-1.6l0,0c0.1-0.4,0.3-0.8,0.6-1.1c0.7-1,1.9-1.6,3.1-1.6c0.8,0,1.6,0.3,2.3,0.7c0.7,0.5,1.2,1.2,1.4,1.9l0,0
+						c0.8,0,1.6,0.3,2.2,0.7c1.7,1.2,2.1,3.6,0.9,5.4c-0.2,0.3-0.5,0.6-0.9,0.9c0.4,1.2,0.2,2.5-0.5,3.5
+						C130.8,219.6,129.6,220.2,128.4,220.2z M106.4,220.2c-0.8,0-1.6-0.3-2.3-0.7l0,0c-0.7,0.5-1.5,0.7-2.3,0.7c-0.8,0-1.6-0.3-2.3-0.7
+						c-1.3-1-1.9-2.7-1.4-4.3l0,0c-0.8-0.6-1.4-1.5-1.5-2.5c-0.2-1,0.1-2,0.7-2.9c0.7-1,1.9-1.6,3.1-1.6l0,0c0.1-0.4,0.3-0.8,0.6-1.1
+						c0.7-1,1.9-1.6,3.1-1.6c0.8,0,1.6,0.3,2.3,0.7c0.7,0.5,1.2,1.2,1.4,1.9l0,0c0.8,0,1.6,0.3,2.3,0.7c0.8,0.6,1.3,1.4,1.5,2.3l0,0
+						l0,0.1c-0.2,0.3-0.3,0.5-0.4,0.7l0,0.1l-0.1,0c-0.3,0-0.5,0.1-0.8,0.2l-0.3,0.1l0-0.3c0-0.7-0.3-1.4-0.9-1.8
+						c-0.4-0.3-0.8-0.4-1.2-0.4c-0.2,0-0.3,0-0.5,0.1c-0.1,0-0.1,0-0.2,0c-0.2,0-0.4-0.1-0.5-0.2c-0.2-0.1-0.3-0.4-0.3-0.6
+						c0-0.6-0.4-1.2-0.9-1.6c-0.4-0.3-0.8-0.4-1.3-0.4c-0.7,0-1.3,0.3-1.7,0.9c-0.2,0.3-0.4,0.7-0.4,1.1c0,0.2-0.1,0.5-0.3,0.6
+						c-0.1,0.1-0.3,0.2-0.5,0.2c-0.1,0-0.1,0-0.2,0c-0.2,0-0.3-0.1-0.5-0.1c-0.7,0-1.3,0.3-1.7,0.9c-0.3,0.5-0.5,1-0.4,1.6
+						c0.1,0.6,0.4,1.1,0.9,1.4c0.1,0.1,0.3,0.2,0.4,0.3c0.2,0.1,0.4,0.3,0.5,0.5c0.1,0.2,0,0.5-0.1,0.7c-0.6,0.9-0.3,2.2,0.6,2.8
+						c0.4,0.3,0.8,0.4,1.2,0.4c0.6,0,1.2-0.3,1.6-0.8c0.2-0.2,0.4-0.3,0.7-0.3c0.3,0,0.5,0.1,0.7,0.3c0.1,0.1,0.2,0.2,0.4,0.4
+						c0.4,0.3,0.8,0.4,1.3,0.4c0.3,0,0.6-0.1,0.9-0.2l0.2-0.1l0.1,0.2c0.2,0.4,0.4,0.7,0.7,1l0.2,0.2l-0.2,0.1
+						C107.7,220,107,220.2,106.4,220.2z M104.1,217c-0.8,0-1.6-0.3-2.2-0.7c-0.8-0.6-1.4-1.5-1.5-2.5c-0.2-1,0.1-2,0.7-2.8
+						c0.7-1,1.9-1.6,3.1-1.6c0.8,0,1.6,0.3,2.2,0.7c0.8,0.6,1.4,1.5,1.5,2.5c0.2,1-0.1,2-0.7,2.8C106.5,216.4,105.4,217,104.1,217z
+						 M104.1,211.1c-0.7,0-1.3,0.3-1.7,0.9c-0.3,0.5-0.5,1-0.4,1.6c0.1,0.6,0.4,1,0.8,1.4c0.4,0.3,0.8,0.4,1.2,0.4
+						c0.7,0,1.3-0.3,1.7-0.9c0.3-0.5,0.5-1,0.4-1.6c-0.1-0.6-0.4-1-0.8-1.4C105,211.2,104.6,211.1,104.1,211.1z M126.1,217
+						c-0.8,0-1.6-0.3-2.2-0.7c-0.8-0.6-1.4-1.5-1.5-2.5c-0.2-1,0.1-2,0.7-2.8c0.7-1,1.9-1.6,3.1-1.6c0.8,0,1.6,0.3,2.2,0.7
+						c0.8,0.6,1.4,1.5,1.5,2.5c0.2,1-0.1,2-0.7,2.8C128.5,216.4,127.3,217,126.1,217z M126.1,211.1c-0.7,0-1.3,0.3-1.7,0.9
+						c-0.3,0.5-0.5,1-0.4,1.6c0.1,0.6,0.4,1,0.8,1.4c0.4,0.3,0.8,0.4,1.2,0.4c0.7,0,1.3-0.3,1.7-0.9c0.3-0.5,0.5-1,0.4-1.6
+						c-0.1-0.6-0.4-1-0.8-1.4C127,211.2,126.6,211.1,126.1,211.1z M114.1,209.6c0-0.5,0-1,0.2-1.5c-1.7-1.3-2.1-3.7-0.9-5.4
+						c0.7-1,1.9-1.6,3.1-1.6l0,0c0.1-0.4,0.3-0.8,0.6-1.1c0.7-1,1.9-1.6,3.1-1.6c0.8,0,1.6,0.3,2.3,0.7c0.7,0.5,1.2,1.2,1.4,1.9l0,0
+						c0.8,0,1.6,0.3,2.3,0.7c1,0.7,1.6,1.9,1.6,3.1l0,0.3l-0.3-0.1c-0.4-0.1-0.8-0.2-1.3-0.2l-0.2,0l0-0.2c-0.1-0.6-0.4-1.1-0.9-1.5
+						c-0.4-0.3-0.8-0.4-1.2-0.4c-0.2,0-0.3,0-0.5,0.1c-0.1,0-0.1,0-0.2,0c-0.2,0-0.4-0.1-0.5-0.2c-0.2-0.1-0.3-0.4-0.3-0.6
+						c0-0.6-0.4-1.2-0.9-1.6c-0.4-0.3-0.8-0.4-1.3-0.4c-0.7,0-1.3,0.3-1.7,0.9c-0.2,0.3-0.4,0.7-0.4,1.1c0,0.2-0.1,0.5-0.3,0.6
+						c-0.1,0.1-0.3,0.2-0.5,0.2c-0.1,0-0.1,0-0.2,0c-0.2,0-0.3-0.1-0.5-0.1c-0.7,0-1.3,0.3-1.7,0.9c-0.7,1-0.5,2.3,0.5,3
+						c0.1,0.1,0.3,0.2,0.4,0.3c0.2,0.1,0.4,0.3,0.5,0.5c0.1,0.2,0,0.5-0.1,0.7c-0.2,0.4-0.3,0.8-0.3,1.3l0,0.2l-0.2,0
+						c-0.2,0-0.3,0-0.5,0c-0.3,0-0.5,0-0.8,0.1l-0.2,0L114.1,209.6z M118.6,209.7c-0.2-0.1-0.4-0.2-0.6-0.3c-0.8-0.6-1.4-1.5-1.5-2.5
+						c-0.2-1,0.1-2,0.7-2.8c0.7-1,1.9-1.6,3.1-1.6c0.8,0,1.6,0.3,2.2,0.7c0.8,0.5,1.3,1.4,1.5,2.3l0,0.1l-0.1,0.1
+						c-0.5,0.3-0.9,0.6-1.2,1.1l0,0.1l-0.3-0.1l0-0.1c0.1-0.8-0.2-1.6-0.8-2c-0.4-0.3-0.8-0.4-1.2-0.4c-0.7,0-1.3,0.3-1.7,0.9
+						c-0.3,0.5-0.5,1-0.4,1.6c0.1,0.6,0.4,1,0.8,1.4c0.2,0.1,0.4,0.3,0.7,0.3l0.4,0.1l-0.3,0.2c-0.3,0.2-0.6,0.5-0.8,0.8
+						c0,0-0.1,0.1-0.1,0.1l-0.1,0.1L118.6,209.7z M111.4,209.6c-0.2-0.4-0.6-0.7-0.9-1l-0.3-0.2l0.4-0.1c0.4-0.1,0.8-0.4,1.1-0.8
+						c0.2-0.3,0.4-0.7,0.4-1l0-0.1l0.4,0l0,0.1c0.2,0.5,0.5,1,0.8,1.5l0.1,0.1l-0.1,0.1c-0.1,0.1-0.2,0.3-0.2,0.4
+						c-0.4,0.5-0.8,0.9-1.4,1.2l-0.2,0.1L111.4,209.6z M107.5,206.6c-0.2-0.3-0.5-0.6-0.8-0.8c-0.1-0.1-0.2-0.2-0.3-0.2l-0.1-0.1l0-0.1
+						c0.1-0.5,0.3-1,0.6-1.4c0.7-1,1.9-1.6,3.1-1.6c0.8,0,1.6,0.3,2.2,0.7c0.1,0.1,0.2,0.1,0.2,0.2l0.1,0.1l0,0.1
+						c-0.2,0.5-0.3,1.1-0.3,1.7l0,0.1l-0.3,0.1l0-0.1c-0.2-0.3-0.4-0.6-0.7-0.8c-0.4-0.3-0.8-0.4-1.2-0.4c-0.7,0-1.3,0.3-1.7,0.9
+						c-0.3,0.4-0.4,0.9-0.4,1.5l0.1,0.7L107.5,206.6z M102.4,205.1c0-0.8,0.2-1.6,0.7-2.3c0.7-1,1.9-1.6,3.1-1.6l0,0
+						c0.1-0.4,0.3-0.8,0.6-1.1c0.7-1,1.9-1.6,3.1-1.6c0.8,0,1.6,0.3,2.3,0.7c0.7,0.5,1.2,1.3,1.4,2.1l0,0c0,0,0,0.1,0,0.1
+						c0,0.1,0,0.2,0,0.2l0,0l0,0.1l0,0l0,0c-0.2,0.2-0.4,0.4-0.6,0.6c-0.1,0.1-0.2,0.2-0.2,0.3l-0.1,0.2l-0.2-0.1c0,0-0.1,0-0.1-0.1
+						c-0.2-0.1-0.3-0.4-0.3-0.6c0-0.6-0.4-1.2-0.9-1.6c-0.4-0.3-0.8-0.4-1.3-0.4c-0.7,0-1.3,0.3-1.7,0.9c-0.2,0.3-0.4,0.7-0.4,1.1
+						c0,0.3-0.1,0.5-0.3,0.6c-0.1,0.1-0.3,0.2-0.5,0.2c-0.1,0-0.1,0-0.2,0c-0.2,0-0.3-0.1-0.5-0.1c-0.7,0-1.3,0.3-1.7,0.9
+						c-0.2,0.3-0.4,0.7-0.4,1l0,0.2l-0.2,0c-0.4,0-0.8,0.1-1.3,0.2l-0.3,0.1L102.4,205.1z"/>
+				</g>
+				<g>
+					<path d="M113.5,43c-4.7-4.7-12.4-12.4-12.4-12.4s-6-5.5-11.5,0c-5.5,5.5-43.1,43.1-43.1,43.1l23.1,23.6l43.9-43.9
+						C113.5,53.4,118.1,47.7,113.5,43z"/>
+					<polygon points="31.9,111.8 63,102.6 40.6,80.2 	"/>
+				</g>
+				</svg>
+
+			</button>
+			<ul class="delivery-days-info" ng-show="showTime">
+				<li ng-click="hold.deliveryinfo[0].xp.deliveryRun='Run1'" ng-class="{active:line.xp.deliveryRun=='Run1'}" class="preference">
+					<p class="delivery-header">{{hold.dataDisplay["deliveryTime"].Run1.Name}}</p>
+					<p class="delivery-day">{{hold.dataDisplay["deliveryTime"].Run1.TimeSlot}}</p>
+				</li>
+				<li ng-click="hold.deliveryinfo[0].xp.deliveryRun='Run2'" ng-class="{active:line.xp.deliveryRun=='Run2'}" class="preference">
+					<p class="delivery-header">{{hold.dataDisplay["deliveryTime"].Run2.Name}}</p>
+					<p class="delivery-day">{{hold.dataDisplay["deliveryTime"].Run2.TimeSlot}}</p>
+				</li>
+				<li ng-click="hold.deliveryinfo[0].xp.deliveryRun='Run3'" ng-class="{active:line.xp.deliveryRun=='Run3'}" class="preference">
+					<p class="delivery-header">{{hold.dataDisplay["deliveryTime"].Run3.Name}}</p>
+					<p class="delivery-day">{{hold.dataDisplay["deliveryTime"].Run3.TimeSlot}}</p>
+				</li>
+			</ul>
 		</div>
 		<div class="hold-btm col-md-12 col-lg-12">
 			<p class="col-md-2 col-lg-2">Delivery Instructions</p>
-			<input type="text" class="col-md-6 col-lg-6" class="message" ng-model="hold.deliveryinfo.xp.deliveryNote" ng-disabled="true"/>
+			<input type="text" class="col-md-3 col-lg-3" class="message" ng-model="hold.deliveryinfo[0].xp.deliveryNote"/>
 		</div>
 		<div class="hold-btm col-md-12 col-lg-12">
-			<p class="col-md-2 col-lg-2">Wired Service</p>
-			<select ng-model="hold.wireserviceopt">
+			<p class="col-md-2 col-lg-2">Wired Service {{hold.wireserviceopt}}</p>
+			<select ng-model="hold.wireserviceopt" ng-change="hold.florist(hold.wireserviceopt)">
 				<option value="FTD">FTD</option>
 				<option value="Teleflora">Teleflora</option>
 			</select>
-		</div>
-		<button ng-click="hold.florist(hold.wireserviceopt)" class="select-florist">Select florist</button>
-
-	</div>
-	<div class="hold-screen row">
+		</div><!-- 
+		<button ng-click="hold.florist(hold.wireserviceopt)" class="select-florist col-md-offset-2">Select florist</button> -->
+		<div class="hold-btm">
 		<div class="col-md-12 col-lg-12">
-			<h2>Wired Service</h2>
 		</div>
 		<div class="hold-btm col-md-12 col-lg-12">
-			<p class="col-md-2 col-lg-2">Wired Service</p>
-			<a class="col-md-2 col-lg-2" ng-click="hold.selectFlorist()">Select Florist</a>
+			<p class="col-md-2 col-lg-2">Card Message</p>
+			<div class="col-md-3 col-lg-3 delivery-input">
+				<input type="text" class="message" ng-model="hold.onholdlineitems1[0].xp.CardMessage.line1"/>
+				<input type="text" class="message" ng-model="hold.onholdlineitems1[0].xp.CardMessage.line2"/>
+				<input type="text" class="message" ng-model="hold.onholdlineitems1[0].xp.CardMessage.line3"/> 
+				<input type="text" class="message" ng-model="hold.onholdlineitems1[0].xp.CardMessage.line4"/>
+			</div>
+		</div>
+	</div>	
+	</div>
+	
+	
+	<div class="wired-services row">
+	<h2>Wired Service</h2>
+	    <div class="col-md-6 col-lg-6 wired-form">
+	    <div class="hold-btm col-md-12 col-lg-12">
+			<p class="col-md-2 col-lg-2">Florist</p>
+			<button class="col-md-2 col-lg-2 selectFlorist" ng-click="hold.floristdata.length==0;hold.selectFlorist()" ng-disabled="hold.floristdata.length==0">Select Florist</button>
 		</div>
 		<div class="hold-btm col-md-12 col-lg-12">
 			<p class="col-md-2 col-lg-2">Florist Name</p>
-			<input type="text" class="col-md-2 col-lg-2" ng-model="hold.selectedflorist.floristName"/>
+			<input type="text" class="col-md-7 col-lg-7" ng-model="hold.selectedflorist.floristName"/>
 		</div>
 		<div class="hold-btm col-md-12 col-lg-12">
 			<p class="col-md-2 col-lg-2">Florist Zip Code</p>
-			<input type="text" class="col-md-2 col-lg-2" ng-model="hold.selectedflorist.zipCode"/>
+			<input type="text" class="col-md-7 col-lg-7" ng-model="hold.selectedflorist.zipCode"/>
 		</div>
 		<div class="hold-btm col-md-12 col-lg-12">
 			<p class="col-md-2 col-lg-2" ng-model="hold.selectedflorist.zipCode">Florist Network</p>
-
+			<input type="text" class="col-md-7 col-lg-7" ng-model=""/>
 		</div>
 		<div class="hold-btm col-md-12 col-lg-12">
 			<p class="col-md-2 col-lg-2">Florist Code</p>
-			<input type="text" class="col-md-2 col-lg-2" ng-model="hold.selectedflorist.zipCode"/>
+			<input type="text" class="col-md-7 col-lg-7" ng-model=""/>
 		</div>
 		<div class="hold-btm col-md-12 col-lg-12">
 			<p class="col-md-2 col-lg-2">Wire Occasion Code</p>
-			<input type="text" class="col-md-2 col-lg-2" ng-model="hold.selectedflorist.zipCode"/>
+			<input type="text" class="col-md-7 col-lg-7" ng-model=""/>
 		</div>
 		<div class="hold-btm col-md-12 col-lg-12">
 			<p class="col-md-2 col-lg-2">Wire Order Number</p>
-			<input type="text" class="col-md-2 col-lg-2" ng-model="hold.selectedflorist.zipCode"/>
+			<input type="text" class="col-md-7 col-lg-7" ng-model=""/>
 		</div>
 		<div class="hold-btm col-md-12 col-lg-12">
 			<p class="col-md-2 col-lg-2">Transmission Status</p>
-			<input type="text" class="col-md-2 col-lg-2" ng-model="hold.selectedflorist.zipCode"/>
+			<input type="text" class="col-md-7 col-lg-7" ng-model=""/>
 		</div>
+	    </div>
+	    <div class="col-md-6 col-lg-6 wired-text">
+			<p>Release Note:</p>
+	    	<textarea ng-model="hold.holdNote"></textarea>
+	    </div>
 	</div>
-	<div class="hold-screen row">
-		<div class="col-md-12 col-lg-12">
-			<h2>Card Message</h2>
-		</div>
-		<div class="hold-btm col-md-12 col-lg-12">
-			<p class="col-md-2 col-lg-2">Delivery Date</p>
-			<div class="col-md-2 col-lg-2 delivery-input">
-				<input type="text" class="message" ng-model="hold.onholdlineitems.xp.CardMessage.line1"/>
-				<input type="text" class="message" ng-model="hold.onholdlineitems.xp.CardMessage.line2"/>
-				<input type="text" class="message" ng-model="hold.onholdlineitems.xp.CardMessage.line3"/> 
-				<input type="text" class="message" ng-model="hold.onholdlineitems.xp.CardMessage.line4"/>
-			</div>
-		</div>
-	</div>
-	<div>
-		<button class="unhold" ng-click="hold.selectedflorist==null || hold.unhold()" ng-disabled="hold.selectedflorist==null">Unhold</button>
-		<button ui-sref="home">CANCEL</button>
+	<div class="button-cont">
+		<button class="unhold" ng-click="hold.saveData(hold.onholdlineitems1, hold.selectedflorist, hold.holdNote, hold.wireserviceopt)">Save</button>
+		<button class="unhold" ng-click="hold.disableRelease==true;hold.unhold()" ng-disabled="hold.disableRelease==true" ng-class="{disabled: hold.disableRelease==true}">Release</button>
+		<button ui-sref="home" class="cancel">Cancel</button>
 	</div>
 </div>
-<modal title="Select a SKU" visible="hold.selectSKU" id="selectSKU" class="create-user-pop-up modal-pop-up">
+<modal title="Select a SKU" visible="hold.selectSKU" id="selectSKU" class="select-florist-pop-up modal-pop-up">
 	<div>
 		<h1>Select a SKU</h1>
 		
@@ -121,14 +385,15 @@
 		<div class="searchfield">
 		</div>
 	</div>
-	<div ui-grid="gridskuopt" ui-grid-selection class="order-grid"></div>
+	<div ui-grid="gridskuopt" ui-grid-selection class="order-grid select-sku"></div>
 
 	<div>
-		<button ng-click="hold.selectSKU =! hold.selectSKU" class="cancel">CANCEL</button>
-		<button ng-click="hold.adddummy()">OKAY</button>
+	    <button ng-click="hold.adddummy()">Okay</button>
+		<button ng-click="hold.selectSKU =! hold.selectSKU" class="cancel">Cancel</button>
+		
 	</div>
 </modal>
-<modal title="Select a SKU" visible="hold.selectFloristshow" id="selectFlorist" class="create-user-pop-up modal-pop-up">
+<modal title="Select a SKU" visible="hold.selectFloristshow" id="selectFlorist" class="select-florist-pop-up modal-pop-up">
 	<div>
 		<h1>Select a Florist</h1>
 		
@@ -137,10 +402,11 @@
 		<div class="searchfield">
 		</div>
 	</div>
-	<div ui-grid="gridfloristopt" ui-grid-selection class="order-grid"></div>
+	<div ui-grid="gridfloristopt" ui-grid-selection class="order-grid floristsLists"></div>
 
-	<div>
-		<button ng-click="hold.selectFloristshow =! hold.selectFloristshow" class="cancel">CANCEL</button>
-		<button ng-click="hold.selectFloristshow =! hold.selectFloristshow">OKAY</button>
+	<div class="confirmation-btn">
+	    <button ng-click="hold.selectFloristshow =! hold.selectFloristshow">Okay</button>
+		<button ng-click="hold.selectFloristshow =! hold.selectFloristshow" class="cancel">Cancel</button>
+		
 	</div>
 </modal>

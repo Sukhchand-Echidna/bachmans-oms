@@ -23,6 +23,15 @@
 .helvetica-medium{
     font-family: 'ProximaNova-Regular';
 }
+/*input,select,textarea{
+    border: 1px solid #EAEAEA;
+    padding-left: 5px;
+    margin-bottom:10px !important;
+    background-color: #f4f4f4;
+    color: #464646;
+    border-radius: 5px;
+    height: 35px;
+}*/
 @charset "utf-8";
 /* CSS Document */
 *{
@@ -51,7 +60,7 @@ body, .container-fluid.home-template, .header, .footer, .buildOrder-plp, .custom
 .in-block{
     display:inline-block;
 }
-::-webkit-scrollbar {
+/*::-webkit-scrollbar {
     width: 8px;
 }
 ::-webkit-scrollbar-track {
@@ -63,6 +72,20 @@ body, .container-fluid.home-template, .header, .footer, .buildOrder-plp, .custom
 }
 ::-webkit-scrollbar:horizontal {
     height: 10px;
+}*/
+::-webkit-scrollbar {
+    width:7px;
+    
+}
+ 
+::-webkit-scrollbar-track {
+    -webkit-box-shadow:none;
+    border-radius:3px;
+}
+ 
+::-webkit-scrollbar-thumb {
+  background-color: #888888;
+  border-radius:3px;
 }
 
 .header {
@@ -511,7 +534,7 @@ input[type=number]::-webkit-outer-spin-button {
                 font-size:1em;
                 text-decoration: none;
                 text-transform: capitalize;
-                padding:6px 25px;
+                padding:6px 10px;
                 width: 100%;
                 display: block;
                 height:auto;
@@ -580,7 +603,7 @@ input[type=number]::-webkit-outer-spin-button {
         }
         .order-grid .ui-grid-render-container-body .ui-grid-viewport .ui-grid-canvas .ui-grid-row:nth-child(odd) .ui-grid-cell{
           border-bottom: none;
-          width: 14.2% !important;
+          width: 9% !important;
           /*max-width: 14.2% !important;*/
         }
         .order-grid .ui-grid-render-container .ui-grid-viewport .ui-grid-canvas .ui-grid-row:hover {
@@ -592,9 +615,10 @@ input[type=number]::-webkit-outer-spin-button {
         }
     }
     .saved_order {
-    height:auto;
+    height:370px;
     padding:0px;
     width:78.2%;
+    margin-bottom:30px;
     [role=button]{
         cursor:default;
     }
@@ -627,7 +651,7 @@ input[type=number]::-webkit-outer-spin-button {
         .order-grid{
             padding:0;
             .ui-grid-contents-wrapper .ui-grid-cell{
-                width:34.6%;
+                width:26.9%;
                 min-width: 15.4%;
             }
             .ui-grid-row > div{
@@ -816,6 +840,10 @@ input[type=number]::-webkit-outer-spin-button {
             background:@color20;
             text-decoration:none;
         }
+         &:focus{
+            background:@color20;
+            text-decoration:none;
+         }
         svg{
             width:10px;
             height:10px;
@@ -829,6 +857,19 @@ input[type=number]::-webkit-outer-spin-button {
             .user-name,.order-name,.phone-num{
                 text-align:right;
             }
+			&.Searcherror{
+				&.recipienterr p{
+					line-height:28px;
+					padding-left:20px;
+					height:28px;
+				}
+				p{
+					color:#f32929;
+					margin:2px 0px;
+					font-size:0.875em;
+					.helvetica-regular;
+				}
+			}
     }
     &.prod-dropdown{
         .search_result p{
@@ -870,7 +911,7 @@ input[type=number]::-webkit-outer-spin-button {
         }
         .recepient-order{
             p{
-               margin-left: 22px;
+               
                display: inline;
                float:left;
             }
@@ -1410,13 +1451,16 @@ input[type=number]::-webkit-outer-spin-button {
     bottom:0;
     width:100%;
     height:30px;
+    line-height:30px;
     ul {
-        .in-block;
-        list-style:none;
-        overflow:auto;
-        padding: 5px 5px 5px 22px;
-        margin-bottom:0;
-        width:60%;
+           display: inline-block;
+            list-style: none;
+            overflow: auto;
+            padding: 0 5px 0 22px;
+            margin-bottom: 0;
+            width: 60%;
+            line-height: 13px;
+            margin-top:10px;
         li {
             float:left;
             a {
@@ -1439,7 +1483,7 @@ input[type=number]::-webkit-outer-spin-button {
         color:@color7;
         width:128px;
         float:right;
-        margin:7px 0 0;
+      
     }
 }
 .summary_wrapper {
@@ -1755,6 +1799,7 @@ input[type=number]::-webkit-outer-spin-button {
 
 .star{
     color: #f32929; 
+    font-size:1em;
 }
 .cg-busy{
         position:fixed !important;
@@ -1843,20 +1888,23 @@ input[type=number]::-webkit-outer-spin-button {
 
 .back-common{
     .helvetica-regular;
-    font-size:0.938em;
+    font-size:1em;
     color: #54565d;
     margin: 10px 0;
     a{
         color: #54565d;
         cursor: pointer;
         text-decoration: none;
+        width:auto;
+        font-size:1em;
+        .helvetica-regular;
         svg{
         width: 15px;
         height: 10px;
         color: rgb(84, 86, 93);
         display: inline-block;
         transform: rotate(180deg);
-        margin-top: 6px;
+        margin-top:7px;
          float: left;
         }
     }
@@ -1907,17 +1955,45 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 
+.purple-btn-small{
+  border: 1px solid #8c58b5;
+    color:#8c58b5;
+    padding:0 12px;
+    .helvetica-regular;
+    font-size:0.813em;
+    cursor: pointer;
+    text-transform:capitalize;
+    line-height:30px;
+    height:30px;
+    .background-fade;
+    border-radius:5px;
+    background:#fff;
+    &:hover {
+        border: 1px solid #8c58b5;
+        color: #fff;
+        background-size: 100% 100%;
+        background-color:#7a43a3;
+    }
+    &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        &:hover {
+            background-color: #7a43a3;
+            border-color: #7a43a3;
+        }
+    }   
+}
+
 .purple-btn {
     border: 1px solid #8c58b5;
     color:#8c58b5;
-    padding:0 15px;
+    padding:0 20px;
     .helvetica-regular;
-    font-size:0.875em;
+    font-size:1em;
     cursor: pointer;
-    letter-spacing: 1px;
     text-transform:capitalize;
-    line-height:35px;
-    height:35px;
+    line-height:40px;
+    height:40px;
     .background-fade;
     border-radius:5px;
     background:#fff;
@@ -1938,14 +2014,13 @@ input[type=number]::-webkit-outer-spin-button {
 }
 .purple-big{
    color:#ffffff;
-    padding:0 15px;
-   .helvetica-bold;
-    font-size:0.875em;
+    padding:0 20px;
+   .helvetica-regular;
+    font-size:1em;
     cursor: pointer;
-    letter-spacing: 1px;
     text-transform:capitalize;
-    line-height: 35px;
-    height:35px;
+    line-height: 40px;
+    height:40px;
     .background-fade;
     border-radius:5px;
     background:#a576ca;
@@ -1960,6 +2035,45 @@ input[type=number]::-webkit-outer-spin-button {
         &:hover {
             background-color:#a576ca;
           }
+    }
+}
+
+.save-btn{
+    .helvetica-regular;
+    font-size:1em;
+    line-height:40px;
+    height:40px;
+    .in-block;
+    width:150px;
+    color:@color0;
+    background-color:@gray-button;
+    .background-fade;
+    border-radius:5px;
+    background-color:#a576ca;
+        &:hover{
+            background-color:#7a43a3;
+        }
+        &:disabled {
+            background-color:#a576ca;
+        }
+}
+.cancel-btn{
+     .helvetica-regular;
+    font-size:1em;
+    line-height:40px;
+    height:40px;
+    .in-block;
+    width:150px;
+    color:@color0;
+    background-color:@gray-button;
+    .background-fade;
+    border-radius:5px;
+    background-color:@gray-button;
+    &:hover{
+        background-color:@color1;
+    }
+     &:disabled {
+        background-color:#a576ca;
     }
 }
 
@@ -1995,14 +2109,13 @@ input[type=number]::-webkit-outer-spin-button {
     border: 1px solid #afd833;
     background-color: #afd833;
     cursor: pointer;
-    padding:0 15px;
+    padding:0 20px;
     .background-fade;
-     .helvetica-bold;
-    letter-spacing: 1px;
-    text-transform: capitalize;
-    line-height:35px;
-    height:35px;
-    font-size:0.875em;
+   .helvetica-regular;
+   text-transform: capitalize;
+    line-height:40px;
+    height:40px;
+    font-size:1em;
     &:hover {
         border: 1px solid #8dbb01;
         color: #fff;
@@ -2112,7 +2225,573 @@ li {
 input:-webkit-autofill {
     -webkit-box-shadow: 0 0 0px 1000px #f4f4f4 inset !important;
 }
+.Assorted.Colors {
+    background-image: url('../../assets/images/assorted_color.png');
+    background-repeat: no-repeat;
+    background-size: contain;
+}
 
+    .Red {
+        background-color: #ff0000;
+    }
+
+    .Cayenne {
+        background-color: #BB3E18;
+    }
+
+    .Lava.Red {
+        background-color: #cf1020;
+    }
+
+    .Orange.Red {
+        background-color: #ff4500;
+    }
+
+    .White.Red {}
+
+    .Yellow.Red {}
+
+    .Bright.Red {}
+
+    .Copper.Red {
+        background-color: #c87533;
+    }
+
+    .Dark.Green {
+        background-color: #006400;
+    }
+
+    .Terra.Cotta {
+        background-color: #E2725B;
+    }
+
+    .Orange {
+        background-color: #ffa500;
+    }
+
+    .Melon {
+        background-color: #fdbcb4;
+    }
+
+    .Aztec.Orange {}
+
+    .Coral {
+        background-color: #ff7f50;
+    }
+
+    .Peach {
+        background-color: #ffdab9;
+    }
+
+    .Rust {
+        background-color: #a55d35;
+    }
+
+    .Terracotta {
+        background-color: #E2725B;
+    }
+
+    .Yellow {
+        background-color: #ffff00;
+    }
+
+    .Amber {
+        background-color: #ffc200;
+    }
+
+    .Sunburst {
+        background-color: #ffe186;
+    }
+
+    .Mustard {
+        background-color: #f5d04c;
+    }
+
+    .Light.Yellow {
+        background-color: #ffffe0;
+    }
+
+    .Dark.Yellow {
+        background-color: #cccc00;
+    }
+
+    .Green {
+        background-color: #008000;
+    }
+
+    .Racing.Green {
+        background-color: #004225;
+    }
+
+    .Lime.Green {
+        background-color: #32cd32;
+    }
+
+    .Olive.Green {
+        background-color: #556b2f;
+    }
+
+    .Chartreuse {
+        background-color: #99FF00;
+    }
+
+    .Light.Green {
+        background-color: #90ee90;
+    }
+
+    .AgedG.reen {}
+
+    .Lime.Green {
+        background-color: #32cd32;
+    }
+
+    .White.Green {}
+
+    .Yellow.Green {
+        background-color: #9acd32;
+    }
+
+    .Evergreen {
+        background-color: #006014;
+    }
+
+    .Moss.Green {
+        background-color: #addfad;
+    }
+
+    .Dark.Green {
+        background-color: #006400;
+    }
+
+    .Bright.Green {}
+
+    .Blue {
+        background-color: #0000ff;
+    }
+
+    .Teal {
+        background-color: #008080;
+    }
+
+    .Aqua {
+        background-color: #00ffff;
+    }
+
+    .Turquoise {
+        background-color: #40e0d0;
+    }
+
+    .Ocean.Blue {
+        background-color: #0077be;
+    }
+
+    .Light.Blue {
+        background-color: #add8e6;
+    }
+
+    .Dark.Blue {
+        background-color: #00008b;
+    }
+
+    .Purple {
+        background-color: #800080;
+    }
+
+    .Lavender {
+        background-color: #e6e6fa;
+    }
+
+    .Violet {
+        background-color: #ee82ee;
+    }
+
+    .Lilac {
+        background-color: #c8a2c8;
+    }
+
+    .Dark.Purple {}
+
+    .Light.Purple {
+        background-color: #b19cd9;
+    }
+
+    .Purple.Green {}
+
+    .Purple.White {}
+
+    .Pink {}
+
+    #ffc0cb {}
+
+    .Rose {
+        background-color: #ff66cc;
+    }
+
+    .Hot.Pink {
+        background-color: #ff69b4;
+    }
+
+    .Fuchsia {
+        background-color: #FF77FF;
+    }
+
+    .Light.Pink {
+        background-color: #ffb6c1;
+    }
+
+    .Pink.Green {}
+
+    .Pink.Red {}
+
+    .Assorted {}
+
+    .Multi {}
+
+    .Pattern {}
+
+    .Black {
+        background-color: #000000;
+    }
+
+    .White {
+        background-color: #ffffff;
+    }
+
+    .Brown {
+        background-color: #a52a2a;
+    }
+
+    .Chocolate {
+        background-color: #d2691e;
+    }
+
+    .Coffee {
+        background-color: #6f4e37;
+    }
+
+    .Golden.Brown {
+        background-color: #996515;
+    }
+
+    .Rustic.Red.Brown {
+        background-color: #4f0d04;
+    }
+
+    .Antique.Brown {
+        background-color: #7c573d;
+    }
+
+    .Dark.Brown {
+        background-color: #654321;
+    }
+
+    .Espresso {
+        background-color: #591e14;
+    }
+
+    .Light.Brown {}
+
+    .Clear {}
+
+    .Silver {
+        background-color: #c0c0c0;
+    }
+
+    .Grey {
+        background-color: #808080;
+    }
+
+    .Gray {}
+
+    .Grey {}
+
+    .Charcoal {
+        background-color: #36454f;
+    }
+
+    .Tan {
+        background-color: #d2b48c;
+    }
+
+    .Beige {
+        background-color: #f5f5dc;
+    }
+
+    .Carmel {
+        background-color: #C68E17;
+    }
+
+    .Natural {
+        background-color: #8c8984;
+    }
+
+    .Sand {
+        background-color: #c2b280;
+    }
+
+    .Neutral {
+        background-color: #C0C0C0;
+    }
+
+    .Taupe {
+        background-color: #483c32;
+    }
+
+    .Orange.Tan {}
+
+    .Red.Tan {}
+
+    .Yellow.Tan {}
+
+    .Desert.Tan {
+        background-color: #b1a688;
+    }
+
+    .Cream {
+        background-color: #fffdd0;
+    }
+
+    .Ivory {
+        background-color: #fffff0;
+    }
+
+    .Gold {
+        background-color: #ffd700;
+    }
+
+    .Rust {
+        background-color: #B7410E;
+    }
+
+    .Copper {
+        background-color: #b87333;
+    }
+
+    .Amber {
+        background-color: ffbf00;
+    }
+
+    .AntiqueBronze {
+        background-color: #cd7f32;
+    }
+
+    .AntiqueGrayTextured {
+        background-color: #808080;
+    }
+
+    .AntiqueGreen {
+        background-color: #00ff00;
+    }
+
+    .AppleGreen {
+        background-color: #8db600;
+    }
+
+    .Assorted.Colors {}
+
+    .AutumnBlend {
+        background-color: #FB9904;
+    }
+
+    .AztecOrange {
+        background-color: #ffa500;
+    }
+
+    .Birch {
+        background-color: #F1EAE0;
+    }
+
+    .Black {
+        background-color: #000000;
+    }
+
+    .BlackText {
+        background-color: #000000;
+    }
+
+    .Blue {
+        background-color: #0000ff;
+    }
+
+    .BlueMist {
+        background-color: #7C9AB6;
+    }
+
+    .Blue.Aqua {
+        background-color: #00ffff;
+    }
+
+    .Bronze {
+        background-color: #cd7f32;
+    }
+
+    .BronzeMetalic {
+        background-color: #B47A52;
+    }
+
+    .Brown {
+        background-color: #a52a2a;
+    }
+
+    .Chamois {
+        background-color: #A0795A;
+    }
+
+    .Charcoal {
+        background-color: #36454f;
+    }
+
+    .Clear {}
+
+    .Copper {
+        background-color: #b87333;
+    }
+
+    .Cranberry {
+        background-color: #601830;
+    }
+
+    .DarkBrown {
+        background-color: #654321;
+    }
+
+    .Diane {}
+
+    .Doris {
+        background-color: #1C73A9;
+    }
+
+    .Duke {
+        background-color: #001A57;
+    }
+
+    .Eucalyptus {
+        background-color: #329760;
+    }
+
+    .Everglade {
+        background-color: #214330;
+    }
+
+    .Evergreen {
+        background-color: #103f2f;
+    }
+
+    .GoldenBrown {
+        background-color: #996515;
+    }
+
+    .Green {
+        background-color: #00ff00;
+    }
+
+    .HarvestBlend {
+        background-color: #EDE275;
+    }
+
+    .Joan {}
+
+    .Kodiak {
+        background-color: #957067;
+    }
+
+    .Lilac {
+        background-color: #c8a2c8;
+    }
+
+    .Millstream {
+        background-color: #3da8b5;
+    }
+
+    .MinnesotaRiver {
+        background-color: #24354A;
+    }
+
+    .Natural {}
+
+    .NorthShoreBlend {
+        background-color: #06A899;
+    }
+
+    .OceanBlue {
+        background-color: #03104F;
+    }
+
+    .Orange {
+        background-color: #ffa500;
+    }
+
+    .ParisianRed {
+        background-color: #C32E30;
+    }
+
+    .Perm {}
+
+    .Pewter {
+        background-color: #8e9294;
+    }
+
+    .Pink {
+        background-color: #ffc0cb;
+    }
+
+    .Purple {
+        background-color: #800080;
+    }
+
+    .RacingGreen {
+        background-color: #004225;
+    }
+
+    .Red {
+        background-color: #ff0000;
+    }
+
+    .Riviers.Blend {}
+
+    .Seattle {
+        background-color: #55999A;
+    }
+
+    .ShadowBlend {
+        background-color: #8a795d;
+    }
+
+    .SlateBlue {
+        background-color: #6a5acd;
+    }
+
+    .Stone {
+        background-color: #b8b0b9;
+    }
+
+    .Tan {
+        background-color: #d2b48c;
+    }
+
+    .Teal {
+        background-color: #008080;
+    }
+
+    .Terracotta {
+        background-color: #e2725b;
+    }
+
+    .Turquoise {
+        background-color: #30d5c8;
+    }
+
+    .White {
+        background-color: #ffffff;
+    }
+
+    .WillowGreen {
+        background-color: #a08d40;
+    }
+
+    .Wood {
+        background-color: #966f33;
+    }
 // font resize 
     body {
         font-size: 16px !important;
@@ -2136,3 +2815,22 @@ input:-webkit-autofill {
             font-size: 20px !important;
         }
     }
+
+    .gift-card-pop-up{
+      .modal-body{
+        font-size:0.875em;
+        .helvetica-regular;
+        input{
+             border: 1px solid #EAEAEA;
+            padding-left: 5px;
+            width:52%;
+            background-color: #f4f4f4;
+            color: #464646;
+            border-radius: 5px;
+            height: 35px;
+            box-shadow: none;
+            margin: 0;
+        }
+      }      
+    }
+ 

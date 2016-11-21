@@ -84,7 +84,7 @@
 			</form>
 			<li ng-repeat="note in buildOrderLeft.list.Notes | limitTo: itemsLimit() track by $index">
 				<div class="noteMsg">
-					<p>{{note.Date | date:'yyyy-MM-dd'}}</p>
+					<p>{{note.Date | date:'MM/dd/yyyy'}}</p>
 					<h5>{{note.Description}}</h5>
 				</div>					
 				<a href="javascript:void(0)" popover-trigger="none" popover-is-open="buildOrderLeft.showDeliveryToolTip{{$index}}" ng-click="buildOrderLeft.showDeleteToolTip($index)" uib-popover-template="deleteNote.templateUrl"><img src="../assets/images/icons-svg/cancel.svg"></a>
@@ -100,7 +100,7 @@
 		<a href="javascript: void(0)" ng-show="hasMoreItemsToShow()"  ng-click="showMoreItems()">View All Notes</a>
 	</div>
 	<div class="guestbtn" ng-if="buildOrderLeft.guest">
-		<button ng-click="buildOrder.guestUserModal=!buildOrder.guestUserModal">Enter User Details</button>
+		<button ng-click="buildOrder.guestUserModal=!buildOrder.guestUserModal">Customer Details</button>
 	</div>
 </div>
 <modal title="Payment Method - Credit Card" visible="showpayment" id="paymentmethod" class="modal-pop-up payment-method">

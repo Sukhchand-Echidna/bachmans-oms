@@ -65,70 +65,83 @@
 	    text-align: center;
 	    transform: translateY(-50%);
 	    padding:0;
-	    p.orderConfirm-title{
+	   .orderConfirm-title{
 	    	color:#8B5BB3;
 	    	font-size:2em;
 	    	.helvetica-bold;
 	    }
-	    p.orderConfirm-ID{
-	    	font-size:1.5em;
+	   .orderConfirm-ID{
+	    	font-size:1em;
 	    	.helvetica-medium;
-	    	margin: 40px 0 30px 0;
+	    	margin:0 auto;
+	    	width:65%;
 	    	span{
 	    	.helvetica-bold;
 	    	}
+	    	.order-id{
+	    		text-align:left;
+	    		padding-left:0;
+	    	}
 	    }
-	    div.orderConfirm-mailContent{
+	    .orderConfirm-mailContent{
 	    	text-align: center;
 	    	margin:0 auto;
 	    	width:65%;
-		    p.orderConfirm-mail, p.orderConfirm-sendToDiff{
+		    .orderConfirm-mail, .orderConfirm-sendToDiff{
 		    	color:#666666;
-		    	font-size: 1.2em;
+		    	font-size: 1em;
 		    	.helvetica-medium;
 		    	text-align: left;
+		    	.email-val{
+		    		color:#000;
+		             padding:0;
+		    		text-align:left;
+		    	}
 		    	span{
 		    		color:#000;
 		    		font-size: 1.5em;
 		    		margin-left:10px;
 		    	}
-		    	input{
+		    	.order-input{
+		    		padding-left:0;
+		    		input{
 		    		border:1px solid @color21;
 		    		height:45px;
 		    		padding-left:5px;
-		    		width: 50%;
+		    		width:100%;
 	    			background-color: @color23;
 	    			color: @color26;
-	    			margin-left: 18px;
-				    border-radius: 5px;
+	    			border-radius: 5px;
 				    height: 35px;
 		    	}
+		    	}
+		    	
 		    }
+			.orderConfirm-mail{
+			   padding-left:0;
+			  }
 		}
 		div.orderConfirm-Btn{
-			width:100%;
+			width:98%;
 			float:left;
 			.sendBtn{
 				.purple-big;
-				margin-left:53px;
+				
 				padding: 0 25px;
 			}
 			.printBtn{
-				margin: 20px 0 0 7%;
+				margin: 20px 0;
 			   }
 		}
 		.print-order{
 		    border-top: 1px solid #ccc;
 		    margin-top: 20px;
 		    padding-top: 30px;
-		    a{
-		    	float: right;
-			    color: #a77bca;
-			    font-size:1.250em;
-			    border-bottom: 1px solid #ccc;
-			    text-decoration:none;
-		    }
-		}
+		   button{
+		   	.purple-big;
+		   	float:right;
+		   }
+		  }
 		.print-order-header{
 			    font-size: 1.250em;
 				margin: 10px 0px;
@@ -165,10 +178,8 @@
 			}
 		}
 		.order-confirmation{
-		    margin-left: 16%;
-		    width: 84%;
-		    float: left;
-		    margin-top:20px;
+		    margin:0 auto;
+		    width:55%;
 			label{
 				    line-height: 33px;
     				text-align: right;
